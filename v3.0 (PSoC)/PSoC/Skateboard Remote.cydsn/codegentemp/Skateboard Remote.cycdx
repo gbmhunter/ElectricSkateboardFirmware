@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<blockRegMap version="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cypress.com/xsd/cyblockregmap cyblockregmap.xsd" xmlns="http://cypress.com/xsd/cyblockregmap">
+  <block name="AMuxAdc" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinThrottleVolt" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="UartDebug" BASE="0x0" SIZE="0x0" desc="" visible="true">
+    <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="BUART" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="TXInternalInterrupt" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  </block>
+  <block name="PinXbeeIsSleep" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="AdcSar" BASE="0x0" SIZE="0x0" desc="SAR ADC" visible="true">
+    <block name="Clock_VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ADC_SAR" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="theACLK" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="cy_analog_noconnect_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_8" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="vRef_Vdda" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="cy_analog_virtualmux_4" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="noconnect" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="cy_analog_virtualmux_2" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="cy_analog_virtualmux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IRQ" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_7" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="cy_analog_virtualmux_3" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_2" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_5" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_6" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_3" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_4" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <register name="ADC_SAR_WRK0_REG" address="0x40005BA0" bitWidth="8" desc="SAR working register 0" />
+    <register name="ADC_SAR_WRK1_REG" address="0x40005BA1" bitWidth="8" desc="SAR working register 1" />
+  </block>
+  <block name="PinBattVolt" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinDebug" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="IsrMainTick" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="timer_clock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinXbeeSleep" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinUartDebugTx" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="TimerMainTick" BASE="0x0" SIZE="0x0" desc="" visible="true">
+    <block name="VirtualMux_3" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="VirtualMux_2" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="OneTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="TimerUDB" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <register name="TimerMainTick_COUNTER" address="0x40006407" bitWidth="8" desc="UDB.A0 - Current Down Counter Value" />
+    <register name="TimerMainTick_PERIOD" address="0x40006427" bitWidth="8" desc="UDB.D0 - Assigned Period" />
+    <register name="TimerMainTick_STATUS_MASK" address="0x40006587" bitWidth="8" desc="UDB Status bits Interrupt Mask Enable Register" />
+    <register name="TimerMainTick_STATUS_AUX_CTRL" address="0x40006597" bitWidth="8" desc="UDB Auxilliary Control Register" />
+  </block>
+  <block name="PinLedRemoteBattLevelHigh" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedRemoteBattLevelMed" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedRemoteBattLevelLow" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedAlarm" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedMotorOn" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedInRange" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedBoardBattLevelHigh" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="UartXbee" BASE="0x0" SIZE="0x0" desc="" visible="true">
+    <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="BUART" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="RXInternalInterrupt" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="TXInternalInterrupt" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  </block>
+  <block name="PinUartXbeeRx" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinUartXbeeTx" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedBoardBattLevelMed" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="PinLedBoardBattLevelLow" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  <block name="CapSense" BASE="0x0" SIZE="0x0" desc="" visible="true">
+    <block name="NoConnect_1_024ToAMuxCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Connect_VdacToAmuxCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Select_VrefOutput" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Connect_VdacToAmuxCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Select_VrefCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_VchanCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IsrCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="OneTerminal_2" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="OneTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ClockSelect_VirtualMux" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="DisableCapSBuf_VchanCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_VrefCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_6" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Clock_tmp" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="or_bclk" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="DisableCapSBuf_VrefCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="DisableCapSBuf_VrefCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_1_024ToAMuxCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_VrefCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_VchanCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="DisableCapSBuf_VchanCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_IdacVoutCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="CompCH0" BASE="0x0" SIZE="0x0" desc="" visible="true">
+      <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+      <block name="ctComp" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    </block>
+    <block name="CmodCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="VrefRefCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="PortCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_10" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="BufCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="IdacCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_2" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_9" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_7" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_5" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="Select_VrefCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="MeasureCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="OneTerminal_3" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ClockGen" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="NoConnect_IdacVoutCH1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="AMuxCH0" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_3" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_8" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+    <block name="ZeroTerminal_4" BASE="0x0" SIZE="0x0" desc="" visible="true" />
+  </block>
+</blockRegMap>

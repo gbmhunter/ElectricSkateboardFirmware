@@ -1,0 +1,327 @@
+/*
+
+ENEL206 UCFK Assignment - LED Matrix
+
+Description: Code creates a scrolling message on a LED matrix. When both buttons are pressed, you can enter a
+custom message using button 1 to scroll through characters and button 2 to select a character. When finished,
+press both buttons simultaneously to begin scrolling through this message. Pressing both buttons again will return
+the preset message...
+
+Alex Millane - 82007284
+Geoffrey Hunter - 66992485
+*/
+
+#include <avr/io.h>
+#include <stdint.h>
+#include <font.h>
+
+// Bit operations
+#define BV(x) (1 << (x))
+#define CLEARBIT(a,x) ((a) & (~BV(x)))
+#define SETBIT(a,x) ((a) | (BV(x)))
+#define ASSIGNBIT(a,x,v) (v==0)?CLEARBIT(a,x):SETBIT(a,x)
+#define ISCLEAR(a,x) ((((a) & (BV(x))) == BV(x))?(0):(1))
+#define ISSET(a,x) ((((a) & (BV(x))) == BV(x))?(1):(0))
+
+// Constants
+#define adcstart 0xC7
+#define adsccheck 6
+
+// Global Variables
+uint8_t messagearray[100][6];
+char custom_message[100];
+char preset_message1[] = "ENEL356: PRINCIPLES OF COMPUTING";
+char preset_message2[] = "THE QUICK BROWN FOX";
+char preset_message3[] = "THE PRICE OF UNLEADED PETROL IS $3.56";
+uint8_t stringlength;
+uint8_t messagelength;
+uint8_t button_count = 0;
+
+ // Defining Functions
+void messagecreator(uint8_t preset_or_custom);
+void collumn(uint8_t x);
+uint8_t getbutton(uint8_t button_num);
+void delay(uint8_t time);
+
+void make_custom_message(){
+	uint8_t col_on;
+	uint8_t fontnum = 0;
+	uint8_t letternum = 0;
+	uint8_t count;
+	messagelength = 1;
+
+	while(1){
+		
+		if(count == 20){
+			count = 0;
+			fontnum = (fontnum + getbutton(1)) % 26;
+			if(getbutton(1) && getbutton(2)){ // Compiles entered message and breaks loop
+				messagecreator(0);
+				break;
+			}
+			if(getbutton(2)){ // Stores chosen letter in array
+				custom_message[letternum] = (fontnum + 65);
+				fontnum = 0;
+				letternum ++;
+				messagelength++;
+			}
+			
+		}
+
+		for(col_on = 1; col_on < 6; ++col_on) // Displays letter of alphabet currently on
+		{
+			PORTD = ~font[((fontnum + 33)*5)+(col_on-1)];	
+			collumn(col_on);
+				
+			delay(2);
+			collumn(0);
+				
+		}
+		count++;
+		
+	}
+}
+
+uint8_t button_check(){ // Checks for both buttons being pressed
+	uint8_t button1 = getbutton(1);
+	uint8_t button2 = getbutton(2);
+	uint8_t reset_disp = 0;
+	if(button1){
+		reset_disp = 1;
+		button_count++;
+		switch(button_count % 3){ // Swaps the displayed message between preset and custom
+		case 0:
+			messagecreator(1);
+		break;
+		case 1:
+			messagecreator(2);
+		break;
+		case 2:
+			messagecreator(3);
+		break;
+		}
+	}
+	return reset_disp;
+}
+
+void delay(uint8_t time) // This function is used to make a delay
+{
+	TCNT1 = 0;
+	while(TCNT1 < time)
+	continue;
+}
+
+uint8_t getbutton(uint8_t button_num)
+{
+	uint8_t pin;
+	switch(button_num){ // Checks whether specified button is pressed (button 1 = closest to programming port, other is 2)
+		case 1:
+			pin = 3;
+		break;
+		case 2:
+			pin = 5;
+		break;
+	}
+		
+	uint8_t pinbyte = PINB;
+	uint8_t buttonstate;
+	if(ISCLEAR(pinbyte,pin)){ // Provided debouncing of buttons using a delay
+		delay(10);
+		buttonstate = 1;
+	}
+	else{
+		buttonstate = 0;
+	}
+	return buttonstate;
+}
+
+
+	
+	
+
+void messagecreator(uint8_t preset_or_custom)
+{
+
+	uint8_t fontcode;
+	uint8_t i;
+	uint8_t j;
+
+	char message_to_compile[100];
+	switch(preset_or_custom){
+		case 1:
+			stringlength = sizeof(preset_message1);
+			for(i=0; i<=stringlength; i++){
+					message_to_compile[i] = preset_message1[i];
+			}
+		break;
+		case 2:
+			stringlength = sizeof(preset_message2);
+			for(i=0; i<=stringlength; i++){
+					message_to_compile[i] = preset_message2[i];
+			}
+		break;
+		case 3:
+			stringlength = sizeof(preset_message3);
+			for(i=0; i<=stringlength; i++){
+					message_to_compile[i] = preset_message3[i];
+			}
+		break;
+	}
+
+	for(j=0; j<6; j++)		//Adding spaces at message beginning and end for continuous scrolling
+	{
+		messagearray[0][j] = ~0x00;
+		messagearray[stringlength][j] = ~0x00;
+	}
+
+	for(i=0; i<(stringlength-1); i++) // Creating the right bytes from ASCII code to turn on LED's
+	{
+		for(j=0; j<5; j++)
+		{
+			fontcode = message_to_compile[i] - 32;
+			messagearray[i+1][j] = ~font[fontcode*5+j];
+		}
+		messagearray[i+1][5] = ~0x00;
+	}
+
+}	
+
+uint8_t getspeed() // Reads the ADC connected to trimpot to adjust speed
+{
+	uint16_t adcvalue;
+	uint8_t speed;
+	ADCSRA = adcstart;
+	while(ISSET(ADCSRA,adsccheck)){
+		continue;
+	}
+	adcvalue = ADC;
+	speed = (((adcvalue*30) / 1023) + 5);
+	return speed;
+	
+		
+}
+
+void collumn(uint8_t x) // Turns on the columns of the LED matrix where 0 is all off, 1 = column 1 etc
+{
+	switch(x)
+	{
+		case 0:
+			PORTB = SETBIT(PORTB,0);		
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 1: 
+			PORTB = CLEARBIT(PORTB,0);		
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 2: 
+			PORTB = SETBIT(PORTB,0);		
+			PORTB = CLEARBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 3: 
+			PORTB = SETBIT(PORTB,0);		
+			PORTB = SETBIT(PORTB,1);
+			PORTB = CLEARBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 4: 
+			PORTB = SETBIT(PORTB,0);		
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = CLEARBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 5: 
+			PORTB = SETBIT(PORTB,0);		
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = CLEARBIT(PORTC,3);
+		break;
+	}
+}
+
+int main(void)	// Displays message (preset or custom)
+{
+
+	messagecreator(1);
+
+	DDRB = 0x07;	// Setting up registers for pins, adc, and timer
+	DDRC = 0x0C;
+	DDRD = 0xFE;
+	ADMUX = 0x40;
+	ADCSRA = 0x87;
+	TCCR1A = 0x00;
+	TCCR1B = 0x05;
+	PORTD = ~0x00; 
+	PORTB = ~0x00;
+	PORTC = ~0x00;
+
+	uint8_t char_start = 0;		// Initialising constants for use in display code
+	uint8_t char_actual = 0;
+	uint8_t col_num = 0;
+	uint8_t col_on = 0;
+	uint8_t position = 0;
+	uint8_t count = 0;
+	uint8_t speed = 100;
+	uint8_t reset_disp;
+
+	while(1){
+	
+		count = count + 1;
+		
+
+
+		if(count == speed){ // controls Speed of scrolling
+			
+			reset_disp = button_check();
+			if(reset_disp == 1){
+				char_start = 0;
+			}
+			speed = getspeed();
+			position = position + 1; //Moves the display by one collumn
+			count = 0;
+			if(position == 7){ // Increments starting character once one has fully moved off screen
+				char_start = char_start + 1;
+				position = 1;
+			}
+			if(char_start >= (stringlength)){ //Loops message back to start for continuous scrolling
+				char_start = 0;
+			}
+		}
+		col_num = position;	
+
+		for(col_on = 1; col_on < 6; ++col_on)
+		{
+				
+
+				if (col_num >= 6){ // Shows the start of the next letter
+					char_actual = char_start + 1;
+					PORTD = messagearray[char_actual][(col_num-6)];
+				}
+				else{	// Turns on rows to display current letter
+					char_actual = char_start;
+					PORTD = messagearray[char_actual][(col_num)];
+				}
+				col_num = col_num + 1;
+				collumn(col_on);
+				
+				delay(2);
+
+				collumn(0);
+				
+		}
+		
+		
+	}
+}
+

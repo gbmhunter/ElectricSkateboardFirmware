@@ -1,0 +1,1049 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"UartDebug_PM.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 D6000000 		.text
+  20      02007400 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.bss
+  24              		.align	2
+  25              	UartDebug_backup:
+  26 0000 00000000 		.space	4
+  27              		.section	.text.UartDebug_SaveConfig,"ax",%progbits
+  28              		.align	2
+  29              		.global	UartDebug_SaveConfig
+  30              		.thumb
+  31              		.thumb_func
+  32              		.type	UartDebug_SaveConfig, %function
+  33              	UartDebug_SaveConfig:
+  34              	.LFB0:
+  35              		.file 1 ".\\Generated_Source\\PSoC5\\UartDebug_PM.c"
+   1:.\Generated_Source\PSoC5/UartDebug_PM.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/UartDebug_PM.c **** * File Name: UartDebug.c
+   3:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Version 2.10
+   4:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+   5:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Description:
+   6:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  This file provides Sleep/WakeUp APIs functionality.
+   7:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+   8:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Note:
+   9:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  10:.\Generated_Source\PSoC5/UartDebug_PM.c **** *******************************************************************************
+  11:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Copyright 2008-2011, Cypress Semiconductor Corporation.  All rights reserved.
+  12:.\Generated_Source\PSoC5/UartDebug_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
+  13:.\Generated_Source\PSoC5/UartDebug_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  14:.\Generated_Source\PSoC5/UartDebug_PM.c **** * the software package with which this file was provided.
+  15:.\Generated_Source\PSoC5/UartDebug_PM.c **** ********************************************************************************/
+  16:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  17:.\Generated_Source\PSoC5/UartDebug_PM.c **** #include "UartDebug.h"
+  18:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 2
+
+
+  19:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  20:.\Generated_Source\PSoC5/UartDebug_PM.c **** /***************************************
+  21:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Local data allocation
+  22:.\Generated_Source\PSoC5/UartDebug_PM.c **** ***************************************/
+  23:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  24:.\Generated_Source\PSoC5/UartDebug_PM.c **** static UartDebug_BACKUP_STRUCT  UartDebug_backup =
+  25:.\Generated_Source\PSoC5/UartDebug_PM.c **** {
+  26:.\Generated_Source\PSoC5/UartDebug_PM.c ****     /* enableState - disabled */
+  27:.\Generated_Source\PSoC5/UartDebug_PM.c ****     0u,
+  28:.\Generated_Source\PSoC5/UartDebug_PM.c **** };        
+  29:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  30:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  31:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  32:.\Generated_Source\PSoC5/UartDebug_PM.c **** /*******************************************************************************
+  33:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Function Name: UartDebug_SaveConfig
+  34:.\Generated_Source\PSoC5/UartDebug_PM.c **** ********************************************************************************
+  35:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  36:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Summary:
+  37:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  Saves the current user configuration.
+  38:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  39:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Parameters:
+  40:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+  41:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  42:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Return:
+  43:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+  44:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  45:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Global Variables:
+  46:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  UartDebug_backup - modified when non-retention registers are saved.
+  47:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  48:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Reentrant:
+  49:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  No.
+  50:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  51:.\Generated_Source\PSoC5/UartDebug_PM.c **** *******************************************************************************/
+  52:.\Generated_Source\PSoC5/UartDebug_PM.c **** void UartDebug_SaveConfig(void)
+  53:.\Generated_Source\PSoC5/UartDebug_PM.c **** {
+  36              		.loc 1 53 0
+  37              		.cfi_startproc
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 1, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0000 80B4     		push	{r7}
+  42              	.LCFI0:
+  43              		.cfi_def_cfa_offset 4
+  44 0002 00AF     		add	r7, sp, #0
+  45              		.cfi_offset 7, -4
+  46              	.LCFI1:
+  47              		.cfi_def_cfa_register 7
+  54:.\Generated_Source\PSoC5/UartDebug_PM.c ****     /* PSoC3 ES2 or early, PSoC5 ES1*/
+  55:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #if (CY_PSOC3_ES2 || CY_PSOC5_ES1)
+  56:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  57:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_CONTROL_REG_REMOVED == 0u)
+  58:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.cr = UartDebug_CONTROL_REG;
+  59:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /* End UartDebug_CONTROL_REG_REMOVED */
+  60:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  61:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if( (UartDebug_RX_ENABLED) || (UartDebug_HD_ENABLED) )
+  62:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.rx_period = UartDebug_RXBITCTR_PERIOD_REG;
+  63:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.rx_mask = UartDebug_RXSTATUS_MASK_REG;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 3
+
+
+  64:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #if (UartDebug_RXHW_ADDRESS_ENABLED)
+  65:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_backup.rx_addr1 = UartDebug_RXADDRESS1_REG;
+  66:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_backup.rx_addr2 = UartDebug_RXADDRESS2_REG;
+  67:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #endif /* End UartDebug_RXHW_ADDRESS_ENABLED */
+  68:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /* End UartDebug_RX_ENABLED | UartDebug_HD_ENABLED*/
+  69:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  70:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_TX_ENABLED)
+  71:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #if(UartDebug_TXCLKGEN_DP)
+  72:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_backup.tx_clk_ctr = UartDebug_TXBITCLKGEN_CTR_REG;
+  48              		.loc 1 72 0
+  49 0004 46F22043 		movw	r3, #:lower16:1073767456
+  50 0008 C4F20003 		movt	r3, #:upper16:1073767456
+  51 000c 1B78     		ldrb	r3, [r3, #0]
+  52 000e DAB2     		uxtb	r2, r3
+  53 0010 40F20003 		movw	r3, #:lower16:UartDebug_backup
+  54 0014 C0F20003 		movt	r3, #:upper16:UartDebug_backup
+  55 0018 5A70     		strb	r2, [r3, #1]
+  73:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_backup.tx_clk_compl = UartDebug_TXBITCLKTX_COMPLETE_REG;
+  56              		.loc 1 73 0
+  57 001a 46F23043 		movw	r3, #:lower16:1073767472
+  58 001e C4F20003 		movt	r3, #:upper16:1073767472
+  59 0022 1B78     		ldrb	r3, [r3, #0]
+  60 0024 DAB2     		uxtb	r2, r3
+  61 0026 40F20003 		movw	r3, #:lower16:UartDebug_backup
+  62 002a C0F20003 		movt	r3, #:upper16:UartDebug_backup
+  63 002e 9A70     		strb	r2, [r3, #2]
+  74:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #else
+  75:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_backup.tx_period = UartDebug_TXBITCTR_PERIOD_REG;
+  76:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #endif /*End UartDebug_TXCLKGEN_DP */
+  77:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.tx_mask = UartDebug_TXSTATUS_MASK_REG;
+  64              		.loc 1 77 0
+  65 0030 46F28443 		movw	r3, #:lower16:1073767556
+  66 0034 C4F20003 		movt	r3, #:upper16:1073767556
+  67 0038 1B78     		ldrb	r3, [r3, #0]
+  68 003a DAB2     		uxtb	r2, r3
+  69 003c 40F20003 		movw	r3, #:lower16:UartDebug_backup
+  70 0040 C0F20003 		movt	r3, #:upper16:UartDebug_backup
+  71 0044 DA70     		strb	r2, [r3, #3]
+  78:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /*End UartDebug_TX_ENABLED */
+  79:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  80:.\Generated_Source\PSoC5/UartDebug_PM.c ****     /* PSoC3 ES3 or later, PSoC5 ES2 or later*/
+  81:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #elif (CY_PSOC3_ES3 || CY_PSOC5_ES2)
+  82:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  83:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_CONTROL_REG_REMOVED == 0u)
+  84:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.cr = UartDebug_CONTROL_REG;
+  85:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /* End UartDebug_CONTROL_REG_REMOVED */
+  86:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  87:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #endif  /* End PSOC3_ES3 || PSOC5_ES2 */
+  88:.\Generated_Source\PSoC5/UartDebug_PM.c **** }
+  72              		.loc 1 88 0
+  73 0046 BD46     		mov	sp, r7
+  74 0048 80BC     		pop	{r7}
+  75 004a 7047     		bx	lr
+  76              		.cfi_endproc
+  77              	.LFE0:
+  78              		.size	UartDebug_SaveConfig, .-UartDebug_SaveConfig
+  79              		.section	.text.UartDebug_RestoreConfig,"ax",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 4
+
+
+  80              		.align	2
+  81              		.global	UartDebug_RestoreConfig
+  82              		.thumb
+  83              		.thumb_func
+  84              		.type	UartDebug_RestoreConfig, %function
+  85              	UartDebug_RestoreConfig:
+  86              	.LFB1:
+  89:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  90:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+  91:.\Generated_Source\PSoC5/UartDebug_PM.c **** /*******************************************************************************
+  92:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Function Name: UartDebug_RestoreConfig
+  93:.\Generated_Source\PSoC5/UartDebug_PM.c **** ********************************************************************************
+  94:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  95:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Summary:
+  96:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  Restores the current user configuration.
+  97:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+  98:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Parameters:
+  99:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 100:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 101:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Return:
+ 102:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 103:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 104:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Global Variables:
+ 105:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  UartDebug_backup - used when non-retention registers are restored.
+ 106:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 107:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Reentrant:
+ 108:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  No.
+ 109:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 110:.\Generated_Source\PSoC5/UartDebug_PM.c **** *******************************************************************************/
+ 111:.\Generated_Source\PSoC5/UartDebug_PM.c **** void UartDebug_RestoreConfig(void)
+ 112:.\Generated_Source\PSoC5/UartDebug_PM.c **** {
+  87              		.loc 1 112 0
+  88              		.cfi_startproc
+  89              		@ args = 0, pretend = 0, frame = 0
+  90              		@ frame_needed = 1, uses_anonymous_args = 0
+  91              		@ link register save eliminated.
+  92 0000 80B4     		push	{r7}
+  93              	.LCFI2:
+  94              		.cfi_def_cfa_offset 4
+  95 0002 00AF     		add	r7, sp, #0
+  96              		.cfi_offset 7, -4
+  97              	.LCFI3:
+  98              		.cfi_def_cfa_register 7
+ 113:.\Generated_Source\PSoC5/UartDebug_PM.c ****     /* PSoC3 ES2 or early, PSoC5 ES1*/
+ 114:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #if (CY_PSOC3_ES2 || CY_PSOC5_ES1)
+ 115:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 116:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_CONTROL_REG_REMOVED == 0u)
+ 117:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_CONTROL_REG = UartDebug_backup.cr;
+ 118:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /* End UartDebug_CONTROL_REG_REMOVED */
+ 119:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 120:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if( (UartDebug_RX_ENABLED) || (UartDebug_HD_ENABLED) )
+ 121:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_RXBITCTR_PERIOD_REG = UartDebug_backup.rx_period;
+ 122:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_RXSTATUS_MASK_REG = UartDebug_backup.rx_mask;
+ 123:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #if (UartDebug_RXHW_ADDRESS_ENABLED)
+ 124:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_RXADDRESS1_REG = UartDebug_backup.rx_addr1;
+ 125:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_RXADDRESS2_REG = UartDebug_backup.rx_addr2;
+ 126:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #endif /* End UartDebug_RXHW_ADDRESS_ENABLED */
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 5
+
+
+ 127:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif  /* End (UartDebug_RX_ENABLED) || (UartDebug_HD_ENABLED) */
+ 128:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 129:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_TX_ENABLED)
+ 130:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #if(UartDebug_TXCLKGEN_DP)
+ 131:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_TXBITCLKGEN_CTR_REG = UartDebug_backup.tx_clk_ctr;
+  99              		.loc 1 131 0
+ 100 0004 46F22043 		movw	r3, #:lower16:1073767456
+ 101 0008 C4F20003 		movt	r3, #:upper16:1073767456
+ 102 000c 40F20002 		movw	r2, #:lower16:UartDebug_backup
+ 103 0010 C0F20002 		movt	r2, #:upper16:UartDebug_backup
+ 104 0014 5278     		ldrb	r2, [r2, #1]	@ zero_extendqisi2
+ 105 0016 1A70     		strb	r2, [r3, #0]
+ 132:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_TXBITCLKTX_COMPLETE_REG = UartDebug_backup.tx_clk_compl;
+ 106              		.loc 1 132 0
+ 107 0018 46F23043 		movw	r3, #:lower16:1073767472
+ 108 001c C4F20003 		movt	r3, #:upper16:1073767472
+ 109 0020 40F20002 		movw	r2, #:lower16:UartDebug_backup
+ 110 0024 C0F20002 		movt	r2, #:upper16:UartDebug_backup
+ 111 0028 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 112 002a 1A70     		strb	r2, [r3, #0]
+ 133:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #else
+ 134:.\Generated_Source\PSoC5/UartDebug_PM.c ****                 UartDebug_TXBITCTR_PERIOD_REG = UartDebug_backup.tx_period;
+ 135:.\Generated_Source\PSoC5/UartDebug_PM.c ****             #endif /*End UartDebug_TXCLKGEN_DP */
+ 136:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_TXSTATUS_MASK_REG = UartDebug_backup.tx_mask;
+ 113              		.loc 1 136 0
+ 114 002c 46F28443 		movw	r3, #:lower16:1073767556
+ 115 0030 C4F20003 		movt	r3, #:upper16:1073767556
+ 116 0034 40F20002 		movw	r2, #:lower16:UartDebug_backup
+ 117 0038 C0F20002 		movt	r2, #:upper16:UartDebug_backup
+ 118 003c D278     		ldrb	r2, [r2, #3]	@ zero_extendqisi2
+ 119 003e 1A70     		strb	r2, [r3, #0]
+ 137:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /*End UartDebug_TX_ENABLED */
+ 138:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 139:.\Generated_Source\PSoC5/UartDebug_PM.c ****     /* PSoC3 ES3 or later, PSoC5 ES2 or later*/
+ 140:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #elif (CY_PSOC3_ES3 || CY_PSOC5_ES2)
+ 141:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 142:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #if(UartDebug_CONTROL_REG_REMOVED == 0u)
+ 143:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_CONTROL_REG = UartDebug_backup.cr;
+ 144:.\Generated_Source\PSoC5/UartDebug_PM.c ****         #endif /* End UartDebug_CONTROL_REG_REMOVED */
+ 145:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 146:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #endif  /* End PSOC3_ES3 || PSOC5_ES2 */
+ 147:.\Generated_Source\PSoC5/UartDebug_PM.c **** }
+ 120              		.loc 1 147 0
+ 121 0040 BD46     		mov	sp, r7
+ 122 0042 80BC     		pop	{r7}
+ 123 0044 7047     		bx	lr
+ 124              		.cfi_endproc
+ 125              	.LFE1:
+ 126              		.size	UartDebug_RestoreConfig, .-UartDebug_RestoreConfig
+ 127 0046 00BF     		.section	.text.UartDebug_Sleep,"ax",%progbits
+ 128              		.align	2
+ 129              		.global	UartDebug_Sleep
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.type	UartDebug_Sleep, %function
+ 133              	UartDebug_Sleep:
+ 134              	.LFB2:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 6
+
+
+ 148:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 149:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 150:.\Generated_Source\PSoC5/UartDebug_PM.c **** /*******************************************************************************
+ 151:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Function Name: UartDebug_Sleep
+ 152:.\Generated_Source\PSoC5/UartDebug_PM.c **** ********************************************************************************
+ 153:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 154:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Summary:
+ 155:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  Stops and saves the user configuration. Should be called 
+ 156:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  just prior to entering sleep.
+ 157:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  
+ 158:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 159:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Parameters:
+ 160:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 161:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 162:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Return:
+ 163:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 164:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 165:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Global Variables:
+ 166:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  UartDebug_backup - modified when non-retention registers are saved.
+ 167:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 168:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Reentrant:
+ 169:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  No.
+ 170:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 171:.\Generated_Source\PSoC5/UartDebug_PM.c **** *******************************************************************************/
+ 172:.\Generated_Source\PSoC5/UartDebug_PM.c **** void UartDebug_Sleep(void)
+ 173:.\Generated_Source\PSoC5/UartDebug_PM.c **** {
+ 135              		.loc 1 173 0
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 1, uses_anonymous_args = 0
+ 139 0000 80B5     		push	{r7, lr}
+ 140              	.LCFI4:
+ 141              		.cfi_def_cfa_offset 8
+ 142 0002 00AF     		add	r7, sp, #0
+ 143              		.cfi_offset 14, -4
+ 144              		.cfi_offset 7, -8
+ 145              	.LCFI5:
+ 146              		.cfi_def_cfa_register 7
+ 174:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 175:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #if(UartDebug_RX_ENABLED || UartDebug_HD_ENABLED)
+ 176:.\Generated_Source\PSoC5/UartDebug_PM.c ****         if((UartDebug_RXSTATUS_ACTL_REG  & UartDebug_INT_ENABLE) != 0u) 
+ 177:.\Generated_Source\PSoC5/UartDebug_PM.c ****         {
+ 178:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.enableState = 1u;
+ 179:.\Generated_Source\PSoC5/UartDebug_PM.c ****         }
+ 180:.\Generated_Source\PSoC5/UartDebug_PM.c ****         else
+ 181:.\Generated_Source\PSoC5/UartDebug_PM.c ****         {
+ 182:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.enableState = 0u;
+ 183:.\Generated_Source\PSoC5/UartDebug_PM.c ****         }
+ 184:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #else
+ 185:.\Generated_Source\PSoC5/UartDebug_PM.c ****         if((UartDebug_TXSTATUS_ACTL_REG  & UartDebug_INT_ENABLE) !=0u)
+ 147              		.loc 1 185 0
+ 148 0004 46F29443 		movw	r3, #:lower16:1073767572
+ 149 0008 C4F20003 		movt	r3, #:upper16:1073767572
+ 150 000c 1B78     		ldrb	r3, [r3, #0]
+ 151 000e DBB2     		uxtb	r3, r3
+ 152 0010 03F01003 		and	r3, r3, #16
+ 153 0014 002B     		cmp	r3, #0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 7
+
+
+ 154 0016 07D0     		beq	.L6
+ 186:.\Generated_Source\PSoC5/UartDebug_PM.c ****         {
+ 187:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.enableState = 1u;
+ 155              		.loc 1 187 0
+ 156 0018 40F20003 		movw	r3, #:lower16:UartDebug_backup
+ 157 001c C0F20003 		movt	r3, #:upper16:UartDebug_backup
+ 158 0020 4FF00102 		mov	r2, #1
+ 159 0024 1A70     		strb	r2, [r3, #0]
+ 160 0026 06E0     		b	.L7
+ 161              	.L6:
+ 188:.\Generated_Source\PSoC5/UartDebug_PM.c ****         }
+ 189:.\Generated_Source\PSoC5/UartDebug_PM.c ****         else
+ 190:.\Generated_Source\PSoC5/UartDebug_PM.c ****         {
+ 191:.\Generated_Source\PSoC5/UartDebug_PM.c ****             UartDebug_backup.enableState = 0u;
+ 162              		.loc 1 191 0
+ 163 0028 40F20003 		movw	r3, #:lower16:UartDebug_backup
+ 164 002c C0F20003 		movt	r3, #:upper16:UartDebug_backup
+ 165 0030 4FF00002 		mov	r2, #0
+ 166 0034 1A70     		strb	r2, [r3, #0]
+ 167              	.L7:
+ 192:.\Generated_Source\PSoC5/UartDebug_PM.c ****         }
+ 193:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #endif /* End UartDebug_RX_ENABLED || UartDebug_HD_ENABLED*/
+ 194:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 195:.\Generated_Source\PSoC5/UartDebug_PM.c ****     UartDebug_Stop();
+ 168              		.loc 1 195 0
+ 169 0036 FFF7FEFF 		bl	UartDebug_Stop
+ 196:.\Generated_Source\PSoC5/UartDebug_PM.c ****     UartDebug_SaveConfig();
+ 170              		.loc 1 196 0
+ 171 003a FFF7FEFF 		bl	UartDebug_SaveConfig
+ 197:.\Generated_Source\PSoC5/UartDebug_PM.c **** }
+ 172              		.loc 1 197 0
+ 173 003e 80BD     		pop	{r7, pc}
+ 174              		.cfi_endproc
+ 175              	.LFE2:
+ 176              		.size	UartDebug_Sleep, .-UartDebug_Sleep
+ 177              		.section	.text.UartDebug_Wakeup,"ax",%progbits
+ 178              		.align	2
+ 179              		.global	UartDebug_Wakeup
+ 180              		.thumb
+ 181              		.thumb_func
+ 182              		.type	UartDebug_Wakeup, %function
+ 183              	UartDebug_Wakeup:
+ 184              	.LFB3:
+ 198:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 199:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 200:.\Generated_Source\PSoC5/UartDebug_PM.c **** /*******************************************************************************
+ 201:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Function Name: UartDebug_Wakeup
+ 202:.\Generated_Source\PSoC5/UartDebug_PM.c **** ********************************************************************************
+ 203:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 204:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Summary:
+ 205:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  Restores and enables the user configuration. Should be called
+ 206:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  just after awaking from sleep.
+ 207:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 208:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Parameters:
+ 209:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 210:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 211:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Return:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 8
+
+
+ 212:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  None.
+ 213:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 214:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Global Variables:
+ 215:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  UartDebug_backup - used when non-retention registers are restored.
+ 216:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 217:.\Generated_Source\PSoC5/UartDebug_PM.c **** * Reentrant:
+ 218:.\Generated_Source\PSoC5/UartDebug_PM.c **** *  No.
+ 219:.\Generated_Source\PSoC5/UartDebug_PM.c **** *
+ 220:.\Generated_Source\PSoC5/UartDebug_PM.c **** *******************************************************************************/
+ 221:.\Generated_Source\PSoC5/UartDebug_PM.c **** void UartDebug_Wakeup(void)
+ 222:.\Generated_Source\PSoC5/UartDebug_PM.c **** {
+ 185              		.loc 1 222 0
+ 186              		.cfi_startproc
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 1, uses_anonymous_args = 0
+ 189 0000 80B5     		push	{r7, lr}
+ 190              	.LCFI6:
+ 191              		.cfi_def_cfa_offset 8
+ 192 0002 00AF     		add	r7, sp, #0
+ 193              		.cfi_offset 14, -4
+ 194              		.cfi_offset 7, -8
+ 195              	.LCFI7:
+ 196              		.cfi_def_cfa_register 7
+ 223:.\Generated_Source\PSoC5/UartDebug_PM.c ****     UartDebug_RestoreConfig();
+ 197              		.loc 1 223 0
+ 198 0004 FFF7FEFF 		bl	UartDebug_RestoreConfig
+ 224:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #if( (UartDebug_RX_ENABLED) || (UartDebug_HD_ENABLED) )
+ 225:.\Generated_Source\PSoC5/UartDebug_PM.c ****         UartDebug_ClearRxBuffer();
+ 226:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #endif /* End (UartDebug_RX_ENABLED) || (UartDebug_HD_ENABLED) */
+ 227:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #if(UartDebug_TX_ENABLED || UartDebug_HD_ENABLED)
+ 228:.\Generated_Source\PSoC5/UartDebug_PM.c ****         UartDebug_ClearTxBuffer();
+ 199              		.loc 1 228 0
+ 200 0008 FFF7FEFF 		bl	UartDebug_ClearTxBuffer
+ 229:.\Generated_Source\PSoC5/UartDebug_PM.c ****     #endif /* End UartDebug_TX_ENABLED || UartDebug_HD_ENABLED */
+ 230:.\Generated_Source\PSoC5/UartDebug_PM.c **** 
+ 231:.\Generated_Source\PSoC5/UartDebug_PM.c ****     if(UartDebug_backup.enableState != 0u)
+ 201              		.loc 1 231 0
+ 202 000c 40F20003 		movw	r3, #:lower16:UartDebug_backup
+ 203 0010 C0F20003 		movt	r3, #:upper16:UartDebug_backup
+ 204 0014 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 205 0016 002B     		cmp	r3, #0
+ 206 0018 01D0     		beq	.L11
+ 232:.\Generated_Source\PSoC5/UartDebug_PM.c ****     {
+ 233:.\Generated_Source\PSoC5/UartDebug_PM.c ****         UartDebug_Enable();
+ 207              		.loc 1 233 0
+ 208 001a FFF7FEFF 		bl	UartDebug_Enable
+ 209              	.L11:
+ 234:.\Generated_Source\PSoC5/UartDebug_PM.c ****     } 
+ 235:.\Generated_Source\PSoC5/UartDebug_PM.c **** }
+ 210              		.loc 1 235 0
+ 211 001e 80BD     		pop	{r7, pc}
+ 212              		.cfi_endproc
+ 213              	.LFE3:
+ 214              		.size	UartDebug_Wakeup, .-UartDebug_Wakeup
+ 215              		.text
+ 216              	.Letext0:
+ 217              		.section	.debug_loc,"",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 9
+
+
+ 218              	.Ldebug_loc0:
+ 219              	.LLST0:
+ 220 0000 00000000 		.4byte	.LFB0
+ 221 0004 02000000 		.4byte	.LCFI0
+ 222 0008 0100     		.2byte	0x1
+ 223 000a 5D       		.byte	0x5d
+ 224 000b 02000000 		.4byte	.LCFI0
+ 225 000f 04000000 		.4byte	.LCFI1
+ 226 0013 0200     		.2byte	0x2
+ 227 0015 7D       		.byte	0x7d
+ 228 0016 04       		.sleb128 4
+ 229 0017 04000000 		.4byte	.LCFI1
+ 230 001b 4C000000 		.4byte	.LFE0
+ 231 001f 0200     		.2byte	0x2
+ 232 0021 77       		.byte	0x77
+ 233 0022 04       		.sleb128 4
+ 234 0023 00000000 		.4byte	0x0
+ 235 0027 00000000 		.4byte	0x0
+ 236              	.LLST1:
+ 237 002b 00000000 		.4byte	.LFB1
+ 238 002f 02000000 		.4byte	.LCFI2
+ 239 0033 0100     		.2byte	0x1
+ 240 0035 5D       		.byte	0x5d
+ 241 0036 02000000 		.4byte	.LCFI2
+ 242 003a 04000000 		.4byte	.LCFI3
+ 243 003e 0200     		.2byte	0x2
+ 244 0040 7D       		.byte	0x7d
+ 245 0041 04       		.sleb128 4
+ 246 0042 04000000 		.4byte	.LCFI3
+ 247 0046 46000000 		.4byte	.LFE1
+ 248 004a 0200     		.2byte	0x2
+ 249 004c 77       		.byte	0x77
+ 250 004d 04       		.sleb128 4
+ 251 004e 00000000 		.4byte	0x0
+ 252 0052 00000000 		.4byte	0x0
+ 253              	.LLST2:
+ 254 0056 00000000 		.4byte	.LFB2
+ 255 005a 02000000 		.4byte	.LCFI4
+ 256 005e 0100     		.2byte	0x1
+ 257 0060 5D       		.byte	0x5d
+ 258 0061 02000000 		.4byte	.LCFI4
+ 259 0065 04000000 		.4byte	.LCFI5
+ 260 0069 0200     		.2byte	0x2
+ 261 006b 7D       		.byte	0x7d
+ 262 006c 08       		.sleb128 8
+ 263 006d 04000000 		.4byte	.LCFI5
+ 264 0071 40000000 		.4byte	.LFE2
+ 265 0075 0200     		.2byte	0x2
+ 266 0077 77       		.byte	0x77
+ 267 0078 08       		.sleb128 8
+ 268 0079 00000000 		.4byte	0x0
+ 269 007d 00000000 		.4byte	0x0
+ 270              	.LLST3:
+ 271 0081 00000000 		.4byte	.LFB3
+ 272 0085 02000000 		.4byte	.LCFI6
+ 273 0089 0100     		.2byte	0x1
+ 274 008b 5D       		.byte	0x5d
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 10
+
+
+ 275 008c 02000000 		.4byte	.LCFI6
+ 276 0090 04000000 		.4byte	.LCFI7
+ 277 0094 0200     		.2byte	0x2
+ 278 0096 7D       		.byte	0x7d
+ 279 0097 08       		.sleb128 8
+ 280 0098 04000000 		.4byte	.LCFI7
+ 281 009c 20000000 		.4byte	.LFE3
+ 282 00a0 0200     		.2byte	0x2
+ 283 00a2 77       		.byte	0x77
+ 284 00a3 08       		.sleb128 8
+ 285 00a4 00000000 		.4byte	0x0
+ 286 00a8 00000000 		.4byte	0x0
+ 287              		.file 2 ".\\Generated_Source\\PSoC5\\/UartDebug.h"
+ 288              		.file 3 ".\\Generated_Source\\PSoC5\\/cytypes.h"
+ 289              		.section	.debug_info
+ 290 0000 33010000 		.4byte	0x133
+ 291 0004 0200     		.2byte	0x2
+ 292 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 293 000a 04       		.byte	0x4
+ 294 000b 01       		.uleb128 0x1
+ 295 000c F4000000 		.4byte	.LASF20
+ 296 0010 01       		.byte	0x1
+ 297 0011 B4000000 		.4byte	.LASF21
+ 298 0015 6E010000 		.4byte	.LASF22
+ 299 0019 00000000 		.4byte	0x0
+ 300 001d 00000000 		.4byte	0x0
+ 301 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 302 0025 00000000 		.4byte	.Ldebug_line0
+ 303 0029 02       		.uleb128 0x2
+ 304 002a 01       		.byte	0x1
+ 305 002b 06       		.byte	0x6
+ 306 002c 62010000 		.4byte	.LASF0
+ 307 0030 02       		.uleb128 0x2
+ 308 0031 01       		.byte	0x1
+ 309 0032 08       		.byte	0x8
+ 310 0033 2C000000 		.4byte	.LASF1
+ 311 0037 02       		.uleb128 0x2
+ 312 0038 02       		.byte	0x2
+ 313 0039 05       		.byte	0x5
+ 314 003a 25010000 		.4byte	.LASF2
+ 315 003e 02       		.uleb128 0x2
+ 316 003f 02       		.byte	0x2
+ 317 0040 07       		.byte	0x7
+ 318 0041 72000000 		.4byte	.LASF3
+ 319 0045 02       		.uleb128 0x2
+ 320 0046 04       		.byte	0x4
+ 321 0047 05       		.byte	0x5
+ 322 0048 35010000 		.4byte	.LASF4
+ 323 004c 02       		.uleb128 0x2
+ 324 004d 04       		.byte	0x4
+ 325 004e 07       		.byte	0x7
+ 326 004f 60000000 		.4byte	.LASF5
+ 327 0053 02       		.uleb128 0x2
+ 328 0054 08       		.byte	0x8
+ 329 0055 05       		.byte	0x5
+ 330 0056 00000000 		.4byte	.LASF6
+ 331 005a 02       		.uleb128 0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 11
+
+
+ 332 005b 08       		.byte	0x8
+ 333 005c 07       		.byte	0x7
+ 334 005d 9D000000 		.4byte	.LASF7
+ 335 0061 03       		.uleb128 0x3
+ 336 0062 04       		.byte	0x4
+ 337 0063 05       		.byte	0x5
+ 338 0064 696E7400 		.ascii	"int\000"
+ 339 0068 02       		.uleb128 0x2
+ 340 0069 04       		.byte	0x4
+ 341 006a 07       		.byte	0x7
+ 342 006b 90000000 		.4byte	.LASF8
+ 343 006f 02       		.uleb128 0x2
+ 344 0070 01       		.byte	0x1
+ 345 0071 08       		.byte	0x8
+ 346 0072 20010000 		.4byte	.LASF9
+ 347 0076 04       		.uleb128 0x4
+ 348 0077 2F010000 		.4byte	.LASF14
+ 349 007b 03       		.byte	0x3
+ 350 007c 51       		.byte	0x51
+ 351 007d 30000000 		.4byte	0x30
+ 352 0081 05       		.uleb128 0x5
+ 353 0082 4A010000 		.4byte	.LASF23
+ 354 0086 04       		.byte	0x4
+ 355 0087 02       		.byte	0x2
+ 356 0088 47       		.byte	0x47
+ 357 0089 C6000000 		.4byte	0xc6
+ 358 008d 06       		.uleb128 0x6
+ 359 008e 3E010000 		.4byte	.LASF10
+ 360 0092 02       		.byte	0x2
+ 361 0093 48       		.byte	0x48
+ 362 0094 76000000 		.4byte	0x76
+ 363 0098 02       		.byte	0x2
+ 364 0099 23       		.byte	0x23
+ 365 009a 00       		.uleb128 0x0
+ 366 009b 06       		.uleb128 0x6
+ 367 009c 85000000 		.4byte	.LASF11
+ 368 00a0 02       		.byte	0x2
+ 369 00a1 5A       		.byte	0x5a
+ 370 00a2 76000000 		.4byte	0x76
+ 371 00a6 02       		.byte	0x2
+ 372 00a7 23       		.byte	0x23
+ 373 00a8 01       		.uleb128 0x1
+ 374 00a9 06       		.uleb128 0x6
+ 375 00aa 1F000000 		.4byte	.LASF12
+ 376 00ae 02       		.byte	0x2
+ 377 00af 5C       		.byte	0x5c
+ 378 00b0 76000000 		.4byte	0x76
+ 379 00b4 02       		.byte	0x2
+ 380 00b5 23       		.byte	0x23
+ 381 00b6 02       		.uleb128 0x2
+ 382 00b7 06       		.uleb128 0x6
+ 383 00b8 18010000 		.4byte	.LASF13
+ 384 00bc 02       		.byte	0x2
+ 385 00bd 62       		.byte	0x62
+ 386 00be 76000000 		.4byte	0x76
+ 387 00c2 02       		.byte	0x2
+ 388 00c3 23       		.byte	0x23
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 12
+
+
+ 389 00c4 03       		.uleb128 0x3
+ 390 00c5 00       		.byte	0x0
+ 391 00c6 04       		.uleb128 0x4
+ 392 00c7 DC000000 		.4byte	.LASF15
+ 393 00cb 02       		.byte	0x2
+ 394 00cc 65       		.byte	0x65
+ 395 00cd 81000000 		.4byte	0x81
+ 396 00d1 07       		.uleb128 0x7
+ 397 00d2 01       		.byte	0x1
+ 398 00d3 3A000000 		.4byte	.LASF16
+ 399 00d7 01       		.byte	0x1
+ 400 00d8 34       		.byte	0x34
+ 401 00d9 01       		.byte	0x1
+ 402 00da 00000000 		.4byte	.LFB0
+ 403 00de 4C000000 		.4byte	.LFE0
+ 404 00e2 00000000 		.4byte	.LLST0
+ 405 00e6 07       		.uleb128 0x7
+ 406 00e7 01       		.byte	0x1
+ 407 00e8 00010000 		.4byte	.LASF17
+ 408 00ec 01       		.byte	0x1
+ 409 00ed 6F       		.byte	0x6f
+ 410 00ee 01       		.byte	0x1
+ 411 00ef 00000000 		.4byte	.LFB1
+ 412 00f3 46000000 		.4byte	.LFE1
+ 413 00f7 2B000000 		.4byte	.LLST1
+ 414 00fb 07       		.uleb128 0x7
+ 415 00fc 01       		.byte	0x1
+ 416 00fd C8010000 		.4byte	.LASF18
+ 417 0101 01       		.byte	0x1
+ 418 0102 AC       		.byte	0xac
+ 419 0103 01       		.byte	0x1
+ 420 0104 00000000 		.4byte	.LFB2
+ 421 0108 40000000 		.4byte	.LFE2
+ 422 010c 56000000 		.4byte	.LLST2
+ 423 0110 07       		.uleb128 0x7
+ 424 0111 01       		.byte	0x1
+ 425 0112 4F000000 		.4byte	.LASF19
+ 426 0116 01       		.byte	0x1
+ 427 0117 DD       		.byte	0xdd
+ 428 0118 01       		.byte	0x1
+ 429 0119 00000000 		.4byte	.LFB3
+ 430 011d 20000000 		.4byte	.LFE3
+ 431 0121 81000000 		.4byte	.LLST3
+ 432 0125 08       		.uleb128 0x8
+ 433 0126 0E000000 		.4byte	.LASF24
+ 434 012a 01       		.byte	0x1
+ 435 012b 18       		.byte	0x18
+ 436 012c C6000000 		.4byte	0xc6
+ 437 0130 05       		.byte	0x5
+ 438 0131 03       		.byte	0x3
+ 439 0132 00000000 		.4byte	UartDebug_backup
+ 440 0136 00       		.byte	0x0
+ 441              		.section	.debug_abbrev
+ 442 0000 01       		.uleb128 0x1
+ 443 0001 11       		.uleb128 0x11
+ 444 0002 01       		.byte	0x1
+ 445 0003 25       		.uleb128 0x25
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 13
+
+
+ 446 0004 0E       		.uleb128 0xe
+ 447 0005 13       		.uleb128 0x13
+ 448 0006 0B       		.uleb128 0xb
+ 449 0007 03       		.uleb128 0x3
+ 450 0008 0E       		.uleb128 0xe
+ 451 0009 1B       		.uleb128 0x1b
+ 452 000a 0E       		.uleb128 0xe
+ 453 000b 11       		.uleb128 0x11
+ 454 000c 01       		.uleb128 0x1
+ 455 000d 52       		.uleb128 0x52
+ 456 000e 01       		.uleb128 0x1
+ 457 000f 55       		.uleb128 0x55
+ 458 0010 06       		.uleb128 0x6
+ 459 0011 10       		.uleb128 0x10
+ 460 0012 06       		.uleb128 0x6
+ 461 0013 00       		.byte	0x0
+ 462 0014 00       		.byte	0x0
+ 463 0015 02       		.uleb128 0x2
+ 464 0016 24       		.uleb128 0x24
+ 465 0017 00       		.byte	0x0
+ 466 0018 0B       		.uleb128 0xb
+ 467 0019 0B       		.uleb128 0xb
+ 468 001a 3E       		.uleb128 0x3e
+ 469 001b 0B       		.uleb128 0xb
+ 470 001c 03       		.uleb128 0x3
+ 471 001d 0E       		.uleb128 0xe
+ 472 001e 00       		.byte	0x0
+ 473 001f 00       		.byte	0x0
+ 474 0020 03       		.uleb128 0x3
+ 475 0021 24       		.uleb128 0x24
+ 476 0022 00       		.byte	0x0
+ 477 0023 0B       		.uleb128 0xb
+ 478 0024 0B       		.uleb128 0xb
+ 479 0025 3E       		.uleb128 0x3e
+ 480 0026 0B       		.uleb128 0xb
+ 481 0027 03       		.uleb128 0x3
+ 482 0028 08       		.uleb128 0x8
+ 483 0029 00       		.byte	0x0
+ 484 002a 00       		.byte	0x0
+ 485 002b 04       		.uleb128 0x4
+ 486 002c 16       		.uleb128 0x16
+ 487 002d 00       		.byte	0x0
+ 488 002e 03       		.uleb128 0x3
+ 489 002f 0E       		.uleb128 0xe
+ 490 0030 3A       		.uleb128 0x3a
+ 491 0031 0B       		.uleb128 0xb
+ 492 0032 3B       		.uleb128 0x3b
+ 493 0033 0B       		.uleb128 0xb
+ 494 0034 49       		.uleb128 0x49
+ 495 0035 13       		.uleb128 0x13
+ 496 0036 00       		.byte	0x0
+ 497 0037 00       		.byte	0x0
+ 498 0038 05       		.uleb128 0x5
+ 499 0039 13       		.uleb128 0x13
+ 500 003a 01       		.byte	0x1
+ 501 003b 03       		.uleb128 0x3
+ 502 003c 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 14
+
+
+ 503 003d 0B       		.uleb128 0xb
+ 504 003e 0B       		.uleb128 0xb
+ 505 003f 3A       		.uleb128 0x3a
+ 506 0040 0B       		.uleb128 0xb
+ 507 0041 3B       		.uleb128 0x3b
+ 508 0042 0B       		.uleb128 0xb
+ 509 0043 01       		.uleb128 0x1
+ 510 0044 13       		.uleb128 0x13
+ 511 0045 00       		.byte	0x0
+ 512 0046 00       		.byte	0x0
+ 513 0047 06       		.uleb128 0x6
+ 514 0048 0D       		.uleb128 0xd
+ 515 0049 00       		.byte	0x0
+ 516 004a 03       		.uleb128 0x3
+ 517 004b 0E       		.uleb128 0xe
+ 518 004c 3A       		.uleb128 0x3a
+ 519 004d 0B       		.uleb128 0xb
+ 520 004e 3B       		.uleb128 0x3b
+ 521 004f 0B       		.uleb128 0xb
+ 522 0050 49       		.uleb128 0x49
+ 523 0051 13       		.uleb128 0x13
+ 524 0052 38       		.uleb128 0x38
+ 525 0053 0A       		.uleb128 0xa
+ 526 0054 00       		.byte	0x0
+ 527 0055 00       		.byte	0x0
+ 528 0056 07       		.uleb128 0x7
+ 529 0057 2E       		.uleb128 0x2e
+ 530 0058 00       		.byte	0x0
+ 531 0059 3F       		.uleb128 0x3f
+ 532 005a 0C       		.uleb128 0xc
+ 533 005b 03       		.uleb128 0x3
+ 534 005c 0E       		.uleb128 0xe
+ 535 005d 3A       		.uleb128 0x3a
+ 536 005e 0B       		.uleb128 0xb
+ 537 005f 3B       		.uleb128 0x3b
+ 538 0060 0B       		.uleb128 0xb
+ 539 0061 27       		.uleb128 0x27
+ 540 0062 0C       		.uleb128 0xc
+ 541 0063 11       		.uleb128 0x11
+ 542 0064 01       		.uleb128 0x1
+ 543 0065 12       		.uleb128 0x12
+ 544 0066 01       		.uleb128 0x1
+ 545 0067 40       		.uleb128 0x40
+ 546 0068 06       		.uleb128 0x6
+ 547 0069 00       		.byte	0x0
+ 548 006a 00       		.byte	0x0
+ 549 006b 08       		.uleb128 0x8
+ 550 006c 34       		.uleb128 0x34
+ 551 006d 00       		.byte	0x0
+ 552 006e 03       		.uleb128 0x3
+ 553 006f 0E       		.uleb128 0xe
+ 554 0070 3A       		.uleb128 0x3a
+ 555 0071 0B       		.uleb128 0xb
+ 556 0072 3B       		.uleb128 0x3b
+ 557 0073 0B       		.uleb128 0xb
+ 558 0074 49       		.uleb128 0x49
+ 559 0075 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 15
+
+
+ 560 0076 02       		.uleb128 0x2
+ 561 0077 0A       		.uleb128 0xa
+ 562 0078 00       		.byte	0x0
+ 563 0079 00       		.byte	0x0
+ 564 007a 00       		.byte	0x0
+ 565              		.section	.debug_pubnames,"",%progbits
+ 566 0000 6C000000 		.4byte	0x6c
+ 567 0004 0200     		.2byte	0x2
+ 568 0006 00000000 		.4byte	.Ldebug_info0
+ 569 000a 37010000 		.4byte	0x137
+ 570 000e D1000000 		.4byte	0xd1
+ 571 0012 55617274 		.ascii	"UartDebug_SaveConfig\000"
+ 571      44656275 
+ 571      675F5361 
+ 571      7665436F 
+ 571      6E666967 
+ 572 0027 E6000000 		.4byte	0xe6
+ 573 002b 55617274 		.ascii	"UartDebug_RestoreConfig\000"
+ 573      44656275 
+ 573      675F5265 
+ 573      73746F72 
+ 573      65436F6E 
+ 574 0043 FB000000 		.4byte	0xfb
+ 575 0047 55617274 		.ascii	"UartDebug_Sleep\000"
+ 575      44656275 
+ 575      675F536C 
+ 575      65657000 
+ 576 0057 10010000 		.4byte	0x110
+ 577 005b 55617274 		.ascii	"UartDebug_Wakeup\000"
+ 577      44656275 
+ 577      675F5761 
+ 577      6B657570 
+ 577      00
+ 578 006c 00000000 		.4byte	0x0
+ 579              		.section	.debug_aranges,"",%progbits
+ 580 0000 34000000 		.4byte	0x34
+ 581 0004 0200     		.2byte	0x2
+ 582 0006 00000000 		.4byte	.Ldebug_info0
+ 583 000a 04       		.byte	0x4
+ 584 000b 00       		.byte	0x0
+ 585 000c 0000     		.2byte	0x0
+ 586 000e 0000     		.2byte	0x0
+ 587 0010 00000000 		.4byte	.LFB0
+ 588 0014 4C000000 		.4byte	.LFE0-.LFB0
+ 589 0018 00000000 		.4byte	.LFB1
+ 590 001c 46000000 		.4byte	.LFE1-.LFB1
+ 591 0020 00000000 		.4byte	.LFB2
+ 592 0024 40000000 		.4byte	.LFE2-.LFB2
+ 593 0028 00000000 		.4byte	.LFB3
+ 594 002c 20000000 		.4byte	.LFE3-.LFB3
+ 595 0030 00000000 		.4byte	0x0
+ 596 0034 00000000 		.4byte	0x0
+ 597              		.section	.debug_ranges,"",%progbits
+ 598              	.Ldebug_ranges0:
+ 599 0000 00000000 		.4byte	.Ltext0
+ 600 0004 00000000 		.4byte	.Letext0
+ 601 0008 00000000 		.4byte	.LFB0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 16
+
+
+ 602 000c 4C000000 		.4byte	.LFE0
+ 603 0010 00000000 		.4byte	.LFB1
+ 604 0014 46000000 		.4byte	.LFE1
+ 605 0018 00000000 		.4byte	.LFB2
+ 606 001c 40000000 		.4byte	.LFE2
+ 607 0020 00000000 		.4byte	.LFB3
+ 608 0024 20000000 		.4byte	.LFE3
+ 609 0028 00000000 		.4byte	0x0
+ 610 002c 00000000 		.4byte	0x0
+ 611              		.section	.debug_str,"MS",%progbits,1
+ 612              	.LASF6:
+ 613 0000 6C6F6E67 		.ascii	"long long int\000"
+ 613      206C6F6E 
+ 613      6720696E 
+ 613      7400
+ 614              	.LASF24:
+ 615 000e 55617274 		.ascii	"UartDebug_backup\000"
+ 615      44656275 
+ 615      675F6261 
+ 615      636B7570 
+ 615      00
+ 616              	.LASF12:
+ 617 001f 74785F63 		.ascii	"tx_clk_compl\000"
+ 617      6C6B5F63 
+ 617      6F6D706C 
+ 617      00
+ 618              	.LASF1:
+ 619 002c 756E7369 		.ascii	"unsigned char\000"
+ 619      676E6564 
+ 619      20636861 
+ 619      7200
+ 620              	.LASF16:
+ 621 003a 55617274 		.ascii	"UartDebug_SaveConfig\000"
+ 621      44656275 
+ 621      675F5361 
+ 621      7665436F 
+ 621      6E666967 
+ 622              	.LASF19:
+ 623 004f 55617274 		.ascii	"UartDebug_Wakeup\000"
+ 623      44656275 
+ 623      675F5761 
+ 623      6B657570 
+ 623      00
+ 624              	.LASF5:
+ 625 0060 6C6F6E67 		.ascii	"long unsigned int\000"
+ 625      20756E73 
+ 625      69676E65 
+ 625      6420696E 
+ 625      7400
+ 626              	.LASF3:
+ 627 0072 73686F72 		.ascii	"short unsigned int\000"
+ 627      7420756E 
+ 627      7369676E 
+ 627      65642069 
+ 627      6E7400
+ 628              	.LASF11:
+ 629 0085 74785F63 		.ascii	"tx_clk_ctr\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 17
+
+
+ 629      6C6B5F63 
+ 629      747200
+ 630              	.LASF8:
+ 631 0090 756E7369 		.ascii	"unsigned int\000"
+ 631      676E6564 
+ 631      20696E74 
+ 631      00
+ 632              	.LASF7:
+ 633 009d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 633      206C6F6E 
+ 633      6720756E 
+ 633      7369676E 
+ 633      65642069 
+ 634              	.LASF21:
+ 635 00b4 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\UartDebug_PM.c\000"
+ 635      6E657261 
+ 635      7465645F 
+ 635      536F7572 
+ 635      63655C50 
+ 636              	.LASF15:
+ 637 00dc 55617274 		.ascii	"UartDebug_BACKUP_STRUCT\000"
+ 637      44656275 
+ 637      675F4241 
+ 637      434B5550 
+ 637      5F535452 
+ 638              	.LASF20:
+ 639 00f4 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 639      4320342E 
+ 639      342E3100 
+ 640              	.LASF17:
+ 641 0100 55617274 		.ascii	"UartDebug_RestoreConfig\000"
+ 641      44656275 
+ 641      675F5265 
+ 641      73746F72 
+ 641      65436F6E 
+ 642              	.LASF13:
+ 643 0118 74785F6D 		.ascii	"tx_mask\000"
+ 643      61736B00 
+ 644              	.LASF9:
+ 645 0120 63686172 		.ascii	"char\000"
+ 645      00
+ 646              	.LASF2:
+ 647 0125 73686F72 		.ascii	"short int\000"
+ 647      7420696E 
+ 647      7400
+ 648              	.LASF14:
+ 649 012f 75696E74 		.ascii	"uint8\000"
+ 649      3800
+ 650              	.LASF4:
+ 651 0135 6C6F6E67 		.ascii	"long int\000"
+ 651      20696E74 
+ 651      00
+ 652              	.LASF10:
+ 653 013e 656E6162 		.ascii	"enableState\000"
+ 653      6C655374 
+ 653      61746500 
+ 654              	.LASF23:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc2yGlhJ.s 			page 18
+
+
+ 655 014a 5F556172 		.ascii	"_UartDebug_backupStruct\000"
+ 655      74446562 
+ 655      75675F62 
+ 655      61636B75 
+ 655      70537472 
+ 656              	.LASF0:
+ 657 0162 7369676E 		.ascii	"signed char\000"
+ 657      65642063 
+ 657      68617200 
+ 658              	.LASF22:
+ 659 016e 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 659      73657273 
+ 659      5C47656F 
+ 659      5C446F63 
+ 659      756D656E 
+ 660 019c 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 660      645C4669 
+ 660      726D7761 
+ 660      72655C50 
+ 660      536F435C 
+ 661              	.LASF18:
+ 662 01c8 55617274 		.ascii	"UartDebug_Sleep\000"
+ 662      44656275 
+ 662      675F536C 
+ 662      65657000 
+ 663              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

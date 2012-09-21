@@ -1,0 +1,1479 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Adc.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 9B010000 		.text
+  20      02002701 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	debugBuff,200,4
+  24              		.bss
+  25              		.align	3
+  26              	_battVoltage:
+  27 0000 00000000 		.space	8
+  27      00000000 
+  28              		.align	3
+  29              	_throttleVoltage:
+  30 0008 00000000 		.space	8
+  30      00000000 
+  31              	_enableThrottleVoltMeasFlag:
+  32 0010 00       		.space	1
+  33              		.global	__aeabi_ui2d
+  34              		.global	__aeabi_dmul
+  35              		.global	__aeabi_dsub
+  36              		.section	.text.Adc_Run,"ax",%progbits
+  37              		.align	2
+  38              		.global	Adc_Run
+  39              		.thumb
+  40              		.thumb_func
+  41              		.type	Adc_Run, %function
+  42              	Adc_Run:
+  43              	.LFB29:
+  44              		.file 1 ".\\Adc.c"
+   1:.\Adc.c       **** //!
+   2:.\Adc.c       **** //! @file 		Adc.c
+   3:.\Adc.c       **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Adc.c       **** //! @date 		14/05/2011
+   5:.\Adc.c       **** //! @brief 		Driver file for the ADC.
+   6:.\Adc.c       **** //! @details
+   7:.\Adc.c       **** //!		<b>Last Modified:			</b> 21/05/2011								\n
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 2
+
+
+   8:.\Adc.c       **** //!		<b>Version:					</b> v1.0									\n
+   9:.\Adc.c       **** //!		<b>Company:					</b> CladLabs								\n
+  10:.\Adc.c       **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\Adc.c       **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\Adc.c       **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\Adc.c       **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\Adc.c       **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\Adc.c       **** //!		
+  16:.\Adc.c       **** //!		Initializes and receives values from the ADC, as well as controlling the adc input mux
+  17:.\Adc.c       **** //!
+  18:.\Adc.c       **** 
+  19:.\Adc.c       **** //=================================================================================================
+  20:.\Adc.c       **** //============================================ INFO ===============================================
+  21:.\Adc.c       **** //=================================================================================================
+  22:.\Adc.c       **** 
+  23:.\Adc.c       **** //=================================================================================================
+  24:.\Adc.c       **** //======================================= FILE INCLUSIONS =========================================
+  25:.\Adc.c       **** //=================================================================================================
+  26:.\Adc.c       **** 
+  27:.\Adc.c       **** #include <device.h>
+  28:.\Adc.c       **** #include <stdio.h>
+  29:.\Adc.c       **** 
+  30:.\Adc.c       **** #include "../common/PublicObjects.h"
+  31:.\Adc.c       **** #include "Config.h"
+  32:.\Adc.c       **** #include "Adc.h"
+  33:.\Adc.c       **** 
+  34:.\Adc.c       **** typedef enum
+  35:.\Adc.c       **** {
+  36:.\Adc.c       **** 	adcInit,
+  37:.\Adc.c       **** 	adcIdle,
+  38:.\Adc.c       **** 	adcGetBattVolt
+  39:.\Adc.c       **** } adcStates_t;
+  40:.\Adc.c       **** 
+  41:.\Adc.c       **** static double _battVoltage = 0;
+  42:.\Adc.c       **** static double _throttleVoltage = 0;
+  43:.\Adc.c       **** static bool_t _enableThrottleVoltMeasFlag = FALSE;
+  44:.\Adc.c       **** 
+  45:.\Adc.c       **** 
+  46:.\Adc.c       **** void Adc_Run(void)
+  47:.\Adc.c       **** {
+  45              		.loc 1 47 0
+  46              		.cfi_startproc
+  47              		@ args = 0, pretend = 0, frame = 16
+  48              		@ frame_needed = 1, uses_anonymous_args = 0
+  49 0000 80B5     		push	{r7, lr}
+  50              	.LCFI0:
+  51              		.cfi_def_cfa_offset 8
+  52 0002 84B0     		sub	sp, sp, #16
+  53              	.LCFI1:
+  54              		.cfi_def_cfa_offset 24
+  55 0004 00AF     		add	r7, sp, #0
+  56              		.cfi_offset 14, -4
+  57              		.cfi_offset 7, -8
+  58              	.LCFI2:
+  59              		.cfi_def_cfa_register 7
+  48:.\Adc.c       **** 	static uint32_t stateCounter = 0;
+  49:.\Adc.c       **** 	
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 3
+
+
+  50:.\Adc.c       **** 	static uint32_t lastBattVoltMeasureCount = 0;
+  51:.\Adc.c       **** 	static uint32_t battVoltMeasurePeriod = (uint32_t)configBATT_MEASURE_PERIOD_MS/configMAIN_TICK_PER
+  52:.\Adc.c       **** 	
+  53:.\Adc.c       **** 	static bool_t turnOn = TRUE;
+  54:.\Adc.c       **** 	
+  55:.\Adc.c       **** 	static adcStates_t adcState = adcInit;
+  56:.\Adc.c       **** 	static adcStates_t prevAdcState = adcInit;
+  57:.\Adc.c       **** 
+  58:.\Adc.c       **** 	switch(adcState)
+  60              		.loc 1 58 0
+  61 0006 40F20003 		movw	r3, #:lower16:adcState.3706
+  62 000a C0F20003 		movt	r3, #:upper16:adcState.3706
+  63 000e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  64 0010 012B     		cmp	r3, #1
+  65 0012 0ED0     		beq	.L4
+  66 0014 022B     		cmp	r3, #2
+  67 0016 51D0     		beq	.L5
+  68 0018 002B     		cmp	r3, #0
+  69 001a 40F0BB80 		bne	.L2
+  70              	.L3:
+  59:.\Adc.c       **** 	{
+  60:.\Adc.c       **** 		case adcInit:
+  61:.\Adc.c       **** 			// Power up the ADC and reset all states
+  62:.\Adc.c       **** 			AdcSar_Start();
+  71              		.loc 1 62 0
+  72 001e FFF7FEFF 		bl	AdcSar_Start
+  63:.\Adc.c       **** 			adcState = adcIdle;
+  73              		.loc 1 63 0
+  74 0022 40F20003 		movw	r3, #:lower16:adcState.3706
+  75 0026 C0F20003 		movt	r3, #:upper16:adcState.3706
+  76 002a 4FF00102 		mov	r2, #1
+  77 002e 1A70     		strb	r2, [r3, #0]
+  64:.\Adc.c       **** 			break;
+  78              		.loc 1 64 0
+  79 0030 B0E0     		b	.L2
+  80              	.L4:
+  65:.\Adc.c       **** 			
+  66:.\Adc.c       **** 		case adcIdle:
+  67:.\Adc.c       **** 			if(prevAdcState != adcState)
+  81              		.loc 1 67 0
+  82 0032 40F20003 		movw	r3, #:lower16:prevAdcState.3707
+  83 0036 C0F20003 		movt	r3, #:upper16:prevAdcState.3707
+  84 003a 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+  85 003c 40F20003 		movw	r3, #:lower16:adcState.3706
+  86 0040 C0F20003 		movt	r3, #:upper16:adcState.3706
+  87 0044 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  88 0046 9A42     		cmp	r2, r3
+  89 0048 09D0     		beq	.L6
+  68:.\Adc.c       **** 			{
+  69:.\Adc.c       **** 				#if(configDEBUG_ADC == 1) 
+  70:.\Adc.c       **** 						UartDebug_PutString("ADC: Entering idle state.\r\n");
+  71:.\Adc.c       **** 				#endif
+  72:.\Adc.c       **** 				prevAdcState = adcState;
+  90              		.loc 1 72 0
+  91 004a 40F20003 		movw	r3, #:lower16:adcState.3706
+  92 004e C0F20003 		movt	r3, #:upper16:adcState.3706
+  93 0052 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 4
+
+
+  94 0054 40F20003 		movw	r3, #:lower16:prevAdcState.3707
+  95 0058 C0F20003 		movt	r3, #:upper16:prevAdcState.3707
+  96 005c 1A70     		strb	r2, [r3, #0]
+  97              	.L6:
+  73:.\Adc.c       **** 			}
+  74:.\Adc.c       **** 				
+  75:.\Adc.c       **** 			if(stateCounter >= lastBattVoltMeasureCount + battVoltMeasurePeriod)
+  98              		.loc 1 75 0
+  99 005e 40F20003 		movw	r3, #:lower16:lastBattVoltMeasureCount.3703
+ 100 0062 C0F20003 		movt	r3, #:upper16:lastBattVoltMeasureCount.3703
+ 101 0066 1A68     		ldr	r2, [r3, #0]
+ 102 0068 40F20003 		movw	r3, #:lower16:battVoltMeasurePeriod.3704
+ 103 006c C0F20003 		movt	r3, #:upper16:battVoltMeasurePeriod.3704
+ 104 0070 1B68     		ldr	r3, [r3, #0]
+ 105 0072 1A44     		add	r2, r2, r3
+ 106 0074 40F20003 		movw	r3, #:lower16:stateCounter.3702
+ 107 0078 C0F20003 		movt	r3, #:upper16:stateCounter.3702
+ 108 007c 1B68     		ldr	r3, [r3, #0]
+ 109 007e 9A42     		cmp	r2, r3
+ 110 0080 06D8     		bhi	.L7
+  76:.\Adc.c       **** 				adcState = adcGetBattVolt;
+ 111              		.loc 1 76 0
+ 112 0082 40F20003 		movw	r3, #:lower16:adcState.3706
+ 113 0086 C0F20003 		movt	r3, #:upper16:adcState.3706
+ 114 008a 4FF00202 		mov	r2, #2
+ 115 008e 1A70     		strb	r2, [r3, #0]
+ 116              	.L7:
+  77:.\Adc.c       **** 			
+  78:.\Adc.c       **** 			
+  79:.\Adc.c       **** 			if(turnOn)
+ 117              		.loc 1 79 0
+ 118 0090 40F20003 		movw	r3, #:lower16:turnOn.3705
+ 119 0094 C0F20003 		movt	r3, #:upper16:turnOn.3705
+ 120 0098 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 121 009a 002B     		cmp	r3, #0
+ 122 009c 79D0     		beq	.L11
+  80:.\Adc.c       **** 			{
+  81:.\Adc.c       **** 				adcState = adcGetBattVolt;
+ 123              		.loc 1 81 0
+ 124 009e 40F20003 		movw	r3, #:lower16:adcState.3706
+ 125 00a2 C0F20003 		movt	r3, #:upper16:adcState.3706
+ 126 00a6 4FF00202 		mov	r2, #2
+ 127 00aa 1A70     		strb	r2, [r3, #0]
+  82:.\Adc.c       **** 				turnOn = FALSE;
+ 128              		.loc 1 82 0
+ 129 00ac 40F20003 		movw	r3, #:lower16:turnOn.3705
+ 130 00b0 C0F20003 		movt	r3, #:upper16:turnOn.3705
+ 131 00b4 4FF00002 		mov	r2, #0
+ 132 00b8 1A70     		strb	r2, [r3, #0]
+  83:.\Adc.c       **** 				break;
+ 133              		.loc 1 83 0
+ 134 00ba 6BE0     		b	.L2
+ 135              	.L5:
+  84:.\Adc.c       **** 			}
+  85:.\Adc.c       **** 			break;
+  86:.\Adc.c       **** 			
+  87:.\Adc.c       **** 		case adcGetBattVolt:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 5
+
+
+  88:.\Adc.c       **** 			if(prevAdcState != adcState)
+ 136              		.loc 1 88 0
+ 137 00bc 40F20003 		movw	r3, #:lower16:prevAdcState.3707
+ 138 00c0 C0F20003 		movt	r3, #:upper16:prevAdcState.3707
+ 139 00c4 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 140 00c6 40F20003 		movw	r3, #:lower16:adcState.3706
+ 141 00ca C0F20003 		movt	r3, #:upper16:adcState.3706
+ 142 00ce 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 143 00d0 9A42     		cmp	r2, r3
+ 144 00d2 15D0     		beq	.L9
+  89:.\Adc.c       **** 			{
+  90:.\Adc.c       **** 				#if(configDEBUG_ADC == 1) 
+  91:.\Adc.c       **** 						UartDebug_PutString("ADC: Entering adcGetBattVolt state.\r\n");
+  92:.\Adc.c       **** 				#endif
+  93:.\Adc.c       **** 				
+  94:.\Adc.c       **** 				// Start ADC conversion
+  95:.\Adc.c       **** 				AdcSar_StartConvert();
+ 145              		.loc 1 95 0
+ 146 00d4 FFF7FEFF 		bl	AdcSar_StartConvert
+  96:.\Adc.c       **** 				
+  97:.\Adc.c       **** 				lastBattVoltMeasureCount = stateCounter;
+ 147              		.loc 1 97 0
+ 148 00d8 40F20003 		movw	r3, #:lower16:stateCounter.3702
+ 149 00dc C0F20003 		movt	r3, #:upper16:stateCounter.3702
+ 150 00e0 1A68     		ldr	r2, [r3, #0]
+ 151 00e2 40F20003 		movw	r3, #:lower16:lastBattVoltMeasureCount.3703
+ 152 00e6 C0F20003 		movt	r3, #:upper16:lastBattVoltMeasureCount.3703
+ 153 00ea 1A60     		str	r2, [r3, #0]
+  98:.\Adc.c       **** 				prevAdcState = adcState;
+ 154              		.loc 1 98 0
+ 155 00ec 40F20003 		movw	r3, #:lower16:adcState.3706
+ 156 00f0 C0F20003 		movt	r3, #:upper16:adcState.3706
+ 157 00f4 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 158 00f6 40F20003 		movw	r3, #:lower16:prevAdcState.3707
+ 159 00fa C0F20003 		movt	r3, #:upper16:prevAdcState.3707
+ 160 00fe 1A70     		strb	r2, [r3, #0]
+ 161              	.L9:
+  99:.\Adc.c       **** 			}
+ 100:.\Adc.c       **** 
+ 101:.\Adc.c       **** 			// Wait for end of conversion
+ 102:.\Adc.c       **** 			// Accepts either ADC_WAIT_FOR_RESULT or ADC_RETURN_STATUS
+ 103:.\Adc.c       **** 			if(AdcSar_IsEndConversion(AdcSar_RETURN_STATUS))
+ 162              		.loc 1 103 0
+ 163 0100 4FF00100 		mov	r0, #1
+ 164 0104 FFF7FEFF 		bl	AdcSar_IsEndConversion
+ 165 0108 0346     		mov	r3, r0
+ 166 010a 002B     		cmp	r3, #0
+ 167 010c 42D0     		beq	.L2
+ 168              	.LBB2:
+ 104:.\Adc.c       **** 			{
+ 105:.\Adc.c       **** 					// Get and return adc value
+ 106:.\Adc.c       **** 				uint16 adcVal = AdcSar_GetResult16();
+ 169              		.loc 1 106 0
+ 170 010e FFF7FEFF 		bl	AdcSar_GetResult16
+ 171 0112 0346     		mov	r3, r0
+ 172 0114 9BB2     		uxth	r3, r3
+ 173 0116 FB80     		strh	r3, [r7, #6]	@ movhi
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 6
+
+
+ 107:.\Adc.c       **** 				
+ 108:.\Adc.c       **** 				// Wait for end of conversion
+ 109:.\Adc.c       **** 				// Accepts either ADC_WAIT_FOR_RESULT or ADC_RETURN_STATUS
+ 110:.\Adc.c       **** 				AdcSar_IsEndConversion(AdcSar_WAIT_FOR_RESULT);
+ 174              		.loc 1 110 0
+ 175 0118 4FF00000 		mov	r0, #0
+ 176 011c FFF7FEFF 		bl	AdcSar_IsEndConversion
+ 111:.\Adc.c       **** 				
+ 112:.\Adc.c       **** 				// Get and return adc value
+ 113:.\Adc.c       **** 				adcVal = AdcSar_GetResult16();
+ 177              		.loc 1 113 0
+ 178 0120 FFF7FEFF 		bl	AdcSar_GetResult16
+ 179 0124 0346     		mov	r3, r0
+ 180 0126 9BB2     		uxth	r3, r3
+ 181 0128 FB80     		strh	r3, [r7, #6]	@ movhi
+ 114:.\Adc.c       **** 				
+ 115:.\Adc.c       **** 				adcVal = AdcSar_CountsTo_mVolts(adcVal);
+ 182              		.loc 1 115 0
+ 183 012a FB88     		ldrh	r3, [r7, #6]
+ 184 012c 1BB2     		sxth	r3, r3
+ 185 012e 1846     		mov	r0, r3
+ 186 0130 FFF7FEFF 		bl	AdcSar_CountsTo_mVolts
+ 187 0134 0346     		mov	r3, r0
+ 188 0136 9BB2     		uxth	r3, r3
+ 189 0138 FB80     		strh	r3, [r7, #6]	@ movhi
+ 116:.\Adc.c       **** 				
+ 117:.\Adc.c       **** 				double tempVar;
+ 118:.\Adc.c       **** 				
+ 119:.\Adc.c       **** 				// Convert 16-bit int to double
+ 120:.\Adc.c       **** 				tempVar = (double)adcVal;
+ 190              		.loc 1 120 0
+ 191 013a FB88     		ldrh	r3, [r7, #6]
+ 192 013c 1846     		mov	r0, r3
+ 193 013e FFF7FEFF 		bl	__aeabi_ui2d
+ 194 0142 0246     		mov	r2, r0
+ 195 0144 0B46     		mov	r3, r1
+ 196 0146 C7E90223 		strd	r2, [r7, #8]
+ 121:.\Adc.c       **** 				
+ 122:.\Adc.c       **** 				#if(configDEBUG_ADC == 1)
+ 123:.\Adc.c       **** 					char tempBuff1[50];
+ 124:.\Adc.c       **** 					snprintf(tempBuff1, sizeof(tempBuff1), "ADC: Adc voltage = %f\r\n", tempVar);
+ 125:.\Adc.c       **** 					UartDebug_PutString(tempBuff1);
+ 126:.\Adc.c       **** 				#endif
+ 127:.\Adc.c       **** 				
+ 128:.\Adc.c       **** 				// Scale by resistor divider to find input voltage
+ 129:.\Adc.c       **** 				tempVar = ((configBATT_VOLT_R1_KOHM + configBATT_VOLT_R2_KOHM)/configBATT_VOLT_R2_KOHM)*tempVar
+ 197              		.loc 1 129 0
+ 198 014a D7E90201 		ldrd	r0, [r7, #8]
+ 199 014e 1AA3     		adr	r3, .L12
+ 200 0150 D3E90023 		ldrd	r2, [r3]
+ 201 0154 FFF7FEFF 		bl	__aeabi_dmul
+ 202 0158 0246     		mov	r2, r0
+ 203 015a 0B46     		mov	r3, r1
+ 204 015c 1046     		mov	r0, r2
+ 205 015e 1946     		mov	r1, r3
+ 206 0160 17A3     		adr	r3, .L12+8
+ 207 0162 D3E90023 		ldrd	r2, [r3]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 7
+
+
+ 208 0166 FFF7FEFF 		bl	__aeabi_dsub
+ 209 016a 0246     		mov	r2, r0
+ 210 016c 0B46     		mov	r3, r1
+ 211 016e C7E90223 		strd	r2, [r7, #8]
+ 130:.\Adc.c       **** 				//tempVar = tempVar*configBATT_VOLT_R_RATIO;
+ 131:.\Adc.c       **** 				// Return battery voltage
+ 132:.\Adc.c       **** 				_battVoltage = tempVar;
+ 212              		.loc 1 132 0
+ 213 0172 40F20003 		movw	r3, #:lower16:_battVoltage
+ 214 0176 C0F20003 		movt	r3, #:upper16:_battVoltage
+ 215 017a D7E90201 		ldrd	r0, [r7, #8]
+ 216 017e C3E90001 		strd	r0, [r3]
+ 133:.\Adc.c       **** 				
+ 134:.\Adc.c       **** 				#if(configDEBUG_ADC == 1)
+ 135:.\Adc.c       **** 					char tempBuff2[50];
+ 136:.\Adc.c       **** 					snprintf(tempBuff2, sizeof(tempBuff2), "ADC: Batt voltage = %f\r\n", _battVoltage);
+ 137:.\Adc.c       **** 					UartDebug_PutString(tempBuff2);
+ 138:.\Adc.c       **** 				#endif
+ 139:.\Adc.c       **** 				
+ 140:.\Adc.c       **** 				// Go back to idle state
+ 141:.\Adc.c       **** 				adcState = adcIdle;
+ 217              		.loc 1 141 0
+ 218 0182 40F20003 		movw	r3, #:lower16:adcState.3706
+ 219 0186 C0F20003 		movt	r3, #:upper16:adcState.3706
+ 220 018a 4FF00102 		mov	r2, #1
+ 221 018e 1A70     		strb	r2, [r3, #0]
+ 222 0190 00E0     		b	.L2
+ 223              	.L11:
+ 224              	.LBE2:
+ 225              		.loc 1 85 0
+ 226 0192 00BF     		nop
+ 227              	.L2:
+ 142:.\Adc.c       **** 				
+ 143:.\Adc.c       **** 				break;
+ 144:.\Adc.c       **** 			}
+ 145:.\Adc.c       **** 			
+ 146:.\Adc.c       **** 		
+ 147:.\Adc.c       **** 			break;
+ 148:.\Adc.c       **** 			
+ 149:.\Adc.c       **** 	}
+ 150:.\Adc.c       **** 	
+ 151:.\Adc.c       **** 	// Increment state counter
+ 152:.\Adc.c       **** 	stateCounter++;
+ 228              		.loc 1 152 0
+ 229 0194 40F20003 		movw	r3, #:lower16:stateCounter.3702
+ 230 0198 C0F20003 		movt	r3, #:upper16:stateCounter.3702
+ 231 019c 1B68     		ldr	r3, [r3, #0]
+ 232 019e 03F10102 		add	r2, r3, #1
+ 233 01a2 40F20003 		movw	r3, #:lower16:stateCounter.3702
+ 234 01a6 C0F20003 		movt	r3, #:upper16:stateCounter.3702
+ 235 01aa 1A60     		str	r2, [r3, #0]
+ 153:.\Adc.c       **** }
+ 236              		.loc 1 153 0
+ 237 01ac 07F11007 		add	r7, r7, #16
+ 238 01b0 BD46     		mov	sp, r7
+ 239 01b2 80BD     		pop	{r7, pc}
+ 240              	.L13:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 8
+
+
+ 241 01b4 AFF30080 		.align	3
+ 242              	.L12:
+ 243 01b8 00000000 		.word	0
+ 244 01bc 00C04F40 		.word	1078968320
+ 245 01c0 00000000 		.word	0
+ 246 01c4 00407F40 		.word	1082081280
+ 247              		.cfi_endproc
+ 248              	.LFE29:
+ 249              		.size	Adc_Run, .-Adc_Run
+ 250              		.section	.text.Adc_EnableThrottleVoltMeas,"ax",%progbits
+ 251              		.align	2
+ 252              		.global	Adc_EnableThrottleVoltMeas
+ 253              		.thumb
+ 254              		.thumb_func
+ 255              		.type	Adc_EnableThrottleVoltMeas, %function
+ 256              	Adc_EnableThrottleVoltMeas:
+ 257              	.LFB30:
+ 154:.\Adc.c       **** 
+ 155:.\Adc.c       **** //! @brief		Enables or disables the throttle voltage measurement. Only needed in the mainMotorOn st
+ 156:.\Adc.c       **** void Adc_EnableThrottleVoltMeas(bool_t enable)
+ 157:.\Adc.c       **** {
+ 258              		.loc 1 157 0
+ 259              		.cfi_startproc
+ 260              		@ args = 0, pretend = 0, frame = 8
+ 261              		@ frame_needed = 1, uses_anonymous_args = 0
+ 262              		@ link register save eliminated.
+ 263 0000 80B4     		push	{r7}
+ 264              	.LCFI3:
+ 265              		.cfi_def_cfa_offset 4
+ 266 0002 83B0     		sub	sp, sp, #12
+ 267              	.LCFI4:
+ 268              		.cfi_def_cfa_offset 16
+ 269 0004 00AF     		add	r7, sp, #0
+ 270              		.cfi_offset 7, -4
+ 271              	.LCFI5:
+ 272              		.cfi_def_cfa_register 7
+ 273 0006 0346     		mov	r3, r0
+ 274 0008 FB71     		strb	r3, [r7, #7]
+ 158:.\Adc.c       **** 		_enableThrottleVoltMeasFlag = enable;
+ 275              		.loc 1 158 0
+ 276 000a 40F20003 		movw	r3, #:lower16:_enableThrottleVoltMeasFlag
+ 277 000e C0F20003 		movt	r3, #:upper16:_enableThrottleVoltMeasFlag
+ 278 0012 FA79     		ldrb	r2, [r7, #7]
+ 279 0014 1A70     		strb	r2, [r3, #0]
+ 159:.\Adc.c       **** }
+ 280              		.loc 1 159 0
+ 281 0016 07F10C07 		add	r7, r7, #12
+ 282 001a BD46     		mov	sp, r7
+ 283 001c 80BC     		pop	{r7}
+ 284 001e 7047     		bx	lr
+ 285              		.cfi_endproc
+ 286              	.LFE30:
+ 287              		.size	Adc_EnableThrottleVoltMeas, .-Adc_EnableThrottleVoltMeas
+ 288              		.section	.text.Adc_GetBattVolt,"ax",%progbits
+ 289              		.align	2
+ 290              		.global	Adc_GetBattVolt
+ 291              		.thumb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 9
+
+
+ 292              		.thumb_func
+ 293              		.type	Adc_GetBattVolt, %function
+ 294              	Adc_GetBattVolt:
+ 295              	.LFB31:
+ 160:.\Adc.c       **** 
+ 161:.\Adc.c       **** //! @brief		Returns the battery voltage
+ 162:.\Adc.c       **** //! @returns 	Battery voltage as double, scaled appropriately due to voltage divider
+ 163:.\Adc.c       **** double Adc_GetBattVolt(void)
+ 164:.\Adc.c       **** {
+ 296              		.loc 1 164 0
+ 297              		.cfi_startproc
+ 298              		@ args = 0, pretend = 0, frame = 0
+ 299              		@ frame_needed = 1, uses_anonymous_args = 0
+ 300              		@ link register save eliminated.
+ 301 0000 80B4     		push	{r7}
+ 302              	.LCFI6:
+ 303              		.cfi_def_cfa_offset 4
+ 304 0002 00AF     		add	r7, sp, #0
+ 305              		.cfi_offset 7, -4
+ 306              	.LCFI7:
+ 307              		.cfi_def_cfa_register 7
+ 165:.\Adc.c       **** 	return _battVoltage;
+ 308              		.loc 1 165 0
+ 309 0004 40F20003 		movw	r3, #:lower16:_battVoltage
+ 310 0008 C0F20003 		movt	r3, #:upper16:_battVoltage
+ 311 000c D3E90023 		ldrd	r2, [r3]
+ 166:.\Adc.c       **** }
+ 312              		.loc 1 166 0
+ 313 0010 1046     		mov	r0, r2
+ 314 0012 1946     		mov	r1, r3
+ 315 0014 BD46     		mov	sp, r7
+ 316 0016 80BC     		pop	{r7}
+ 317 0018 7047     		bx	lr
+ 318              		.cfi_endproc
+ 319              	.LFE31:
+ 320              		.size	Adc_GetBattVolt, .-Adc_GetBattVolt
+ 321 001a 00BF     		.section	.text.Adc_GetThrottleVolt,"ax",%progbits
+ 322              		.align	2
+ 323              		.global	Adc_GetThrottleVolt
+ 324              		.thumb
+ 325              		.thumb_func
+ 326              		.type	Adc_GetThrottleVolt, %function
+ 327              	Adc_GetThrottleVolt:
+ 328              	.LFB32:
+ 167:.\Adc.c       **** 
+ 168:.\Adc.c       **** //! @brief		Returns the throttle voltage
+ 169:.\Adc.c       **** //! @returns 	Throttle voltage as double, scaled appropriately due to voltage divider
+ 170:.\Adc.c       **** double Adc_GetThrottleVolt(void)
+ 171:.\Adc.c       **** {
+ 329              		.loc 1 171 0
+ 330              		.cfi_startproc
+ 331              		@ args = 0, pretend = 0, frame = 0
+ 332              		@ frame_needed = 1, uses_anonymous_args = 0
+ 333              		@ link register save eliminated.
+ 334 0000 80B4     		push	{r7}
+ 335              	.LCFI8:
+ 336              		.cfi_def_cfa_offset 4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 10
+
+
+ 337 0002 00AF     		add	r7, sp, #0
+ 338              		.cfi_offset 7, -4
+ 339              	.LCFI9:
+ 340              		.cfi_def_cfa_register 7
+ 172:.\Adc.c       **** 	return _throttleVoltage;
+ 341              		.loc 1 172 0
+ 342 0004 40F20003 		movw	r3, #:lower16:_throttleVoltage
+ 343 0008 C0F20003 		movt	r3, #:upper16:_throttleVoltage
+ 344 000c D3E90023 		ldrd	r2, [r3]
+ 173:.\Adc.c       **** }	
+ 345              		.loc 1 173 0
+ 346 0010 1046     		mov	r0, r2
+ 347 0012 1946     		mov	r1, r3
+ 348 0014 BD46     		mov	sp, r7
+ 349 0016 80BC     		pop	{r7}
+ 350 0018 7047     		bx	lr
+ 351              		.cfi_endproc
+ 352              	.LFE32:
+ 353              		.size	Adc_GetThrottleVolt, .-Adc_GetThrottleVolt
+ 354 001a 00BF     		.bss
+ 355              	adcState.3706:
+ 356 0011 00       		.space	1
+ 357              	prevAdcState.3707:
+ 358 0012 00       		.space	1
+ 359 0013 00       		.align	2
+ 360              	lastBattVoltMeasureCount.3703:
+ 361 0014 00000000 		.space	4
+ 362              		.data
+ 363              		.align	2
+ 364              		.type	battVoltMeasurePeriod.3704, %object
+ 365              		.size	battVoltMeasurePeriod.3704, 4
+ 366              	battVoltMeasurePeriod.3704:
+ 367 0000 32000000 		.word	50
+ 368              		.bss
+ 369              		.align	2
+ 370              	stateCounter.3702:
+ 371 0018 00000000 		.space	4
+ 372 001c 00000000 		.data
+ 373              		.type	turnOn.3705, %object
+ 374              		.size	turnOn.3705, 1
+ 375              	turnOn.3705:
+ 376 0004 01       		.byte	1
+ 377 0005 000000   		.text
+ 378              	.Letext0:
+ 379              		.section	.debug_loc,"",%progbits
+ 380              	.Ldebug_loc0:
+ 381              	.LLST0:
+ 382 0000 00000000 		.4byte	.LFB29
+ 383 0004 02000000 		.4byte	.LCFI0
+ 384 0008 0100     		.2byte	0x1
+ 385 000a 5D       		.byte	0x5d
+ 386 000b 02000000 		.4byte	.LCFI0
+ 387 000f 04000000 		.4byte	.LCFI1
+ 388 0013 0200     		.2byte	0x2
+ 389 0015 7D       		.byte	0x7d
+ 390 0016 08       		.sleb128 8
+ 391 0017 04000000 		.4byte	.LCFI1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 11
+
+
+ 392 001b 06000000 		.4byte	.LCFI2
+ 393 001f 0200     		.2byte	0x2
+ 394 0021 7D       		.byte	0x7d
+ 395 0022 18       		.sleb128 24
+ 396 0023 06000000 		.4byte	.LCFI2
+ 397 0027 C8010000 		.4byte	.LFE29
+ 398 002b 0200     		.2byte	0x2
+ 399 002d 77       		.byte	0x77
+ 400 002e 18       		.sleb128 24
+ 401 002f 00000000 		.4byte	0x0
+ 402 0033 00000000 		.4byte	0x0
+ 403              	.LLST1:
+ 404 0037 00000000 		.4byte	.LFB30
+ 405 003b 02000000 		.4byte	.LCFI3
+ 406 003f 0100     		.2byte	0x1
+ 407 0041 5D       		.byte	0x5d
+ 408 0042 02000000 		.4byte	.LCFI3
+ 409 0046 04000000 		.4byte	.LCFI4
+ 410 004a 0200     		.2byte	0x2
+ 411 004c 7D       		.byte	0x7d
+ 412 004d 04       		.sleb128 4
+ 413 004e 04000000 		.4byte	.LCFI4
+ 414 0052 06000000 		.4byte	.LCFI5
+ 415 0056 0200     		.2byte	0x2
+ 416 0058 7D       		.byte	0x7d
+ 417 0059 10       		.sleb128 16
+ 418 005a 06000000 		.4byte	.LCFI5
+ 419 005e 20000000 		.4byte	.LFE30
+ 420 0062 0200     		.2byte	0x2
+ 421 0064 77       		.byte	0x77
+ 422 0065 10       		.sleb128 16
+ 423 0066 00000000 		.4byte	0x0
+ 424 006a 00000000 		.4byte	0x0
+ 425              	.LLST2:
+ 426 006e 00000000 		.4byte	.LFB31
+ 427 0072 02000000 		.4byte	.LCFI6
+ 428 0076 0100     		.2byte	0x1
+ 429 0078 5D       		.byte	0x5d
+ 430 0079 02000000 		.4byte	.LCFI6
+ 431 007d 04000000 		.4byte	.LCFI7
+ 432 0081 0200     		.2byte	0x2
+ 433 0083 7D       		.byte	0x7d
+ 434 0084 04       		.sleb128 4
+ 435 0085 04000000 		.4byte	.LCFI7
+ 436 0089 1A000000 		.4byte	.LFE31
+ 437 008d 0200     		.2byte	0x2
+ 438 008f 77       		.byte	0x77
+ 439 0090 04       		.sleb128 4
+ 440 0091 00000000 		.4byte	0x0
+ 441 0095 00000000 		.4byte	0x0
+ 442              	.LLST3:
+ 443 0099 00000000 		.4byte	.LFB32
+ 444 009d 02000000 		.4byte	.LCFI8
+ 445 00a1 0100     		.2byte	0x1
+ 446 00a3 5D       		.byte	0x5d
+ 447 00a4 02000000 		.4byte	.LCFI8
+ 448 00a8 04000000 		.4byte	.LCFI9
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 12
+
+
+ 449 00ac 0200     		.2byte	0x2
+ 450 00ae 7D       		.byte	0x7d
+ 451 00af 04       		.sleb128 4
+ 452 00b0 04000000 		.4byte	.LCFI9
+ 453 00b4 1A000000 		.4byte	.LFE32
+ 454 00b8 0200     		.2byte	0x2
+ 455 00ba 77       		.byte	0x77
+ 456 00bb 04       		.sleb128 4
+ 457 00bc 00000000 		.4byte	0x0
+ 458 00c0 00000000 		.4byte	0x0
+ 459              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 460              		.file 3 "./Generated_Source/PSoC5/cytypes.h"
+ 461              		.file 4 ".\\/../common/PublicObjects.h"
+ 462              		.file 5 "./Generated_Source/PSoC5/core_cm3.h"
+ 463              		.file 6 ".\\/Config.h"
+ 464              		.section	.debug_info
+ 465 0000 41020000 		.4byte	0x241
+ 466 0004 0200     		.2byte	0x2
+ 467 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 468 000a 04       		.byte	0x4
+ 469 000b 01       		.uleb128 0x1
+ 470 000c 84010000 		.4byte	.LASF37
+ 471 0010 01       		.byte	0x1
+ 472 0011 BA010000 		.4byte	.LASF38
+ 473 0015 DD010000 		.4byte	.LASF39
+ 474 0019 00000000 		.4byte	0x0
+ 475 001d 00000000 		.4byte	0x0
+ 476 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 477 0025 00000000 		.4byte	.Ldebug_line0
+ 478 0029 02       		.uleb128 0x2
+ 479 002a 01       		.byte	0x1
+ 480 002b 06       		.byte	0x6
+ 481 002c 3C020000 		.4byte	.LASF0
+ 482 0030 02       		.uleb128 0x2
+ 483 0031 01       		.byte	0x1
+ 484 0032 08       		.byte	0x8
+ 485 0033 7F000000 		.4byte	.LASF1
+ 486 0037 02       		.uleb128 0x2
+ 487 0038 02       		.byte	0x2
+ 488 0039 05       		.byte	0x5
+ 489 003a 95010000 		.4byte	.LASF2
+ 490 003e 02       		.uleb128 0x2
+ 491 003f 02       		.byte	0x2
+ 492 0040 07       		.byte	0x7
+ 493 0041 B7000000 		.4byte	.LASF3
+ 494 0045 02       		.uleb128 0x2
+ 495 0046 04       		.byte	0x4
+ 496 0047 05       		.byte	0x5
+ 497 0048 D4010000 		.4byte	.LASF4
+ 498 004c 03       		.uleb128 0x3
+ 499 004d CB010000 		.4byte	.LASF10
+ 500 0051 02       		.byte	0x2
+ 501 0052 50       		.byte	0x50
+ 502 0053 57000000 		.4byte	0x57
+ 503 0057 02       		.uleb128 0x2
+ 504 0058 04       		.byte	0x4
+ 505 0059 07       		.byte	0x7
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 13
+
+
+ 506 005a E7000000 		.4byte	.LASF5
+ 507 005e 02       		.uleb128 0x2
+ 508 005f 08       		.byte	0x8
+ 509 0060 05       		.byte	0x5
+ 510 0061 00000000 		.4byte	.LASF6
+ 511 0065 02       		.uleb128 0x2
+ 512 0066 08       		.byte	0x8
+ 513 0067 07       		.byte	0x7
+ 514 0068 39010000 		.4byte	.LASF7
+ 515 006c 04       		.uleb128 0x4
+ 516 006d 04       		.byte	0x4
+ 517 006e 05       		.byte	0x5
+ 518 006f 696E7400 		.ascii	"int\000"
+ 519 0073 02       		.uleb128 0x2
+ 520 0074 04       		.byte	0x4
+ 521 0075 07       		.byte	0x7
+ 522 0076 10010000 		.4byte	.LASF8
+ 523 007a 02       		.uleb128 0x2
+ 524 007b 01       		.byte	0x1
+ 525 007c 08       		.byte	0x8
+ 526 007d 90010000 		.4byte	.LASF9
+ 527 0081 03       		.uleb128 0x3
+ 528 0082 01010000 		.4byte	.LASF11
+ 529 0086 03       		.byte	0x3
+ 530 0087 52       		.byte	0x52
+ 531 0088 3E000000 		.4byte	0x3e
+ 532 008c 05       		.uleb128 0x5
+ 533 008d 04       		.byte	0x4
+ 534 008e 07       		.byte	0x7
+ 535 008f 06       		.uleb128 0x6
+ 536 0090 01       		.byte	0x1
+ 537 0091 04       		.byte	0x4
+ 538 0092 23       		.byte	0x23
+ 539 0093 A4000000 		.4byte	0xa4
+ 540 0097 07       		.uleb128 0x7
+ 541 0098 E1000000 		.4byte	.LASF12
+ 542 009c 00       		.sleb128 0
+ 543 009d 07       		.uleb128 0x7
+ 544 009e B5010000 		.4byte	.LASF13
+ 545 00a2 01       		.sleb128 1
+ 546 00a3 00       		.byte	0x0
+ 547 00a4 03       		.uleb128 0x3
+ 548 00a5 36000000 		.4byte	.LASF14
+ 549 00a9 04       		.byte	0x4
+ 550 00aa 26       		.byte	0x26
+ 551 00ab 8F000000 		.4byte	0x8f
+ 552 00af 06       		.uleb128 0x6
+ 553 00b0 01       		.byte	0x1
+ 554 00b1 01       		.byte	0x1
+ 555 00b2 23       		.byte	0x23
+ 556 00b3 CA000000 		.4byte	0xca
+ 557 00b7 07       		.uleb128 0x7
+ 558 00b8 F9000000 		.4byte	.LASF15
+ 559 00bc 00       		.sleb128 0
+ 560 00bd 07       		.uleb128 0x7
+ 561 00be 3D000000 		.4byte	.LASF16
+ 562 00c2 01       		.sleb128 1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 14
+
+
+ 563 00c3 07       		.uleb128 0x7
+ 564 00c4 60000000 		.4byte	.LASF17
+ 565 00c8 02       		.sleb128 2
+ 566 00c9 00       		.byte	0x0
+ 567 00ca 03       		.uleb128 0x3
+ 568 00cb 6B010000 		.4byte	.LASF18
+ 569 00cf 01       		.byte	0x1
+ 570 00d0 27       		.byte	0x27
+ 571 00d1 AF000000 		.4byte	0xaf
+ 572 00d5 08       		.uleb128 0x8
+ 573 00d6 01       		.byte	0x1
+ 574 00d7 4F020000 		.4byte	.LASF28
+ 575 00db 01       		.byte	0x1
+ 576 00dc 2E       		.byte	0x2e
+ 577 00dd 01       		.byte	0x1
+ 578 00de 00000000 		.4byte	.LFB29
+ 579 00e2 C8010000 		.4byte	.LFE29
+ 580 00e6 00000000 		.4byte	.LLST0
+ 581 00ea 7B010000 		.4byte	0x17b
+ 582 00ee 09       		.uleb128 0x9
+ 583 00ef 1B000000 		.4byte	.LASF19
+ 584 00f3 01       		.byte	0x1
+ 585 00f4 30       		.byte	0x30
+ 586 00f5 4C000000 		.4byte	0x4c
+ 587 00f9 05       		.byte	0x5
+ 588 00fa 03       		.byte	0x3
+ 589 00fb 18000000 		.4byte	stateCounter.3702
+ 590 00ff 09       		.uleb128 0x9
+ 591 0100 8D000000 		.4byte	.LASF20
+ 592 0104 01       		.byte	0x1
+ 593 0105 32       		.byte	0x32
+ 594 0106 4C000000 		.4byte	0x4c
+ 595 010a 05       		.byte	0x5
+ 596 010b 03       		.byte	0x3
+ 597 010c 14000000 		.4byte	lastBattVoltMeasureCount.3703
+ 598 0110 09       		.uleb128 0x9
+ 599 0111 9F010000 		.4byte	.LASF21
+ 600 0115 01       		.byte	0x1
+ 601 0116 33       		.byte	0x33
+ 602 0117 4C000000 		.4byte	0x4c
+ 603 011b 05       		.byte	0x5
+ 604 011c 03       		.byte	0x3
+ 605 011d 00000000 		.4byte	battVoltMeasurePeriod.3704
+ 606 0121 09       		.uleb128 0x9
+ 607 0122 59000000 		.4byte	.LASF22
+ 608 0126 01       		.byte	0x1
+ 609 0127 35       		.byte	0x35
+ 610 0128 A4000000 		.4byte	0xa4
+ 611 012c 05       		.byte	0x5
+ 612 012d 03       		.byte	0x3
+ 613 012e 04000000 		.4byte	turnOn.3705
+ 614 0132 09       		.uleb128 0x9
+ 615 0133 C2010000 		.4byte	.LASF23
+ 616 0137 01       		.byte	0x1
+ 617 0138 37       		.byte	0x37
+ 618 0139 CA000000 		.4byte	0xca
+ 619 013d 05       		.byte	0x5
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 15
+
+
+ 620 013e 03       		.byte	0x3
+ 621 013f 11000000 		.4byte	adcState.3706
+ 622 0143 09       		.uleb128 0x9
+ 623 0144 77010000 		.4byte	.LASF24
+ 624 0148 01       		.byte	0x1
+ 625 0149 38       		.byte	0x38
+ 626 014a CA000000 		.4byte	0xca
+ 627 014e 05       		.byte	0x5
+ 628 014f 03       		.byte	0x3
+ 629 0150 12000000 		.4byte	prevAdcState.3707
+ 630 0154 0A       		.uleb128 0xa
+ 631 0155 0E010000 		.4byte	.LBB2
+ 632 0159 92010000 		.4byte	.LBE2
+ 633 015d 09       		.uleb128 0x9
+ 634 015e 28000000 		.4byte	.LASF25
+ 635 0162 01       		.byte	0x1
+ 636 0163 6A       		.byte	0x6a
+ 637 0164 81000000 		.4byte	0x81
+ 638 0168 02       		.byte	0x2
+ 639 0169 91       		.byte	0x91
+ 640 016a 6E       		.sleb128 -18
+ 641 016b 09       		.uleb128 0x9
+ 642 016c 08010000 		.4byte	.LASF26
+ 643 0170 01       		.byte	0x1
+ 644 0171 75       		.byte	0x75
+ 645 0172 7B010000 		.4byte	0x17b
+ 646 0176 02       		.byte	0x2
+ 647 0177 91       		.byte	0x91
+ 648 0178 70       		.sleb128 -16
+ 649 0179 00       		.byte	0x0
+ 650 017a 00       		.byte	0x0
+ 651 017b 02       		.uleb128 0x2
+ 652 017c 08       		.byte	0x8
+ 653 017d 04       		.byte	0x4
+ 654 017e 48020000 		.4byte	.LASF27
+ 655 0182 08       		.uleb128 0x8
+ 656 0183 01       		.byte	0x1
+ 657 0184 50010000 		.4byte	.LASF29
+ 658 0188 01       		.byte	0x1
+ 659 0189 9C       		.byte	0x9c
+ 660 018a 01       		.byte	0x1
+ 661 018b 00000000 		.4byte	.LFB30
+ 662 018f 20000000 		.4byte	.LFE30
+ 663 0193 37000000 		.4byte	.LLST1
+ 664 0197 AA010000 		.4byte	0x1aa
+ 665 019b 0B       		.uleb128 0xb
+ 666 019c 2F000000 		.4byte	.LASF40
+ 667 01a0 01       		.byte	0x1
+ 668 01a1 9C       		.byte	0x9c
+ 669 01a2 A4000000 		.4byte	0xa4
+ 670 01a6 02       		.byte	0x2
+ 671 01a7 91       		.byte	0x91
+ 672 01a8 77       		.sleb128 -9
+ 673 01a9 00       		.byte	0x0
+ 674 01aa 0C       		.uleb128 0xc
+ 675 01ab 01       		.byte	0x1
+ 676 01ac 6F000000 		.4byte	.LASF30
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 16
+
+
+ 677 01b0 01       		.byte	0x1
+ 678 01b1 A3       		.byte	0xa3
+ 679 01b2 01       		.byte	0x1
+ 680 01b3 7B010000 		.4byte	0x17b
+ 681 01b7 00000000 		.4byte	.LFB31
+ 682 01bb 1A000000 		.4byte	.LFE31
+ 683 01bf 6E000000 		.4byte	.LLST2
+ 684 01c3 0C       		.uleb128 0xc
+ 685 01c4 01       		.byte	0x1
+ 686 01c5 45000000 		.4byte	.LASF31
+ 687 01c9 01       		.byte	0x1
+ 688 01ca AA       		.byte	0xaa
+ 689 01cb 01       		.byte	0x1
+ 690 01cc 7B010000 		.4byte	0x17b
+ 691 01d0 00000000 		.4byte	.LFB32
+ 692 01d4 1A000000 		.4byte	.LFE32
+ 693 01d8 99000000 		.4byte	.LLST3
+ 694 01dc 09       		.uleb128 0x9
+ 695 01dd 0E000000 		.4byte	.LASF32
+ 696 01e1 01       		.byte	0x1
+ 697 01e2 29       		.byte	0x29
+ 698 01e3 7B010000 		.4byte	0x17b
+ 699 01e7 05       		.byte	0x5
+ 700 01e8 03       		.byte	0x3
+ 701 01e9 00000000 		.4byte	_battVoltage
+ 702 01ed 09       		.uleb128 0x9
+ 703 01ee A6000000 		.4byte	.LASF33
+ 704 01f2 01       		.byte	0x1
+ 705 01f3 2A       		.byte	0x2a
+ 706 01f4 7B010000 		.4byte	0x17b
+ 707 01f8 05       		.byte	0x5
+ 708 01f9 03       		.byte	0x3
+ 709 01fa 08000000 		.4byte	_throttleVoltage
+ 710 01fe 09       		.uleb128 0x9
+ 711 01ff 1D010000 		.4byte	.LASF34
+ 712 0203 01       		.byte	0x1
+ 713 0204 2B       		.byte	0x2b
+ 714 0205 A4000000 		.4byte	0xa4
+ 715 0209 05       		.byte	0x5
+ 716 020a 03       		.byte	0x3
+ 717 020b 10000000 		.4byte	_enableThrottleVoltMeasFlag
+ 718 020f 0D       		.uleb128 0xd
+ 719 0210 D4000000 		.4byte	.LASF35
+ 720 0214 05       		.byte	0x5
+ 721 0215 CE06     		.2byte	0x6ce
+ 722 0217 1D020000 		.4byte	0x21d
+ 723 021b 01       		.byte	0x1
+ 724 021c 01       		.byte	0x1
+ 725 021d 0E       		.uleb128 0xe
+ 726 021e 6C000000 		.4byte	0x6c
+ 727 0222 0F       		.uleb128 0xf
+ 728 0223 7A000000 		.4byte	0x7a
+ 729 0227 32020000 		.4byte	0x232
+ 730 022b 10       		.uleb128 0x10
+ 731 022c 8C000000 		.4byte	0x8c
+ 732 0230 C7       		.byte	0xc7
+ 733 0231 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 17
+
+
+ 734 0232 11       		.uleb128 0x11
+ 735 0233 CA000000 		.4byte	.LASF36
+ 736 0237 06       		.byte	0x6
+ 737 0238 2A       		.byte	0x2a
+ 738 0239 22020000 		.4byte	0x222
+ 739 023d 01       		.byte	0x1
+ 740 023e 05       		.byte	0x5
+ 741 023f 03       		.byte	0x3
+ 742 0240 00000000 		.4byte	debugBuff
+ 743 0244 00       		.byte	0x0
+ 744              		.section	.debug_abbrev
+ 745 0000 01       		.uleb128 0x1
+ 746 0001 11       		.uleb128 0x11
+ 747 0002 01       		.byte	0x1
+ 748 0003 25       		.uleb128 0x25
+ 749 0004 0E       		.uleb128 0xe
+ 750 0005 13       		.uleb128 0x13
+ 751 0006 0B       		.uleb128 0xb
+ 752 0007 03       		.uleb128 0x3
+ 753 0008 0E       		.uleb128 0xe
+ 754 0009 1B       		.uleb128 0x1b
+ 755 000a 0E       		.uleb128 0xe
+ 756 000b 11       		.uleb128 0x11
+ 757 000c 01       		.uleb128 0x1
+ 758 000d 52       		.uleb128 0x52
+ 759 000e 01       		.uleb128 0x1
+ 760 000f 55       		.uleb128 0x55
+ 761 0010 06       		.uleb128 0x6
+ 762 0011 10       		.uleb128 0x10
+ 763 0012 06       		.uleb128 0x6
+ 764 0013 00       		.byte	0x0
+ 765 0014 00       		.byte	0x0
+ 766 0015 02       		.uleb128 0x2
+ 767 0016 24       		.uleb128 0x24
+ 768 0017 00       		.byte	0x0
+ 769 0018 0B       		.uleb128 0xb
+ 770 0019 0B       		.uleb128 0xb
+ 771 001a 3E       		.uleb128 0x3e
+ 772 001b 0B       		.uleb128 0xb
+ 773 001c 03       		.uleb128 0x3
+ 774 001d 0E       		.uleb128 0xe
+ 775 001e 00       		.byte	0x0
+ 776 001f 00       		.byte	0x0
+ 777 0020 03       		.uleb128 0x3
+ 778 0021 16       		.uleb128 0x16
+ 779 0022 00       		.byte	0x0
+ 780 0023 03       		.uleb128 0x3
+ 781 0024 0E       		.uleb128 0xe
+ 782 0025 3A       		.uleb128 0x3a
+ 783 0026 0B       		.uleb128 0xb
+ 784 0027 3B       		.uleb128 0x3b
+ 785 0028 0B       		.uleb128 0xb
+ 786 0029 49       		.uleb128 0x49
+ 787 002a 13       		.uleb128 0x13
+ 788 002b 00       		.byte	0x0
+ 789 002c 00       		.byte	0x0
+ 790 002d 04       		.uleb128 0x4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 18
+
+
+ 791 002e 24       		.uleb128 0x24
+ 792 002f 00       		.byte	0x0
+ 793 0030 0B       		.uleb128 0xb
+ 794 0031 0B       		.uleb128 0xb
+ 795 0032 3E       		.uleb128 0x3e
+ 796 0033 0B       		.uleb128 0xb
+ 797 0034 03       		.uleb128 0x3
+ 798 0035 08       		.uleb128 0x8
+ 799 0036 00       		.byte	0x0
+ 800 0037 00       		.byte	0x0
+ 801 0038 05       		.uleb128 0x5
+ 802 0039 24       		.uleb128 0x24
+ 803 003a 00       		.byte	0x0
+ 804 003b 0B       		.uleb128 0xb
+ 805 003c 0B       		.uleb128 0xb
+ 806 003d 3E       		.uleb128 0x3e
+ 807 003e 0B       		.uleb128 0xb
+ 808 003f 00       		.byte	0x0
+ 809 0040 00       		.byte	0x0
+ 810 0041 06       		.uleb128 0x6
+ 811 0042 04       		.uleb128 0x4
+ 812 0043 01       		.byte	0x1
+ 813 0044 0B       		.uleb128 0xb
+ 814 0045 0B       		.uleb128 0xb
+ 815 0046 3A       		.uleb128 0x3a
+ 816 0047 0B       		.uleb128 0xb
+ 817 0048 3B       		.uleb128 0x3b
+ 818 0049 0B       		.uleb128 0xb
+ 819 004a 01       		.uleb128 0x1
+ 820 004b 13       		.uleb128 0x13
+ 821 004c 00       		.byte	0x0
+ 822 004d 00       		.byte	0x0
+ 823 004e 07       		.uleb128 0x7
+ 824 004f 28       		.uleb128 0x28
+ 825 0050 00       		.byte	0x0
+ 826 0051 03       		.uleb128 0x3
+ 827 0052 0E       		.uleb128 0xe
+ 828 0053 1C       		.uleb128 0x1c
+ 829 0054 0D       		.uleb128 0xd
+ 830 0055 00       		.byte	0x0
+ 831 0056 00       		.byte	0x0
+ 832 0057 08       		.uleb128 0x8
+ 833 0058 2E       		.uleb128 0x2e
+ 834 0059 01       		.byte	0x1
+ 835 005a 3F       		.uleb128 0x3f
+ 836 005b 0C       		.uleb128 0xc
+ 837 005c 03       		.uleb128 0x3
+ 838 005d 0E       		.uleb128 0xe
+ 839 005e 3A       		.uleb128 0x3a
+ 840 005f 0B       		.uleb128 0xb
+ 841 0060 3B       		.uleb128 0x3b
+ 842 0061 0B       		.uleb128 0xb
+ 843 0062 27       		.uleb128 0x27
+ 844 0063 0C       		.uleb128 0xc
+ 845 0064 11       		.uleb128 0x11
+ 846 0065 01       		.uleb128 0x1
+ 847 0066 12       		.uleb128 0x12
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 19
+
+
+ 848 0067 01       		.uleb128 0x1
+ 849 0068 40       		.uleb128 0x40
+ 850 0069 06       		.uleb128 0x6
+ 851 006a 01       		.uleb128 0x1
+ 852 006b 13       		.uleb128 0x13
+ 853 006c 00       		.byte	0x0
+ 854 006d 00       		.byte	0x0
+ 855 006e 09       		.uleb128 0x9
+ 856 006f 34       		.uleb128 0x34
+ 857 0070 00       		.byte	0x0
+ 858 0071 03       		.uleb128 0x3
+ 859 0072 0E       		.uleb128 0xe
+ 860 0073 3A       		.uleb128 0x3a
+ 861 0074 0B       		.uleb128 0xb
+ 862 0075 3B       		.uleb128 0x3b
+ 863 0076 0B       		.uleb128 0xb
+ 864 0077 49       		.uleb128 0x49
+ 865 0078 13       		.uleb128 0x13
+ 866 0079 02       		.uleb128 0x2
+ 867 007a 0A       		.uleb128 0xa
+ 868 007b 00       		.byte	0x0
+ 869 007c 00       		.byte	0x0
+ 870 007d 0A       		.uleb128 0xa
+ 871 007e 0B       		.uleb128 0xb
+ 872 007f 01       		.byte	0x1
+ 873 0080 11       		.uleb128 0x11
+ 874 0081 01       		.uleb128 0x1
+ 875 0082 12       		.uleb128 0x12
+ 876 0083 01       		.uleb128 0x1
+ 877 0084 00       		.byte	0x0
+ 878 0085 00       		.byte	0x0
+ 879 0086 0B       		.uleb128 0xb
+ 880 0087 05       		.uleb128 0x5
+ 881 0088 00       		.byte	0x0
+ 882 0089 03       		.uleb128 0x3
+ 883 008a 0E       		.uleb128 0xe
+ 884 008b 3A       		.uleb128 0x3a
+ 885 008c 0B       		.uleb128 0xb
+ 886 008d 3B       		.uleb128 0x3b
+ 887 008e 0B       		.uleb128 0xb
+ 888 008f 49       		.uleb128 0x49
+ 889 0090 13       		.uleb128 0x13
+ 890 0091 02       		.uleb128 0x2
+ 891 0092 0A       		.uleb128 0xa
+ 892 0093 00       		.byte	0x0
+ 893 0094 00       		.byte	0x0
+ 894 0095 0C       		.uleb128 0xc
+ 895 0096 2E       		.uleb128 0x2e
+ 896 0097 00       		.byte	0x0
+ 897 0098 3F       		.uleb128 0x3f
+ 898 0099 0C       		.uleb128 0xc
+ 899 009a 03       		.uleb128 0x3
+ 900 009b 0E       		.uleb128 0xe
+ 901 009c 3A       		.uleb128 0x3a
+ 902 009d 0B       		.uleb128 0xb
+ 903 009e 3B       		.uleb128 0x3b
+ 904 009f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 20
+
+
+ 905 00a0 27       		.uleb128 0x27
+ 906 00a1 0C       		.uleb128 0xc
+ 907 00a2 49       		.uleb128 0x49
+ 908 00a3 13       		.uleb128 0x13
+ 909 00a4 11       		.uleb128 0x11
+ 910 00a5 01       		.uleb128 0x1
+ 911 00a6 12       		.uleb128 0x12
+ 912 00a7 01       		.uleb128 0x1
+ 913 00a8 40       		.uleb128 0x40
+ 914 00a9 06       		.uleb128 0x6
+ 915 00aa 00       		.byte	0x0
+ 916 00ab 00       		.byte	0x0
+ 917 00ac 0D       		.uleb128 0xd
+ 918 00ad 34       		.uleb128 0x34
+ 919 00ae 00       		.byte	0x0
+ 920 00af 03       		.uleb128 0x3
+ 921 00b0 0E       		.uleb128 0xe
+ 922 00b1 3A       		.uleb128 0x3a
+ 923 00b2 0B       		.uleb128 0xb
+ 924 00b3 3B       		.uleb128 0x3b
+ 925 00b4 05       		.uleb128 0x5
+ 926 00b5 49       		.uleb128 0x49
+ 927 00b6 13       		.uleb128 0x13
+ 928 00b7 3F       		.uleb128 0x3f
+ 929 00b8 0C       		.uleb128 0xc
+ 930 00b9 3C       		.uleb128 0x3c
+ 931 00ba 0C       		.uleb128 0xc
+ 932 00bb 00       		.byte	0x0
+ 933 00bc 00       		.byte	0x0
+ 934 00bd 0E       		.uleb128 0xe
+ 935 00be 35       		.uleb128 0x35
+ 936 00bf 00       		.byte	0x0
+ 937 00c0 49       		.uleb128 0x49
+ 938 00c1 13       		.uleb128 0x13
+ 939 00c2 00       		.byte	0x0
+ 940 00c3 00       		.byte	0x0
+ 941 00c4 0F       		.uleb128 0xf
+ 942 00c5 01       		.uleb128 0x1
+ 943 00c6 01       		.byte	0x1
+ 944 00c7 49       		.uleb128 0x49
+ 945 00c8 13       		.uleb128 0x13
+ 946 00c9 01       		.uleb128 0x1
+ 947 00ca 13       		.uleb128 0x13
+ 948 00cb 00       		.byte	0x0
+ 949 00cc 00       		.byte	0x0
+ 950 00cd 10       		.uleb128 0x10
+ 951 00ce 21       		.uleb128 0x21
+ 952 00cf 00       		.byte	0x0
+ 953 00d0 49       		.uleb128 0x49
+ 954 00d1 13       		.uleb128 0x13
+ 955 00d2 2F       		.uleb128 0x2f
+ 956 00d3 0B       		.uleb128 0xb
+ 957 00d4 00       		.byte	0x0
+ 958 00d5 00       		.byte	0x0
+ 959 00d6 11       		.uleb128 0x11
+ 960 00d7 34       		.uleb128 0x34
+ 961 00d8 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 21
+
+
+ 962 00d9 03       		.uleb128 0x3
+ 963 00da 0E       		.uleb128 0xe
+ 964 00db 3A       		.uleb128 0x3a
+ 965 00dc 0B       		.uleb128 0xb
+ 966 00dd 3B       		.uleb128 0x3b
+ 967 00de 0B       		.uleb128 0xb
+ 968 00df 49       		.uleb128 0x49
+ 969 00e0 13       		.uleb128 0x13
+ 970 00e1 3F       		.uleb128 0x3f
+ 971 00e2 0C       		.uleb128 0xc
+ 972 00e3 02       		.uleb128 0x2
+ 973 00e4 0A       		.uleb128 0xa
+ 974 00e5 00       		.byte	0x0
+ 975 00e6 00       		.byte	0x0
+ 976 00e7 00       		.byte	0x0
+ 977              		.section	.debug_pubnames,"",%progbits
+ 978 0000 73000000 		.4byte	0x73
+ 979 0004 0200     		.2byte	0x2
+ 980 0006 00000000 		.4byte	.Ldebug_info0
+ 981 000a 45020000 		.4byte	0x245
+ 982 000e D5000000 		.4byte	0xd5
+ 983 0012 4164635F 		.ascii	"Adc_Run\000"
+ 983      52756E00 
+ 984 001a 82010000 		.4byte	0x182
+ 985 001e 4164635F 		.ascii	"Adc_EnableThrottleVoltMeas\000"
+ 985      456E6162 
+ 985      6C655468 
+ 985      726F7474 
+ 985      6C65566F 
+ 986 0039 AA010000 		.4byte	0x1aa
+ 987 003d 4164635F 		.ascii	"Adc_GetBattVolt\000"
+ 987      47657442 
+ 987      61747456 
+ 987      6F6C7400 
+ 988 004d C3010000 		.4byte	0x1c3
+ 989 0051 4164635F 		.ascii	"Adc_GetThrottleVolt\000"
+ 989      47657454 
+ 989      68726F74 
+ 989      746C6556 
+ 989      6F6C7400 
+ 990 0065 32020000 		.4byte	0x232
+ 991 0069 64656275 		.ascii	"debugBuff\000"
+ 991      67427566 
+ 991      6600
+ 992 0073 00000000 		.4byte	0x0
+ 993              		.section	.debug_aranges,"",%progbits
+ 994 0000 34000000 		.4byte	0x34
+ 995 0004 0200     		.2byte	0x2
+ 996 0006 00000000 		.4byte	.Ldebug_info0
+ 997 000a 04       		.byte	0x4
+ 998 000b 00       		.byte	0x0
+ 999 000c 0000     		.2byte	0x0
+ 1000 000e 0000     		.2byte	0x0
+ 1001 0010 00000000 		.4byte	.LFB29
+ 1002 0014 C8010000 		.4byte	.LFE29-.LFB29
+ 1003 0018 00000000 		.4byte	.LFB30
+ 1004 001c 20000000 		.4byte	.LFE30-.LFB30
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 22
+
+
+ 1005 0020 00000000 		.4byte	.LFB31
+ 1006 0024 1A000000 		.4byte	.LFE31-.LFB31
+ 1007 0028 00000000 		.4byte	.LFB32
+ 1008 002c 1A000000 		.4byte	.LFE32-.LFB32
+ 1009 0030 00000000 		.4byte	0x0
+ 1010 0034 00000000 		.4byte	0x0
+ 1011              		.section	.debug_ranges,"",%progbits
+ 1012              	.Ldebug_ranges0:
+ 1013 0000 00000000 		.4byte	.Ltext0
+ 1014 0004 00000000 		.4byte	.Letext0
+ 1015 0008 00000000 		.4byte	.LFB29
+ 1016 000c C8010000 		.4byte	.LFE29
+ 1017 0010 00000000 		.4byte	.LFB30
+ 1018 0014 20000000 		.4byte	.LFE30
+ 1019 0018 00000000 		.4byte	.LFB31
+ 1020 001c 1A000000 		.4byte	.LFE31
+ 1021 0020 00000000 		.4byte	.LFB32
+ 1022 0024 1A000000 		.4byte	.LFE32
+ 1023 0028 00000000 		.4byte	0x0
+ 1024 002c 00000000 		.4byte	0x0
+ 1025              		.section	.debug_str,"MS",%progbits,1
+ 1026              	.LASF6:
+ 1027 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1027      206C6F6E 
+ 1027      6720696E 
+ 1027      7400
+ 1028              	.LASF32:
+ 1029 000e 5F626174 		.ascii	"_battVoltage\000"
+ 1029      74566F6C 
+ 1029      74616765 
+ 1029      00
+ 1030              	.LASF19:
+ 1031 001b 73746174 		.ascii	"stateCounter\000"
+ 1031      65436F75 
+ 1031      6E746572 
+ 1031      00
+ 1032              	.LASF25:
+ 1033 0028 61646356 		.ascii	"adcVal\000"
+ 1033      616C00
+ 1034              	.LASF40:
+ 1035 002f 656E6162 		.ascii	"enable\000"
+ 1035      6C6500
+ 1036              	.LASF14:
+ 1037 0036 626F6F6C 		.ascii	"bool_t\000"
+ 1037      5F7400
+ 1038              	.LASF16:
+ 1039 003d 61646349 		.ascii	"adcIdle\000"
+ 1039      646C6500 
+ 1040              	.LASF31:
+ 1041 0045 4164635F 		.ascii	"Adc_GetThrottleVolt\000"
+ 1041      47657454 
+ 1041      68726F74 
+ 1041      746C6556 
+ 1041      6F6C7400 
+ 1042              	.LASF22:
+ 1043 0059 7475726E 		.ascii	"turnOn\000"
+ 1043      4F6E00
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 23
+
+
+ 1044              	.LASF17:
+ 1045 0060 61646347 		.ascii	"adcGetBattVolt\000"
+ 1045      65744261 
+ 1045      7474566F 
+ 1045      6C7400
+ 1046              	.LASF30:
+ 1047 006f 4164635F 		.ascii	"Adc_GetBattVolt\000"
+ 1047      47657442 
+ 1047      61747456 
+ 1047      6F6C7400 
+ 1048              	.LASF1:
+ 1049 007f 756E7369 		.ascii	"unsigned char\000"
+ 1049      676E6564 
+ 1049      20636861 
+ 1049      7200
+ 1050              	.LASF20:
+ 1051 008d 6C617374 		.ascii	"lastBattVoltMeasureCount\000"
+ 1051      42617474 
+ 1051      566F6C74 
+ 1051      4D656173 
+ 1051      75726543 
+ 1052              	.LASF33:
+ 1053 00a6 5F746872 		.ascii	"_throttleVoltage\000"
+ 1053      6F74746C 
+ 1053      65566F6C 
+ 1053      74616765 
+ 1053      00
+ 1054              	.LASF3:
+ 1055 00b7 73686F72 		.ascii	"short unsigned int\000"
+ 1055      7420756E 
+ 1055      7369676E 
+ 1055      65642069 
+ 1055      6E7400
+ 1056              	.LASF36:
+ 1057 00ca 64656275 		.ascii	"debugBuff\000"
+ 1057      67427566 
+ 1057      6600
+ 1058              	.LASF35:
+ 1059 00d4 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1059      52784275 
+ 1059      66666572 
+ 1059      00
+ 1060              	.LASF12:
+ 1061 00e1 46414C53 		.ascii	"FALSE\000"
+ 1061      4500
+ 1062              	.LASF5:
+ 1063 00e7 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1063      20756E73 
+ 1063      69676E65 
+ 1063      6420696E 
+ 1063      7400
+ 1064              	.LASF15:
+ 1065 00f9 61646349 		.ascii	"adcInit\000"
+ 1065      6E697400 
+ 1066              	.LASF11:
+ 1067 0101 75696E74 		.ascii	"uint16\000"
+ 1067      313600
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 24
+
+
+ 1068              	.LASF26:
+ 1069 0108 74656D70 		.ascii	"tempVar\000"
+ 1069      56617200 
+ 1070              	.LASF8:
+ 1071 0110 756E7369 		.ascii	"unsigned int\000"
+ 1071      676E6564 
+ 1071      20696E74 
+ 1071      00
+ 1072              	.LASF34:
+ 1073 011d 5F656E61 		.ascii	"_enableThrottleVoltMeasFlag\000"
+ 1073      626C6554 
+ 1073      68726F74 
+ 1073      746C6556 
+ 1073      6F6C744D 
+ 1074              	.LASF7:
+ 1075 0139 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1075      206C6F6E 
+ 1075      6720756E 
+ 1075      7369676E 
+ 1075      65642069 
+ 1076              	.LASF29:
+ 1077 0150 4164635F 		.ascii	"Adc_EnableThrottleVoltMeas\000"
+ 1077      456E6162 
+ 1077      6C655468 
+ 1077      726F7474 
+ 1077      6C65566F 
+ 1078              	.LASF18:
+ 1079 016b 61646353 		.ascii	"adcStates_t\000"
+ 1079      74617465 
+ 1079      735F7400 
+ 1080              	.LASF24:
+ 1081 0177 70726576 		.ascii	"prevAdcState\000"
+ 1081      41646353 
+ 1081      74617465 
+ 1081      00
+ 1082              	.LASF37:
+ 1083 0184 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1083      4320342E 
+ 1083      342E3100 
+ 1084              	.LASF9:
+ 1085 0190 63686172 		.ascii	"char\000"
+ 1085      00
+ 1086              	.LASF2:
+ 1087 0195 73686F72 		.ascii	"short int\000"
+ 1087      7420696E 
+ 1087      7400
+ 1088              	.LASF21:
+ 1089 019f 62617474 		.ascii	"battVoltMeasurePeriod\000"
+ 1089      566F6C74 
+ 1089      4D656173 
+ 1089      75726550 
+ 1089      6572696F 
+ 1090              	.LASF13:
+ 1091 01b5 54525545 		.ascii	"TRUE\000"
+ 1091      00
+ 1092              	.LASF38:
+ 1093 01ba 2E5C4164 		.ascii	".\\Adc.c\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccsHgdp4.s 			page 25
+
+
+ 1093      632E6300 
+ 1094              	.LASF23:
+ 1095 01c2 61646353 		.ascii	"adcState\000"
+ 1095      74617465 
+ 1095      00
+ 1096              	.LASF10:
+ 1097 01cb 75696E74 		.ascii	"uint32_t\000"
+ 1097      33325F74 
+ 1097      00
+ 1098              	.LASF4:
+ 1099 01d4 6C6F6E67 		.ascii	"long int\000"
+ 1099      20696E74 
+ 1099      00
+ 1100              	.LASF39:
+ 1101 01dd 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1101      73657273 
+ 1101      5C47656F 
+ 1101      5C446F63 
+ 1101      756D656E 
+ 1102 020b 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 1102      645C4669 
+ 1102      726D7761 
+ 1102      72655C50 
+ 1102      536F435C 
+ 1103 023b 00       		.ascii	"\000"
+ 1104              	.LASF0:
+ 1105 023c 7369676E 		.ascii	"signed char\000"
+ 1105      65642063 
+ 1105      68617200 
+ 1106              	.LASF27:
+ 1107 0248 646F7562 		.ascii	"double\000"
+ 1107      6C6500
+ 1108              	.LASF28:
+ 1109 024f 4164635F 		.ascii	"Adc_Run\000"
+ 1109      52756E00 
+ 1110              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

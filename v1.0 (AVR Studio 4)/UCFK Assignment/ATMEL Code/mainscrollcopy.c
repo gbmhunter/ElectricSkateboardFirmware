@@ -1,0 +1,150 @@
+#include <avr/io.h>
+#include <stdint.h>
+#include <font.h>
+
+#define BV(x) (1 << (x))
+#define CLEARBIT(a,x) ((a) & (~BV(x)))
+#define SETBIT(a,x) ((a) | (BV(x)))
+#define ASSIGNBIT(a,x,v) (v==0)?CLEARBIT(a,x):SETBIT(a,x)
+#define ISCLEAR(a,x) ((((a) & (BV(x))) == BV(x))?(0):(1))
+#define ISSET(a,x) ((((a) & (BV(x))) == BV(x))?(1):(0))
+
+int messagearray[50][5];
+char message[] = "HAPPY :-) SAD :-( HUNGRY :-O DEAD X-( KISS :-X RICH $-) ";
+int stringlength = sizeof(message);
+
+
+void messagecreator()
+{
+
+	int asciicode;
+	int i;
+	int j;
+	for(i=0; i<stringlength; i++)
+	{
+		for(j=0; j<5; j++)
+		{
+			asciicode = message[i] - 32;
+			messagearray[i][j] = ~font[asciicode*5+j];
+		}
+	}
+}	
+
+
+void collumn(int x) // This is spelt wrongly!?!
+{
+	switch(x)
+	{
+		case 0:
+			PORTB = SETBIT(PORTB,0);		//PORTB = ~0;
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 1: 
+			PORTB = CLEARBIT(PORTB,0);		//PORTB = ~1;
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 2: 
+			PORTB = SETBIT(PORTB,0);		//PORTB = ~2;
+			PORTB = CLEARBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 3: 
+			PORTB = SETBIT(PORTB,0);		//PORTB = ~4;
+			PORTB = SETBIT(PORTB,1);
+			PORTB = CLEARBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 4: 
+			PORTB = SETBIT(PORTB,0);		//PORTC = ~4;
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = CLEARBIT(PORTC,2);
+			PORTC = SETBIT(PORTC,3);
+		break;
+		case 5: 
+			PORTB = SETBIT(PORTB,0);		//PORTB = ~8;
+			PORTB = SETBIT(PORTB,1);
+			PORTB = SETBIT(PORTB,2);
+			PORTC = SETBIT(PORTC,2);
+			PORTC = CLEARBIT(PORTC,3);
+		break;
+	}
+}
+
+int main(void)
+{
+
+	messagecreator();
+
+	DDRB = 0x07;
+	DDRC = 0x0C;
+	DDRD = 0xFE;
+	TCCR1A = 0x00;
+	TCCR1B = 0x05;
+
+	PORTD = ~0x00;
+	PORTB = ~0x00;
+	PORTC = ~0x00;
+
+	int char_start = 0;
+	int char_actual = 0;
+	int col_num = 0;
+	int col_on = 0;
+	int position = 0;
+	int count = 0;
+
+	while(1)
+	{
+		count = count + 1;
+		
+		if(count == 6){ // controls Speed of scrolling
+			position = position + 1; //Moves the display once over every 6 times
+			count = 0;
+			if(position == 6){ // Increments starting character once 1st one has fully moved off screen
+				char_start = char_start + 1;
+				position = 1;
+			}
+			if(char_start == (stringlength-1)){
+				char_start = 0;
+			}
+		}
+		col_num = position;	
+
+		for(col_on = 1; col_on < 6; ++col_on)
+		{
+			TCNT1 = 0;
+				
+
+				if (col_num >= 5){ // Shows the start of the next letter
+					char_actual = char_start + 1;
+					PORTD = messagearray[char_actual][(col_num-5)];
+				}
+				else{
+					char_actual = char_start;
+					PORTD = messagearray[char_actual][(col_num)];
+				}
+				col_num = col_num + 1;
+				collumn(col_on);
+				
+				
+
+			while (TCNT1 < 2) // controls resolution
+   				continue;
+				collumn(0);
+				
+		}
+		
+		
+	}
+	//return(0);
+}
+

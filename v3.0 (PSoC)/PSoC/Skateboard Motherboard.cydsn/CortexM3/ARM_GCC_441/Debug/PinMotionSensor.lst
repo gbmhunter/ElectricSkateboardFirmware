@@ -1,0 +1,971 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"PinMotionSensor.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 C8000000 		.text
+  20      02006800 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.PinMotionSensor_Write,"ax",%progbits
+  24              		.align	2
+  25              		.global	PinMotionSensor_Write
+  26              		.thumb
+  27              		.thumb_func
+  28              		.type	PinMotionSensor_Write, %function
+  29              	PinMotionSensor_Write:
+  30              	.LFB0:
+  31              		.file 1 ".\\Generated_Source\\PSoC5\\PinMotionSensor.c"
+   1:.\Generated_Source\PSoC5/PinMotionSensor.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/PinMotionSensor.c **** * File Name: PinMotionSensor.c  
+   3:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Version 1.60
+   4:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+   5:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Description:
+   6:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  This file contains API to enable firmware control of a Pins component.
+   7:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+   8:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Note:
+   9:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  10:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************
+  11:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Copyright 2008-2010, Cypress Semiconductor Corporation.  All rights reserved.
+  12:.\Generated_Source\PSoC5/PinMotionSensor.c **** * You may use this file only in accordance with the license, terms, conditions, 
+  13:.\Generated_Source\PSoC5/PinMotionSensor.c **** * disclaimers, and limitations in the end user license agreement accompanying 
+  14:.\Generated_Source\PSoC5/PinMotionSensor.c **** * the software package with which this file was provided.
+  15:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************/
+  16:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  17:.\Generated_Source\PSoC5/PinMotionSensor.c **** #include "cytypes.h"
+  18:.\Generated_Source\PSoC5/PinMotionSensor.c **** #include "PinMotionSensor.h"
+  19:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  20:.\Generated_Source\PSoC5/PinMotionSensor.c **** /* APIs are not generated for P15[7:6] */
+  21:.\Generated_Source\PSoC5/PinMotionSensor.c **** #if !(CYDEV_CHIP_FAMILY_USED == CYDEV_CHIP_FAMILY_PSOC5 &&\
+  22:.\Generated_Source\PSoC5/PinMotionSensor.c ****      CYDEV_CHIP_REVISION_USED == CYDEV_CHIP_REVISION_5A_PRODUCTION &&\
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 2
+
+
+  23:.\Generated_Source\PSoC5/PinMotionSensor.c **** 	 PinMotionSensor__PORT == 15 && (PinMotionSensor__MASK & 0xC0))
+  24:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  25:.\Generated_Source\PSoC5/PinMotionSensor.c **** /*******************************************************************************
+  26:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Function Name: PinMotionSensor_Write
+  27:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************
+  28:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Summary:
+  29:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Assign a new value to the digital port's data output register.  
+  30:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  31:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Parameters:  
+  32:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  prtValue:  The value to be assigned to the Digital Port. 
+  33:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  34:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Return: 
+  35:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  void 
+  36:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  
+  37:.\Generated_Source\PSoC5/PinMotionSensor.c **** *******************************************************************************/
+  38:.\Generated_Source\PSoC5/PinMotionSensor.c **** void PinMotionSensor_Write(uint8 value) 
+  39:.\Generated_Source\PSoC5/PinMotionSensor.c **** {
+  32              		.loc 1 39 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 16
+  35              		@ frame_needed = 1, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  37 0000 80B4     		push	{r7}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 4
+  40 0002 85B0     		sub	sp, sp, #20
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 24
+  43 0004 00AF     		add	r7, sp, #0
+  44              		.cfi_offset 7, -4
+  45              	.LCFI2:
+  46              		.cfi_def_cfa_register 7
+  47 0006 0346     		mov	r3, r0
+  48 0008 FB71     		strb	r3, [r7, #7]
+  40:.\Generated_Source\PSoC5/PinMotionSensor.c ****     uint8 staticBits = PinMotionSensor_DR & ~PinMotionSensor_MASK;
+  49              		.loc 1 40 0
+  50 000a 45F26013 		movw	r3, #:lower16:1073762656
+  51 000e C4F20003 		movt	r3, #:upper16:1073762656
+  52 0012 1B78     		ldrb	r3, [r3, #0]
+  53 0014 DBB2     		uxtb	r3, r3
+  54 0016 23F00203 		bic	r3, r3, #2
+  55 001a FB73     		strb	r3, [r7, #15]
+  41:.\Generated_Source\PSoC5/PinMotionSensor.c ****     PinMotionSensor_DR = staticBits | ((value << PinMotionSensor_SHIFT) & PinMotionSensor_MASK);
+  56              		.loc 1 41 0
+  57 001c 45F26013 		movw	r3, #:lower16:1073762656
+  58 0020 C4F20003 		movt	r3, #:upper16:1073762656
+  59 0024 FA79     		ldrb	r2, [r7, #7]
+  60 0026 4FEA4202 		lsl	r2, r2, #1
+  61 002a D2B2     		uxtb	r2, r2
+  62 002c 02F00202 		and	r2, r2, #2
+  63 0030 F97B     		ldrb	r1, [r7, #15]
+  64 0032 42EA0102 		orr	r2, r2, r1
+  65 0036 D2B2     		uxtb	r2, r2
+  66 0038 1A70     		strb	r2, [r3, #0]
+  42:.\Generated_Source\PSoC5/PinMotionSensor.c **** }
+  67              		.loc 1 42 0
+  68 003a 07F11407 		add	r7, r7, #20
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 3
+
+
+  69 003e BD46     		mov	sp, r7
+  70 0040 80BC     		pop	{r7}
+  71 0042 7047     		bx	lr
+  72              		.cfi_endproc
+  73              	.LFE0:
+  74              		.size	PinMotionSensor_Write, .-PinMotionSensor_Write
+  75              		.section	.text.PinMotionSensor_SetDriveMode,"ax",%progbits
+  76              		.align	2
+  77              		.global	PinMotionSensor_SetDriveMode
+  78              		.thumb
+  79              		.thumb_func
+  80              		.type	PinMotionSensor_SetDriveMode, %function
+  81              	PinMotionSensor_SetDriveMode:
+  82              	.LFB1:
+  43:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  44:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  45:.\Generated_Source\PSoC5/PinMotionSensor.c **** /*******************************************************************************
+  46:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Function Name: PinMotionSensor_SetDriveMode
+  47:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************
+  48:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Summary:
+  49:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Change the drive mode on the pins of the port.
+  50:.\Generated_Source\PSoC5/PinMotionSensor.c **** * 
+  51:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Parameters:  
+  52:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  mode:  Change the pins to this drive mode.
+  53:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  54:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Return: 
+  55:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  void
+  56:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  57:.\Generated_Source\PSoC5/PinMotionSensor.c **** *******************************************************************************/
+  58:.\Generated_Source\PSoC5/PinMotionSensor.c **** void PinMotionSensor_SetDriveMode(uint8 mode) 
+  59:.\Generated_Source\PSoC5/PinMotionSensor.c **** {
+  83              		.loc 1 59 0
+  84              		.cfi_startproc
+  85              		@ args = 0, pretend = 0, frame = 8
+  86              		@ frame_needed = 1, uses_anonymous_args = 0
+  87              		@ link register save eliminated.
+  88 0000 80B4     		push	{r7}
+  89              	.LCFI3:
+  90              		.cfi_def_cfa_offset 4
+  91 0002 83B0     		sub	sp, sp, #12
+  92              	.LCFI4:
+  93              		.cfi_def_cfa_offset 16
+  94 0004 00AF     		add	r7, sp, #0
+  95              		.cfi_offset 7, -4
+  96              	.LCFI5:
+  97              		.cfi_def_cfa_register 7
+  98 0006 0346     		mov	r3, r0
+  99 0008 FB71     		strb	r3, [r7, #7]
+  60:.\Generated_Source\PSoC5/PinMotionSensor.c **** 	CyPins_SetPinDriveMode(PinMotionSensor_0, mode);
+ 100              		.loc 1 60 0
+ 101 000a 45F23103 		movw	r3, #:lower16:1073762353
+ 102 000e C4F20003 		movt	r3, #:upper16:1073762353
+ 103 0012 45F23102 		movw	r2, #:lower16:1073762353
+ 104 0016 C4F20002 		movt	r2, #:upper16:1073762353
+ 105 001a 1278     		ldrb	r2, [r2, #0]
+ 106 001c D2B2     		uxtb	r2, r2
+ 107 001e 1146     		mov	r1, r2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 4
+
+
+ 108 0020 01F0F101 		and	r1, r1, #241
+ 109 0024 FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 110 0026 02F00E02 		and	r2, r2, #14
+ 111 002a 41EA0202 		orr	r2, r1, r2
+ 112 002e D2B2     		uxtb	r2, r2
+ 113 0030 1A70     		strb	r2, [r3, #0]
+  61:.\Generated_Source\PSoC5/PinMotionSensor.c **** }
+ 114              		.loc 1 61 0
+ 115 0032 07F10C07 		add	r7, r7, #12
+ 116 0036 BD46     		mov	sp, r7
+ 117 0038 80BC     		pop	{r7}
+ 118 003a 7047     		bx	lr
+ 119              		.cfi_endproc
+ 120              	.LFE1:
+ 121              		.size	PinMotionSensor_SetDriveMode, .-PinMotionSensor_SetDriveMode
+ 122              		.section	.text.PinMotionSensor_Read,"ax",%progbits
+ 123              		.align	2
+ 124              		.global	PinMotionSensor_Read
+ 125              		.thumb
+ 126              		.thumb_func
+ 127              		.type	PinMotionSensor_Read, %function
+ 128              	PinMotionSensor_Read:
+ 129              	.LFB2:
+  62:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  63:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  64:.\Generated_Source\PSoC5/PinMotionSensor.c **** /*******************************************************************************
+  65:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Function Name: PinMotionSensor_Read
+  66:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************
+  67:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Summary:
+  68:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Read the current value on the pins of the Digital Port in right justified 
+  69:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  form.
+  70:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  71:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Parameters:  
+  72:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  void 
+  73:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  74:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Return: 
+  75:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Returns the current value of the Digital Port as a right justified number
+  76:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  
+  77:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Note:
+  78:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Macro PinMotionSensor_ReadPS calls this function. 
+  79:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  
+  80:.\Generated_Source\PSoC5/PinMotionSensor.c **** *******************************************************************************/
+  81:.\Generated_Source\PSoC5/PinMotionSensor.c **** uint8 PinMotionSensor_Read(void) 
+  82:.\Generated_Source\PSoC5/PinMotionSensor.c **** {
+ 130              		.loc 1 82 0
+ 131              		.cfi_startproc
+ 132              		@ args = 0, pretend = 0, frame = 0
+ 133              		@ frame_needed = 1, uses_anonymous_args = 0
+ 134              		@ link register save eliminated.
+ 135 0000 80B4     		push	{r7}
+ 136              	.LCFI6:
+ 137              		.cfi_def_cfa_offset 4
+ 138 0002 00AF     		add	r7, sp, #0
+ 139              		.cfi_offset 7, -4
+ 140              	.LCFI7:
+ 141              		.cfi_def_cfa_register 7
+  83:.\Generated_Source\PSoC5/PinMotionSensor.c ****     return (PinMotionSensor_PS & PinMotionSensor_MASK) >> PinMotionSensor_SHIFT;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 5
+
+
+ 142              		.loc 1 83 0
+ 143 0004 45F26113 		movw	r3, #:lower16:1073762657
+ 144 0008 C4F20003 		movt	r3, #:upper16:1073762657
+ 145 000c 1B78     		ldrb	r3, [r3, #0]
+ 146 000e DBB2     		uxtb	r3, r3
+ 147 0010 03F00203 		and	r3, r3, #2
+ 148 0014 4FEA5303 		lsr	r3, r3, #1
+ 149 0018 DBB2     		uxtb	r3, r3
+  84:.\Generated_Source\PSoC5/PinMotionSensor.c **** }
+ 150              		.loc 1 84 0
+ 151 001a 1846     		mov	r0, r3
+ 152 001c BD46     		mov	sp, r7
+ 153 001e 80BC     		pop	{r7}
+ 154 0020 7047     		bx	lr
+ 155              		.cfi_endproc
+ 156              	.LFE2:
+ 157              		.size	PinMotionSensor_Read, .-PinMotionSensor_Read
+ 158 0022 00BF     		.section	.text.PinMotionSensor_ReadDataReg,"ax",%progbits
+ 159              		.align	2
+ 160              		.global	PinMotionSensor_ReadDataReg
+ 161              		.thumb
+ 162              		.thumb_func
+ 163              		.type	PinMotionSensor_ReadDataReg, %function
+ 164              	PinMotionSensor_ReadDataReg:
+ 165              	.LFB3:
+  85:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  86:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+  87:.\Generated_Source\PSoC5/PinMotionSensor.c **** /*******************************************************************************
+  88:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Function Name: PinMotionSensor_ReadDataReg
+  89:.\Generated_Source\PSoC5/PinMotionSensor.c **** ********************************************************************************
+  90:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Summary:
+  91:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Read the current value assigned to a Digital Port's data output register
+  92:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  93:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Parameters:  
+  94:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  void 
+  95:.\Generated_Source\PSoC5/PinMotionSensor.c **** *
+  96:.\Generated_Source\PSoC5/PinMotionSensor.c **** * Return: 
+  97:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  Returns the current value assigned to the Digital Port's data output register
+  98:.\Generated_Source\PSoC5/PinMotionSensor.c **** *  
+  99:.\Generated_Source\PSoC5/PinMotionSensor.c **** *******************************************************************************/
+ 100:.\Generated_Source\PSoC5/PinMotionSensor.c **** uint8 PinMotionSensor_ReadDataReg(void) 
+ 101:.\Generated_Source\PSoC5/PinMotionSensor.c **** {
+ 166              		.loc 1 101 0
+ 167              		.cfi_startproc
+ 168              		@ args = 0, pretend = 0, frame = 0
+ 169              		@ frame_needed = 1, uses_anonymous_args = 0
+ 170              		@ link register save eliminated.
+ 171 0000 80B4     		push	{r7}
+ 172              	.LCFI8:
+ 173              		.cfi_def_cfa_offset 4
+ 174 0002 00AF     		add	r7, sp, #0
+ 175              		.cfi_offset 7, -4
+ 176              	.LCFI9:
+ 177              		.cfi_def_cfa_register 7
+ 102:.\Generated_Source\PSoC5/PinMotionSensor.c ****     return (PinMotionSensor_DR & PinMotionSensor_MASK) >> PinMotionSensor_SHIFT;
+ 178              		.loc 1 102 0
+ 179 0004 45F26013 		movw	r3, #:lower16:1073762656
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 6
+
+
+ 180 0008 C4F20003 		movt	r3, #:upper16:1073762656
+ 181 000c 1B78     		ldrb	r3, [r3, #0]
+ 182 000e DBB2     		uxtb	r3, r3
+ 183 0010 03F00203 		and	r3, r3, #2
+ 184 0014 4FEA5303 		lsr	r3, r3, #1
+ 185 0018 DBB2     		uxtb	r3, r3
+ 103:.\Generated_Source\PSoC5/PinMotionSensor.c **** }
+ 186              		.loc 1 103 0
+ 187 001a 1846     		mov	r0, r3
+ 188 001c BD46     		mov	sp, r7
+ 189 001e 80BC     		pop	{r7}
+ 190 0020 7047     		bx	lr
+ 191              		.cfi_endproc
+ 192              	.LFE3:
+ 193              		.size	PinMotionSensor_ReadDataReg, .-PinMotionSensor_ReadDataReg
+ 194 0022 00BF     		.section	.text.PinMotionSensor_ClearInterrupt,"ax",%progbits
+ 195              		.align	2
+ 196              		.global	PinMotionSensor_ClearInterrupt
+ 197              		.thumb
+ 198              		.thumb_func
+ 199              		.type	PinMotionSensor_ClearInterrupt, %function
+ 200              	PinMotionSensor_ClearInterrupt:
+ 201              	.LFB4:
+ 104:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+ 105:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+ 106:.\Generated_Source\PSoC5/PinMotionSensor.c **** /* If Interrupts Are Enabled for this Pins component */ 
+ 107:.\Generated_Source\PSoC5/PinMotionSensor.c **** #if defined(PinMotionSensor_INTSTAT) 
+ 108:.\Generated_Source\PSoC5/PinMotionSensor.c **** 
+ 109:.\Generated_Source\PSoC5/PinMotionSensor.c ****     /*******************************************************************************
+ 110:.\Generated_Source\PSoC5/PinMotionSensor.c ****     * Function Name: PinMotionSensor_ClearInterrupt
+ 111:.\Generated_Source\PSoC5/PinMotionSensor.c ****     ********************************************************************************
+ 112:.\Generated_Source\PSoC5/PinMotionSensor.c ****     * Summary:
+ 113:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *  Clears any active interrupts attached to port and returns the value of the 
+ 114:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *  interrupt status register.
+ 115:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *
+ 116:.\Generated_Source\PSoC5/PinMotionSensor.c ****     * Parameters:  
+ 117:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *  void 
+ 118:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *
+ 119:.\Generated_Source\PSoC5/PinMotionSensor.c ****     * Return: 
+ 120:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *  Returns the value of the interrupt status register
+ 121:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *  
+ 122:.\Generated_Source\PSoC5/PinMotionSensor.c ****     *******************************************************************************/
+ 123:.\Generated_Source\PSoC5/PinMotionSensor.c ****     uint8 PinMotionSensor_ClearInterrupt(void) 
+ 124:.\Generated_Source\PSoC5/PinMotionSensor.c ****     {
+ 202              		.loc 1 124 0
+ 203              		.cfi_startproc
+ 204              		@ args = 0, pretend = 0, frame = 0
+ 205              		@ frame_needed = 1, uses_anonymous_args = 0
+ 206              		@ link register save eliminated.
+ 207 0000 80B4     		push	{r7}
+ 208              	.LCFI10:
+ 209              		.cfi_def_cfa_offset 4
+ 210 0002 00AF     		add	r7, sp, #0
+ 211              		.cfi_offset 7, -4
+ 212              	.LCFI11:
+ 213              		.cfi_def_cfa_register 7
+ 125:.\Generated_Source\PSoC5/PinMotionSensor.c ****         return (PinMotionSensor_INTSTAT & PinMotionSensor_MASK) >> PinMotionSensor_SHIFT;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 7
+
+
+ 214              		.loc 1 125 0
+ 215 0004 44F28653 		movw	r3, #:lower16:1073759622
+ 216 0008 C4F20003 		movt	r3, #:upper16:1073759622
+ 217 000c 1B78     		ldrb	r3, [r3, #0]
+ 218 000e DBB2     		uxtb	r3, r3
+ 219 0010 03F00203 		and	r3, r3, #2
+ 220 0014 4FEA5303 		lsr	r3, r3, #1
+ 221 0018 DBB2     		uxtb	r3, r3
+ 126:.\Generated_Source\PSoC5/PinMotionSensor.c ****     }
+ 222              		.loc 1 126 0
+ 223 001a 1846     		mov	r0, r3
+ 224 001c BD46     		mov	sp, r7
+ 225 001e 80BC     		pop	{r7}
+ 226 0020 7047     		bx	lr
+ 227              		.cfi_endproc
+ 228              	.LFE4:
+ 229              		.size	PinMotionSensor_ClearInterrupt, .-PinMotionSensor_ClearInterrupt
+ 230 0022 00BF     		.text
+ 231              	.Letext0:
+ 232              		.section	.debug_loc,"",%progbits
+ 233              	.Ldebug_loc0:
+ 234              	.LLST0:
+ 235 0000 00000000 		.4byte	.LFB0
+ 236 0004 02000000 		.4byte	.LCFI0
+ 237 0008 0100     		.2byte	0x1
+ 238 000a 5D       		.byte	0x5d
+ 239 000b 02000000 		.4byte	.LCFI0
+ 240 000f 04000000 		.4byte	.LCFI1
+ 241 0013 0200     		.2byte	0x2
+ 242 0015 7D       		.byte	0x7d
+ 243 0016 04       		.sleb128 4
+ 244 0017 04000000 		.4byte	.LCFI1
+ 245 001b 06000000 		.4byte	.LCFI2
+ 246 001f 0200     		.2byte	0x2
+ 247 0021 7D       		.byte	0x7d
+ 248 0022 18       		.sleb128 24
+ 249 0023 06000000 		.4byte	.LCFI2
+ 250 0027 44000000 		.4byte	.LFE0
+ 251 002b 0200     		.2byte	0x2
+ 252 002d 77       		.byte	0x77
+ 253 002e 18       		.sleb128 24
+ 254 002f 00000000 		.4byte	0x0
+ 255 0033 00000000 		.4byte	0x0
+ 256              	.LLST1:
+ 257 0037 00000000 		.4byte	.LFB1
+ 258 003b 02000000 		.4byte	.LCFI3
+ 259 003f 0100     		.2byte	0x1
+ 260 0041 5D       		.byte	0x5d
+ 261 0042 02000000 		.4byte	.LCFI3
+ 262 0046 04000000 		.4byte	.LCFI4
+ 263 004a 0200     		.2byte	0x2
+ 264 004c 7D       		.byte	0x7d
+ 265 004d 04       		.sleb128 4
+ 266 004e 04000000 		.4byte	.LCFI4
+ 267 0052 06000000 		.4byte	.LCFI5
+ 268 0056 0200     		.2byte	0x2
+ 269 0058 7D       		.byte	0x7d
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 8
+
+
+ 270 0059 10       		.sleb128 16
+ 271 005a 06000000 		.4byte	.LCFI5
+ 272 005e 3C000000 		.4byte	.LFE1
+ 273 0062 0200     		.2byte	0x2
+ 274 0064 77       		.byte	0x77
+ 275 0065 10       		.sleb128 16
+ 276 0066 00000000 		.4byte	0x0
+ 277 006a 00000000 		.4byte	0x0
+ 278              	.LLST2:
+ 279 006e 00000000 		.4byte	.LFB2
+ 280 0072 02000000 		.4byte	.LCFI6
+ 281 0076 0100     		.2byte	0x1
+ 282 0078 5D       		.byte	0x5d
+ 283 0079 02000000 		.4byte	.LCFI6
+ 284 007d 04000000 		.4byte	.LCFI7
+ 285 0081 0200     		.2byte	0x2
+ 286 0083 7D       		.byte	0x7d
+ 287 0084 04       		.sleb128 4
+ 288 0085 04000000 		.4byte	.LCFI7
+ 289 0089 22000000 		.4byte	.LFE2
+ 290 008d 0200     		.2byte	0x2
+ 291 008f 77       		.byte	0x77
+ 292 0090 04       		.sleb128 4
+ 293 0091 00000000 		.4byte	0x0
+ 294 0095 00000000 		.4byte	0x0
+ 295              	.LLST3:
+ 296 0099 00000000 		.4byte	.LFB3
+ 297 009d 02000000 		.4byte	.LCFI8
+ 298 00a1 0100     		.2byte	0x1
+ 299 00a3 5D       		.byte	0x5d
+ 300 00a4 02000000 		.4byte	.LCFI8
+ 301 00a8 04000000 		.4byte	.LCFI9
+ 302 00ac 0200     		.2byte	0x2
+ 303 00ae 7D       		.byte	0x7d
+ 304 00af 04       		.sleb128 4
+ 305 00b0 04000000 		.4byte	.LCFI9
+ 306 00b4 22000000 		.4byte	.LFE3
+ 307 00b8 0200     		.2byte	0x2
+ 308 00ba 77       		.byte	0x77
+ 309 00bb 04       		.sleb128 4
+ 310 00bc 00000000 		.4byte	0x0
+ 311 00c0 00000000 		.4byte	0x0
+ 312              	.LLST4:
+ 313 00c4 00000000 		.4byte	.LFB4
+ 314 00c8 02000000 		.4byte	.LCFI10
+ 315 00cc 0100     		.2byte	0x1
+ 316 00ce 5D       		.byte	0x5d
+ 317 00cf 02000000 		.4byte	.LCFI10
+ 318 00d3 04000000 		.4byte	.LCFI11
+ 319 00d7 0200     		.2byte	0x2
+ 320 00d9 7D       		.byte	0x7d
+ 321 00da 04       		.sleb128 4
+ 322 00db 04000000 		.4byte	.LCFI11
+ 323 00df 22000000 		.4byte	.LFE4
+ 324 00e3 0200     		.2byte	0x2
+ 325 00e5 77       		.byte	0x77
+ 326 00e6 04       		.sleb128 4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 9
+
+
+ 327 00e7 00000000 		.4byte	0x0
+ 328 00eb 00000000 		.4byte	0x0
+ 329              		.file 2 ".\\Generated_Source\\PSoC5\\/cytypes.h"
+ 330              		.section	.debug_info
+ 331 0000 27010000 		.4byte	0x127
+ 332 0004 0200     		.2byte	0x2
+ 333 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 334 000a 04       		.byte	0x4
+ 335 000b 01       		.uleb128 0x1
+ 336 000c 0C010000 		.4byte	.LASF17
+ 337 0010 01       		.byte	0x1
+ 338 0011 CB000000 		.4byte	.LASF18
+ 339 0015 36010000 		.4byte	.LASF19
+ 340 0019 00000000 		.4byte	0x0
+ 341 001d 00000000 		.4byte	0x0
+ 342 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 343 0025 00000000 		.4byte	.Ldebug_line0
+ 344 0029 02       		.uleb128 0x2
+ 345 002a 01       		.byte	0x1
+ 346 002b 06       		.byte	0x6
+ 347 002c B2010000 		.4byte	.LASF0
+ 348 0030 02       		.uleb128 0x2
+ 349 0031 01       		.byte	0x1
+ 350 0032 08       		.byte	0x8
+ 351 0033 50000000 		.4byte	.LASF1
+ 352 0037 02       		.uleb128 0x2
+ 353 0038 02       		.byte	0x2
+ 354 0039 05       		.byte	0x5
+ 355 003a 1D010000 		.4byte	.LASF2
+ 356 003e 02       		.uleb128 0x2
+ 357 003f 02       		.byte	0x2
+ 358 0040 07       		.byte	0x7
+ 359 0041 70000000 		.4byte	.LASF3
+ 360 0045 02       		.uleb128 0x2
+ 361 0046 04       		.byte	0x4
+ 362 0047 05       		.byte	0x5
+ 363 0048 2D010000 		.4byte	.LASF4
+ 364 004c 02       		.uleb128 0x2
+ 365 004d 04       		.byte	0x4
+ 366 004e 07       		.byte	0x7
+ 367 004f 5E000000 		.4byte	.LASF5
+ 368 0053 02       		.uleb128 0x2
+ 369 0054 08       		.byte	0x8
+ 370 0055 05       		.byte	0x5
+ 371 0056 00000000 		.4byte	.LASF6
+ 372 005a 02       		.uleb128 0x2
+ 373 005b 08       		.byte	0x8
+ 374 005c 07       		.byte	0x7
+ 375 005d AF000000 		.4byte	.LASF7
+ 376 0061 03       		.uleb128 0x3
+ 377 0062 04       		.byte	0x4
+ 378 0063 05       		.byte	0x5
+ 379 0064 696E7400 		.ascii	"int\000"
+ 380 0068 02       		.uleb128 0x2
+ 381 0069 04       		.byte	0x4
+ 382 006a 07       		.byte	0x7
+ 383 006b A2000000 		.4byte	.LASF8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 10
+
+
+ 384 006f 02       		.uleb128 0x2
+ 385 0070 01       		.byte	0x1
+ 386 0071 08       		.byte	0x8
+ 387 0072 18010000 		.4byte	.LASF9
+ 388 0076 04       		.uleb128 0x4
+ 389 0077 27010000 		.4byte	.LASF20
+ 390 007b 02       		.byte	0x2
+ 391 007c 51       		.byte	0x51
+ 392 007d 30000000 		.4byte	0x30
+ 393 0081 05       		.uleb128 0x5
+ 394 0082 01       		.byte	0x1
+ 395 0083 F6000000 		.4byte	.LASF10
+ 396 0087 01       		.byte	0x1
+ 397 0088 26       		.byte	0x26
+ 398 0089 01       		.byte	0x1
+ 399 008a 00000000 		.4byte	.LFB0
+ 400 008e 44000000 		.4byte	.LFE0
+ 401 0092 00000000 		.4byte	.LLST0
+ 402 0096 B7000000 		.4byte	0xb7
+ 403 009a 06       		.uleb128 0x6
+ 404 009b 23000000 		.4byte	.LASF12
+ 405 009f 01       		.byte	0x1
+ 406 00a0 26       		.byte	0x26
+ 407 00a1 76000000 		.4byte	0x76
+ 408 00a5 02       		.byte	0x2
+ 409 00a6 91       		.byte	0x91
+ 410 00a7 6F       		.sleb128 -17
+ 411 00a8 07       		.uleb128 0x7
+ 412 00a9 29000000 		.4byte	.LASF21
+ 413 00ad 01       		.byte	0x1
+ 414 00ae 28       		.byte	0x28
+ 415 00af 76000000 		.4byte	0x76
+ 416 00b3 02       		.byte	0x2
+ 417 00b4 91       		.byte	0x91
+ 418 00b5 77       		.sleb128 -9
+ 419 00b6 00       		.byte	0x0
+ 420 00b7 05       		.uleb128 0x5
+ 421 00b8 01       		.byte	0x1
+ 422 00b9 95010000 		.4byte	.LASF11
+ 423 00bd 01       		.byte	0x1
+ 424 00be 3A       		.byte	0x3a
+ 425 00bf 01       		.byte	0x1
+ 426 00c0 00000000 		.4byte	.LFB1
+ 427 00c4 3C000000 		.4byte	.LFE1
+ 428 00c8 37000000 		.4byte	.LLST1
+ 429 00cc DF000000 		.4byte	0xdf
+ 430 00d0 06       		.uleb128 0x6
+ 431 00d1 C6000000 		.4byte	.LASF13
+ 432 00d5 01       		.byte	0x1
+ 433 00d6 3A       		.byte	0x3a
+ 434 00d7 76000000 		.4byte	0x76
+ 435 00db 02       		.byte	0x2
+ 436 00dc 91       		.byte	0x91
+ 437 00dd 77       		.sleb128 -9
+ 438 00de 00       		.byte	0x0
+ 439 00df 08       		.uleb128 0x8
+ 440 00e0 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 11
+
+
+ 441 00e1 0E000000 		.4byte	.LASF14
+ 442 00e5 01       		.byte	0x1
+ 443 00e6 51       		.byte	0x51
+ 444 00e7 01       		.byte	0x1
+ 445 00e8 76000000 		.4byte	0x76
+ 446 00ec 00000000 		.4byte	.LFB2
+ 447 00f0 22000000 		.4byte	.LFE2
+ 448 00f4 6E000000 		.4byte	.LLST2
+ 449 00f8 08       		.uleb128 0x8
+ 450 00f9 01       		.byte	0x1
+ 451 00fa 34000000 		.4byte	.LASF15
+ 452 00fe 01       		.byte	0x1
+ 453 00ff 64       		.byte	0x64
+ 454 0100 01       		.byte	0x1
+ 455 0101 76000000 		.4byte	0x76
+ 456 0105 00000000 		.4byte	.LFB3
+ 457 0109 22000000 		.4byte	.LFE3
+ 458 010d 99000000 		.4byte	.LLST3
+ 459 0111 08       		.uleb128 0x8
+ 460 0112 01       		.byte	0x1
+ 461 0113 83000000 		.4byte	.LASF16
+ 462 0117 01       		.byte	0x1
+ 463 0118 7B       		.byte	0x7b
+ 464 0119 01       		.byte	0x1
+ 465 011a 76000000 		.4byte	0x76
+ 466 011e 00000000 		.4byte	.LFB4
+ 467 0122 22000000 		.4byte	.LFE4
+ 468 0126 C4000000 		.4byte	.LLST4
+ 469 012a 00       		.byte	0x0
+ 470              		.section	.debug_abbrev
+ 471 0000 01       		.uleb128 0x1
+ 472 0001 11       		.uleb128 0x11
+ 473 0002 01       		.byte	0x1
+ 474 0003 25       		.uleb128 0x25
+ 475 0004 0E       		.uleb128 0xe
+ 476 0005 13       		.uleb128 0x13
+ 477 0006 0B       		.uleb128 0xb
+ 478 0007 03       		.uleb128 0x3
+ 479 0008 0E       		.uleb128 0xe
+ 480 0009 1B       		.uleb128 0x1b
+ 481 000a 0E       		.uleb128 0xe
+ 482 000b 11       		.uleb128 0x11
+ 483 000c 01       		.uleb128 0x1
+ 484 000d 52       		.uleb128 0x52
+ 485 000e 01       		.uleb128 0x1
+ 486 000f 55       		.uleb128 0x55
+ 487 0010 06       		.uleb128 0x6
+ 488 0011 10       		.uleb128 0x10
+ 489 0012 06       		.uleb128 0x6
+ 490 0013 00       		.byte	0x0
+ 491 0014 00       		.byte	0x0
+ 492 0015 02       		.uleb128 0x2
+ 493 0016 24       		.uleb128 0x24
+ 494 0017 00       		.byte	0x0
+ 495 0018 0B       		.uleb128 0xb
+ 496 0019 0B       		.uleb128 0xb
+ 497 001a 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 12
+
+
+ 498 001b 0B       		.uleb128 0xb
+ 499 001c 03       		.uleb128 0x3
+ 500 001d 0E       		.uleb128 0xe
+ 501 001e 00       		.byte	0x0
+ 502 001f 00       		.byte	0x0
+ 503 0020 03       		.uleb128 0x3
+ 504 0021 24       		.uleb128 0x24
+ 505 0022 00       		.byte	0x0
+ 506 0023 0B       		.uleb128 0xb
+ 507 0024 0B       		.uleb128 0xb
+ 508 0025 3E       		.uleb128 0x3e
+ 509 0026 0B       		.uleb128 0xb
+ 510 0027 03       		.uleb128 0x3
+ 511 0028 08       		.uleb128 0x8
+ 512 0029 00       		.byte	0x0
+ 513 002a 00       		.byte	0x0
+ 514 002b 04       		.uleb128 0x4
+ 515 002c 16       		.uleb128 0x16
+ 516 002d 00       		.byte	0x0
+ 517 002e 03       		.uleb128 0x3
+ 518 002f 0E       		.uleb128 0xe
+ 519 0030 3A       		.uleb128 0x3a
+ 520 0031 0B       		.uleb128 0xb
+ 521 0032 3B       		.uleb128 0x3b
+ 522 0033 0B       		.uleb128 0xb
+ 523 0034 49       		.uleb128 0x49
+ 524 0035 13       		.uleb128 0x13
+ 525 0036 00       		.byte	0x0
+ 526 0037 00       		.byte	0x0
+ 527 0038 05       		.uleb128 0x5
+ 528 0039 2E       		.uleb128 0x2e
+ 529 003a 01       		.byte	0x1
+ 530 003b 3F       		.uleb128 0x3f
+ 531 003c 0C       		.uleb128 0xc
+ 532 003d 03       		.uleb128 0x3
+ 533 003e 0E       		.uleb128 0xe
+ 534 003f 3A       		.uleb128 0x3a
+ 535 0040 0B       		.uleb128 0xb
+ 536 0041 3B       		.uleb128 0x3b
+ 537 0042 0B       		.uleb128 0xb
+ 538 0043 27       		.uleb128 0x27
+ 539 0044 0C       		.uleb128 0xc
+ 540 0045 11       		.uleb128 0x11
+ 541 0046 01       		.uleb128 0x1
+ 542 0047 12       		.uleb128 0x12
+ 543 0048 01       		.uleb128 0x1
+ 544 0049 40       		.uleb128 0x40
+ 545 004a 06       		.uleb128 0x6
+ 546 004b 01       		.uleb128 0x1
+ 547 004c 13       		.uleb128 0x13
+ 548 004d 00       		.byte	0x0
+ 549 004e 00       		.byte	0x0
+ 550 004f 06       		.uleb128 0x6
+ 551 0050 05       		.uleb128 0x5
+ 552 0051 00       		.byte	0x0
+ 553 0052 03       		.uleb128 0x3
+ 554 0053 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 13
+
+
+ 555 0054 3A       		.uleb128 0x3a
+ 556 0055 0B       		.uleb128 0xb
+ 557 0056 3B       		.uleb128 0x3b
+ 558 0057 0B       		.uleb128 0xb
+ 559 0058 49       		.uleb128 0x49
+ 560 0059 13       		.uleb128 0x13
+ 561 005a 02       		.uleb128 0x2
+ 562 005b 0A       		.uleb128 0xa
+ 563 005c 00       		.byte	0x0
+ 564 005d 00       		.byte	0x0
+ 565 005e 07       		.uleb128 0x7
+ 566 005f 34       		.uleb128 0x34
+ 567 0060 00       		.byte	0x0
+ 568 0061 03       		.uleb128 0x3
+ 569 0062 0E       		.uleb128 0xe
+ 570 0063 3A       		.uleb128 0x3a
+ 571 0064 0B       		.uleb128 0xb
+ 572 0065 3B       		.uleb128 0x3b
+ 573 0066 0B       		.uleb128 0xb
+ 574 0067 49       		.uleb128 0x49
+ 575 0068 13       		.uleb128 0x13
+ 576 0069 02       		.uleb128 0x2
+ 577 006a 0A       		.uleb128 0xa
+ 578 006b 00       		.byte	0x0
+ 579 006c 00       		.byte	0x0
+ 580 006d 08       		.uleb128 0x8
+ 581 006e 2E       		.uleb128 0x2e
+ 582 006f 00       		.byte	0x0
+ 583 0070 3F       		.uleb128 0x3f
+ 584 0071 0C       		.uleb128 0xc
+ 585 0072 03       		.uleb128 0x3
+ 586 0073 0E       		.uleb128 0xe
+ 587 0074 3A       		.uleb128 0x3a
+ 588 0075 0B       		.uleb128 0xb
+ 589 0076 3B       		.uleb128 0x3b
+ 590 0077 0B       		.uleb128 0xb
+ 591 0078 27       		.uleb128 0x27
+ 592 0079 0C       		.uleb128 0xc
+ 593 007a 49       		.uleb128 0x49
+ 594 007b 13       		.uleb128 0x13
+ 595 007c 11       		.uleb128 0x11
+ 596 007d 01       		.uleb128 0x1
+ 597 007e 12       		.uleb128 0x12
+ 598 007f 01       		.uleb128 0x1
+ 599 0080 40       		.uleb128 0x40
+ 600 0081 06       		.uleb128 0x6
+ 601 0082 00       		.byte	0x0
+ 602 0083 00       		.byte	0x0
+ 603 0084 00       		.byte	0x0
+ 604              		.section	.debug_pubnames,"",%progbits
+ 605 0000 A5000000 		.4byte	0xa5
+ 606 0004 0200     		.2byte	0x2
+ 607 0006 00000000 		.4byte	.Ldebug_info0
+ 608 000a 2B010000 		.4byte	0x12b
+ 609 000e 81000000 		.4byte	0x81
+ 610 0012 50696E4D 		.ascii	"PinMotionSensor_Write\000"
+ 610      6F74696F 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 14
+
+
+ 610      6E53656E 
+ 610      736F725F 
+ 610      57726974 
+ 611 0028 B7000000 		.4byte	0xb7
+ 612 002c 50696E4D 		.ascii	"PinMotionSensor_SetDriveMode\000"
+ 612      6F74696F 
+ 612      6E53656E 
+ 612      736F725F 
+ 612      53657444 
+ 613 0049 DF000000 		.4byte	0xdf
+ 614 004d 50696E4D 		.ascii	"PinMotionSensor_Read\000"
+ 614      6F74696F 
+ 614      6E53656E 
+ 614      736F725F 
+ 614      52656164 
+ 615 0062 F8000000 		.4byte	0xf8
+ 616 0066 50696E4D 		.ascii	"PinMotionSensor_ReadDataReg\000"
+ 616      6F74696F 
+ 616      6E53656E 
+ 616      736F725F 
+ 616      52656164 
+ 617 0082 11010000 		.4byte	0x111
+ 618 0086 50696E4D 		.ascii	"PinMotionSensor_ClearInterrupt\000"
+ 618      6F74696F 
+ 618      6E53656E 
+ 618      736F725F 
+ 618      436C6561 
+ 619 00a5 00000000 		.4byte	0x0
+ 620              		.section	.debug_aranges,"",%progbits
+ 621 0000 3C000000 		.4byte	0x3c
+ 622 0004 0200     		.2byte	0x2
+ 623 0006 00000000 		.4byte	.Ldebug_info0
+ 624 000a 04       		.byte	0x4
+ 625 000b 00       		.byte	0x0
+ 626 000c 0000     		.2byte	0x0
+ 627 000e 0000     		.2byte	0x0
+ 628 0010 00000000 		.4byte	.LFB0
+ 629 0014 44000000 		.4byte	.LFE0-.LFB0
+ 630 0018 00000000 		.4byte	.LFB1
+ 631 001c 3C000000 		.4byte	.LFE1-.LFB1
+ 632 0020 00000000 		.4byte	.LFB2
+ 633 0024 22000000 		.4byte	.LFE2-.LFB2
+ 634 0028 00000000 		.4byte	.LFB3
+ 635 002c 22000000 		.4byte	.LFE3-.LFB3
+ 636 0030 00000000 		.4byte	.LFB4
+ 637 0034 22000000 		.4byte	.LFE4-.LFB4
+ 638 0038 00000000 		.4byte	0x0
+ 639 003c 00000000 		.4byte	0x0
+ 640              		.section	.debug_ranges,"",%progbits
+ 641              	.Ldebug_ranges0:
+ 642 0000 00000000 		.4byte	.Ltext0
+ 643 0004 00000000 		.4byte	.Letext0
+ 644 0008 00000000 		.4byte	.LFB0
+ 645 000c 44000000 		.4byte	.LFE0
+ 646 0010 00000000 		.4byte	.LFB1
+ 647 0014 3C000000 		.4byte	.LFE1
+ 648 0018 00000000 		.4byte	.LFB2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 15
+
+
+ 649 001c 22000000 		.4byte	.LFE2
+ 650 0020 00000000 		.4byte	.LFB3
+ 651 0024 22000000 		.4byte	.LFE3
+ 652 0028 00000000 		.4byte	.LFB4
+ 653 002c 22000000 		.4byte	.LFE4
+ 654 0030 00000000 		.4byte	0x0
+ 655 0034 00000000 		.4byte	0x0
+ 656              		.section	.debug_str,"MS",%progbits,1
+ 657              	.LASF6:
+ 658 0000 6C6F6E67 		.ascii	"long long int\000"
+ 658      206C6F6E 
+ 658      6720696E 
+ 658      7400
+ 659              	.LASF14:
+ 660 000e 50696E4D 		.ascii	"PinMotionSensor_Read\000"
+ 660      6F74696F 
+ 660      6E53656E 
+ 660      736F725F 
+ 660      52656164 
+ 661              	.LASF12:
+ 662 0023 76616C75 		.ascii	"value\000"
+ 662      6500
+ 663              	.LASF21:
+ 664 0029 73746174 		.ascii	"staticBits\000"
+ 664      69634269 
+ 664      747300
+ 665              	.LASF15:
+ 666 0034 50696E4D 		.ascii	"PinMotionSensor_ReadDataReg\000"
+ 666      6F74696F 
+ 666      6E53656E 
+ 666      736F725F 
+ 666      52656164 
+ 667              	.LASF1:
+ 668 0050 756E7369 		.ascii	"unsigned char\000"
+ 668      676E6564 
+ 668      20636861 
+ 668      7200
+ 669              	.LASF5:
+ 670 005e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 670      20756E73 
+ 670      69676E65 
+ 670      6420696E 
+ 670      7400
+ 671              	.LASF3:
+ 672 0070 73686F72 		.ascii	"short unsigned int\000"
+ 672      7420756E 
+ 672      7369676E 
+ 672      65642069 
+ 672      6E7400
+ 673              	.LASF16:
+ 674 0083 50696E4D 		.ascii	"PinMotionSensor_ClearInterrupt\000"
+ 674      6F74696F 
+ 674      6E53656E 
+ 674      736F725F 
+ 674      436C6561 
+ 675              	.LASF8:
+ 676 00a2 756E7369 		.ascii	"unsigned int\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 16
+
+
+ 676      676E6564 
+ 676      20696E74 
+ 676      00
+ 677              	.LASF7:
+ 678 00af 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 678      206C6F6E 
+ 678      6720756E 
+ 678      7369676E 
+ 678      65642069 
+ 679              	.LASF13:
+ 680 00c6 6D6F6465 		.ascii	"mode\000"
+ 680      00
+ 681              	.LASF18:
+ 682 00cb 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\PinMotionSensor.c\000"
+ 682      6E657261 
+ 682      7465645F 
+ 682      536F7572 
+ 682      63655C50 
+ 683              	.LASF10:
+ 684 00f6 50696E4D 		.ascii	"PinMotionSensor_Write\000"
+ 684      6F74696F 
+ 684      6E53656E 
+ 684      736F725F 
+ 684      57726974 
+ 685              	.LASF17:
+ 686 010c 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 686      4320342E 
+ 686      342E3100 
+ 687              	.LASF9:
+ 688 0118 63686172 		.ascii	"char\000"
+ 688      00
+ 689              	.LASF2:
+ 690 011d 73686F72 		.ascii	"short int\000"
+ 690      7420696E 
+ 690      7400
+ 691              	.LASF20:
+ 692 0127 75696E74 		.ascii	"uint8\000"
+ 692      3800
+ 693              	.LASF4:
+ 694 012d 6C6F6E67 		.ascii	"long int\000"
+ 694      20696E74 
+ 694      00
+ 695              	.LASF19:
+ 696 0136 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 696      73657273 
+ 696      5C47656F 
+ 696      5C446F63 
+ 696      756D656E 
+ 697 0164 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 697      645C4669 
+ 697      726D7761 
+ 697      72655C50 
+ 697      536F435C 
+ 698 0194 00       		.ascii	"\000"
+ 699              	.LASF11:
+ 700 0195 50696E4D 		.ascii	"PinMotionSensor_SetDriveMode\000"
+ 700      6F74696F 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccqdDxT4.s 			page 17
+
+
+ 700      6E53656E 
+ 700      736F725F 
+ 700      53657444 
+ 701              	.LASF0:
+ 702 01b2 7369676E 		.ascii	"signed char\000"
+ 702      65642063 
+ 702      68617200 
+ 703              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

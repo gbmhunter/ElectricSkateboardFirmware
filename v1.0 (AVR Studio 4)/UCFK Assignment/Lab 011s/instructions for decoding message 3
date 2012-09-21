@@ -1,0 +1,24 @@
+Packing encoder
+The third message is encrypted using a packing scheme.  Here we are going to use a reduced subset of the ASCII table of character codes:
+
+Reduced Code            ASCII Code              Character
+(decimal)                       (decimal)
+----------------------------------------------------------------------
+0                               32                              [space]
+1                               33                              !
+2                               34                              "
+3                               35                              #
+4                               36                              $
+5                               37                              %
+...
+60                              92                              \
+61                              93                              ]
+62                              94                              ^
+63                              10                              '\n'
+
+Messages encoded in this scheme contain only one special character --- the Line Feed, LF or '\n' --- a few punctuation characters and only the uppercase characters of the alphabet.  Many early computers were of this form and it is for this reason that a lot of computer systems are case-insensitive.
+
+This reduced set of characters has only 64 members, and therefore they can be uniquely identified using a 6-bit code.  However, the minimum base size of a sequence (word length) is 8 bits.  Therefore in 3 words (24bits) we can encode 4 6-bit reduced code characters.
+
+Message 3 is encoded in this form.  Write a decoder as in the previous two cases to reveal the hidden message.
+

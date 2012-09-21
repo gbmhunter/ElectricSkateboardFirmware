@@ -1,0 +1,2763 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 1C020000 		.text
+  20      02002801 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.bss
+  24              		.align	2
+  25              	_mainTickCounter:
+  26 0000 00000000 		.space	4
+  27              		.align	2
+  28              	_msg:
+  29 0004 00000000 		.space	8
+  29      00000000 
+  30              	statusByte:
+  31 000c 00       		.space	1
+  32 000d 000000   		.align	2
+  33              	tempBuff:
+  34 0010 00000000 		.space	100
+  34      00000000 
+  34      00000000 
+  34      00000000 
+  34      00000000 
+  35              		.section	.rodata
+  36              		.align	2
+  37              	.LC0:
+  38 0000 52756E6E 		.ascii	"Running...\000"
+  38      696E672E 
+  38      2E2E00
+  39              		.global	__aeabi_ui2d
+  40 000b 00       		.align	2
+  41              	.LC1:
+  42 000c 4D41494E 		.ascii	"MAIN: Entering mainOff state.\015\012\000"
+  42      3A20456E 
+  42      74657269 
+  42      6E67206D 
+  42      61696E4F 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 2
+
+
+  43              		.align	2
+  44              	.LC2:
+  45 002c 4D41494E 		.ascii	"MAIN: Entering mainInRange state.\015\012\000"
+  45      3A20456E 
+  45      74657269 
+  45      6E67206D 
+  45      61696E49 
+  46              		.align	2
+  47              	.LC3:
+  48 0050 4D41494E 		.ascii	"MAIN: Entering motorOn state.\015\012\000"
+  48      3A20456E 
+  48      74657269 
+  48      6E67206D 
+  48      6F746F72 
+  49              		.align	2
+  50              	.LC4:
+  51 0070 4D41494E 		.ascii	"MAIN: Entering alarmOn state.\015\012\000"
+  51      3A20456E 
+  51      74657269 
+  51      6E672061 
+  51      6C61726D 
+  52              		.section	.text.main,"ax",%progbits
+  53              		.align	2
+  54              		.global	main
+  55              		.thumb
+  56              		.thumb_func
+  57              		.type	main, %function
+  58              	main:
+  59              	.LFB29:
+  60              		.file 1 ".\\main.c"
+   1:.\main.c      **** //!
+   2:.\main.c      **** //! @file 		main.c
+   3:.\main.c      **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\main.c      **** //! @date 		14/05/2011
+   5:.\main.c      **** //! @brief 		Contains the entry point and main loop.
+   6:.\main.c      **** //! @details
+   7:.\main.c      **** //!		<b>Last Modified:			</b> 22/05/2011								\n
+   8:.\main.c      **** //!		<b>Version:					</b> v1.0									\n
+   9:.\main.c      **** //!		<b>Company:					</b> CladLabs								\n
+  10:.\main.c      **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\main.c      **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\main.c      **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\main.c      **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\main.c      **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\main.c      **** //!		
+  16:.\main.c      **** //!		Main entry point and loop
+  17:.\main.c      **** //!
+  18:.\main.c      **** 
+  19:.\main.c      **** //=================================================================================================
+  20:.\main.c      **** //============================================ INFO ===============================================
+  21:.\main.c      **** //=================================================================================================
+  22:.\main.c      **** 
+  23:.\main.c      **** //===============================================================================================//
+  24:.\main.c      **** //======================================= FILE INCLUSIONS =======================================//
+  25:.\main.c      **** //===============================================================================================//
+  26:.\main.c      **** 
+  27:.\main.c      **** #include <device.h>
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 3
+
+
+  28:.\main.c      **** #include <stdio.h>
+  29:.\main.c      **** 
+  30:.\main.c      **** #include "../common/PublicObjects.h"
+  31:.\main.c      **** #include "Config.h"
+  32:.\main.c      **** #include "Buttons.h"
+  33:.\main.c      **** #include "BattMonitor.h"
+  34:.\main.c      **** #include "Lights.h"
+  35:.\main.c      **** #include "Adc.h"
+  36:.\main.c      **** #include "Comms.h"
+  37:.\main.c      **** 
+  38:.\main.c      **** typedef enum{
+  39:.\main.c      **** 	mainInit,
+  40:.\main.c      **** 	mainOff,
+  41:.\main.c      **** 	mainInRange,
+  42:.\main.c      **** 	mainMotorOn,
+  43:.\main.c      **** 	mainAlarmOn
+  44:.\main.c      **** } mainState_t;
+  45:.\main.c      **** 
+  46:.\main.c      **** //===============================================================================================//
+  47:.\main.c      **** //==================================== PRIVATE VARIABLES ========================================//
+  48:.\main.c      **** //===============================================================================================//
+  49:.\main.c      **** 
+  50:.\main.c      **** static uint32 _mainTickCounter = 0;	//!< Main tick counter, incremented by timer interrupt and used
+  51:.\main.c      **** 
+  52:.\main.c      **** 
+  53:.\main.c      **** static uint8_t _msg[8];
+  54:.\main.c      **** // Status byte
+  55:.\main.c      **** static uint8_t statusByte = 0x00;
+  56:.\main.c      **** 
+  57:.\main.c      **** //! @debug
+  58:.\main.c      **** static char tempBuff[100] = {0};
+  59:.\main.c      **** 
+  60:.\main.c      **** //===============================================================================================//
+  61:.\main.c      **** //=============================== PRIVATE FUNCTION PROTOTYPES ===================================//
+  62:.\main.c      **** //===============================================================================================//
+  63:.\main.c      **** 
+  64:.\main.c      **** void Main_BuildMsg(uint8_t *msg, mainState_t mainState);
+  65:.\main.c      **** CY_ISR_PROTO(Main_MainTickIsr);
+  66:.\main.c      **** 
+  67:.\main.c      **** //===============================================================================================//
+  68:.\main.c      **** //===================================== PUBLIC FUNCTIONS ========================================//
+  69:.\main.c      **** //===============================================================================================//
+  70:.\main.c      **** 
+  71:.\main.c      **** void main()
+  72:.\main.c      **** {
+  61              		.loc 1 72 0
+  62              		.cfi_startproc
+  63              		@ args = 0, pretend = 0, frame = 24
+  64              		@ frame_needed = 1, uses_anonymous_args = 0
+  65 0000 B0B5     		push	{r4, r5, r7, lr}
+  66              	.LCFI0:
+  67              		.cfi_def_cfa_offset 16
+  68 0002 86B0     		sub	sp, sp, #24
+  69              	.LCFI1:
+  70              		.cfi_def_cfa_offset 40
+  71 0004 00AF     		add	r7, sp, #0
+  72              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 4
+
+
+  73              		.cfi_offset 7, -8
+  74              		.cfi_offset 5, -12
+  75              		.cfi_offset 4, -16
+  76              	.LCFI2:
+  77              		.cfi_def_cfa_register 7
+  73:.\main.c      **** 
+  74:.\main.c      **** 	// Enables global interrupts. Required for CapSense.
+  75:.\main.c      ****     CyGlobalIntEnable;
+  78              		.loc 1 75 0
+  79              	@ 75 ".\main.c" 1
+  80 0006 62B6     		CPSIE   i
+  81              	@ 0 "" 2
+  76:.\main.c      **** 	
+  77:.\main.c      **** 	//========================================= INITIALIZATION CODE ================================//
+  78:.\main.c      **** 	Buttons_Init();
+  82              		.loc 1 78 0
+  83              		.thumb
+  84 0008 FFF7FEFF 		bl	Buttons_Init
+  79:.\main.c      **** 	
+  80:.\main.c      **** 	static uint8_t iden_chars[3];
+  81:.\main.c      **** 	iden_chars[0] = 'r';
+  85              		.loc 1 81 0
+  86 000c 40F20003 		movw	r3, #:lower16:iden_chars.3807
+  87 0010 C0F20003 		movt	r3, #:upper16:iden_chars.3807
+  88 0014 4FF07202 		mov	r2, #114
+  89 0018 1A70     		strb	r2, [r3, #0]
+  82:.\main.c      **** 	iden_chars[1] = 'm';
+  90              		.loc 1 82 0
+  91 001a 40F20003 		movw	r3, #:lower16:iden_chars.3807
+  92 001e C0F20003 		movt	r3, #:upper16:iden_chars.3807
+  93 0022 4FF06D02 		mov	r2, #109
+  94 0026 5A70     		strb	r2, [r3, #1]
+  83:.\main.c      **** 	iden_chars[2] = 't';
+  95              		.loc 1 83 0
+  96 0028 40F20003 		movw	r3, #:lower16:iden_chars.3807
+  97 002c C0F20003 		movt	r3, #:upper16:iden_chars.3807
+  98 0030 4FF07402 		mov	r2, #116
+  99 0034 9A70     		strb	r2, [r3, #2]
+  84:.\main.c      **** 	
+  85:.\main.c      **** 	Comms_Init(iden_chars);
+ 100              		.loc 1 85 0
+ 101 0036 40F20000 		movw	r0, #:lower16:iden_chars.3807
+ 102 003a C0F20000 		movt	r0, #:upper16:iden_chars.3807
+ 103 003e FFF7FEFF 		bl	Comms_Init
+  86:.\main.c      **** 	BattMonitor_Init();
+ 104              		.loc 1 86 0
+ 105 0042 FFF7FEFF 		bl	BattMonitor_Init
+  87:.\main.c      **** 	// Enable timer that triggers interrupt to increment tick
+  88:.\main.c      **** 	TimerMainTick_Start();
+ 106              		.loc 1 88 0
+ 107 0046 FFF7FEFF 		bl	TimerMainTick_Start
+  89:.\main.c      **** 	//SleepTimer_Start();
+  90:.\main.c      **** 	
+  91:.\main.c      **** 	#if(config_DEBUG_MAIN == 1)
+  92:.\main.c      **** 		UartDebug_Start();
+ 108              		.loc 1 92 0
+ 109 004a FFF7FEFF 		bl	UartDebug_Start
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 5
+
+
+  93:.\main.c      **** 		UartDebug_PutString("Running...");
+ 110              		.loc 1 93 0
+ 111 004e 40F20000 		movw	r0, #:lower16:.LC0
+ 112 0052 C0F20000 		movt	r0, #:upper16:.LC0
+ 113 0056 FFF7FEFF 		bl	UartDebug_PutString
+  94:.\main.c      **** 	#endif
+  95:.\main.c      **** 	
+  96:.\main.c      **** 	// Start main tick ISR and pass in interrupt handler function
+  97:.\main.c      **** 	//IsrSleepTick_StartEx(Main_MainTickIsr);
+  98:.\main.c      **** 	IsrMainTick_StartEx(Main_MainTickIsr);
+ 114              		.loc 1 98 0
+ 115 005a 40F20000 		movw	r0, #:lower16:Main_MainTickIsr
+ 116 005e C0F20000 		movt	r0, #:upper16:Main_MainTickIsr
+ 117 0062 FFF7FEFF 		bl	IsrMainTick_StartEx
+  99:.\main.c      **** 	
+ 100:.\main.c      **** 	uint16 count = 0;
+ 118              		.loc 1 100 0
+ 119 0066 4FF00003 		mov	r3, #0
+ 120 006a FB80     		strh	r3, [r7, #6]	@ movhi
+ 101:.\main.c      **** 	uint32 currentTick = 0;
+ 121              		.loc 1 101 0
+ 122 006c 4FF00003 		mov	r3, #0
+ 123 0070 BB60     		str	r3, [r7, #8]
+ 102:.\main.c      **** 	
+ 103:.\main.c      **** 	// Main state variable
+ 104:.\main.c      **** 	mainState_t prevMainState = mainInit;		//!< Assign reset, only valid for first time running throug
+ 124              		.loc 1 104 0
+ 125 0072 4FF00003 		mov	r3, #0
+ 126 0076 BB73     		strb	r3, [r7, #14]
+ 105:.\main.c      **** 	mainState_t mainState = mainInit;		//!< Default state is off
+ 127              		.loc 1 105 0
+ 128 0078 4FF00003 		mov	r3, #0
+ 129 007c FB73     		strb	r3, [r7, #15]
+ 106:.\main.c      **** 	
+ 107:.\main.c      **** 	uint32_t commsSendCountInterval = (uint32_t)(configCOMMS_SEND_PERIOD_MS/configMAIN_TICK_PERIOD_MS)
+ 130              		.loc 1 107 0
+ 131 007e 4FF00A03 		mov	r3, #10
+ 132 0082 3B61     		str	r3, [r7, #16]
+ 108:.\main.c      **** 	uint32_t commsLastSendCount = 0;
+ 133              		.loc 1 108 0
+ 134 0084 4FF00003 		mov	r3, #0
+ 135 0088 7B61     		str	r3, [r7, #20]
+ 109:.\main.c      **** 	
+ 110:.\main.c      **** 
+ 111:.\main.c      **** 	// Flash leds as O.K
+ 112:.\main.c      **** 	Lights_AllOn();
+ 136              		.loc 1 112 0
+ 137 008a FFF7FEFF 		bl	Lights_AllOn
+ 113:.\main.c      **** 	CyDelay(500);
+ 138              		.loc 1 113 0
+ 139 008e 4FF4FA70 		mov	r0, #500
+ 140 0092 FFF7FEFF 		bl	CyDelay
+ 114:.\main.c      **** 	Lights_AllOff();
+ 141              		.loc 1 114 0
+ 142 0096 FFF7FEFF 		bl	Lights_AllOff
+ 115:.\main.c      **** 	CyDelay(500);
+ 143              		.loc 1 115 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 6
+
+
+ 144 009a 4FF4FA70 		mov	r0, #500
+ 145 009e FFF7FEFF 		bl	CyDelay
+ 146              	.L40:
+ 147              	.LBB2:
+ 116:.\main.c      **** 
+ 117:.\main.c      **** 	
+ 118:.\main.c      **** 	//! @todo	Make sure tick variables do not overflow
+ 119:.\main.c      **** 	
+ 120:.\main.c      **** 	
+ 121:.\main.c      **** 	//========================================= MAIN LOOP ==========================================//
+ 122:.\main.c      ****     for(;;)
+ 123:.\main.c      ****     {
+ 124:.\main.c      **** 			
+ 125:.\main.c      **** 		// Update the current tick
+ 126:.\main.c      **** 		currentTick = _mainTickCounter;
+ 148              		.loc 1 126 0
+ 149 00a2 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 150 00a6 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 151 00aa 1B68     		ldr	r3, [r3, #0]
+ 152 00ac BB60     		str	r3, [r7, #8]
+ 127:.\main.c      **** 		
+ 128:.\main.c      **** 		// Run state machines
+ 129:.\main.c      **** 		Comms_Run();
+ 153              		.loc 1 129 0
+ 154 00ae FFF7FEFF 		bl	Comms_Run
+ 130:.\main.c      **** 		Adc_Run();
+ 155              		.loc 1 130 0
+ 156 00b2 FFF7FEFF 		bl	Adc_Run
+ 131:.\main.c      **** 		static uint16_t boardBattVoltage = 0;
+ 132:.\main.c      **** 		boardBattVoltage = ((Comms_GetByte(commsBOARD_BATT_VOLT_HIGH_BYTE_POS)<<8) | (Comms_GetByte(comms
+ 157              		.loc 1 132 0
+ 158 00b6 4FF00700 		mov	r0, #7
+ 159 00ba FFF7FEFF 		bl	Comms_GetByte
+ 160 00be 0346     		mov	r3, r0
+ 161 00c0 4FEA0323 		lsl	r3, r3, #8
+ 162 00c4 9CB2     		uxth	r4, r3
+ 163 00c6 4FF00800 		mov	r0, #8
+ 164 00ca FFF7FEFF 		bl	Comms_GetByte
+ 165 00ce 0346     		mov	r3, r0
+ 166 00d0 2246     		mov	r2, r4	@ movhi
+ 167 00d2 42EA0303 		orr	r3, r2, r3
+ 168 00d6 9BB2     		uxth	r3, r3
+ 169 00d8 9AB2     		uxth	r2, r3
+ 170 00da 40F20003 		movw	r3, #:lower16:boardBattVoltage.3814
+ 171 00de C0F20003 		movt	r3, #:upper16:boardBattVoltage.3814
+ 172 00e2 1A80     		strh	r2, [r3, #0]	@ movhi
+ 133:.\main.c      **** 		BattMonitor_Run(Adc_GetBattVolt(), (double)boardBattVoltage);
+ 173              		.loc 1 133 0
+ 174 00e4 FFF7FEFF 		bl	Adc_GetBattVolt
+ 175 00e8 0446     		mov	r4, r0
+ 176 00ea 0D46     		mov	r5, r1
+ 177 00ec 40F20003 		movw	r3, #:lower16:boardBattVoltage.3814
+ 178 00f0 C0F20003 		movt	r3, #:upper16:boardBattVoltage.3814
+ 179 00f4 1B88     		ldrh	r3, [r3, #0]
+ 180 00f6 1846     		mov	r0, r3
+ 181 00f8 FFF7FEFF 		bl	__aeabi_ui2d
+ 182 00fc 0246     		mov	r2, r0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 7
+
+
+ 183 00fe 0B46     		mov	r3, r1
+ 184 0100 2046     		mov	r0, r4
+ 185 0102 2946     		mov	r1, r5
+ 186 0104 FFF7FEFF 		bl	BattMonitor_Run
+ 134:.\main.c      **** 		Lights_Run();
+ 187              		.loc 1 134 0
+ 188 0108 FFF7FEFF 		bl	Lights_Run
+ 135:.\main.c      **** 		Buttons_Run();
+ 189              		.loc 1 135 0
+ 190 010c FFF7FEFF 		bl	Buttons_Run
+ 136:.\main.c      **** 		
+ 137:.\main.c      **** 		//! @debug
+ 138:.\main.c      **** 		count++;
+ 191              		.loc 1 138 0
+ 192 0110 FB88     		ldrh	r3, [r7, #6]	@ movhi
+ 193 0112 03F10103 		add	r3, r3, #1
+ 194 0116 FB80     		strh	r3, [r7, #6]	@ movhi
+ 139:.\main.c      **** 		
+ 140:.\main.c      **** 		
+ 141:.\main.c      **** 	
+ 142:.\main.c      **** 		
+ 143:.\main.c      **** 		// Main state machine
+ 144:.\main.c      **** 		switch(mainState)
+ 195              		.loc 1 144 0
+ 196 0118 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 197 011a 042B     		cmp	r3, #4
+ 198 011c 00F2A882 		bhi	.L2
+ 199 0120 01A2     		adr	r2, .L8
+ 200 0122 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 201 0126 00BF     		.align	2
+ 202              	.L8:
+ 203 0128 3D010000 		.word	.L3+1
+ 204 012c 45010000 		.word	.L4+1
+ 205 0130 FF010000 		.word	.L5+1
+ 206 0134 CF030000 		.word	.L6+1
+ 207 0138 57050000 		.word	.L7+1
+ 208              	.L3:
+ 145:.\main.c      **** 		{
+ 146:.\main.c      **** 			case mainInit:
+ 147:.\main.c      **** 				mainState = mainOff;
+ 209              		.loc 1 147 0
+ 210 013c 4FF00103 		mov	r3, #1
+ 211 0140 FB73     		strb	r3, [r7, #15]
+ 148:.\main.c      **** 				break;
+ 212              		.loc 1 148 0
+ 213 0142 95E2     		b	.L2
+ 214              	.L4:
+ 149:.\main.c      **** 			case mainOff:
+ 150:.\main.c      **** 				if(prevMainState != mainOff)
+ 215              		.loc 1 150 0
+ 216 0144 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 217 0146 012B     		cmp	r3, #1
+ 218 0148 15D0     		beq	.L9
+ 151:.\main.c      **** 				{
+ 152:.\main.c      **** 					#if(config_DEBUG_MAIN == 1) 
+ 153:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainOff state.\r\n");
+ 219              		.loc 1 153 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 8
+
+
+ 220 014a 40F20000 		movw	r0, #:lower16:.LC1
+ 221 014e C0F20000 		movt	r0, #:upper16:.LC1
+ 222 0152 FFF7FEFF 		bl	UartDebug_PutString
+ 154:.\main.c      **** 					#endif
+ 155:.\main.c      **** 					// Clears on bit in status byte
+ 156:.\main.c      **** 					statusByte &= ((1 << commsON_BIT_POS)^0xFF);
+ 223              		.loc 1 156 0
+ 224 0156 40F20003 		movw	r3, #:lower16:statusByte
+ 225 015a C0F20003 		movt	r3, #:upper16:statusByte
+ 226 015e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 227 0160 1A46     		mov	r2, r3
+ 228 0162 02F0FE02 		and	r2, r2, #254
+ 229 0166 40F20003 		movw	r3, #:lower16:statusByte
+ 230 016a C0F20003 		movt	r3, #:upper16:statusByte
+ 231 016e 1A70     		strb	r2, [r3, #0]
+ 157:.\main.c      **** 					prevMainState = mainOff;
+ 232              		.loc 1 157 0
+ 233 0170 4FF00103 		mov	r3, #1
+ 234 0174 BB73     		strb	r3, [r7, #14]
+ 235              	.L9:
+ 158:.\main.c      **** 				}
+ 159:.\main.c      **** 				
+ 160:.\main.c      **** 				// Flash first LED
+ 161:.\main.c      **** 				Lights_SetLedMode(LED_IN_RANGE, FLASHING, 500);
+ 236              		.loc 1 161 0
+ 237 0176 4FF00000 		mov	r0, #0
+ 238 017a 4FF00201 		mov	r1, #2
+ 239 017e 0FF22853 		adr	r3, .L48
+ 240 0182 D3E90023 		ldrd	r2, [r3]
+ 241 0186 FFF7FEFF 		bl	Lights_SetLedMode
+ 162:.\main.c      **** 				
+ 163:.\main.c      **** 				// Determines speed of packages
+ 164:.\main.c      **** 				if(currentTick >= commsLastSendCount + commsSendCountInterval)
+ 242              		.loc 1 164 0
+ 243 018a 7A69     		ldr	r2, [r7, #20]
+ 244 018c 3B69     		ldr	r3, [r7, #16]
+ 245 018e 1A44     		add	r2, r2, r3
+ 246 0190 BB68     		ldr	r3, [r7, #8]
+ 247 0192 9A42     		cmp	r2, r3
+ 248 0194 11D8     		bhi	.L10
+ 165:.\main.c      **** 				{
+ 166:.\main.c      **** 					// Send message to skateboard
+ 167:.\main.c      **** 					Main_BuildMsg(_msg, mainState);
+ 249              		.loc 1 167 0
+ 250 0196 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 251 0198 40F20000 		movw	r0, #:lower16:_msg
+ 252 019c C0F20000 		movt	r0, #:upper16:_msg
+ 253 01a0 1946     		mov	r1, r3
+ 254 01a2 FFF7FEFF 		bl	Main_BuildMsg
+ 168:.\main.c      **** 					Comms_TurnOn();
+ 255              		.loc 1 168 0
+ 256 01a6 FFF7FEFF 		bl	Comms_TurnOn
+ 169:.\main.c      **** 					Comms_Send(_msg);
+ 257              		.loc 1 169 0
+ 258 01aa 40F20000 		movw	r0, #:lower16:_msg
+ 259 01ae C0F20000 		movt	r0, #:upper16:_msg
+ 260 01b2 FFF7FEFF 		bl	Comms_Send
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 9
+
+
+ 170:.\main.c      **** 					commsLastSendCount = currentTick;
+ 261              		.loc 1 170 0
+ 262 01b6 BB68     		ldr	r3, [r7, #8]
+ 263 01b8 7B61     		str	r3, [r7, #20]
+ 264              	.L10:
+ 171:.\main.c      **** 				}
+ 172:.\main.c      **** 				
+ 173:.\main.c      **** 				if(Comms_IsTimeout())
+ 265              		.loc 1 173 0
+ 266 01ba FFF7FEFF 		bl	Comms_IsTimeout
+ 174:.\main.c      **** 				{
+ 175:.\main.c      **** 					// Do nothing, connection has not been established yet
+ 176:.\main.c      **** 					// No power save mode while searching for skateboard
+ 177:.\main.c      **** 				}
+ 178:.\main.c      **** 				
+ 179:.\main.c      **** 				// Check for new packet
+ 180:.\main.c      **** 				if(Comms_IsNewPacket())
+ 267              		.loc 1 180 0
+ 268 01be FFF7FEFF 		bl	Comms_IsNewPacket
+ 269 01c2 0346     		mov	r3, r0
+ 270 01c4 002B     		cmp	r3, #0
+ 271 01c6 00F04882 		beq	.L42
+ 181:.\main.c      **** 				{
+ 182:.\main.c      **** 					Comms_TurnOff();
+ 272              		.loc 1 182 0
+ 273 01ca FFF7FEFF 		bl	Comms_TurnOff
+ 183:.\main.c      **** 					// True if skateboard has received msg from remote and replied with o.k.
+ 184:.\main.c      **** 					if((Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsIN_RANGE_BIT_POS)) != 0x00)
+ 274              		.loc 1 184 0
+ 275 01ce 4FF00400 		mov	r0, #4
+ 276 01d2 FFF7FEFF 		bl	Comms_GetByte
+ 277 01d6 0346     		mov	r3, r0
+ 278 01d8 03F00403 		and	r3, r3, #4
+ 279 01dc 002B     		cmp	r3, #0
+ 280 01de 00F03E82 		beq	.L43
+ 185:.\main.c      **** 					{
+ 186:.\main.c      **** 						mainState = mainInRange;
+ 281              		.loc 1 186 0
+ 282 01e2 4FF00203 		mov	r3, #2
+ 283 01e6 FB73     		strb	r3, [r7, #15]
+ 187:.\main.c      **** 						Lights_SetLedMode(LED_IN_RANGE, OFF, 0);
+ 284              		.loc 1 187 0
+ 285 01e8 4FF00000 		mov	r0, #0
+ 286 01ec 4FF00001 		mov	r1, #0
+ 287 01f0 4FF00002 		mov	r2, #0
+ 288 01f4 4FF00003 		mov	r3, #0
+ 289 01f8 FFF7FEFF 		bl	Lights_SetLedMode
+ 188:.\main.c      **** 						break;
+ 290              		.loc 1 188 0
+ 291 01fc 38E2     		b	.L2
+ 292              	.L5:
+ 189:.\main.c      **** 					}
+ 190:.\main.c      **** 				}
+ 191:.\main.c      **** 				
+ 192:.\main.c      **** 				break;
+ 193:.\main.c      **** 				
+ 194:.\main.c      **** 			case mainInRange:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 10
+
+
+ 195:.\main.c      **** 				if(prevMainState != mainInRange)
+ 293              		.loc 1 195 0
+ 294 01fe BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 295 0200 022B     		cmp	r3, #2
+ 296 0202 26D0     		beq	.L12
+ 196:.\main.c      **** 				{
+ 197:.\main.c      **** 					#if(config_DEBUG_MAIN == 1) 
+ 198:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainInRange state.\r\n");
+ 297              		.loc 1 198 0
+ 298 0204 40F20000 		movw	r0, #:lower16:.LC2
+ 299 0208 C0F20000 		movt	r0, #:upper16:.LC2
+ 300 020c FFF7FEFF 		bl	UartDebug_PutString
+ 199:.\main.c      **** 					#endif
+ 200:.\main.c      **** 					Lights_SetLedMode(LED_IN_RANGE, ON, 0);
+ 301              		.loc 1 200 0
+ 302 0210 4FF00000 		mov	r0, #0
+ 303 0214 4FF00101 		mov	r1, #1
+ 304 0218 4FF00002 		mov	r2, #0
+ 305 021c 4FF00003 		mov	r3, #0
+ 306 0220 FFF7FEFF 		bl	Lights_SetLedMode
+ 201:.\main.c      **** 					Lights_SetLedMode(LED_ALARM_ON, OFF, 0);
+ 307              		.loc 1 201 0
+ 308 0224 4FF00200 		mov	r0, #2
+ 309 0228 4FF00001 		mov	r1, #0
+ 310 022c 4FF00002 		mov	r2, #0
+ 311 0230 4FF00003 		mov	r3, #0
+ 312 0234 FFF7FEFF 		bl	Lights_SetLedMode
+ 202:.\main.c      **** 					Lights_SetLedMode(LED_MOTOR_ON, OFF, 0);
+ 313              		.loc 1 202 0
+ 314 0238 4FF00100 		mov	r0, #1
+ 315 023c 4FF00001 		mov	r1, #0
+ 316 0240 4FF00002 		mov	r2, #0
+ 317 0244 4FF00003 		mov	r3, #0
+ 318 0248 FFF7FEFF 		bl	Lights_SetLedMode
+ 203:.\main.c      **** 					prevMainState = mainInRange;
+ 319              		.loc 1 203 0
+ 320 024c 4FF00203 		mov	r3, #2
+ 321 0250 BB73     		strb	r3, [r7, #14]
+ 322              	.L12:
+ 204:.\main.c      **** 				}
+ 205:.\main.c      **** 				
+ 206:.\main.c      **** 				// Check for comms timeout. Comms has been dropped (out of range), so go back to off state.
+ 207:.\main.c      **** 				if(Comms_IsTimeout())
+ 323              		.loc 1 207 0
+ 324 0252 FFF7FEFF 		bl	Comms_IsTimeout
+ 325 0256 0346     		mov	r3, r0
+ 326 0258 002B     		cmp	r3, #0
+ 327 025a 03D0     		beq	.L13
+ 208:.\main.c      **** 				{
+ 209:.\main.c      **** 					mainState = mainOff;
+ 328              		.loc 1 209 0
+ 329 025c 4FF00103 		mov	r3, #1
+ 330 0260 FB73     		strb	r3, [r7, #15]
+ 210:.\main.c      **** 					break;
+ 331              		.loc 1 210 0
+ 332 0262 05E2     		b	.L2
+ 333              	.L13:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 11
+
+
+ 211:.\main.c      **** 				}
+ 212:.\main.c      **** 				
+ 213:.\main.c      **** 				// Check if user has pressed on button, set on bit if true
+ 214:.\main.c      **** 				if(Buttons_IsMotorButtonPressed())
+ 334              		.loc 1 214 0
+ 335 0264 FFF7FEFF 		bl	Buttons_IsMotorButtonPressed
+ 336 0268 0346     		mov	r3, r0
+ 337 026a 002B     		cmp	r3, #0
+ 338 026c 0DD0     		beq	.L14
+ 215:.\main.c      **** 				{
+ 216:.\main.c      **** 					// Set on bit in status byte
+ 217:.\main.c      **** 					statusByte |= (1 << commsON_BIT_POS);
+ 339              		.loc 1 217 0
+ 340 026e 40F20003 		movw	r3, #:lower16:statusByte
+ 341 0272 C0F20003 		movt	r3, #:upper16:statusByte
+ 342 0276 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 343 0278 43F00103 		orr	r3, r3, #1
+ 344 027c DAB2     		uxtb	r2, r3
+ 345 027e 40F20003 		movw	r3, #:lower16:statusByte
+ 346 0282 C0F20003 		movt	r3, #:upper16:statusByte
+ 347 0286 1A70     		strb	r2, [r3, #0]
+ 348 0288 11E0     		b	.L15
+ 349              	.L14:
+ 218:.\main.c      **** 					
+ 219:.\main.c      **** 				}
+ 220:.\main.c      **** 				// Buttons presses are mutually exclusive (else if)
+ 221:.\main.c      **** 				else if(Buttons_IsAlarmButtonPressed())
+ 350              		.loc 1 221 0
+ 351 028a FFF7FEFF 		bl	Buttons_IsAlarmButtonPressed
+ 352 028e 0346     		mov	r3, r0
+ 353 0290 002B     		cmp	r3, #0
+ 354 0292 0CD0     		beq	.L15
+ 222:.\main.c      **** 				{
+ 223:.\main.c      **** 					statusByte |= (1<< commsALARM_ON_BIT_POS);
+ 355              		.loc 1 223 0
+ 356 0294 40F20003 		movw	r3, #:lower16:statusByte
+ 357 0298 C0F20003 		movt	r3, #:upper16:statusByte
+ 358 029c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 359 029e 43F00203 		orr	r3, r3, #2
+ 360 02a2 DAB2     		uxtb	r2, r3
+ 361 02a4 40F20003 		movw	r3, #:lower16:statusByte
+ 362 02a8 C0F20003 		movt	r3, #:upper16:statusByte
+ 363 02ac 1A70     		strb	r2, [r3, #0]
+ 364              	.L15:
+ 224:.\main.c      **** 				}
+ 225:.\main.c      **** 				
+ 226:.\main.c      **** 				// Check if use has pressed the lights on button, set bit if true
+ 227:.\main.c      **** 				if(Buttons_IsLightsOnOffButtonPressed())
+ 365              		.loc 1 227 0
+ 366 02ae FFF7FEFF 		bl	Buttons_IsLightsOnOffButtonPressed
+ 367 02b2 0346     		mov	r3, r0
+ 368 02b4 002B     		cmp	r3, #0
+ 369 02b6 0DD0     		beq	.L16
+ 228:.\main.c      **** 					statusByte |= (1 << commsLIGHTS_ON_BIT_POS);
+ 370              		.loc 1 228 0
+ 371 02b8 40F20003 		movw	r3, #:lower16:statusByte
+ 372 02bc C0F20003 		movt	r3, #:upper16:statusByte
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 12
+
+
+ 373 02c0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 374 02c2 43F00803 		orr	r3, r3, #8
+ 375 02c6 DAB2     		uxtb	r2, r3
+ 376 02c8 40F20003 		movw	r3, #:lower16:statusByte
+ 377 02cc C0F20003 		movt	r3, #:upper16:statusByte
+ 378 02d0 1A70     		strb	r2, [r3, #0]
+ 379 02d2 0CE0     		b	.L17
+ 380              	.L16:
+ 229:.\main.c      **** 				else
+ 230:.\main.c      **** 					statusByte &= ((1 << commsLIGHTS_ON_BIT_POS)^0xFF);
+ 381              		.loc 1 230 0
+ 382 02d4 40F20003 		movw	r3, #:lower16:statusByte
+ 383 02d8 C0F20003 		movt	r3, #:upper16:statusByte
+ 384 02dc 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 385 02de 1A46     		mov	r2, r3
+ 386 02e0 02F0F702 		and	r2, r2, #247
+ 387 02e4 40F20003 		movw	r3, #:lower16:statusByte
+ 388 02e8 C0F20003 		movt	r3, #:upper16:statusByte
+ 389 02ec 1A70     		strb	r2, [r3, #0]
+ 390              	.L17:
+ 231:.\main.c      **** 				
+ 232:.\main.c      **** 				// Check for light mode being pressed. This needs to be reset after message sent.
+ 233:.\main.c      **** 				if(Buttons_IsLightModeButtonPressed())
+ 391              		.loc 1 233 0
+ 392 02ee FFF7FEFF 		bl	Buttons_IsLightModeButtonPressed
+ 393 02f2 0346     		mov	r3, r0
+ 394 02f4 002B     		cmp	r3, #0
+ 395 02f6 0DD0     		beq	.L18
+ 234:.\main.c      **** 					statusByte |= (1 << commsCHANGE_LIGHT_MODE_BIT_POS);
+ 396              		.loc 1 234 0
+ 397 02f8 40F20003 		movw	r3, #:lower16:statusByte
+ 398 02fc C0F20003 		movt	r3, #:upper16:statusByte
+ 399 0300 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 400 0302 43F01003 		orr	r3, r3, #16
+ 401 0306 DAB2     		uxtb	r2, r3
+ 402 0308 40F20003 		movw	r3, #:lower16:statusByte
+ 403 030c C0F20003 		movt	r3, #:upper16:statusByte
+ 404 0310 1A70     		strb	r2, [r3, #0]
+ 405 0312 0CE0     		b	.L19
+ 406              	.L18:
+ 235:.\main.c      **** 				else
+ 236:.\main.c      **** 					statusByte &= ((1 << commsCHANGE_LIGHT_MODE_BIT_POS)^0xFF);
+ 407              		.loc 1 236 0
+ 408 0314 40F20003 		movw	r3, #:lower16:statusByte
+ 409 0318 C0F20003 		movt	r3, #:upper16:statusByte
+ 410 031c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 411 031e 1A46     		mov	r2, r3
+ 412 0320 02F0EF02 		and	r2, r2, #239
+ 413 0324 40F20003 		movw	r3, #:lower16:statusByte
+ 414 0328 C0F20003 		movt	r3, #:upper16:statusByte
+ 415 032c 1A70     		strb	r2, [r3, #0]
+ 416              	.L19:
+ 237:.\main.c      **** 					
+ 238:.\main.c      **** 				// Send packet to skateboard
+ 239:.\main.c      **** 				if(currentTick >= commsLastSendCount + commsSendCountInterval)
+ 417              		.loc 1 239 0
+ 418 032e 7A69     		ldr	r2, [r7, #20]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 13
+
+
+ 419 0330 3B69     		ldr	r3, [r7, #16]
+ 420 0332 1A44     		add	r2, r2, r3
+ 421 0334 BB68     		ldr	r3, [r7, #8]
+ 422 0336 9A42     		cmp	r2, r3
+ 423 0338 13D8     		bhi	.L20
+ 240:.\main.c      **** 				{
+ 241:.\main.c      **** 					// Reset button light mode state once info has been sent
+ 242:.\main.c      **** 					Buttons_ResetLightModeButtonState();
+ 424              		.loc 1 242 0
+ 425 033a FFF7FEFF 		bl	Buttons_ResetLightModeButtonState
+ 243:.\main.c      **** 					// Send message to skateboard
+ 244:.\main.c      **** 					Main_BuildMsg(_msg, mainState);
+ 426              		.loc 1 244 0
+ 427 033e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 428 0340 40F20000 		movw	r0, #:lower16:_msg
+ 429 0344 C0F20000 		movt	r0, #:upper16:_msg
+ 430 0348 1946     		mov	r1, r3
+ 431 034a FFF7FEFF 		bl	Main_BuildMsg
+ 245:.\main.c      **** 					
+ 246:.\main.c      **** 					Comms_TurnOn();	
+ 432              		.loc 1 246 0
+ 433 034e FFF7FEFF 		bl	Comms_TurnOn
+ 247:.\main.c      **** 					Comms_Send(_msg);
+ 434              		.loc 1 247 0
+ 435 0352 40F20000 		movw	r0, #:lower16:_msg
+ 436 0356 C0F20000 		movt	r0, #:upper16:_msg
+ 437 035a FFF7FEFF 		bl	Comms_Send
+ 248:.\main.c      **** 					// Reset counter
+ 249:.\main.c      **** 					commsLastSendCount = currentTick;
+ 438              		.loc 1 249 0
+ 439 035e BB68     		ldr	r3, [r7, #8]
+ 440 0360 7B61     		str	r3, [r7, #20]
+ 441              	.L20:
+ 250:.\main.c      **** 				}
+ 251:.\main.c      **** 
+ 252:.\main.c      **** 				if(Comms_IsNewPacket())
+ 442              		.loc 1 252 0
+ 443 0362 FFF7FEFF 		bl	Comms_IsNewPacket
+ 444 0366 0346     		mov	r3, r0
+ 445 0368 002B     		cmp	r3, #0
+ 446 036a 00F07A81 		beq	.L44
+ 253:.\main.c      **** 				{
+ 254:.\main.c      **** 					Comms_TurnOff();
+ 447              		.loc 1 254 0
+ 448 036e FFF7FEFF 		bl	Comms_TurnOff
+ 255:.\main.c      **** 					// True is skateboard has received msg from remote and replied with on
+ 256:.\main.c      **** 					if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsON_BIT_POS))
+ 449              		.loc 1 256 0
+ 450 0372 4FF00400 		mov	r0, #4
+ 451 0376 FFF7FEFF 		bl	Comms_GetByte
+ 452 037a 0346     		mov	r3, r0
+ 453 037c 03F00103 		and	r3, r3, #1
+ 454 0380 DBB2     		uxtb	r3, r3
+ 455 0382 002B     		cmp	r3, #0
+ 456 0384 11D0     		beq	.L22
+ 257:.\main.c      **** 					{	
+ 258:.\main.c      **** 						PinXbeeSleep_Write(0);
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 14
+
+
+ 457              		.loc 1 258 0
+ 458 0386 4FF00000 		mov	r0, #0
+ 459 038a FFF7FEFF 		bl	PinXbeeSleep_Write
+ 259:.\main.c      **** 						mainState = mainMotorOn;
+ 460              		.loc 1 259 0
+ 461 038e 4FF00303 		mov	r3, #3
+ 462 0392 FB73     		strb	r3, [r7, #15]
+ 260:.\main.c      **** 						Lights_SetLedMode(LED_IN_RANGE, OFF, 0);
+ 463              		.loc 1 260 0
+ 464 0394 4FF00000 		mov	r0, #0
+ 465 0398 4FF00001 		mov	r1, #0
+ 466 039c 4FF00002 		mov	r2, #0
+ 467 03a0 4FF00003 		mov	r3, #0
+ 468 03a4 FFF7FEFF 		bl	Lights_SetLedMode
+ 261:.\main.c      **** 						break;
+ 469              		.loc 1 261 0
+ 470 03a8 62E1     		b	.L2
+ 471              	.L22:
+ 262:.\main.c      **** 					}
+ 263:.\main.c      **** 					// True is skateboard has received msg from remote and replied alarm on
+ 264:.\main.c      **** 					else if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsALARM_ON_BIT_POS))
+ 472              		.loc 1 264 0
+ 473 03aa 4FF00400 		mov	r0, #4
+ 474 03ae FFF7FEFF 		bl	Comms_GetByte
+ 475 03b2 0346     		mov	r3, r0
+ 476 03b4 03F00203 		and	r3, r3, #2
+ 477 03b8 002B     		cmp	r3, #0
+ 478 03ba 00F05481 		beq	.L45
+ 265:.\main.c      **** 					{	
+ 266:.\main.c      **** 						PinXbeeSleep_Write(0);
+ 479              		.loc 1 266 0
+ 480 03be 4FF00000 		mov	r0, #0
+ 481 03c2 FFF7FEFF 		bl	PinXbeeSleep_Write
+ 267:.\main.c      **** 						mainState = mainAlarmOn;
+ 482              		.loc 1 267 0
+ 483 03c6 4FF00403 		mov	r3, #4
+ 484 03ca FB73     		strb	r3, [r7, #15]
+ 268:.\main.c      **** 						break;
+ 485              		.loc 1 268 0
+ 486 03cc 50E1     		b	.L2
+ 487              	.L6:
+ 269:.\main.c      **** 					}
+ 270:.\main.c      **** 				}
+ 271:.\main.c      **** 				
+ 272:.\main.c      **** 				break;
+ 273:.\main.c      **** 			
+ 274:.\main.c      **** 
+ 275:.\main.c      **** 			//===================================== MOTOR ON STATE =======================================//
+ 276:.\main.c      **** 			case mainMotorOn:
+ 277:.\main.c      **** 				
+ 278:.\main.c      **** 				if(prevMainState != mainMotorOn)
+ 488              		.loc 1 278 0
+ 489 03ce BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 490 03d0 032B     		cmp	r3, #3
+ 491 03d2 23D0     		beq	.L23
+ 279:.\main.c      **** 				{
+ 280:.\main.c      **** 					#if(config_DEBUG_MAIN == 1) 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 15
+
+
+ 281:.\main.c      **** 						UartDebug_PutString("MAIN: Entering motorOn state.\r\n");
+ 492              		.loc 1 281 0
+ 493 03d4 40F20000 		movw	r0, #:lower16:.LC3
+ 494 03d8 C0F20000 		movt	r0, #:upper16:.LC3
+ 495 03dc FFF7FEFF 		bl	UartDebug_PutString
+ 282:.\main.c      **** 					#endif
+ 283:.\main.c      **** 					// Set on bit in status byte
+ 284:.\main.c      **** 					statusByte |= (1 << commsON_BIT_POS);
+ 496              		.loc 1 284 0
+ 497 03e0 40F20003 		movw	r3, #:lower16:statusByte
+ 498 03e4 C0F20003 		movt	r3, #:upper16:statusByte
+ 499 03e8 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 500 03ea 43F00103 		orr	r3, r3, #1
+ 501 03ee DAB2     		uxtb	r2, r3
+ 502 03f0 40F20003 		movw	r3, #:lower16:statusByte
+ 503 03f4 C0F20003 		movt	r3, #:upper16:statusByte
+ 504 03f8 1A70     		strb	r2, [r3, #0]
+ 285:.\main.c      **** 					// Flash third LED
+ 286:.\main.c      **** 					Lights_SetLedMode(LED_MOTOR_ON, ON, 0);
+ 505              		.loc 1 286 0
+ 506 03fa 4FF00100 		mov	r0, #1
+ 507 03fe 4FF00101 		mov	r1, #1
+ 508 0402 4FF00002 		mov	r2, #0
+ 509 0406 4FF00003 		mov	r3, #0
+ 510 040a FFF7FEFF 		bl	Lights_SetLedMode
+ 287:.\main.c      **** 					
+ 288:.\main.c      **** 					// Enable throttle voltage measurements. ADC state machine measures throttle every configADC_T
+ 289:.\main.c      **** 					Adc_EnableThrottleVoltMeas(TRUE);
+ 511              		.loc 1 289 0
+ 512 040e 4FF00100 		mov	r0, #1
+ 513 0412 FFF7FEFF 		bl	Adc_EnableThrottleVoltMeas
+ 290:.\main.c      **** 					prevMainState = mainMotorOn;
+ 514              		.loc 1 290 0
+ 515 0416 4FF00303 		mov	r3, #3
+ 516 041a BB73     		strb	r3, [r7, #14]
+ 517              	.L23:
+ 291:.\main.c      **** 				}
+ 292:.\main.c      **** 				
+ 293:.\main.c      **** 				// Check for comms timeout. If comms has been dropped, go to off state
+ 294:.\main.c      **** 				if(Comms_IsTimeout())
+ 518              		.loc 1 294 0
+ 519 041c FFF7FEFF 		bl	Comms_IsTimeout
+ 520 0420 0346     		mov	r3, r0
+ 521 0422 002B     		cmp	r3, #0
+ 522 0424 11D0     		beq	.L24
+ 295:.\main.c      **** 				{
+ 296:.\main.c      **** 					mainState = mainOff;
+ 523              		.loc 1 296 0
+ 524 0426 4FF00103 		mov	r3, #1
+ 525 042a FB73     		strb	r3, [r7, #15]
+ 297:.\main.c      **** 					Lights_SetLedMode(LED_MOTOR_ON, OFF, 0);
+ 526              		.loc 1 297 0
+ 527 042c 4FF00100 		mov	r0, #1
+ 528 0430 4FF00001 		mov	r1, #0
+ 529 0434 4FF00002 		mov	r2, #0
+ 530 0438 4FF00003 		mov	r3, #0
+ 531 043c FFF7FEFF 		bl	Lights_SetLedMode
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 16
+
+
+ 298:.\main.c      **** 					Adc_EnableThrottleVoltMeas(FALSE);
+ 532              		.loc 1 298 0
+ 533 0440 4FF00000 		mov	r0, #0
+ 534 0444 FFF7FEFF 		bl	Adc_EnableThrottleVoltMeas
+ 299:.\main.c      **** 					break;
+ 535              		.loc 1 299 0
+ 536 0448 12E1     		b	.L2
+ 537              	.L24:
+ 300:.\main.c      **** 				}
+ 301:.\main.c      **** 				
+ 302:.\main.c      **** 				// Check if user has pressed on button, clear on bit if true (to turn off)
+ 303:.\main.c      **** 				if(!Buttons_IsMotorButtonPressed())
+ 538              		.loc 1 303 0
+ 539 044a FFF7FEFF 		bl	Buttons_IsMotorButtonPressed
+ 540 044e 0346     		mov	r3, r0
+ 541 0450 002B     		cmp	r3, #0
+ 542 0452 0CD1     		bne	.L25
+ 304:.\main.c      **** 				{
+ 305:.\main.c      **** 					// Clear on bit in status byte
+ 306:.\main.c      **** 					statusByte &= ((1 << commsON_BIT_POS)^0xFF);
+ 543              		.loc 1 306 0
+ 544 0454 40F20003 		movw	r3, #:lower16:statusByte
+ 545 0458 C0F20003 		movt	r3, #:upper16:statusByte
+ 546 045c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 547 045e 1A46     		mov	r2, r3
+ 548 0460 02F0FE02 		and	r2, r2, #254
+ 549 0464 40F20003 		movw	r3, #:lower16:statusByte
+ 550 0468 C0F20003 		movt	r3, #:upper16:statusByte
+ 551 046c 1A70     		strb	r2, [r3, #0]
+ 552              	.L25:
+ 307:.\main.c      **** 					//nextMainState = off;
+ 308:.\main.c      **** 					//Lights_SetLedMode(LED_MOTOR_ON, OFF, 0);
+ 309:.\main.c      **** 				}
+ 310:.\main.c      **** 				
+ 311:.\main.c      **** 				// Check if user has pressed the lights on button, set bit if true
+ 312:.\main.c      **** 				if(Buttons_IsLightsOnOffButtonPressed())
+ 553              		.loc 1 312 0
+ 554 046e FFF7FEFF 		bl	Buttons_IsLightsOnOffButtonPressed
+ 555 0472 0346     		mov	r3, r0
+ 556 0474 002B     		cmp	r3, #0
+ 557 0476 0DD0     		beq	.L26
+ 313:.\main.c      **** 					statusByte |= (1 << commsLIGHTS_ON_BIT_POS);
+ 558              		.loc 1 313 0
+ 559 0478 40F20003 		movw	r3, #:lower16:statusByte
+ 560 047c C0F20003 		movt	r3, #:upper16:statusByte
+ 561 0480 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 562 0482 43F00803 		orr	r3, r3, #8
+ 563 0486 DAB2     		uxtb	r2, r3
+ 564 0488 40F20003 		movw	r3, #:lower16:statusByte
+ 565 048c C0F20003 		movt	r3, #:upper16:statusByte
+ 566 0490 1A70     		strb	r2, [r3, #0]
+ 567 0492 0CE0     		b	.L27
+ 568              	.L26:
+ 314:.\main.c      **** 				else
+ 315:.\main.c      **** 					statusByte &= ((1 << commsLIGHTS_ON_BIT_POS)^0xFF);
+ 569              		.loc 1 315 0
+ 570 0494 40F20003 		movw	r3, #:lower16:statusByte
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 17
+
+
+ 571 0498 C0F20003 		movt	r3, #:upper16:statusByte
+ 572 049c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 573 049e 1A46     		mov	r2, r3
+ 574 04a0 02F0F702 		and	r2, r2, #247
+ 575 04a4 40F20003 		movw	r3, #:lower16:statusByte
+ 576 04a8 C0F20003 		movt	r3, #:upper16:statusByte
+ 577 04ac 1A70     		strb	r2, [r3, #0]
+ 578              	.L27:
+ 316:.\main.c      **** 				
+ 317:.\main.c      **** 				// Check for light mode being pressed. This needs to be reset after message sent.
+ 318:.\main.c      **** 				if(Buttons_IsLightModeButtonPressed())
+ 579              		.loc 1 318 0
+ 580 04ae FFF7FEFF 		bl	Buttons_IsLightModeButtonPressed
+ 581 04b2 0346     		mov	r3, r0
+ 582 04b4 002B     		cmp	r3, #0
+ 583 04b6 0DD0     		beq	.L28
+ 319:.\main.c      **** 					statusByte |= (1 << commsCHANGE_LIGHT_MODE_BIT_POS);
+ 584              		.loc 1 319 0
+ 585 04b8 40F20003 		movw	r3, #:lower16:statusByte
+ 586 04bc C0F20003 		movt	r3, #:upper16:statusByte
+ 587 04c0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 588 04c2 43F01003 		orr	r3, r3, #16
+ 589 04c6 DAB2     		uxtb	r2, r3
+ 590 04c8 40F20003 		movw	r3, #:lower16:statusByte
+ 591 04cc C0F20003 		movt	r3, #:upper16:statusByte
+ 592 04d0 1A70     		strb	r2, [r3, #0]
+ 593 04d2 0CE0     		b	.L29
+ 594              	.L28:
+ 320:.\main.c      **** 				else
+ 321:.\main.c      **** 					statusByte &= ((1 << commsCHANGE_LIGHT_MODE_BIT_POS)^0xFF);
+ 595              		.loc 1 321 0
+ 596 04d4 40F20003 		movw	r3, #:lower16:statusByte
+ 597 04d8 C0F20003 		movt	r3, #:upper16:statusByte
+ 598 04dc 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 599 04de 1A46     		mov	r2, r3
+ 600 04e0 02F0EF02 		and	r2, r2, #239
+ 601 04e4 40F20003 		movw	r3, #:lower16:statusByte
+ 602 04e8 C0F20003 		movt	r3, #:upper16:statusByte
+ 603 04ec 1A70     		strb	r2, [r3, #0]
+ 604              	.L29:
+ 322:.\main.c      **** 				
+ 323:.\main.c      **** 				
+ 324:.\main.c      **** 				// Send a new packet to skateboard periodically
+ 325:.\main.c      **** 				if(currentTick >= commsLastSendCount + commsSendCountInterval)
+ 605              		.loc 1 325 0
+ 606 04ee 7A69     		ldr	r2, [r7, #20]
+ 607 04f0 3B69     		ldr	r3, [r7, #16]
+ 608 04f2 1A44     		add	r2, r2, r3
+ 609 04f4 BB68     		ldr	r3, [r7, #8]
+ 610 04f6 9A42     		cmp	r2, r3
+ 611 04f8 13D8     		bhi	.L30
+ 326:.\main.c      **** 				{
+ 327:.\main.c      **** 					Buttons_ResetLightModeButtonState();
+ 612              		.loc 1 327 0
+ 613 04fa FFF7FEFF 		bl	Buttons_ResetLightModeButtonState
+ 328:.\main.c      **** 					// Send message to skateboard
+ 329:.\main.c      **** 					Main_BuildMsg(_msg, mainState);
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 18
+
+
+ 614              		.loc 1 329 0
+ 615 04fe FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 616 0500 40F20000 		movw	r0, #:lower16:_msg
+ 617 0504 C0F20000 		movt	r0, #:upper16:_msg
+ 618 0508 1946     		mov	r1, r3
+ 619 050a FFF7FEFF 		bl	Main_BuildMsg
+ 330:.\main.c      **** 					Comms_TurnOn();
+ 620              		.loc 1 330 0
+ 621 050e FFF7FEFF 		bl	Comms_TurnOn
+ 331:.\main.c      **** 					Comms_Send(_msg);
+ 622              		.loc 1 331 0
+ 623 0512 40F20000 		movw	r0, #:lower16:_msg
+ 624 0516 C0F20000 		movt	r0, #:upper16:_msg
+ 625 051a FFF7FEFF 		bl	Comms_Send
+ 332:.\main.c      **** 			
+ 333:.\main.c      **** 					// Reset counter
+ 334:.\main.c      **** 					commsLastSendCount = currentTick;
+ 626              		.loc 1 334 0
+ 627 051e BB68     		ldr	r3, [r7, #8]
+ 628 0520 7B61     		str	r3, [r7, #20]
+ 629              	.L30:
+ 335:.\main.c      **** 				}
+ 336:.\main.c      **** 				
+ 337:.\main.c      **** 				if(Comms_IsNewPacket())
+ 630              		.loc 1 337 0
+ 631 0522 FFF7FEFF 		bl	Comms_IsNewPacket
+ 632 0526 0346     		mov	r3, r0
+ 633 0528 002B     		cmp	r3, #0
+ 634 052a 00F09E80 		beq	.L46
+ 338:.\main.c      **** 				{
+ 339:.\main.c      **** 					Comms_TurnOff();
+ 635              		.loc 1 339 0
+ 636 052e FFF7FEFF 		bl	Comms_TurnOff
+ 340:.\main.c      **** 					// True is skateboard has received msg from remote and replied with off
+ 341:.\main.c      **** 					if(!(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsON_BIT_POS)))
+ 637              		.loc 1 341 0
+ 638 0532 4FF00400 		mov	r0, #4
+ 639 0536 FFF7FEFF 		bl	Comms_GetByte
+ 640 053a 0346     		mov	r3, r0
+ 641 053c 03F00103 		and	r3, r3, #1
+ 642 0540 002B     		cmp	r3, #0
+ 643 0542 40F09480 		bne	.L47
+ 342:.\main.c      **** 					{	
+ 343:.\main.c      **** 						mainState = mainInRange;
+ 644              		.loc 1 343 0
+ 645 0546 4FF00203 		mov	r3, #2
+ 646 054a FB73     		strb	r3, [r7, #15]
+ 344:.\main.c      **** 						Adc_EnableThrottleVoltMeas(FALSE);
+ 647              		.loc 1 344 0
+ 648 054c 4FF00000 		mov	r0, #0
+ 649 0550 FFF7FEFF 		bl	Adc_EnableThrottleVoltMeas
+ 345:.\main.c      **** 						break;
+ 650              		.loc 1 345 0
+ 651 0554 8CE0     		b	.L2
+ 652              	.L7:
+ 346:.\main.c      **** 					}
+ 347:.\main.c      **** 				}
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 19
+
+
+ 348:.\main.c      **** 				
+ 349:.\main.c      **** 				break;
+ 350:.\main.c      **** 			
+ 351:.\main.c      **** 			//===================================== ALARM ACTIVATED STATE ================================//
+ 352:.\main.c      **** 			// Alarm on state. From here you can only go back to the in range by turning off the alarm.
+ 353:.\main.c      **** 			// Allows lights to be turned on/off, light mode to be changed
+ 354:.\main.c      **** 			case mainAlarmOn:
+ 355:.\main.c      **** 				if(prevMainState != mainAlarmOn)
+ 653              		.loc 1 355 0
+ 654 0556 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 655 0558 042B     		cmp	r3, #4
+ 656 055a 12D0     		beq	.L32
+ 356:.\main.c      **** 				{
+ 357:.\main.c      **** 					#if(config_DEBUG_MAIN == 1) 
+ 358:.\main.c      **** 						UartDebug_PutString("MAIN: Entering alarmOn state.\r\n");
+ 657              		.loc 1 358 0
+ 658 055c 40F20000 		movw	r0, #:lower16:.LC4
+ 659 0560 C0F20000 		movt	r0, #:upper16:.LC4
+ 660 0564 FFF7FEFF 		bl	UartDebug_PutString
+ 359:.\main.c      **** 					#endif
+ 360:.\main.c      **** 					Lights_SetLedMode(LED_ALARM_ON, ON, 0);
+ 661              		.loc 1 360 0
+ 662 0568 4FF00200 		mov	r0, #2
+ 663 056c 4FF00101 		mov	r1, #1
+ 664 0570 4FF00002 		mov	r2, #0
+ 665 0574 4FF00003 		mov	r3, #0
+ 666 0578 FFF7FEFF 		bl	Lights_SetLedMode
+ 361:.\main.c      **** 					prevMainState = mainAlarmOn;
+ 667              		.loc 1 361 0
+ 668 057c 4FF00403 		mov	r3, #4
+ 669 0580 BB73     		strb	r3, [r7, #14]
+ 670              	.L32:
+ 362:.\main.c      **** 				}
+ 363:.\main.c      **** 				
+ 364:.\main.c      **** 				// Check if user turns alarm off
+ 365:.\main.c      **** 				if(Buttons_IsAlarmButtonPressed())
+ 671              		.loc 1 365 0
+ 672 0582 FFF7FEFF 		bl	Buttons_IsAlarmButtonPressed
+ 673 0586 0346     		mov	r3, r0
+ 674 0588 002B     		cmp	r3, #0
+ 675 058a 0DD0     		beq	.L33
+ 366:.\main.c      **** 					statusByte |= (1<< commsALARM_ON_BIT_POS);
+ 676              		.loc 1 366 0
+ 677 058c 40F20003 		movw	r3, #:lower16:statusByte
+ 678 0590 C0F20003 		movt	r3, #:upper16:statusByte
+ 679 0594 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 680 0596 43F00203 		orr	r3, r3, #2
+ 681 059a DAB2     		uxtb	r2, r3
+ 682 059c 40F20003 		movw	r3, #:lower16:statusByte
+ 683 05a0 C0F20003 		movt	r3, #:upper16:statusByte
+ 684 05a4 1A70     		strb	r2, [r3, #0]
+ 685 05a6 0CE0     		b	.L34
+ 686              	.L33:
+ 367:.\main.c      **** 				else
+ 368:.\main.c      **** 					statusByte &= ((1 << commsALARM_ON_BIT_POS)^0xFF);
+ 687              		.loc 1 368 0
+ 688 05a8 40F20003 		movw	r3, #:lower16:statusByte
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 20
+
+
+ 689 05ac C0F20003 		movt	r3, #:upper16:statusByte
+ 690 05b0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 691 05b2 1A46     		mov	r2, r3
+ 692 05b4 02F0FD02 		and	r2, r2, #253
+ 693 05b8 40F20003 		movw	r3, #:lower16:statusByte
+ 694 05bc C0F20003 		movt	r3, #:upper16:statusByte
+ 695 05c0 1A70     		strb	r2, [r3, #0]
+ 696              	.L34:
+ 369:.\main.c      **** 				
+ 370:.\main.c      **** 				// Check if user has pressed the lights on button, set bit if true
+ 371:.\main.c      **** 				if(Buttons_IsLightsOnOffButtonPressed())
+ 697              		.loc 1 371 0
+ 698 05c2 FFF7FEFF 		bl	Buttons_IsLightsOnOffButtonPressed
+ 699 05c6 0346     		mov	r3, r0
+ 700 05c8 002B     		cmp	r3, #0
+ 701 05ca 0DD0     		beq	.L35
+ 372:.\main.c      **** 					statusByte |= (1 << commsLIGHTS_ON_BIT_POS);
+ 702              		.loc 1 372 0
+ 703 05cc 40F20003 		movw	r3, #:lower16:statusByte
+ 704 05d0 C0F20003 		movt	r3, #:upper16:statusByte
+ 705 05d4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 706 05d6 43F00803 		orr	r3, r3, #8
+ 707 05da DAB2     		uxtb	r2, r3
+ 708 05dc 40F20003 		movw	r3, #:lower16:statusByte
+ 709 05e0 C0F20003 		movt	r3, #:upper16:statusByte
+ 710 05e4 1A70     		strb	r2, [r3, #0]
+ 711 05e6 0CE0     		b	.L36
+ 712              	.L35:
+ 373:.\main.c      **** 				else
+ 374:.\main.c      **** 					statusByte &= ((1 << commsLIGHTS_ON_BIT_POS)^0xFF);
+ 713              		.loc 1 374 0
+ 714 05e8 40F20003 		movw	r3, #:lower16:statusByte
+ 715 05ec C0F20003 		movt	r3, #:upper16:statusByte
+ 716 05f0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 717 05f2 1A46     		mov	r2, r3
+ 718 05f4 02F0F702 		and	r2, r2, #247
+ 719 05f8 40F20003 		movw	r3, #:lower16:statusByte
+ 720 05fc C0F20003 		movt	r3, #:upper16:statusByte
+ 721 0600 1A70     		strb	r2, [r3, #0]
+ 722              	.L36:
+ 375:.\main.c      **** 				
+ 376:.\main.c      **** 				// Send a new packet to skateboard periodically
+ 377:.\main.c      **** 				if(currentTick >= commsLastSendCount + commsSendCountInterval)
+ 723              		.loc 1 377 0
+ 724 0602 7A69     		ldr	r2, [r7, #20]
+ 725 0604 3B69     		ldr	r3, [r7, #16]
+ 726 0606 1A44     		add	r2, r2, r3
+ 727 0608 BB68     		ldr	r3, [r7, #8]
+ 728 060a 9A42     		cmp	r2, r3
+ 729 060c 11D8     		bhi	.L37
+ 378:.\main.c      **** 				{
+ 379:.\main.c      **** 						// Send message to skateboard
+ 380:.\main.c      **** 						Main_BuildMsg(_msg, mainState);
+ 730              		.loc 1 380 0
+ 731 060e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 732 0610 40F20000 		movw	r0, #:lower16:_msg
+ 733 0614 C0F20000 		movt	r0, #:upper16:_msg
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 21
+
+
+ 734 0618 1946     		mov	r1, r3
+ 735 061a FFF7FEFF 		bl	Main_BuildMsg
+ 381:.\main.c      **** 						Comms_TurnOn();
+ 736              		.loc 1 381 0
+ 737 061e FFF7FEFF 		bl	Comms_TurnOn
+ 382:.\main.c      **** 						Comms_Send(_msg);
+ 738              		.loc 1 382 0
+ 739 0622 40F20000 		movw	r0, #:lower16:_msg
+ 740 0626 C0F20000 		movt	r0, #:upper16:_msg
+ 741 062a FFF7FEFF 		bl	Comms_Send
+ 383:.\main.c      **** 						// Reset counter
+ 384:.\main.c      **** 						commsLastSendCount = currentTick;
+ 742              		.loc 1 384 0
+ 743 062e BB68     		ldr	r3, [r7, #8]
+ 744 0630 7B61     		str	r3, [r7, #20]
+ 745              	.L37:
+ 385:.\main.c      **** 				}
+ 386:.\main.c      **** 				
+ 387:.\main.c      **** 
+ 388:.\main.c      **** 				if(Comms_IsNewPacket())
+ 746              		.loc 1 388 0
+ 747 0632 FFF7FEFF 		bl	Comms_IsNewPacket
+ 748 0636 0346     		mov	r3, r0
+ 749 0638 002B     		cmp	r3, #0
+ 750 063a 19D0     		beq	.L2
+ 389:.\main.c      **** 				{
+ 390:.\main.c      **** 					Comms_TurnOff();
+ 751              		.loc 1 390 0
+ 752 063c FFF7FEFF 		bl	Comms_TurnOff
+ 391:.\main.c      **** 					// True is skateboard has replied with alarm off
+ 392:.\main.c      **** 					if(!(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsALARM_ON_BIT_POS)))
+ 753              		.loc 1 392 0
+ 754 0640 4FF00400 		mov	r0, #4
+ 755 0644 FFF7FEFF 		bl	Comms_GetByte
+ 756 0648 0346     		mov	r3, r0
+ 757 064a 03F00203 		and	r3, r3, #2
+ 758 064e 002B     		cmp	r3, #0
+ 759 0650 0ED1     		bne	.L2
+ 393:.\main.c      **** 					{	
+ 394:.\main.c      **** 						mainState = mainInRange;
+ 760              		.loc 1 394 0
+ 761 0652 4FF00203 		mov	r3, #2
+ 762 0656 FB73     		strb	r3, [r7, #15]
+ 763 0658 0AE0     		b	.L2
+ 764              	.L42:
+ 765              		.loc 1 192 0
+ 766 065a 00BF     		nop
+ 767 065c 08E0     		b	.L2
+ 768              	.L43:
+ 769 065e 00BF     		nop
+ 770 0660 06E0     		b	.L2
+ 771              	.L44:
+ 772              		.loc 1 272 0
+ 773 0662 00BF     		nop
+ 774 0664 04E0     		b	.L2
+ 775              	.L45:
+ 776 0666 00BF     		nop
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 22
+
+
+ 777 0668 02E0     		b	.L2
+ 778              	.L46:
+ 779              		.loc 1 349 0
+ 780 066a 00BF     		nop
+ 781 066c 00E0     		b	.L2
+ 782              	.L47:
+ 783 066e 00BF     		nop
+ 784              	.L2:
+ 395:.\main.c      **** 						break;
+ 396:.\main.c      **** 					}
+ 397:.\main.c      **** 				}
+ 398:.\main.c      **** 				
+ 399:.\main.c      **** 				break;
+ 400:.\main.c      **** 			
+ 401:.\main.c      **** 		}
+ 402:.\main.c      **** 		
+ 403:.\main.c      **** 		PinDebug_Write(1);
+ 785              		.loc 1 403 0
+ 786 0670 4FF00100 		mov	r0, #1
+ 787 0674 FFF7FEFF 		bl	PinDebug_Write
+ 404:.\main.c      **** 		
+ 405:.\main.c      **** 		
+ 406:.\main.c      **** 		// Wait for next tick from interrupt
+ 407:.\main.c      **** 		if(currentTick == _mainTickCounter)
+ 788              		.loc 1 407 0
+ 789 0678 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 790 067c C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 791 0680 1B68     		ldr	r3, [r3, #0]
+ 792 0682 BA68     		ldr	r2, [r7, #8]
+ 793 0684 9A42     		cmp	r2, r3
+ 794 0686 07D1     		bne	.L38
+ 795              	.L39:
+ 408:.\main.c      **** 			// Normal operation, wait for next tick
+ 409:.\main.c      **** 			while(currentTick == _mainTickCounter);
+ 796              		.loc 1 409 0
+ 797 0688 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 798 068c C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 799 0690 1B68     		ldr	r3, [r3, #0]
+ 800 0692 BA68     		ldr	r2, [r7, #8]
+ 801 0694 9A42     		cmp	r2, r3
+ 802 0696 F7D0     		beq	.L39
+ 803              	.L38:
+ 410:.\main.c      **** 		else
+ 411:.\main.c      **** 		{
+ 412:.\main.c      **** 			//! @todo Add error checking
+ 413:.\main.c      **** 		}
+ 414:.\main.c      **** 		
+ 415:.\main.c      **** 		PinDebug_Write(0);
+ 804              		.loc 1 415 0
+ 805 0698 4FF00000 		mov	r0, #0
+ 806 069c FFF7FEFF 		bl	PinDebug_Write
+ 807              	.LBE2:
+ 416:.\main.c      **** 		
+ 417:.\main.c      ****     }
+ 808              		.loc 1 417 0
+ 809 06a0 FFE4     		b	.L40
+ 810              	.L49:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 23
+
+
+ 811 06a2 00BFAFF3 		.align	3
+ 811      0080
+ 812              	.L48:
+ 813 06a8 00000000 		.word	0
+ 814 06ac 00407F40 		.word	1082081280
+ 815              		.cfi_endproc
+ 816              	.LFE29:
+ 817              		.size	main, .-main
+ 818              		.global	__aeabi_dsub
+ 819              		.global	__aeabi_dmul
+ 820              		.global	__aeabi_ddiv
+ 821              		.global	__aeabi_dcmplt
+ 822              		.global	__aeabi_dcmpgt
+ 823              		.global	__aeabi_d2uiz
+ 824              		.section	.text.Main_BuildMsg,"ax",%progbits
+ 825              		.align	2
+ 826              		.global	Main_BuildMsg
+ 827              		.thumb
+ 828              		.thumb_func
+ 829              		.type	Main_BuildMsg, %function
+ 830              	Main_BuildMsg:
+ 831              	.LFB30:
+ 418:.\main.c      **** }
+ 419:.\main.c      **** 
+ 420:.\main.c      **** void Main_BuildMsg(uint8_t *msg, mainState_t mainState)
+ 421:.\main.c      **** {
+ 832              		.loc 1 421 0
+ 833              		.cfi_startproc
+ 834              		@ args = 0, pretend = 0, frame = 32
+ 835              		@ frame_needed = 1, uses_anonymous_args = 0
+ 836 0000 90B5     		push	{r4, r7, lr}
+ 837              	.LCFI3:
+ 838              		.cfi_def_cfa_offset 12
+ 839 0002 89B0     		sub	sp, sp, #36
+ 840              	.LCFI4:
+ 841              		.cfi_def_cfa_offset 48
+ 842 0004 00AF     		add	r7, sp, #0
+ 843              		.cfi_offset 14, -4
+ 844              		.cfi_offset 7, -8
+ 845              		.cfi_offset 4, -12
+ 846              	.LCFI5:
+ 847              		.cfi_def_cfa_register 7
+ 848 0006 7860     		str	r0, [r7, #4]
+ 849 0008 0B46     		mov	r3, r1
+ 850 000a FB70     		strb	r3, [r7, #3]
+ 422:.\main.c      **** 
+ 423:.\main.c      **** 	static uint32_t count = 0;
+ 424:.\main.c      **** 	
+ 425:.\main.c      **** 	count++;
+ 851              		.loc 1 425 0
+ 852 000c 40F20003 		movw	r3, #:lower16:count.3982
+ 853 0010 C0F20003 		movt	r3, #:upper16:count.3982
+ 854 0014 1B68     		ldr	r3, [r3, #0]
+ 855 0016 03F10102 		add	r2, r3, #1
+ 856 001a 40F20003 		movw	r3, #:lower16:count.3982
+ 857 001e C0F20003 		movt	r3, #:upper16:count.3982
+ 858 0022 1A60     		str	r2, [r3, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 24
+
+
+ 426:.\main.c      **** 
+ 427:.\main.c      **** 	// 3 header chars indentifing message
+ 428:.\main.c      **** 	msg[0] = 's';
+ 859              		.loc 1 428 0
+ 860 0024 7B68     		ldr	r3, [r7, #4]
+ 861 0026 4FF07302 		mov	r2, #115
+ 862 002a 1A70     		strb	r2, [r3, #0]
+ 429:.\main.c      **** 	msg[1] = 'k';
+ 863              		.loc 1 429 0
+ 864 002c 7B68     		ldr	r3, [r7, #4]
+ 865 002e 03F10103 		add	r3, r3, #1
+ 866 0032 4FF06B02 		mov	r2, #107
+ 867 0036 1A70     		strb	r2, [r3, #0]
+ 430:.\main.c      **** 	msg[2] = 't';
+ 868              		.loc 1 430 0
+ 869 0038 7B68     		ldr	r3, [r7, #4]
+ 870 003a 03F10203 		add	r3, r3, #2
+ 871 003e 4FF07402 		mov	r2, #116
+ 872 0042 1A70     		strb	r2, [r3, #0]
+ 431:.\main.c      **** 	// Number of data bytes following...
+ 432:.\main.c      **** 	msg[3] = 0x03;
+ 873              		.loc 1 432 0
+ 874 0044 7B68     		ldr	r3, [r7, #4]
+ 875 0046 03F10303 		add	r3, r3, #3
+ 876 004a 4FF00302 		mov	r2, #3
+ 877 004e 1A70     		strb	r2, [r3, #0]
+ 433:.\main.c      **** 	// Status byte
+ 434:.\main.c      **** 	msg[commsSTATUS_BYTE_POS] = statusByte;
+ 878              		.loc 1 434 0
+ 879 0050 7B68     		ldr	r3, [r7, #4]
+ 880 0052 03F10402 		add	r2, r3, #4
+ 881 0056 40F20003 		movw	r3, #:lower16:statusByte
+ 882 005a C0F20003 		movt	r3, #:upper16:statusByte
+ 883 005e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 884 0060 1370     		strb	r3, [r2, #0]
+ 435:.\main.c      **** 	
+ 436:.\main.c      **** 	if(mainState == mainMotorOn)
+ 885              		.loc 1 436 0
+ 886 0062 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 887 0064 032B     		cmp	r3, #3
+ 888 0066 6AD1     		bne	.L51
+ 889              	.LBB3:
+ 437:.\main.c      **** 	{
+ 438:.\main.c      **** 		// Motor speed value (16-bit) (make 0 when off)
+ 439:.\main.c      **** 		double throttleVolt = Adc_GetThrottleVolt();
+ 890              		.loc 1 439 0
+ 891 0068 FFF7FEFF 		bl	Adc_GetThrottleVolt
+ 892 006c 0246     		mov	r2, r0
+ 893 006e 0B46     		mov	r3, r1
+ 894 0070 C7E90223 		strd	r2, [r7, #8]
+ 440:.\main.c      **** 		// Scale to use full resolution
+ 441:.\main.c      **** 		double throttleVal = 65535.0*((throttleVolt - configTHROTTLE_LOW_LEVEL_MV))/(configTHROTTLE_HIGH_
+ 895              		.loc 1 441 0
+ 896 0074 D7E90201 		ldrd	r0, [r7, #8]
+ 897 0078 3DA3     		adr	r3, .L60
+ 898 007a D3E90023 		ldrd	r2, [r3]
+ 899 007e FFF7FEFF 		bl	__aeabi_dsub
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 25
+
+
+ 900 0082 0246     		mov	r2, r0
+ 901 0084 0B46     		mov	r3, r1
+ 902 0086 1046     		mov	r0, r2
+ 903 0088 1946     		mov	r1, r3
+ 904 008a 3BA3     		adr	r3, .L60+8
+ 905 008c D3E90023 		ldrd	r2, [r3]
+ 906 0090 FFF7FEFF 		bl	__aeabi_dmul
+ 907 0094 0246     		mov	r2, r0
+ 908 0096 0B46     		mov	r3, r1
+ 909 0098 1046     		mov	r0, r2
+ 910 009a 1946     		mov	r1, r3
+ 911 009c 38A3     		adr	r3, .L60+16
+ 912 009e D3E90023 		ldrd	r2, [r3]
+ 913 00a2 FFF7FEFF 		bl	__aeabi_ddiv
+ 914 00a6 0246     		mov	r2, r0
+ 915 00a8 0B46     		mov	r3, r1
+ 916 00aa C7E90423 		strd	r2, [r7, #16]
+ 442:.\main.c      **** 		
+ 443:.\main.c      **** 		if(throttleVal < 0)
+ 917              		.loc 1 443 0
+ 918 00ae 4FF00003 		mov	r3, #0
+ 919 00b2 1C46     		mov	r4, r3
+ 920 00b4 D7E90401 		ldrd	r0, [r7, #16]
+ 921 00b8 4FF00002 		mov	r2, #0
+ 922 00bc 4FF00003 		mov	r3, #0
+ 923 00c0 FFF7FEFF 		bl	__aeabi_dcmplt
+ 924 00c4 0346     		mov	r3, r0
+ 925 00c6 002B     		cmp	r3, #0
+ 926 00c8 02D0     		beq	.L52
+ 927              	.L53:
+ 928 00ca 4FF00103 		mov	r3, #1
+ 929 00ce 1C46     		mov	r4, r3
+ 930              	.L52:
+ 931 00d0 E3B2     		uxtb	r3, r4
+ 932 00d2 002B     		cmp	r3, #0
+ 933 00d4 05D0     		beq	.L54
+ 444:.\main.c      **** 			throttleVal = 0;
+ 934              		.loc 1 444 0
+ 935 00d6 4FF00002 		mov	r2, #0
+ 936 00da 4FF00003 		mov	r3, #0
+ 937 00de C7E90423 		strd	r2, [r7, #16]
+ 938              	.L54:
+ 445:.\main.c      **** 			
+ 446:.\main.c      **** 		if(throttleVal > 65535)
+ 939              		.loc 1 446 0
+ 940 00e2 4FF00003 		mov	r3, #0
+ 941 00e6 1C46     		mov	r4, r3
+ 942 00e8 D7E90401 		ldrd	r0, [r7, #16]
+ 943 00ec 22A3     		adr	r3, .L60+8
+ 944 00ee D3E90023 		ldrd	r2, [r3]
+ 945 00f2 FFF7FEFF 		bl	__aeabi_dcmpgt
+ 946 00f6 0346     		mov	r3, r0
+ 947 00f8 002B     		cmp	r3, #0
+ 948 00fa 02D0     		beq	.L55
+ 949              	.L56:
+ 950 00fc 4FF00103 		mov	r3, #1
+ 951 0100 1C46     		mov	r4, r3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 26
+
+
+ 952              	.L55:
+ 953 0102 E3B2     		uxtb	r3, r4
+ 954 0104 002B     		cmp	r3, #0
+ 955 0106 04D0     		beq	.L57
+ 447:.\main.c      **** 			throttleVal = 65535;
+ 956              		.loc 1 447 0
+ 957 0108 1BA3     		adr	r3, .L60+8
+ 958 010a D3E90023 		ldrd	r2, [r3]
+ 959 010e C7E90423 		strd	r2, [r7, #16]
+ 960              	.L57:
+ 448:.\main.c      **** 			
+ 449:.\main.c      **** 		// Convert to 16-bit
+ 450:.\main.c      **** 		uint16_t throttleVal16Bit = (uint16_t)throttleVal;
+ 961              		.loc 1 450 0
+ 962 0112 D7E90401 		ldrd	r0, [r7, #16]
+ 963 0116 FFF7FEFF 		bl	__aeabi_d2uiz
+ 964 011a 0346     		mov	r3, r0
+ 965 011c FB83     		strh	r3, [r7, #30]	@ movhi
+ 451:.\main.c      **** 		msg[commsMOTOR_HIGH_BYTE_POS] = (uint8_t)(throttleVal16Bit >> 8);
+ 966              		.loc 1 451 0
+ 967 011e 7B68     		ldr	r3, [r7, #4]
+ 968 0120 03F10503 		add	r3, r3, #5
+ 969 0124 FA8B     		ldrh	r2, [r7, #30]
+ 970 0126 4FEA1222 		lsr	r2, r2, #8
+ 971 012a 92B2     		uxth	r2, r2
+ 972 012c D2B2     		uxtb	r2, r2
+ 973 012e 1A70     		strb	r2, [r3, #0]
+ 452:.\main.c      **** 		msg[commsMOTOR_LOW_BYTE_POS] = (uint8_t)(throttleVal16Bit >> 0);
+ 974              		.loc 1 452 0
+ 975 0130 7B68     		ldr	r3, [r7, #4]
+ 976 0132 03F10603 		add	r3, r3, #6
+ 977 0136 FA8B     		ldrh	r2, [r7, #30]	@ movhi
+ 978 0138 D2B2     		uxtb	r2, r2
+ 979 013a 1A70     		strb	r2, [r3, #0]
+ 980 013c 0BE0     		b	.L58
+ 981              	.L51:
+ 982              	.LBE3:
+ 453:.\main.c      **** 	}
+ 454:.\main.c      **** 	else
+ 455:.\main.c      **** 	{
+ 456:.\main.c      **** 		msg[commsMOTOR_HIGH_BYTE_POS] = 0;
+ 983              		.loc 1 456 0
+ 984 013e 7B68     		ldr	r3, [r7, #4]
+ 985 0140 03F10503 		add	r3, r3, #5
+ 986 0144 4FF00002 		mov	r2, #0
+ 987 0148 1A70     		strb	r2, [r3, #0]
+ 457:.\main.c      **** 		msg[commsMOTOR_LOW_BYTE_POS] = 0;
+ 988              		.loc 1 457 0
+ 989 014a 7B68     		ldr	r3, [r7, #4]
+ 990 014c 03F10603 		add	r3, r3, #6
+ 991 0150 4FF00002 		mov	r2, #0
+ 992 0154 1A70     		strb	r2, [r3, #0]
+ 993              	.L58:
+ 458:.\main.c      **** 	}
+ 459:.\main.c      **** 	
+ 460:.\main.c      **** 	msg[7] = '\0';
+ 994              		.loc 1 460 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 27
+
+
+ 995 0156 7B68     		ldr	r3, [r7, #4]
+ 996 0158 03F10703 		add	r3, r3, #7
+ 997 015c 4FF00002 		mov	r2, #0
+ 998 0160 1A70     		strb	r2, [r3, #0]
+ 461:.\main.c      **** 	
+ 462:.\main.c      **** 	/*
+ 463:.\main.c      **** 	if(count >= 5)
+ 464:.\main.c      **** 	{
+ 465:.\main.c      **** 			snprintf(tempBuff, sizeof(tempBuff), "Voltage = %u %u\r\n", msg[commsMOTOR_HIGH_BYTE_POS], msg[c
+ 466:.\main.c      **** 			UartDebug_PutString(tempBuff);
+ 467:.\main.c      **** 			count = 0;
+ 468:.\main.c      **** 	}
+ 469:.\main.c      **** 	*/
+ 470:.\main.c      **** 	
+ 471:.\main.c      **** }
+ 999              		.loc 1 471 0
+ 1000 0162 07F12407 		add	r7, r7, #36
+ 1001 0166 BD46     		mov	sp, r7
+ 1002 0168 90BD     		pop	{r4, r7, pc}
+ 1003              	.L61:
+ 1004 016a 00BFAFF3 		.align	3
+ 1004      0080
+ 1005              	.L60:
+ 1006 0170 00000000 		.word	0
+ 1007 0174 00889340 		.word	1083410432
+ 1008 0178 00000000 		.word	0
+ 1009 017c E0FFEF40 		.word	1089470432
+ 1010 0180 00000000 		.word	0
+ 1011 0184 00288D40 		.word	1082992640
+ 1012              		.cfi_endproc
+ 1013              	.LFE30:
+ 1014              		.size	Main_BuildMsg, .-Main_BuildMsg
+ 1015              		.section	.text.Main_MainTickIsr,"ax",%progbits
+ 1016              		.align	2
+ 1017              		.global	Main_MainTickIsr
+ 1018              		.thumb
+ 1019              		.thumb_func
+ 1020              		.type	Main_MainTickIsr, %function
+ 1021              	Main_MainTickIsr:
+ 1022              	.LFB31:
+ 472:.\main.c      **** 
+ 473:.\main.c      **** //! @brief 		ISR to handle the main tick
+ 474:.\main.c      **** CY_ISR(Main_MainTickIsr)
+ 475:.\main.c      **** {	
+ 1023              		.loc 1 475 0
+ 1024              		.cfi_startproc
+ 1025              		@ args = 0, pretend = 0, frame = 0
+ 1026              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1027              		@ link register save eliminated.
+ 1028 0000 80B4     		push	{r7}
+ 1029              	.LCFI6:
+ 1030              		.cfi_def_cfa_offset 4
+ 1031 0002 00AF     		add	r7, sp, #0
+ 1032              		.cfi_offset 7, -4
+ 1033              	.LCFI7:
+ 1034              		.cfi_def_cfa_register 7
+ 476:.\main.c      **** 	
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 28
+
+
+ 477:.\main.c      **** 	// Increment the tick counter. This will cause the main loop to execute once
+ 478:.\main.c      **** 	_mainTickCounter++;
+ 1035              		.loc 1 478 0
+ 1036 0004 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 1037 0008 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 1038 000c 1B68     		ldr	r3, [r3, #0]
+ 1039 000e 03F10102 		add	r2, r3, #1
+ 1040 0012 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 1041 0016 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 1042 001a 1A60     		str	r2, [r3, #0]
+ 479:.\main.c      **** }
+ 1043              		.loc 1 479 0
+ 1044 001c BD46     		mov	sp, r7
+ 1045 001e 80BC     		pop	{r7}
+ 1046 0020 7047     		bx	lr
+ 1047              		.cfi_endproc
+ 1048              	.LFE31:
+ 1049              		.size	Main_MainTickIsr, .-Main_MainTickIsr
+ 1050 0022 00BF     		.bss
+ 1051              		.align	2
+ 1052              	count.3982:
+ 1053 0074 00000000 		.space	4
+ 1054              		.align	2
+ 1055              	iden_chars.3807:
+ 1056 0078 000000   		.space	3
+ 1057 007b 00       		.align	1
+ 1058              	boardBattVoltage.3814:
+ 1059 007c 0000     		.space	2
+ 1060 007e 0000     		.text
+ 1061              	.Letext0:
+ 1062              		.section	.debug_loc,"",%progbits
+ 1063              	.Ldebug_loc0:
+ 1064              	.LLST0:
+ 1065 0000 00000000 		.4byte	.LFB29
+ 1066 0004 02000000 		.4byte	.LCFI0
+ 1067 0008 0100     		.2byte	0x1
+ 1068 000a 5D       		.byte	0x5d
+ 1069 000b 02000000 		.4byte	.LCFI0
+ 1070 000f 04000000 		.4byte	.LCFI1
+ 1071 0013 0200     		.2byte	0x2
+ 1072 0015 7D       		.byte	0x7d
+ 1073 0016 10       		.sleb128 16
+ 1074 0017 04000000 		.4byte	.LCFI1
+ 1075 001b 06000000 		.4byte	.LCFI2
+ 1076 001f 0200     		.2byte	0x2
+ 1077 0021 7D       		.byte	0x7d
+ 1078 0022 28       		.sleb128 40
+ 1079 0023 06000000 		.4byte	.LCFI2
+ 1080 0027 B0060000 		.4byte	.LFE29
+ 1081 002b 0200     		.2byte	0x2
+ 1082 002d 77       		.byte	0x77
+ 1083 002e 28       		.sleb128 40
+ 1084 002f 00000000 		.4byte	0x0
+ 1085 0033 00000000 		.4byte	0x0
+ 1086              	.LLST1:
+ 1087 0037 00000000 		.4byte	.LFB30
+ 1088 003b 02000000 		.4byte	.LCFI3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 29
+
+
+ 1089 003f 0100     		.2byte	0x1
+ 1090 0041 5D       		.byte	0x5d
+ 1091 0042 02000000 		.4byte	.LCFI3
+ 1092 0046 04000000 		.4byte	.LCFI4
+ 1093 004a 0200     		.2byte	0x2
+ 1094 004c 7D       		.byte	0x7d
+ 1095 004d 0C       		.sleb128 12
+ 1096 004e 04000000 		.4byte	.LCFI4
+ 1097 0052 06000000 		.4byte	.LCFI5
+ 1098 0056 0200     		.2byte	0x2
+ 1099 0058 7D       		.byte	0x7d
+ 1100 0059 30       		.sleb128 48
+ 1101 005a 06000000 		.4byte	.LCFI5
+ 1102 005e 88010000 		.4byte	.LFE30
+ 1103 0062 0200     		.2byte	0x2
+ 1104 0064 77       		.byte	0x77
+ 1105 0065 30       		.sleb128 48
+ 1106 0066 00000000 		.4byte	0x0
+ 1107 006a 00000000 		.4byte	0x0
+ 1108              	.LLST2:
+ 1109 006e 00000000 		.4byte	.LFB31
+ 1110 0072 02000000 		.4byte	.LCFI6
+ 1111 0076 0100     		.2byte	0x1
+ 1112 0078 5D       		.byte	0x5d
+ 1113 0079 02000000 		.4byte	.LCFI6
+ 1114 007d 04000000 		.4byte	.LCFI7
+ 1115 0081 0200     		.2byte	0x2
+ 1116 0083 7D       		.byte	0x7d
+ 1117 0084 04       		.sleb128 4
+ 1118 0085 04000000 		.4byte	.LCFI7
+ 1119 0089 22000000 		.4byte	.LFE31
+ 1120 008d 0200     		.2byte	0x2
+ 1121 008f 77       		.byte	0x77
+ 1122 0090 04       		.sleb128 4
+ 1123 0091 00000000 		.4byte	0x0
+ 1124 0095 00000000 		.4byte	0x0
+ 1125              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 1126              		.file 3 "./Generated_Source/PSoC5/cytypes.h"
+ 1127              		.file 4 ".\\/../common/PublicObjects.h"
+ 1128              		.file 5 ".\\/Lights.h"
+ 1129              		.file 6 "./Generated_Source/PSoC5/core_cm3.h"
+ 1130              		.section	.debug_info
+ 1131 0000 12030000 		.4byte	0x312
+ 1132 0004 0200     		.2byte	0x2
+ 1133 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1134 000a 04       		.byte	0x4
+ 1135 000b 01       		.uleb128 0x1
+ 1136 000c 4C020000 		.4byte	.LASF49
+ 1137 0010 01       		.byte	0x1
+ 1138 0011 EE000000 		.4byte	.LASF50
+ 1139 0015 B3020000 		.4byte	.LASF51
+ 1140 0019 00000000 		.4byte	0x0
+ 1141 001d 00000000 		.4byte	0x0
+ 1142 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 1143 0025 00000000 		.4byte	.Ldebug_line0
+ 1144 0029 02       		.uleb128 0x2
+ 1145 002a 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 30
+
+
+ 1146 002b 06       		.byte	0x6
+ 1147 002c CA000000 		.4byte	.LASF0
+ 1148 0030 03       		.uleb128 0x3
+ 1149 0031 08020000 		.4byte	.LASF3
+ 1150 0035 02       		.byte	0x2
+ 1151 0036 2A       		.byte	0x2a
+ 1152 0037 3B000000 		.4byte	0x3b
+ 1153 003b 02       		.uleb128 0x2
+ 1154 003c 01       		.byte	0x1
+ 1155 003d 08       		.byte	0x8
+ 1156 003e D6010000 		.4byte	.LASF1
+ 1157 0042 02       		.uleb128 0x2
+ 1158 0043 02       		.byte	0x2
+ 1159 0044 05       		.byte	0x5
+ 1160 0045 72020000 		.4byte	.LASF2
+ 1161 0049 03       		.uleb128 0x3
+ 1162 004a 69020000 		.4byte	.LASF4
+ 1163 004e 02       		.byte	0x2
+ 1164 004f 36       		.byte	0x36
+ 1165 0050 54000000 		.4byte	0x54
+ 1166 0054 02       		.uleb128 0x2
+ 1167 0055 02       		.byte	0x2
+ 1168 0056 07       		.byte	0x7
+ 1169 0057 16010000 		.4byte	.LASF5
+ 1170 005b 02       		.uleb128 0x2
+ 1171 005c 04       		.byte	0x4
+ 1172 005d 05       		.byte	0x5
+ 1173 005e 89000000 		.4byte	.LASF6
+ 1174 0062 03       		.uleb128 0x3
+ 1175 0063 94020000 		.4byte	.LASF7
+ 1176 0067 02       		.byte	0x2
+ 1177 0068 50       		.byte	0x50
+ 1178 0069 6D000000 		.4byte	0x6d
+ 1179 006d 02       		.uleb128 0x2
+ 1180 006e 04       		.byte	0x4
+ 1181 006f 07       		.byte	0x7
+ 1182 0070 04010000 		.4byte	.LASF8
+ 1183 0074 02       		.uleb128 0x2
+ 1184 0075 08       		.byte	0x8
+ 1185 0076 05       		.byte	0x5
+ 1186 0077 00000000 		.4byte	.LASF9
+ 1187 007b 02       		.uleb128 0x2
+ 1188 007c 08       		.byte	0x8
+ 1189 007d 07       		.byte	0x7
+ 1190 007e F1010000 		.4byte	.LASF10
+ 1191 0082 04       		.uleb128 0x4
+ 1192 0083 04       		.byte	0x4
+ 1193 0084 05       		.byte	0x5
+ 1194 0085 696E7400 		.ascii	"int\000"
+ 1195 0089 02       		.uleb128 0x2
+ 1196 008a 04       		.byte	0x4
+ 1197 008b 07       		.byte	0x7
+ 1198 008c E4010000 		.4byte	.LASF11
+ 1199 0090 02       		.uleb128 0x2
+ 1200 0091 01       		.byte	0x1
+ 1201 0092 08       		.byte	0x8
+ 1202 0093 58020000 		.4byte	.LASF12
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 31
+
+
+ 1203 0097 03       		.uleb128 0x3
+ 1204 0098 81010000 		.4byte	.LASF13
+ 1205 009c 03       		.byte	0x3
+ 1206 009d 52       		.byte	0x52
+ 1207 009e 54000000 		.4byte	0x54
+ 1208 00a2 03       		.uleb128 0x3
+ 1209 00a3 CF010000 		.4byte	.LASF14
+ 1210 00a7 03       		.byte	0x3
+ 1211 00a8 53       		.byte	0x53
+ 1212 00a9 6D000000 		.4byte	0x6d
+ 1213 00ad 05       		.uleb128 0x5
+ 1214 00ae 04       		.byte	0x4
+ 1215 00af 07       		.byte	0x7
+ 1216 00b0 06       		.uleb128 0x6
+ 1217 00b1 01       		.byte	0x1
+ 1218 00b2 04       		.byte	0x4
+ 1219 00b3 23       		.byte	0x23
+ 1220 00b4 C5000000 		.4byte	0xc5
+ 1221 00b8 07       		.uleb128 0x7
+ 1222 00b9 63010000 		.4byte	.LASF15
+ 1223 00bd 00       		.sleb128 0
+ 1224 00be 07       		.uleb128 0x7
+ 1225 00bf 7E000000 		.4byte	.LASF16
+ 1226 00c3 01       		.sleb128 1
+ 1227 00c4 00       		.byte	0x0
+ 1228 00c5 06       		.uleb128 0x6
+ 1229 00c6 01       		.byte	0x1
+ 1230 00c7 05       		.byte	0x5
+ 1231 00c8 24       		.byte	0x24
+ 1232 00c9 04010000 		.4byte	0x104
+ 1233 00cd 07       		.uleb128 0x7
+ 1234 00ce 25000000 		.4byte	.LASF17
+ 1235 00d2 00       		.sleb128 0
+ 1236 00d3 07       		.uleb128 0x7
+ 1237 00d4 F7000000 		.4byte	.LASF18
+ 1238 00d8 01       		.sleb128 1
+ 1239 00d9 07       		.uleb128 0x7
+ 1240 00da C2010000 		.4byte	.LASF19
+ 1241 00de 02       		.sleb128 2
+ 1242 00df 07       		.uleb128 0x7
+ 1243 00e0 50000000 		.4byte	.LASF20
+ 1244 00e4 03       		.sleb128 3
+ 1245 00e5 07       		.uleb128 0x7
+ 1246 00e6 0E000000 		.4byte	.LASF21
+ 1247 00ea 04       		.sleb128 4
+ 1248 00eb 07       		.uleb128 0x7
+ 1249 00ec 4C010000 		.4byte	.LASF22
+ 1250 00f0 05       		.sleb128 5
+ 1251 00f1 07       		.uleb128 0x7
+ 1252 00f2 99010000 		.4byte	.LASF23
+ 1253 00f6 06       		.sleb128 6
+ 1254 00f7 07       		.uleb128 0x7
+ 1255 00f8 7C020000 		.4byte	.LASF24
+ 1256 00fc 07       		.sleb128 7
+ 1257 00fd 07       		.uleb128 0x7
+ 1258 00fe D6000000 		.4byte	.LASF25
+ 1259 0102 08       		.sleb128 8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 32
+
+
+ 1260 0103 00       		.byte	0x0
+ 1261 0104 06       		.uleb128 0x6
+ 1262 0105 01       		.byte	0x1
+ 1263 0106 05       		.byte	0x5
+ 1264 0107 31       		.byte	0x31
+ 1265 0108 1E010000 		.4byte	0x11e
+ 1266 010c 08       		.uleb128 0x8
+ 1267 010d 4F464600 		.ascii	"OFF\000"
+ 1268 0111 00       		.sleb128 0
+ 1269 0112 08       		.uleb128 0x8
+ 1270 0113 4F4E00   		.ascii	"ON\000"
+ 1271 0116 01       		.sleb128 1
+ 1272 0117 07       		.uleb128 0x7
+ 1273 0118 92000000 		.4byte	.LASF26
+ 1274 011c 02       		.sleb128 2
+ 1275 011d 00       		.byte	0x0
+ 1276 011e 06       		.uleb128 0x6
+ 1277 011f 01       		.byte	0x1
+ 1278 0120 01       		.byte	0x1
+ 1279 0121 26       		.byte	0x26
+ 1280 0122 45010000 		.4byte	0x145
+ 1281 0126 07       		.uleb128 0x7
+ 1282 0127 29010000 		.4byte	.LASF27
+ 1283 012b 00       		.sleb128 0
+ 1284 012c 07       		.uleb128 0x7
+ 1285 012d 72010000 		.4byte	.LASF28
+ 1286 0131 01       		.sleb128 1
+ 1287 0132 07       		.uleb128 0x7
+ 1288 0133 0D030000 		.4byte	.LASF29
+ 1289 0137 02       		.sleb128 2
+ 1290 0138 07       		.uleb128 0x7
+ 1291 0139 19030000 		.4byte	.LASF30
+ 1292 013d 03       		.sleb128 3
+ 1293 013e 07       		.uleb128 0x7
+ 1294 013f A5000000 		.4byte	.LASF31
+ 1295 0143 04       		.sleb128 4
+ 1296 0144 00       		.byte	0x0
+ 1297 0145 03       		.uleb128 0x3
+ 1298 0146 88010000 		.4byte	.LASF32
+ 1299 014a 01       		.byte	0x1
+ 1300 014b 2C       		.byte	0x2c
+ 1301 014c 1E010000 		.4byte	0x11e
+ 1302 0150 09       		.uleb128 0x9
+ 1303 0151 01       		.byte	0x1
+ 1304 0152 94010000 		.4byte	.LASF52
+ 1305 0156 01       		.byte	0x1
+ 1306 0157 47       		.byte	0x47
+ 1307 0158 00000000 		.4byte	.LFB29
+ 1308 015c B0060000 		.4byte	.LFE29
+ 1309 0160 00000000 		.4byte	.LLST0
+ 1310 0164 E9010000 		.4byte	0x1e9
+ 1311 0168 0A       		.uleb128 0xa
+ 1312 0169 32000000 		.4byte	.LASF33
+ 1313 016d 01       		.byte	0x1
+ 1314 016e 50       		.byte	0x50
+ 1315 016f E9010000 		.4byte	0x1e9
+ 1316 0173 05       		.byte	0x5
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 33
+
+
+ 1317 0174 03       		.byte	0x3
+ 1318 0175 78000000 		.4byte	iden_chars.3807
+ 1319 0179 0A       		.uleb128 0xa
+ 1320 017a 83000000 		.4byte	.LASF34
+ 1321 017e 01       		.byte	0x1
+ 1322 017f 64       		.byte	0x64
+ 1323 0180 97000000 		.4byte	0x97
+ 1324 0184 02       		.byte	0x2
+ 1325 0185 91       		.byte	0x91
+ 1326 0186 5E       		.sleb128 -34
+ 1327 0187 0A       		.uleb128 0xa
+ 1328 0188 2F020000 		.4byte	.LASF35
+ 1329 018c 01       		.byte	0x1
+ 1330 018d 65       		.byte	0x65
+ 1331 018e A2000000 		.4byte	0xa2
+ 1332 0192 02       		.byte	0x2
+ 1333 0193 91       		.byte	0x91
+ 1334 0194 60       		.sleb128 -32
+ 1335 0195 0A       		.uleb128 0xa
+ 1336 0196 BC000000 		.4byte	.LASF36
+ 1337 019a 01       		.byte	0x1
+ 1338 019b 68       		.byte	0x68
+ 1339 019c 45010000 		.4byte	0x145
+ 1340 01a0 02       		.byte	0x2
+ 1341 01a1 91       		.byte	0x91
+ 1342 01a2 66       		.sleb128 -26
+ 1343 01a3 0A       		.uleb128 0xa
+ 1344 01a4 9B000000 		.4byte	.LASF37
+ 1345 01a8 01       		.byte	0x1
+ 1346 01a9 69       		.byte	0x69
+ 1347 01aa 45010000 		.4byte	0x145
+ 1348 01ae 02       		.byte	0x2
+ 1349 01af 91       		.byte	0x91
+ 1350 01b0 67       		.sleb128 -25
+ 1351 01b1 0A       		.uleb128 0xa
+ 1352 01b2 67000000 		.4byte	.LASF38
+ 1353 01b6 01       		.byte	0x1
+ 1354 01b7 6B       		.byte	0x6b
+ 1355 01b8 62000000 		.4byte	0x62
+ 1356 01bc 02       		.byte	0x2
+ 1357 01bd 91       		.byte	0x91
+ 1358 01be 68       		.sleb128 -24
+ 1359 01bf 0A       		.uleb128 0xa
+ 1360 01c0 3D000000 		.4byte	.LASF39
+ 1361 01c4 01       		.byte	0x1
+ 1362 01c5 6C       		.byte	0x6c
+ 1363 01c6 62000000 		.4byte	0x62
+ 1364 01ca 02       		.byte	0x2
+ 1365 01cb 91       		.byte	0x91
+ 1366 01cc 6C       		.sleb128 -20
+ 1367 01cd 0B       		.uleb128 0xb
+ 1368 01ce A2000000 		.4byte	.LBB2
+ 1369 01d2 A0060000 		.4byte	.LBE2
+ 1370 01d6 0A       		.uleb128 0xa
+ 1371 01d7 1E020000 		.4byte	.LASF40
+ 1372 01db 01       		.byte	0x1
+ 1373 01dc 83       		.byte	0x83
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 34
+
+
+ 1374 01dd 49000000 		.4byte	0x49
+ 1375 01e1 05       		.byte	0x5
+ 1376 01e2 03       		.byte	0x3
+ 1377 01e3 7C000000 		.4byte	boardBattVoltage.3814
+ 1378 01e7 00       		.byte	0x0
+ 1379 01e8 00       		.byte	0x0
+ 1380 01e9 0C       		.uleb128 0xc
+ 1381 01ea 30000000 		.4byte	0x30
+ 1382 01ee F9010000 		.4byte	0x1f9
+ 1383 01f2 0D       		.uleb128 0xd
+ 1384 01f3 AD000000 		.4byte	0xad
+ 1385 01f7 02       		.byte	0x2
+ 1386 01f8 00       		.byte	0x0
+ 1387 01f9 0E       		.uleb128 0xe
+ 1388 01fa 01       		.byte	0x1
+ 1389 01fb 10020000 		.4byte	.LASF53
+ 1390 01ff 01       		.byte	0x1
+ 1391 0200 A401     		.2byte	0x1a4
+ 1392 0202 01       		.byte	0x1
+ 1393 0203 00000000 		.4byte	.LFB30
+ 1394 0207 88010000 		.4byte	.LFE30
+ 1395 020b 37000000 		.4byte	.LLST1
+ 1396 020f 7B020000 		.4byte	0x27b
+ 1397 0213 0F       		.uleb128 0xf
+ 1398 0214 6D736700 		.ascii	"msg\000"
+ 1399 0218 01       		.byte	0x1
+ 1400 0219 A401     		.2byte	0x1a4
+ 1401 021b 7B020000 		.4byte	0x27b
+ 1402 021f 02       		.byte	0x2
+ 1403 0220 91       		.byte	0x91
+ 1404 0221 54       		.sleb128 -44
+ 1405 0222 10       		.uleb128 0x10
+ 1406 0223 9B000000 		.4byte	.LASF37
+ 1407 0227 01       		.byte	0x1
+ 1408 0228 A401     		.2byte	0x1a4
+ 1409 022a 45010000 		.4byte	0x145
+ 1410 022e 02       		.byte	0x2
+ 1411 022f 91       		.byte	0x91
+ 1412 0230 53       		.sleb128 -45
+ 1413 0231 11       		.uleb128 0x11
+ 1414 0232 83000000 		.4byte	.LASF34
+ 1415 0236 01       		.byte	0x1
+ 1416 0237 A701     		.2byte	0x1a7
+ 1417 0239 62000000 		.4byte	0x62
+ 1418 023d 05       		.byte	0x5
+ 1419 023e 03       		.byte	0x3
+ 1420 023f 74000000 		.4byte	count.3982
+ 1421 0243 0B       		.uleb128 0xb
+ 1422 0244 68000000 		.4byte	.LBB3
+ 1423 0248 3E010000 		.4byte	.LBE3
+ 1424 024c 11       		.uleb128 0x11
+ 1425 024d 32010000 		.4byte	.LASF41
+ 1426 0251 01       		.byte	0x1
+ 1427 0252 B701     		.2byte	0x1b7
+ 1428 0254 81020000 		.4byte	0x281
+ 1429 0258 02       		.byte	0x2
+ 1430 0259 91       		.byte	0x91
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 35
+
+
+ 1431 025a 58       		.sleb128 -40
+ 1432 025b 11       		.uleb128 0x11
+ 1433 025c 5D020000 		.4byte	.LASF42
+ 1434 0260 01       		.byte	0x1
+ 1435 0261 B901     		.2byte	0x1b9
+ 1436 0263 81020000 		.4byte	0x281
+ 1437 0267 02       		.byte	0x2
+ 1438 0268 91       		.byte	0x91
+ 1439 0269 60       		.sleb128 -32
+ 1440 026a 11       		.uleb128 0x11
+ 1441 026b 9D020000 		.4byte	.LASF43
+ 1442 026f 01       		.byte	0x1
+ 1443 0270 C201     		.2byte	0x1c2
+ 1444 0272 49000000 		.4byte	0x49
+ 1445 0276 02       		.byte	0x2
+ 1446 0277 91       		.byte	0x91
+ 1447 0278 6E       		.sleb128 -18
+ 1448 0279 00       		.byte	0x0
+ 1449 027a 00       		.byte	0x0
+ 1450 027b 12       		.uleb128 0x12
+ 1451 027c 04       		.byte	0x4
+ 1452 027d 30000000 		.4byte	0x30
+ 1453 0281 02       		.uleb128 0x2
+ 1454 0282 08       		.byte	0x8
+ 1455 0283 04       		.byte	0x4
+ 1456 0284 7A010000 		.4byte	.LASF44
+ 1457 0288 13       		.uleb128 0x13
+ 1458 0289 01       		.byte	0x1
+ 1459 028a B1010000 		.4byte	.LASF54
+ 1460 028e 01       		.byte	0x1
+ 1461 028f DA01     		.2byte	0x1da
+ 1462 0291 01       		.byte	0x1
+ 1463 0292 00000000 		.4byte	.LFB31
+ 1464 0296 22000000 		.4byte	.LFE31
+ 1465 029a 6E000000 		.4byte	.LLST2
+ 1466 029e 0A       		.uleb128 0xa
+ 1467 029f 3B020000 		.4byte	.LASF45
+ 1468 02a3 01       		.byte	0x1
+ 1469 02a4 32       		.byte	0x32
+ 1470 02a5 A2000000 		.4byte	0xa2
+ 1471 02a9 05       		.byte	0x5
+ 1472 02aa 03       		.byte	0x3
+ 1473 02ab 00000000 		.4byte	_mainTickCounter
+ 1474 02af 0C       		.uleb128 0xc
+ 1475 02b0 30000000 		.4byte	0x30
+ 1476 02b4 BF020000 		.4byte	0x2bf
+ 1477 02b8 0D       		.uleb128 0xd
+ 1478 02b9 AD000000 		.4byte	0xad
+ 1479 02bd 07       		.byte	0x7
+ 1480 02be 00       		.byte	0x0
+ 1481 02bf 0A       		.uleb128 0xa
+ 1482 02c0 AE020000 		.4byte	.LASF46
+ 1483 02c4 01       		.byte	0x1
+ 1484 02c5 35       		.byte	0x35
+ 1485 02c6 AF020000 		.4byte	0x2af
+ 1486 02ca 05       		.byte	0x5
+ 1487 02cb 03       		.byte	0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 36
+
+
+ 1488 02cc 04000000 		.4byte	_msg
+ 1489 02d0 0A       		.uleb128 0xa
+ 1490 02d1 B1000000 		.4byte	.LASF47
+ 1491 02d5 01       		.byte	0x1
+ 1492 02d6 37       		.byte	0x37
+ 1493 02d7 30000000 		.4byte	0x30
+ 1494 02db 05       		.byte	0x5
+ 1495 02dc 03       		.byte	0x3
+ 1496 02dd 0C000000 		.4byte	statusByte
+ 1497 02e1 0C       		.uleb128 0xc
+ 1498 02e2 90000000 		.4byte	0x90
+ 1499 02e6 F1020000 		.4byte	0x2f1
+ 1500 02ea 0D       		.uleb128 0xd
+ 1501 02eb AD000000 		.4byte	0xad
+ 1502 02ef 63       		.byte	0x63
+ 1503 02f0 00       		.byte	0x0
+ 1504 02f1 0A       		.uleb128 0xa
+ 1505 02f2 69010000 		.4byte	.LASF48
+ 1506 02f6 01       		.byte	0x1
+ 1507 02f7 3A       		.byte	0x3a
+ 1508 02f8 E1020000 		.4byte	0x2e1
+ 1509 02fc 05       		.byte	0x5
+ 1510 02fd 03       		.byte	0x3
+ 1511 02fe 10000000 		.4byte	tempBuff
+ 1512 0302 14       		.uleb128 0x14
+ 1513 0303 3F010000 		.4byte	.LASF55
+ 1514 0307 06       		.byte	0x6
+ 1515 0308 CE06     		.2byte	0x6ce
+ 1516 030a 10030000 		.4byte	0x310
+ 1517 030e 01       		.byte	0x1
+ 1518 030f 01       		.byte	0x1
+ 1519 0310 15       		.uleb128 0x15
+ 1520 0311 82000000 		.4byte	0x82
+ 1521 0315 00       		.byte	0x0
+ 1522              		.section	.debug_abbrev
+ 1523 0000 01       		.uleb128 0x1
+ 1524 0001 11       		.uleb128 0x11
+ 1525 0002 01       		.byte	0x1
+ 1526 0003 25       		.uleb128 0x25
+ 1527 0004 0E       		.uleb128 0xe
+ 1528 0005 13       		.uleb128 0x13
+ 1529 0006 0B       		.uleb128 0xb
+ 1530 0007 03       		.uleb128 0x3
+ 1531 0008 0E       		.uleb128 0xe
+ 1532 0009 1B       		.uleb128 0x1b
+ 1533 000a 0E       		.uleb128 0xe
+ 1534 000b 11       		.uleb128 0x11
+ 1535 000c 01       		.uleb128 0x1
+ 1536 000d 52       		.uleb128 0x52
+ 1537 000e 01       		.uleb128 0x1
+ 1538 000f 55       		.uleb128 0x55
+ 1539 0010 06       		.uleb128 0x6
+ 1540 0011 10       		.uleb128 0x10
+ 1541 0012 06       		.uleb128 0x6
+ 1542 0013 00       		.byte	0x0
+ 1543 0014 00       		.byte	0x0
+ 1544 0015 02       		.uleb128 0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 37
+
+
+ 1545 0016 24       		.uleb128 0x24
+ 1546 0017 00       		.byte	0x0
+ 1547 0018 0B       		.uleb128 0xb
+ 1548 0019 0B       		.uleb128 0xb
+ 1549 001a 3E       		.uleb128 0x3e
+ 1550 001b 0B       		.uleb128 0xb
+ 1551 001c 03       		.uleb128 0x3
+ 1552 001d 0E       		.uleb128 0xe
+ 1553 001e 00       		.byte	0x0
+ 1554 001f 00       		.byte	0x0
+ 1555 0020 03       		.uleb128 0x3
+ 1556 0021 16       		.uleb128 0x16
+ 1557 0022 00       		.byte	0x0
+ 1558 0023 03       		.uleb128 0x3
+ 1559 0024 0E       		.uleb128 0xe
+ 1560 0025 3A       		.uleb128 0x3a
+ 1561 0026 0B       		.uleb128 0xb
+ 1562 0027 3B       		.uleb128 0x3b
+ 1563 0028 0B       		.uleb128 0xb
+ 1564 0029 49       		.uleb128 0x49
+ 1565 002a 13       		.uleb128 0x13
+ 1566 002b 00       		.byte	0x0
+ 1567 002c 00       		.byte	0x0
+ 1568 002d 04       		.uleb128 0x4
+ 1569 002e 24       		.uleb128 0x24
+ 1570 002f 00       		.byte	0x0
+ 1571 0030 0B       		.uleb128 0xb
+ 1572 0031 0B       		.uleb128 0xb
+ 1573 0032 3E       		.uleb128 0x3e
+ 1574 0033 0B       		.uleb128 0xb
+ 1575 0034 03       		.uleb128 0x3
+ 1576 0035 08       		.uleb128 0x8
+ 1577 0036 00       		.byte	0x0
+ 1578 0037 00       		.byte	0x0
+ 1579 0038 05       		.uleb128 0x5
+ 1580 0039 24       		.uleb128 0x24
+ 1581 003a 00       		.byte	0x0
+ 1582 003b 0B       		.uleb128 0xb
+ 1583 003c 0B       		.uleb128 0xb
+ 1584 003d 3E       		.uleb128 0x3e
+ 1585 003e 0B       		.uleb128 0xb
+ 1586 003f 00       		.byte	0x0
+ 1587 0040 00       		.byte	0x0
+ 1588 0041 06       		.uleb128 0x6
+ 1589 0042 04       		.uleb128 0x4
+ 1590 0043 01       		.byte	0x1
+ 1591 0044 0B       		.uleb128 0xb
+ 1592 0045 0B       		.uleb128 0xb
+ 1593 0046 3A       		.uleb128 0x3a
+ 1594 0047 0B       		.uleb128 0xb
+ 1595 0048 3B       		.uleb128 0x3b
+ 1596 0049 0B       		.uleb128 0xb
+ 1597 004a 01       		.uleb128 0x1
+ 1598 004b 13       		.uleb128 0x13
+ 1599 004c 00       		.byte	0x0
+ 1600 004d 00       		.byte	0x0
+ 1601 004e 07       		.uleb128 0x7
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 38
+
+
+ 1602 004f 28       		.uleb128 0x28
+ 1603 0050 00       		.byte	0x0
+ 1604 0051 03       		.uleb128 0x3
+ 1605 0052 0E       		.uleb128 0xe
+ 1606 0053 1C       		.uleb128 0x1c
+ 1607 0054 0D       		.uleb128 0xd
+ 1608 0055 00       		.byte	0x0
+ 1609 0056 00       		.byte	0x0
+ 1610 0057 08       		.uleb128 0x8
+ 1611 0058 28       		.uleb128 0x28
+ 1612 0059 00       		.byte	0x0
+ 1613 005a 03       		.uleb128 0x3
+ 1614 005b 08       		.uleb128 0x8
+ 1615 005c 1C       		.uleb128 0x1c
+ 1616 005d 0D       		.uleb128 0xd
+ 1617 005e 00       		.byte	0x0
+ 1618 005f 00       		.byte	0x0
+ 1619 0060 09       		.uleb128 0x9
+ 1620 0061 2E       		.uleb128 0x2e
+ 1621 0062 01       		.byte	0x1
+ 1622 0063 3F       		.uleb128 0x3f
+ 1623 0064 0C       		.uleb128 0xc
+ 1624 0065 03       		.uleb128 0x3
+ 1625 0066 0E       		.uleb128 0xe
+ 1626 0067 3A       		.uleb128 0x3a
+ 1627 0068 0B       		.uleb128 0xb
+ 1628 0069 3B       		.uleb128 0x3b
+ 1629 006a 0B       		.uleb128 0xb
+ 1630 006b 11       		.uleb128 0x11
+ 1631 006c 01       		.uleb128 0x1
+ 1632 006d 12       		.uleb128 0x12
+ 1633 006e 01       		.uleb128 0x1
+ 1634 006f 40       		.uleb128 0x40
+ 1635 0070 06       		.uleb128 0x6
+ 1636 0071 01       		.uleb128 0x1
+ 1637 0072 13       		.uleb128 0x13
+ 1638 0073 00       		.byte	0x0
+ 1639 0074 00       		.byte	0x0
+ 1640 0075 0A       		.uleb128 0xa
+ 1641 0076 34       		.uleb128 0x34
+ 1642 0077 00       		.byte	0x0
+ 1643 0078 03       		.uleb128 0x3
+ 1644 0079 0E       		.uleb128 0xe
+ 1645 007a 3A       		.uleb128 0x3a
+ 1646 007b 0B       		.uleb128 0xb
+ 1647 007c 3B       		.uleb128 0x3b
+ 1648 007d 0B       		.uleb128 0xb
+ 1649 007e 49       		.uleb128 0x49
+ 1650 007f 13       		.uleb128 0x13
+ 1651 0080 02       		.uleb128 0x2
+ 1652 0081 0A       		.uleb128 0xa
+ 1653 0082 00       		.byte	0x0
+ 1654 0083 00       		.byte	0x0
+ 1655 0084 0B       		.uleb128 0xb
+ 1656 0085 0B       		.uleb128 0xb
+ 1657 0086 01       		.byte	0x1
+ 1658 0087 11       		.uleb128 0x11
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 39
+
+
+ 1659 0088 01       		.uleb128 0x1
+ 1660 0089 12       		.uleb128 0x12
+ 1661 008a 01       		.uleb128 0x1
+ 1662 008b 00       		.byte	0x0
+ 1663 008c 00       		.byte	0x0
+ 1664 008d 0C       		.uleb128 0xc
+ 1665 008e 01       		.uleb128 0x1
+ 1666 008f 01       		.byte	0x1
+ 1667 0090 49       		.uleb128 0x49
+ 1668 0091 13       		.uleb128 0x13
+ 1669 0092 01       		.uleb128 0x1
+ 1670 0093 13       		.uleb128 0x13
+ 1671 0094 00       		.byte	0x0
+ 1672 0095 00       		.byte	0x0
+ 1673 0096 0D       		.uleb128 0xd
+ 1674 0097 21       		.uleb128 0x21
+ 1675 0098 00       		.byte	0x0
+ 1676 0099 49       		.uleb128 0x49
+ 1677 009a 13       		.uleb128 0x13
+ 1678 009b 2F       		.uleb128 0x2f
+ 1679 009c 0B       		.uleb128 0xb
+ 1680 009d 00       		.byte	0x0
+ 1681 009e 00       		.byte	0x0
+ 1682 009f 0E       		.uleb128 0xe
+ 1683 00a0 2E       		.uleb128 0x2e
+ 1684 00a1 01       		.byte	0x1
+ 1685 00a2 3F       		.uleb128 0x3f
+ 1686 00a3 0C       		.uleb128 0xc
+ 1687 00a4 03       		.uleb128 0x3
+ 1688 00a5 0E       		.uleb128 0xe
+ 1689 00a6 3A       		.uleb128 0x3a
+ 1690 00a7 0B       		.uleb128 0xb
+ 1691 00a8 3B       		.uleb128 0x3b
+ 1692 00a9 05       		.uleb128 0x5
+ 1693 00aa 27       		.uleb128 0x27
+ 1694 00ab 0C       		.uleb128 0xc
+ 1695 00ac 11       		.uleb128 0x11
+ 1696 00ad 01       		.uleb128 0x1
+ 1697 00ae 12       		.uleb128 0x12
+ 1698 00af 01       		.uleb128 0x1
+ 1699 00b0 40       		.uleb128 0x40
+ 1700 00b1 06       		.uleb128 0x6
+ 1701 00b2 01       		.uleb128 0x1
+ 1702 00b3 13       		.uleb128 0x13
+ 1703 00b4 00       		.byte	0x0
+ 1704 00b5 00       		.byte	0x0
+ 1705 00b6 0F       		.uleb128 0xf
+ 1706 00b7 05       		.uleb128 0x5
+ 1707 00b8 00       		.byte	0x0
+ 1708 00b9 03       		.uleb128 0x3
+ 1709 00ba 08       		.uleb128 0x8
+ 1710 00bb 3A       		.uleb128 0x3a
+ 1711 00bc 0B       		.uleb128 0xb
+ 1712 00bd 3B       		.uleb128 0x3b
+ 1713 00be 05       		.uleb128 0x5
+ 1714 00bf 49       		.uleb128 0x49
+ 1715 00c0 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 40
+
+
+ 1716 00c1 02       		.uleb128 0x2
+ 1717 00c2 0A       		.uleb128 0xa
+ 1718 00c3 00       		.byte	0x0
+ 1719 00c4 00       		.byte	0x0
+ 1720 00c5 10       		.uleb128 0x10
+ 1721 00c6 05       		.uleb128 0x5
+ 1722 00c7 00       		.byte	0x0
+ 1723 00c8 03       		.uleb128 0x3
+ 1724 00c9 0E       		.uleb128 0xe
+ 1725 00ca 3A       		.uleb128 0x3a
+ 1726 00cb 0B       		.uleb128 0xb
+ 1727 00cc 3B       		.uleb128 0x3b
+ 1728 00cd 05       		.uleb128 0x5
+ 1729 00ce 49       		.uleb128 0x49
+ 1730 00cf 13       		.uleb128 0x13
+ 1731 00d0 02       		.uleb128 0x2
+ 1732 00d1 0A       		.uleb128 0xa
+ 1733 00d2 00       		.byte	0x0
+ 1734 00d3 00       		.byte	0x0
+ 1735 00d4 11       		.uleb128 0x11
+ 1736 00d5 34       		.uleb128 0x34
+ 1737 00d6 00       		.byte	0x0
+ 1738 00d7 03       		.uleb128 0x3
+ 1739 00d8 0E       		.uleb128 0xe
+ 1740 00d9 3A       		.uleb128 0x3a
+ 1741 00da 0B       		.uleb128 0xb
+ 1742 00db 3B       		.uleb128 0x3b
+ 1743 00dc 05       		.uleb128 0x5
+ 1744 00dd 49       		.uleb128 0x49
+ 1745 00de 13       		.uleb128 0x13
+ 1746 00df 02       		.uleb128 0x2
+ 1747 00e0 0A       		.uleb128 0xa
+ 1748 00e1 00       		.byte	0x0
+ 1749 00e2 00       		.byte	0x0
+ 1750 00e3 12       		.uleb128 0x12
+ 1751 00e4 0F       		.uleb128 0xf
+ 1752 00e5 00       		.byte	0x0
+ 1753 00e6 0B       		.uleb128 0xb
+ 1754 00e7 0B       		.uleb128 0xb
+ 1755 00e8 49       		.uleb128 0x49
+ 1756 00e9 13       		.uleb128 0x13
+ 1757 00ea 00       		.byte	0x0
+ 1758 00eb 00       		.byte	0x0
+ 1759 00ec 13       		.uleb128 0x13
+ 1760 00ed 2E       		.uleb128 0x2e
+ 1761 00ee 00       		.byte	0x0
+ 1762 00ef 3F       		.uleb128 0x3f
+ 1763 00f0 0C       		.uleb128 0xc
+ 1764 00f1 03       		.uleb128 0x3
+ 1765 00f2 0E       		.uleb128 0xe
+ 1766 00f3 3A       		.uleb128 0x3a
+ 1767 00f4 0B       		.uleb128 0xb
+ 1768 00f5 3B       		.uleb128 0x3b
+ 1769 00f6 05       		.uleb128 0x5
+ 1770 00f7 27       		.uleb128 0x27
+ 1771 00f8 0C       		.uleb128 0xc
+ 1772 00f9 11       		.uleb128 0x11
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 41
+
+
+ 1773 00fa 01       		.uleb128 0x1
+ 1774 00fb 12       		.uleb128 0x12
+ 1775 00fc 01       		.uleb128 0x1
+ 1776 00fd 40       		.uleb128 0x40
+ 1777 00fe 06       		.uleb128 0x6
+ 1778 00ff 00       		.byte	0x0
+ 1779 0100 00       		.byte	0x0
+ 1780 0101 14       		.uleb128 0x14
+ 1781 0102 34       		.uleb128 0x34
+ 1782 0103 00       		.byte	0x0
+ 1783 0104 03       		.uleb128 0x3
+ 1784 0105 0E       		.uleb128 0xe
+ 1785 0106 3A       		.uleb128 0x3a
+ 1786 0107 0B       		.uleb128 0xb
+ 1787 0108 3B       		.uleb128 0x3b
+ 1788 0109 05       		.uleb128 0x5
+ 1789 010a 49       		.uleb128 0x49
+ 1790 010b 13       		.uleb128 0x13
+ 1791 010c 3F       		.uleb128 0x3f
+ 1792 010d 0C       		.uleb128 0xc
+ 1793 010e 3C       		.uleb128 0x3c
+ 1794 010f 0C       		.uleb128 0xc
+ 1795 0110 00       		.byte	0x0
+ 1796 0111 00       		.byte	0x0
+ 1797 0112 15       		.uleb128 0x15
+ 1798 0113 35       		.uleb128 0x35
+ 1799 0114 00       		.byte	0x0
+ 1800 0115 49       		.uleb128 0x49
+ 1801 0116 13       		.uleb128 0x13
+ 1802 0117 00       		.byte	0x0
+ 1803 0118 00       		.byte	0x0
+ 1804 0119 00       		.byte	0x0
+ 1805              		.section	.debug_pubnames,"",%progbits
+ 1806 0000 3E000000 		.4byte	0x3e
+ 1807 0004 0200     		.2byte	0x2
+ 1808 0006 00000000 		.4byte	.Ldebug_info0
+ 1809 000a 16030000 		.4byte	0x316
+ 1810 000e 50010000 		.4byte	0x150
+ 1811 0012 6D61696E 		.ascii	"main\000"
+ 1811      00
+ 1812 0017 F9010000 		.4byte	0x1f9
+ 1813 001b 4D61696E 		.ascii	"Main_BuildMsg\000"
+ 1813      5F427569 
+ 1813      6C644D73 
+ 1813      6700
+ 1814 0029 88020000 		.4byte	0x288
+ 1815 002d 4D61696E 		.ascii	"Main_MainTickIsr\000"
+ 1815      5F4D6169 
+ 1815      6E546963 
+ 1815      6B497372 
+ 1815      00
+ 1816 003e 00000000 		.4byte	0x0
+ 1817              		.section	.debug_aranges,"",%progbits
+ 1818 0000 2C000000 		.4byte	0x2c
+ 1819 0004 0200     		.2byte	0x2
+ 1820 0006 00000000 		.4byte	.Ldebug_info0
+ 1821 000a 04       		.byte	0x4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 42
+
+
+ 1822 000b 00       		.byte	0x0
+ 1823 000c 0000     		.2byte	0x0
+ 1824 000e 0000     		.2byte	0x0
+ 1825 0010 00000000 		.4byte	.LFB29
+ 1826 0014 B0060000 		.4byte	.LFE29-.LFB29
+ 1827 0018 00000000 		.4byte	.LFB30
+ 1828 001c 88010000 		.4byte	.LFE30-.LFB30
+ 1829 0020 00000000 		.4byte	.LFB31
+ 1830 0024 22000000 		.4byte	.LFE31-.LFB31
+ 1831 0028 00000000 		.4byte	0x0
+ 1832 002c 00000000 		.4byte	0x0
+ 1833              		.section	.debug_ranges,"",%progbits
+ 1834              	.Ldebug_ranges0:
+ 1835 0000 00000000 		.4byte	.Ltext0
+ 1836 0004 00000000 		.4byte	.Letext0
+ 1837 0008 00000000 		.4byte	.LFB29
+ 1838 000c B0060000 		.4byte	.LFE29
+ 1839 0010 00000000 		.4byte	.LFB30
+ 1840 0014 88010000 		.4byte	.LFE30
+ 1841 0018 00000000 		.4byte	.LFB31
+ 1842 001c 22000000 		.4byte	.LFE31
+ 1843 0020 00000000 		.4byte	0x0
+ 1844 0024 00000000 		.4byte	0x0
+ 1845              		.section	.debug_str,"MS",%progbits,1
+ 1846              	.LASF9:
+ 1847 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1847      206C6F6E 
+ 1847      6720696E 
+ 1847      7400
+ 1848              	.LASF21:
+ 1849 000e 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_MID\000"
+ 1849      424F4152 
+ 1849      445F4241 
+ 1849      54545F4C 
+ 1849      564C5F4D 
+ 1850              	.LASF17:
+ 1851 0025 4C45445F 		.ascii	"LED_IN_RANGE\000"
+ 1851      494E5F52 
+ 1851      414E4745 
+ 1851      00
+ 1852              	.LASF33:
+ 1853 0032 6964656E 		.ascii	"iden_chars\000"
+ 1853      5F636861 
+ 1853      727300
+ 1854              	.LASF39:
+ 1855 003d 636F6D6D 		.ascii	"commsLastSendCount\000"
+ 1855      734C6173 
+ 1855      7453656E 
+ 1855      64436F75 
+ 1855      6E7400
+ 1856              	.LASF20:
+ 1857 0050 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_TOP\000"
+ 1857      424F4152 
+ 1857      445F4241 
+ 1857      54545F4C 
+ 1857      564C5F54 
+ 1858              	.LASF38:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 43
+
+
+ 1859 0067 636F6D6D 		.ascii	"commsSendCountInterval\000"
+ 1859      7353656E 
+ 1859      64436F75 
+ 1859      6E74496E 
+ 1859      74657276 
+ 1860              	.LASF16:
+ 1861 007e 54525545 		.ascii	"TRUE\000"
+ 1861      00
+ 1862              	.LASF34:
+ 1863 0083 636F756E 		.ascii	"count\000"
+ 1863      7400
+ 1864              	.LASF6:
+ 1865 0089 6C6F6E67 		.ascii	"long int\000"
+ 1865      20696E74 
+ 1865      00
+ 1866              	.LASF26:
+ 1867 0092 464C4153 		.ascii	"FLASHING\000"
+ 1867      48494E47 
+ 1867      00
+ 1868              	.LASF37:
+ 1869 009b 6D61696E 		.ascii	"mainState\000"
+ 1869      53746174 
+ 1869      6500
+ 1870              	.LASF31:
+ 1871 00a5 6D61696E 		.ascii	"mainAlarmOn\000"
+ 1871      416C6172 
+ 1871      6D4F6E00 
+ 1872              	.LASF47:
+ 1873 00b1 73746174 		.ascii	"statusByte\000"
+ 1873      75734279 
+ 1873      746500
+ 1874              	.LASF36:
+ 1875 00bc 70726576 		.ascii	"prevMainState\000"
+ 1875      4D61696E 
+ 1875      53746174 
+ 1875      6500
+ 1876              	.LASF0:
+ 1877 00ca 7369676E 		.ascii	"signed char\000"
+ 1877      65642063 
+ 1877      68617200 
+ 1878              	.LASF25:
+ 1879 00d6 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_BOT\000"
+ 1879      52454D4F 
+ 1879      54455F42 
+ 1879      4154545F 
+ 1879      4C564C5F 
+ 1880              	.LASF50:
+ 1881 00ee 2E5C6D61 		.ascii	".\\main.c\000"
+ 1881      696E2E63 
+ 1881      00
+ 1882              	.LASF18:
+ 1883 00f7 4C45445F 		.ascii	"LED_MOTOR_ON\000"
+ 1883      4D4F544F 
+ 1883      525F4F4E 
+ 1883      00
+ 1884              	.LASF8:
+ 1885 0104 6C6F6E67 		.ascii	"long unsigned int\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 44
+
+
+ 1885      20756E73 
+ 1885      69676E65 
+ 1885      6420696E 
+ 1885      7400
+ 1886              	.LASF5:
+ 1887 0116 73686F72 		.ascii	"short unsigned int\000"
+ 1887      7420756E 
+ 1887      7369676E 
+ 1887      65642069 
+ 1887      6E7400
+ 1888              	.LASF27:
+ 1889 0129 6D61696E 		.ascii	"mainInit\000"
+ 1889      496E6974 
+ 1889      00
+ 1890              	.LASF41:
+ 1891 0132 7468726F 		.ascii	"throttleVolt\000"
+ 1891      74746C65 
+ 1891      566F6C74 
+ 1891      00
+ 1892              	.LASF55:
+ 1893 013f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1893      52784275 
+ 1893      66666572 
+ 1893      00
+ 1894              	.LASF22:
+ 1895 014c 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_BOT\000"
+ 1895      424F4152 
+ 1895      445F4241 
+ 1895      54545F4C 
+ 1895      564C5F42 
+ 1896              	.LASF15:
+ 1897 0163 46414C53 		.ascii	"FALSE\000"
+ 1897      4500
+ 1898              	.LASF48:
+ 1899 0169 74656D70 		.ascii	"tempBuff\000"
+ 1899      42756666 
+ 1899      00
+ 1900              	.LASF28:
+ 1901 0172 6D61696E 		.ascii	"mainOff\000"
+ 1901      4F666600 
+ 1902              	.LASF44:
+ 1903 017a 646F7562 		.ascii	"double\000"
+ 1903      6C6500
+ 1904              	.LASF13:
+ 1905 0181 75696E74 		.ascii	"uint16\000"
+ 1905      313600
+ 1906              	.LASF32:
+ 1907 0188 6D61696E 		.ascii	"mainState_t\000"
+ 1907      53746174 
+ 1907      655F7400 
+ 1908              	.LASF52:
+ 1909 0194 6D61696E 		.ascii	"main\000"
+ 1909      00
+ 1910              	.LASF23:
+ 1911 0199 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_TOP\000"
+ 1911      52454D4F 
+ 1911      54455F42 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 45
+
+
+ 1911      4154545F 
+ 1911      4C564C5F 
+ 1912              	.LASF54:
+ 1913 01b1 4D61696E 		.ascii	"Main_MainTickIsr\000"
+ 1913      5F4D6169 
+ 1913      6E546963 
+ 1913      6B497372 
+ 1913      00
+ 1914              	.LASF19:
+ 1915 01c2 4C45445F 		.ascii	"LED_ALARM_ON\000"
+ 1915      414C4152 
+ 1915      4D5F4F4E 
+ 1915      00
+ 1916              	.LASF14:
+ 1917 01cf 75696E74 		.ascii	"uint32\000"
+ 1917      333200
+ 1918              	.LASF1:
+ 1919 01d6 756E7369 		.ascii	"unsigned char\000"
+ 1919      676E6564 
+ 1919      20636861 
+ 1919      7200
+ 1920              	.LASF11:
+ 1921 01e4 756E7369 		.ascii	"unsigned int\000"
+ 1921      676E6564 
+ 1921      20696E74 
+ 1921      00
+ 1922              	.LASF10:
+ 1923 01f1 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1923      206C6F6E 
+ 1923      6720756E 
+ 1923      7369676E 
+ 1923      65642069 
+ 1924              	.LASF3:
+ 1925 0208 75696E74 		.ascii	"uint8_t\000"
+ 1925      385F7400 
+ 1926              	.LASF53:
+ 1927 0210 4D61696E 		.ascii	"Main_BuildMsg\000"
+ 1927      5F427569 
+ 1927      6C644D73 
+ 1927      6700
+ 1928              	.LASF40:
+ 1929 021e 626F6172 		.ascii	"boardBattVoltage\000"
+ 1929      64426174 
+ 1929      74566F6C 
+ 1929      74616765 
+ 1929      00
+ 1930              	.LASF35:
+ 1931 022f 63757272 		.ascii	"currentTick\000"
+ 1931      656E7454 
+ 1931      69636B00 
+ 1932              	.LASF45:
+ 1933 023b 5F6D6169 		.ascii	"_mainTickCounter\000"
+ 1933      6E546963 
+ 1933      6B436F75 
+ 1933      6E746572 
+ 1933      00
+ 1934              	.LASF49:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 46
+
+
+ 1935 024c 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1935      4320342E 
+ 1935      342E3100 
+ 1936              	.LASF12:
+ 1937 0258 63686172 		.ascii	"char\000"
+ 1937      00
+ 1938              	.LASF42:
+ 1939 025d 7468726F 		.ascii	"throttleVal\000"
+ 1939      74746C65 
+ 1939      56616C00 
+ 1940              	.LASF4:
+ 1941 0269 75696E74 		.ascii	"uint16_t\000"
+ 1941      31365F74 
+ 1941      00
+ 1942              	.LASF2:
+ 1943 0272 73686F72 		.ascii	"short int\000"
+ 1943      7420696E 
+ 1943      7400
+ 1944              	.LASF24:
+ 1945 027c 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_MID\000"
+ 1945      52454D4F 
+ 1945      54455F42 
+ 1945      4154545F 
+ 1945      4C564C5F 
+ 1946              	.LASF7:
+ 1947 0294 75696E74 		.ascii	"uint32_t\000"
+ 1947      33325F74 
+ 1947      00
+ 1948              	.LASF43:
+ 1949 029d 7468726F 		.ascii	"throttleVal16Bit\000"
+ 1949      74746C65 
+ 1949      56616C31 
+ 1949      36426974 
+ 1949      00
+ 1950              	.LASF46:
+ 1951 02ae 5F6D7367 		.ascii	"_msg\000"
+ 1951      00
+ 1952              	.LASF51:
+ 1953 02b3 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1953      73657273 
+ 1953      5C47656F 
+ 1953      5C446F63 
+ 1953      756D656E 
+ 1954 02e1 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 1954      645C4669 
+ 1954      726D7761 
+ 1954      72655C50 
+ 1954      536F435C 
+ 1955              	.LASF29:
+ 1956 030d 6D61696E 		.ascii	"mainInRange\000"
+ 1956      496E5261 
+ 1956      6E676500 
+ 1957              	.LASF30:
+ 1958 0319 6D61696E 		.ascii	"mainMotorOn\000"
+ 1958      4D6F746F 
+ 1958      724F6E00 
+ 1959              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRzRACg.s 			page 47
+
+
