@@ -1,0 +1,333 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Led.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 4F000000 		.text
+  20      02004900 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	debugBuff,200,4
+  24              	.Letext0:
+  25              		.file 1 "./Generated_Source/PSoC5/core_cm3.h"
+  26              		.file 2 ".\\/Config.h"
+  27              		.section	.debug_info
+  28 0000 A7000000 		.4byte	0xa7
+  29 0004 0200     		.2byte	0x2
+  30 0006 00000000 		.4byte	.Ldebug_abbrev0
+  31 000a 04       		.byte	0x4
+  32 000b 01       		.uleb128 0x1
+  33 000c AD000000 		.4byte	.LASF12
+  34 0010 01       		.byte	0x1
+  35 0011 01010000 		.4byte	.LASF13
+  36 0015 1B000000 		.4byte	.LASF14
+  37 0019 00000000 		.4byte	.Ltext0
+  38 001d 00000000 		.4byte	.Letext0
+  39 0021 00000000 		.4byte	.Ldebug_line0
+  40 0025 02       		.uleb128 0x2
+  41 0026 01       		.byte	0x1
+  42 0027 06       		.byte	0x6
+  43 0028 F5000000 		.4byte	.LASF0
+  44 002c 02       		.uleb128 0x2
+  45 002d 01       		.byte	0x1
+  46 002e 08       		.byte	0x8
+  47 002f B9000000 		.4byte	.LASF1
+  48 0033 02       		.uleb128 0x2
+  49 0034 02       		.byte	0x2
+  50 0035 05       		.byte	0x5
+  51 0036 09010000 		.4byte	.LASF2
+  52 003a 02       		.uleb128 0x2
+  53 003b 02       		.byte	0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 2
+
+
+  54 003c 07       		.byte	0x7
+  55 003d E2000000 		.4byte	.LASF3
+  56 0041 02       		.uleb128 0x2
+  57 0042 04       		.byte	0x4
+  58 0043 05       		.byte	0x5
+  59 0044 D9000000 		.4byte	.LASF4
+  60 0048 02       		.uleb128 0x2
+  61 0049 04       		.byte	0x4
+  62 004a 07       		.byte	0x7
+  63 004b 84000000 		.4byte	.LASF5
+  64 004f 02       		.uleb128 0x2
+  65 0050 08       		.byte	0x8
+  66 0051 05       		.byte	0x5
+  67 0052 00000000 		.4byte	.LASF6
+  68 0056 02       		.uleb128 0x2
+  69 0057 08       		.byte	0x8
+  70 0058 07       		.byte	0x7
+  71 0059 96000000 		.4byte	.LASF7
+  72 005d 03       		.uleb128 0x3
+  73 005e 04       		.byte	0x4
+  74 005f 05       		.byte	0x5
+  75 0060 696E7400 		.ascii	"int\000"
+  76 0064 02       		.uleb128 0x2
+  77 0065 04       		.byte	0x4
+  78 0066 07       		.byte	0x7
+  79 0067 0E000000 		.4byte	.LASF8
+  80 006b 02       		.uleb128 0x2
+  81 006c 01       		.byte	0x1
+  82 006d 08       		.byte	0x8
+  83 006e C7000000 		.4byte	.LASF9
+  84 0072 04       		.uleb128 0x4
+  85 0073 04       		.byte	0x4
+  86 0074 07       		.byte	0x7
+  87 0075 05       		.uleb128 0x5
+  88 0076 CC000000 		.4byte	.LASF10
+  89 007a 01       		.byte	0x1
+  90 007b CE06     		.2byte	0x6ce
+  91 007d 83000000 		.4byte	0x83
+  92 0081 01       		.byte	0x1
+  93 0082 01       		.byte	0x1
+  94 0083 06       		.uleb128 0x6
+  95 0084 5D000000 		.4byte	0x5d
+  96 0088 07       		.uleb128 0x7
+  97 0089 6B000000 		.4byte	0x6b
+  98 008d 98000000 		.4byte	0x98
+  99 0091 08       		.uleb128 0x8
+ 100 0092 72000000 		.4byte	0x72
+ 101 0096 C7       		.byte	0xc7
+ 102 0097 00       		.byte	0x0
+ 103 0098 09       		.uleb128 0x9
+ 104 0099 7A000000 		.4byte	.LASF11
+ 105 009d 02       		.byte	0x2
+ 106 009e 2A       		.byte	0x2a
+ 107 009f 88000000 		.4byte	0x88
+ 108 00a3 01       		.byte	0x1
+ 109 00a4 05       		.byte	0x5
+ 110 00a5 03       		.byte	0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 3
+
+
+ 111 00a6 00000000 		.4byte	debugBuff
+ 112 00aa 00       		.byte	0x0
+ 113              		.section	.debug_abbrev
+ 114 0000 01       		.uleb128 0x1
+ 115 0001 11       		.uleb128 0x11
+ 116 0002 01       		.byte	0x1
+ 117 0003 25       		.uleb128 0x25
+ 118 0004 0E       		.uleb128 0xe
+ 119 0005 13       		.uleb128 0x13
+ 120 0006 0B       		.uleb128 0xb
+ 121 0007 03       		.uleb128 0x3
+ 122 0008 0E       		.uleb128 0xe
+ 123 0009 1B       		.uleb128 0x1b
+ 124 000a 0E       		.uleb128 0xe
+ 125 000b 11       		.uleb128 0x11
+ 126 000c 01       		.uleb128 0x1
+ 127 000d 12       		.uleb128 0x12
+ 128 000e 01       		.uleb128 0x1
+ 129 000f 10       		.uleb128 0x10
+ 130 0010 06       		.uleb128 0x6
+ 131 0011 00       		.byte	0x0
+ 132 0012 00       		.byte	0x0
+ 133 0013 02       		.uleb128 0x2
+ 134 0014 24       		.uleb128 0x24
+ 135 0015 00       		.byte	0x0
+ 136 0016 0B       		.uleb128 0xb
+ 137 0017 0B       		.uleb128 0xb
+ 138 0018 3E       		.uleb128 0x3e
+ 139 0019 0B       		.uleb128 0xb
+ 140 001a 03       		.uleb128 0x3
+ 141 001b 0E       		.uleb128 0xe
+ 142 001c 00       		.byte	0x0
+ 143 001d 00       		.byte	0x0
+ 144 001e 03       		.uleb128 0x3
+ 145 001f 24       		.uleb128 0x24
+ 146 0020 00       		.byte	0x0
+ 147 0021 0B       		.uleb128 0xb
+ 148 0022 0B       		.uleb128 0xb
+ 149 0023 3E       		.uleb128 0x3e
+ 150 0024 0B       		.uleb128 0xb
+ 151 0025 03       		.uleb128 0x3
+ 152 0026 08       		.uleb128 0x8
+ 153 0027 00       		.byte	0x0
+ 154 0028 00       		.byte	0x0
+ 155 0029 04       		.uleb128 0x4
+ 156 002a 24       		.uleb128 0x24
+ 157 002b 00       		.byte	0x0
+ 158 002c 0B       		.uleb128 0xb
+ 159 002d 0B       		.uleb128 0xb
+ 160 002e 3E       		.uleb128 0x3e
+ 161 002f 0B       		.uleb128 0xb
+ 162 0030 00       		.byte	0x0
+ 163 0031 00       		.byte	0x0
+ 164 0032 05       		.uleb128 0x5
+ 165 0033 34       		.uleb128 0x34
+ 166 0034 00       		.byte	0x0
+ 167 0035 03       		.uleb128 0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 4
+
+
+ 168 0036 0E       		.uleb128 0xe
+ 169 0037 3A       		.uleb128 0x3a
+ 170 0038 0B       		.uleb128 0xb
+ 171 0039 3B       		.uleb128 0x3b
+ 172 003a 05       		.uleb128 0x5
+ 173 003b 49       		.uleb128 0x49
+ 174 003c 13       		.uleb128 0x13
+ 175 003d 3F       		.uleb128 0x3f
+ 176 003e 0C       		.uleb128 0xc
+ 177 003f 3C       		.uleb128 0x3c
+ 178 0040 0C       		.uleb128 0xc
+ 179 0041 00       		.byte	0x0
+ 180 0042 00       		.byte	0x0
+ 181 0043 06       		.uleb128 0x6
+ 182 0044 35       		.uleb128 0x35
+ 183 0045 00       		.byte	0x0
+ 184 0046 49       		.uleb128 0x49
+ 185 0047 13       		.uleb128 0x13
+ 186 0048 00       		.byte	0x0
+ 187 0049 00       		.byte	0x0
+ 188 004a 07       		.uleb128 0x7
+ 189 004b 01       		.uleb128 0x1
+ 190 004c 01       		.byte	0x1
+ 191 004d 49       		.uleb128 0x49
+ 192 004e 13       		.uleb128 0x13
+ 193 004f 01       		.uleb128 0x1
+ 194 0050 13       		.uleb128 0x13
+ 195 0051 00       		.byte	0x0
+ 196 0052 00       		.byte	0x0
+ 197 0053 08       		.uleb128 0x8
+ 198 0054 21       		.uleb128 0x21
+ 199 0055 00       		.byte	0x0
+ 200 0056 49       		.uleb128 0x49
+ 201 0057 13       		.uleb128 0x13
+ 202 0058 2F       		.uleb128 0x2f
+ 203 0059 0B       		.uleb128 0xb
+ 204 005a 00       		.byte	0x0
+ 205 005b 00       		.byte	0x0
+ 206 005c 09       		.uleb128 0x9
+ 207 005d 34       		.uleb128 0x34
+ 208 005e 00       		.byte	0x0
+ 209 005f 03       		.uleb128 0x3
+ 210 0060 0E       		.uleb128 0xe
+ 211 0061 3A       		.uleb128 0x3a
+ 212 0062 0B       		.uleb128 0xb
+ 213 0063 3B       		.uleb128 0x3b
+ 214 0064 0B       		.uleb128 0xb
+ 215 0065 49       		.uleb128 0x49
+ 216 0066 13       		.uleb128 0x13
+ 217 0067 3F       		.uleb128 0x3f
+ 218 0068 0C       		.uleb128 0xc
+ 219 0069 02       		.uleb128 0x2
+ 220 006a 0A       		.uleb128 0xa
+ 221 006b 00       		.byte	0x0
+ 222 006c 00       		.byte	0x0
+ 223 006d 00       		.byte	0x0
+ 224              		.section	.debug_pubnames,"",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 5
+
+
+ 225 0000 1C000000 		.4byte	0x1c
+ 226 0004 0200     		.2byte	0x2
+ 227 0006 00000000 		.4byte	.Ldebug_info0
+ 228 000a AB000000 		.4byte	0xab
+ 229 000e 98000000 		.4byte	0x98
+ 230 0012 64656275 		.ascii	"debugBuff\000"
+ 230      67427566 
+ 230      6600
+ 231 001c 00000000 		.4byte	0x0
+ 232              		.section	.debug_str,"MS",%progbits,1
+ 233              	.LASF6:
+ 234 0000 6C6F6E67 		.ascii	"long long int\000"
+ 234      206C6F6E 
+ 234      6720696E 
+ 234      7400
+ 235              	.LASF8:
+ 236 000e 756E7369 		.ascii	"unsigned int\000"
+ 236      676E6564 
+ 236      20696E74 
+ 236      00
+ 237              	.LASF14:
+ 238 001b 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 238      73657273 
+ 238      5C47656F 
+ 238      5C446F63 
+ 238      756D656E 
+ 239 0049 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 239      645C4669 
+ 239      726D7761 
+ 239      72655C50 
+ 239      536F435C 
+ 240 0079 00       		.ascii	"\000"
+ 241              	.LASF11:
+ 242 007a 64656275 		.ascii	"debugBuff\000"
+ 242      67427566 
+ 242      6600
+ 243              	.LASF5:
+ 244 0084 6C6F6E67 		.ascii	"long unsigned int\000"
+ 244      20756E73 
+ 244      69676E65 
+ 244      6420696E 
+ 244      7400
+ 245              	.LASF7:
+ 246 0096 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 246      206C6F6E 
+ 246      6720756E 
+ 246      7369676E 
+ 246      65642069 
+ 247              	.LASF12:
+ 248 00ad 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 248      4320342E 
+ 248      342E3100 
+ 249              	.LASF1:
+ 250 00b9 756E7369 		.ascii	"unsigned char\000"
+ 250      676E6564 
+ 250      20636861 
+ 250      7200
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccob2Atb.s 			page 6
+
+
+ 251              	.LASF9:
+ 252 00c7 63686172 		.ascii	"char\000"
+ 252      00
+ 253              	.LASF10:
+ 254 00cc 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 254      52784275 
+ 254      66666572 
+ 254      00
+ 255              	.LASF4:
+ 256 00d9 6C6F6E67 		.ascii	"long int\000"
+ 256      20696E74 
+ 256      00
+ 257              	.LASF3:
+ 258 00e2 73686F72 		.ascii	"short unsigned int\000"
+ 258      7420756E 
+ 258      7369676E 
+ 258      65642069 
+ 258      6E7400
+ 259              	.LASF0:
+ 260 00f5 7369676E 		.ascii	"signed char\000"
+ 260      65642063 
+ 260      68617200 
+ 261              	.LASF13:
+ 262 0101 2E5C4C65 		.ascii	".\\Led.c\000"
+ 262      642E6300 
+ 263              	.LASF2:
+ 264 0109 73686F72 		.ascii	"short int\000"
+ 264      7420696E 
+ 264      7400
+ 265              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

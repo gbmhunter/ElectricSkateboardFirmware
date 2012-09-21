@@ -1,0 +1,1688 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"SleepTimer.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 0D010000 		.text
+  20      02006200 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	SleepTimer_initVar
+  24              		.bss
+  25              		.type	SleepTimer_initVar, %object
+  26              		.size	SleepTimer_initVar, 1
+  27              	SleepTimer_initVar:
+  28 0000 00       		.space	1
+  29              		.section	.text.SleepTimer_Start,"ax",%progbits
+  30              		.align	2
+  31              		.global	SleepTimer_Start
+  32              		.thumb
+  33              		.thumb_func
+  34              		.type	SleepTimer_Start, %function
+  35              	SleepTimer_Start:
+  36              	.LFB0:
+  37              		.file 1 ".\\Generated_Source\\PSoC5\\SleepTimer.c"
+   1:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/SleepTimer.c **** * File Name: SleepTimer.c
+   3:.\Generated_Source\PSoC5/SleepTimer.c **** * Version 2.1
+   4:.\Generated_Source\PSoC5/SleepTimer.c **** *
+   5:.\Generated_Source\PSoC5/SleepTimer.c **** * Description:
+   6:.\Generated_Source\PSoC5/SleepTimer.c **** *  This file provides the source code to API for the Sleep Timer.
+   7:.\Generated_Source\PSoC5/SleepTimer.c **** *
+   8:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+   9:.\Generated_Source\PSoC5/SleepTimer.c **** * Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+  10:.\Generated_Source\PSoC5/SleepTimer.c **** * You may use this file only in accordance with the license, terms, conditions,
+  11:.\Generated_Source\PSoC5/SleepTimer.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  12:.\Generated_Source\PSoC5/SleepTimer.c **** * the software package with which this file was provided.
+  13:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+  14:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  15:.\Generated_Source\PSoC5/SleepTimer.c **** #include "SleepTimer.h"
+  16:.\Generated_Source\PSoC5/SleepTimer.c **** #include "CyLib.h"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 2
+
+
+  17:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  18:.\Generated_Source\PSoC5/SleepTimer.c **** /* Variables were not initialized */
+  19:.\Generated_Source\PSoC5/SleepTimer.c **** uint8 SleepTimer_initVar = 0u;
+  20:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  21:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  22:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+  23:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_Start
+  24:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+  25:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  26:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+  27:.\Generated_Source\PSoC5/SleepTimer.c **** *  Starts the Sleep Timer operation. If this function is called, then the
+  28:.\Generated_Source\PSoC5/SleepTimer.c **** *  component will be initialized with values defined in the customizer. If
+  29:.\Generated_Source\PSoC5/SleepTimer.c **** *  parameters need to be changed, then stop component, change needed parameters
+  30:.\Generated_Source\PSoC5/SleepTimer.c **** *  by calling the desired API functions, and restart the component.
+  31:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  32:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+  33:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+  34:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  35:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+  36:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+  37:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  38:.\Generated_Source\PSoC5/SleepTimer.c **** * Global variables:
+  39:.\Generated_Source\PSoC5/SleepTimer.c **** *  The SleepTimer_initVar variable is used to indicate initial
+  40:.\Generated_Source\PSoC5/SleepTimer.c **** *  configuration of this component.  The variable is initialized to zero and
+  41:.\Generated_Source\PSoC5/SleepTimer.c **** *  set to 1 the first time SleepTimer_Start() is called. This allows for
+  42:.\Generated_Source\PSoC5/SleepTimer.c **** *  component initialization without re-initialization in all subsequent calls
+  43:.\Generated_Source\PSoC5/SleepTimer.c **** *  to the SleepTimer_Start() routine.
+  44:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  45:.\Generated_Source\PSoC5/SleepTimer.c **** * Reentrant:
+  46:.\Generated_Source\PSoC5/SleepTimer.c **** *  No
+  47:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  48:.\Generated_Source\PSoC5/SleepTimer.c **** * Side Effects:
+  49:.\Generated_Source\PSoC5/SleepTimer.c **** *  Enables 1 kHz ILO clock and leaves it enabled after the Sleep Time component
+  50:.\Generated_Source\PSoC5/SleepTimer.c **** *  is stopped.
+  51:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  52:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+  53:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_Start(void) 
+  54:.\Generated_Source\PSoC5/SleepTimer.c **** {
+  38              		.loc 1 54 0
+  39              		.cfi_startproc
+  40              		@ args = 0, pretend = 0, frame = 0
+  41              		@ frame_needed = 1, uses_anonymous_args = 0
+  42 0000 80B5     		push	{r7, lr}
+  43              	.LCFI0:
+  44              		.cfi_def_cfa_offset 8
+  45 0002 00AF     		add	r7, sp, #0
+  46              		.cfi_offset 14, -4
+  47              		.cfi_offset 7, -8
+  48              	.LCFI1:
+  49              		.cfi_def_cfa_register 7
+  55:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Execute once in normal flow */
+  56:.\Generated_Source\PSoC5/SleepTimer.c ****     if (0u == SleepTimer_initVar)
+  50              		.loc 1 56 0
+  51 0004 40F20003 		movw	r3, #:lower16:SleepTimer_initVar
+  52 0008 C0F20003 		movt	r3, #:upper16:SleepTimer_initVar
+  53 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  54 000e 002B     		cmp	r3, #0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 3
+
+
+  55 0010 08D1     		bne	.L2
+  57:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+  58:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_Init();
+  56              		.loc 1 58 0
+  57 0012 FFF7FEFF 		bl	SleepTimer_Init
+  59:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_initVar = 1u;
+  58              		.loc 1 59 0
+  59 0016 40F20003 		movw	r3, #:lower16:SleepTimer_initVar
+  60 001a C0F20003 		movt	r3, #:upper16:SleepTimer_initVar
+  61 001e 4FF00102 		mov	r2, #1
+  62 0022 1A70     		strb	r2, [r3, #0]
+  63              	.L2:
+  60:.\Generated_Source\PSoC5/SleepTimer.c ****     }
+  61:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  62:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Enables the component operation */
+  63:.\Generated_Source\PSoC5/SleepTimer.c ****     SleepTimer_Enable();
+  64              		.loc 1 63 0
+  65 0024 FFF7FEFF 		bl	SleepTimer_Enable
+  64:.\Generated_Source\PSoC5/SleepTimer.c **** }
+  66              		.loc 1 64 0
+  67 0028 80BD     		pop	{r7, pc}
+  68              		.cfi_endproc
+  69              	.LFE0:
+  70              		.size	SleepTimer_Start, .-SleepTimer_Start
+  71 002a 00BF     		.section	.text.SleepTimer_Init,"ax",%progbits
+  72              		.align	2
+  73              		.global	SleepTimer_Init
+  74              		.thumb
+  75              		.thumb_func
+  76              		.type	SleepTimer_Init, %function
+  77              	SleepTimer_Init:
+  78              	.LFB1:
+  65:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  66:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  67:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+  68:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_Init
+  69:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+  70:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  71:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+  72:.\Generated_Source\PSoC5/SleepTimer.c **** *  Initializes/Restores default configuration provided with the customizer.
+  73:.\Generated_Source\PSoC5/SleepTimer.c **** *  Sets CTW interval period and enables/disables CTW interrupt (according to
+  74:.\Generated_Source\PSoC5/SleepTimer.c **** *  the customizer's settings).
+  75:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  76:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+  77:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+  78:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  79:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+  80:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+  81:.\Generated_Source\PSoC5/SleepTimer.c **** *
+  82:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+  83:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_Init(void)  
+  84:.\Generated_Source\PSoC5/SleepTimer.c **** {
+  79              		.loc 1 84 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 1, uses_anonymous_args = 0
+  83 0000 80B5     		push	{r7, lr}
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 4
+
+
+  84              	.LCFI2:
+  85              		.cfi_def_cfa_offset 8
+  86 0002 00AF     		add	r7, sp, #0
+  87              		.cfi_offset 14, -4
+  88              		.cfi_offset 7, -8
+  89              	.LCFI3:
+  90              		.cfi_def_cfa_register 7
+  85:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Sets default (passed from customizer) interval */
+  86:.\Generated_Source\PSoC5/SleepTimer.c ****     SleepTimer_SetInterval(SleepTimer_INTERVAL);
+  91              		.loc 1 86 0
+  92 0004 4FF00300 		mov	r0, #3
+  93 0008 FFF7FEFF 		bl	SleepTimer_SetInterval
+  87:.\Generated_Source\PSoC5/SleepTimer.c **** 
+  88:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Check if user sets to issue an interrupt in customizer */
+  89:.\Generated_Source\PSoC5/SleepTimer.c ****     if (1u == SleepTimer_ENABLE_INTERRUPT)
+  90:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+  91:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enable interrupt */
+  92:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_EnableInt();
+  94              		.loc 1 92 0
+  95 000c FFF7FEFF 		bl	SleepTimer_EnableInt
+  93:.\Generated_Source\PSoC5/SleepTimer.c ****     }
+  94:.\Generated_Source\PSoC5/SleepTimer.c ****     else /* interrupt should be disabled */
+  95:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+  96:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Disable interrupt */
+  97:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_DisableInt();
+  98:.\Generated_Source\PSoC5/SleepTimer.c ****     }   /* Interrupt is disabled  */
+  99:.\Generated_Source\PSoC5/SleepTimer.c **** }
+  96              		.loc 1 99 0
+  97 0010 80BD     		pop	{r7, pc}
+  98              		.cfi_endproc
+  99              	.LFE1:
+ 100              		.size	SleepTimer_Init, .-SleepTimer_Init
+ 101 0012 00BF     		.section	.text.SleepTimer_Enable,"ax",%progbits
+ 102              		.align	2
+ 103              		.global	SleepTimer_Enable
+ 104              		.thumb
+ 105              		.thumb_func
+ 106              		.type	SleepTimer_Enable, %function
+ 107              	SleepTimer_Enable:
+ 108              	.LFB2:
+ 100:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 101:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 102:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 103:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_Enable
+ 104:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 105:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 106:.\Generated_Source\PSoC5/SleepTimer.c **** *  Enables the 1kHz ILO clock, enables the CTW counter.
+ 107:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 108:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 109:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 110:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 111:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 112:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 113:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 114:.\Generated_Source\PSoC5/SleepTimer.c **** * Side Effects:
+ 115:.\Generated_Source\PSoC5/SleepTimer.c **** *  Enables 1 kHz ILO clocks and leaves it enabled after Sleep Time component
+ 116:.\Generated_Source\PSoC5/SleepTimer.c **** *  is stopped.
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 5
+
+
+ 117:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 118:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 119:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_Enable(void) 
+ 120:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 109              		.loc 1 120 0
+ 110              		.cfi_startproc
+ 111              		@ args = 0, pretend = 0, frame = 8
+ 112              		@ frame_needed = 1, uses_anonymous_args = 0
+ 113 0000 80B5     		push	{r7, lr}
+ 114              	.LCFI4:
+ 115              		.cfi_def_cfa_offset 8
+ 116 0002 82B0     		sub	sp, sp, #8
+ 117              	.LCFI5:
+ 118              		.cfi_def_cfa_offset 16
+ 119 0004 00AF     		add	r7, sp, #0
+ 120              		.cfi_offset 14, -4
+ 121              		.cfi_offset 7, -8
+ 122              	.LCFI6:
+ 123              		.cfi_def_cfa_register 7
+ 121:.\Generated_Source\PSoC5/SleepTimer.c ****     uint8 interruptState;
+ 122:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 123:.\Generated_Source\PSoC5/SleepTimer.c ****     /* If 1kHz ILO is disabled */
+ 124:.\Generated_Source\PSoC5/SleepTimer.c ****     if(0u == (SleepTimer_ILO_CFG_REG & SleepTimer_ILO_1KHZ_EN))
+ 124              		.loc 1 124 0
+ 125 0006 44F20033 		movw	r3, #:lower16:1073758976
+ 126 000a C4F20003 		movt	r3, #:upper16:1073758976
+ 127 000e 1B78     		ldrb	r3, [r3, #0]
+ 128 0010 DBB2     		uxtb	r3, r3
+ 129 0012 03F00203 		and	r3, r3, #2
+ 130 0016 002B     		cmp	r3, #0
+ 131 0018 24D1     		bne	.L7
+ 125:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+ 126:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enter critical section */
+ 127:.\Generated_Source\PSoC5/SleepTimer.c ****         interruptState = CyEnterCriticalSection();
+ 132              		.loc 1 127 0
+ 133 001a FFF7FEFF 		bl	CyEnterCriticalSection
+ 134 001e 0346     		mov	r3, r0
+ 135 0020 FB71     		strb	r3, [r7, #7]
+ 128:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 129:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enable 1kHz ILO */
+ 130:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_ILO_CFG_REG |=SleepTimer_ILO_1KHZ_EN;
+ 136              		.loc 1 130 0
+ 137 0022 44F20033 		movw	r3, #:lower16:1073758976
+ 138 0026 C4F20003 		movt	r3, #:upper16:1073758976
+ 139 002a 44F20032 		movw	r2, #:lower16:1073758976
+ 140 002e C4F20002 		movt	r2, #:upper16:1073758976
+ 141 0032 1278     		ldrb	r2, [r2, #0]
+ 142 0034 D2B2     		uxtb	r2, r2
+ 143 0036 42F00202 		orr	r2, r2, #2
+ 144 003a D2B2     		uxtb	r2, r2
+ 145 003c 1A70     		strb	r2, [r3, #0]
+ 131:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 132:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enable the CTW counter */
+ 133:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_TW_CFG_REG |= SleepTimer_CTW_EN;
+ 146              		.loc 1 133 0
+ 147 003e 44F28233 		movw	r3, #:lower16:1073759106
+ 148 0042 C4F20003 		movt	r3, #:upper16:1073759106
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 6
+
+
+ 149 0046 44F28232 		movw	r2, #:lower16:1073759106
+ 150 004a C4F20002 		movt	r2, #:upper16:1073759106
+ 151 004e 1278     		ldrb	r2, [r2, #0]
+ 152 0050 D2B2     		uxtb	r2, r2
+ 153 0052 42F00402 		orr	r2, r2, #4
+ 154 0056 D2B2     		uxtb	r2, r2
+ 155 0058 1A70     		strb	r2, [r3, #0]
+ 134:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 135:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Exit critical section */
+ 136:.\Generated_Source\PSoC5/SleepTimer.c ****         CyExitCriticalSection(interruptState);
+ 156              		.loc 1 136 0
+ 157 005a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 158 005c 1846     		mov	r0, r3
+ 159 005e FFF7FEFF 		bl	CyExitCriticalSection
+ 160 0062 15E0     		b	.L9
+ 161              	.L7:
+ 137:.\Generated_Source\PSoC5/SleepTimer.c ****     }
+ 138:.\Generated_Source\PSoC5/SleepTimer.c ****     else /* If 1kHz ILO is enabled - enable CTW counter */
+ 139:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+ 140:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enter critical section */
+ 141:.\Generated_Source\PSoC5/SleepTimer.c ****         interruptState = CyEnterCriticalSection();
+ 162              		.loc 1 141 0
+ 163 0064 FFF7FEFF 		bl	CyEnterCriticalSection
+ 164 0068 0346     		mov	r3, r0
+ 165 006a FB71     		strb	r3, [r7, #7]
+ 142:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 143:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Enable the CTW counter */
+ 144:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_TW_CFG_REG |= SleepTimer_CTW_EN;
+ 166              		.loc 1 144 0
+ 167 006c 44F28233 		movw	r3, #:lower16:1073759106
+ 168 0070 C4F20003 		movt	r3, #:upper16:1073759106
+ 169 0074 44F28232 		movw	r2, #:lower16:1073759106
+ 170 0078 C4F20002 		movt	r2, #:upper16:1073759106
+ 171 007c 1278     		ldrb	r2, [r2, #0]
+ 172 007e D2B2     		uxtb	r2, r2
+ 173 0080 42F00402 		orr	r2, r2, #4
+ 174 0084 D2B2     		uxtb	r2, r2
+ 175 0086 1A70     		strb	r2, [r3, #0]
+ 145:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 146:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Exit critical section */
+ 147:.\Generated_Source\PSoC5/SleepTimer.c ****         CyExitCriticalSection(interruptState);
+ 176              		.loc 1 147 0
+ 177 0088 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 178 008a 1846     		mov	r0, r3
+ 179 008c FFF7FEFF 		bl	CyExitCriticalSection
+ 180              	.L9:
+ 148:.\Generated_Source\PSoC5/SleepTimer.c ****     }
+ 149:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 181              		.loc 1 149 0
+ 182 0090 07F10807 		add	r7, r7, #8
+ 183 0094 BD46     		mov	sp, r7
+ 184 0096 80BD     		pop	{r7, pc}
+ 185              		.cfi_endproc
+ 186              	.LFE2:
+ 187              		.size	SleepTimer_Enable, .-SleepTimer_Enable
+ 188              		.section	.text.SleepTimer_Stop,"ax",%progbits
+ 189              		.align	2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 7
+
+
+ 190              		.global	SleepTimer_Stop
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.type	SleepTimer_Stop, %function
+ 194              	SleepTimer_Stop:
+ 195              	.LFB3:
+ 150:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 151:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 152:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 153:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_Stop
+ 154:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 155:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 156:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 157:.\Generated_Source\PSoC5/SleepTimer.c **** *  Stops the Sleep Timer operation: disables wake up on the Central Time Wheel
+ 158:.\Generated_Source\PSoC5/SleepTimer.c **** *  (CTW) counter terminal count reached.
+ 159:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 160:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 161:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 162:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 163:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 164:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 165:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 166:.\Generated_Source\PSoC5/SleepTimer.c **** * Side Effects:
+ 167:.\Generated_Source\PSoC5/SleepTimer.c **** *  Leaves the 1 kHz ILO clock enabled after Sleep Time component is stopped.
+ 168:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 169:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 170:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_Stop(void) 
+ 171:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 196              		.loc 1 171 0
+ 197              		.cfi_startproc
+ 198              		@ args = 0, pretend = 0, frame = 8
+ 199              		@ frame_needed = 1, uses_anonymous_args = 0
+ 200 0000 80B5     		push	{r7, lr}
+ 201              	.LCFI7:
+ 202              		.cfi_def_cfa_offset 8
+ 203 0002 82B0     		sub	sp, sp, #8
+ 204              	.LCFI8:
+ 205              		.cfi_def_cfa_offset 16
+ 206 0004 00AF     		add	r7, sp, #0
+ 207              		.cfi_offset 14, -4
+ 208              		.cfi_offset 7, -8
+ 209              	.LCFI9:
+ 210              		.cfi_def_cfa_register 7
+ 172:.\Generated_Source\PSoC5/SleepTimer.c ****     uint8 interruptState;
+ 173:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 174:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Enter critical section */
+ 175:.\Generated_Source\PSoC5/SleepTimer.c ****     interruptState = CyEnterCriticalSection();
+ 211              		.loc 1 175 0
+ 212 0006 FFF7FEFF 		bl	CyEnterCriticalSection
+ 213 000a 0346     		mov	r3, r0
+ 214 000c FB71     		strb	r3, [r7, #7]
+ 176:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 177:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Disable CTW counter */
+ 178:.\Generated_Source\PSoC5/SleepTimer.c ****     SleepTimer_TW_CFG_REG &= ~SleepTimer_CTW_EN;
+ 215              		.loc 1 178 0
+ 216 000e 44F28233 		movw	r3, #:lower16:1073759106
+ 217 0012 C4F20003 		movt	r3, #:upper16:1073759106
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 8
+
+
+ 218 0016 44F28232 		movw	r2, #:lower16:1073759106
+ 219 001a C4F20002 		movt	r2, #:upper16:1073759106
+ 220 001e 1278     		ldrb	r2, [r2, #0]
+ 221 0020 D2B2     		uxtb	r2, r2
+ 222 0022 02F0FB02 		and	r2, r2, #251
+ 223 0026 1A70     		strb	r2, [r3, #0]
+ 179:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 180:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Exit critical section */
+ 181:.\Generated_Source\PSoC5/SleepTimer.c ****     CyExitCriticalSection(interruptState);
+ 224              		.loc 1 181 0
+ 225 0028 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 226 002a 1846     		mov	r0, r3
+ 227 002c FFF7FEFF 		bl	CyExitCriticalSection
+ 182:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 228              		.loc 1 182 0
+ 229 0030 07F10807 		add	r7, r7, #8
+ 230 0034 BD46     		mov	sp, r7
+ 231 0036 80BD     		pop	{r7, pc}
+ 232              		.cfi_endproc
+ 233              	.LFE3:
+ 234              		.size	SleepTimer_Stop, .-SleepTimer_Stop
+ 235              		.section	.text.SleepTimer_EnableInt,"ax",%progbits
+ 236              		.align	2
+ 237              		.global	SleepTimer_EnableInt
+ 238              		.thumb
+ 239              		.thumb_func
+ 240              		.type	SleepTimer_EnableInt, %function
+ 241              	SleepTimer_EnableInt:
+ 242              	.LFB4:
+ 183:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 184:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 185:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 186:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_EnableInt
+ 187:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 188:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 189:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 190:.\Generated_Source\PSoC5/SleepTimer.c **** *  Enables interrupt on the Central Time Wheel (CTW) terminal count reached.
+ 191:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 192:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 193:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 194:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 195:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 196:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 197:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 198:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 199:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_EnableInt(void) 
+ 200:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 243              		.loc 1 200 0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 8
+ 246              		@ frame_needed = 1, uses_anonymous_args = 0
+ 247 0000 80B5     		push	{r7, lr}
+ 248              	.LCFI10:
+ 249              		.cfi_def_cfa_offset 8
+ 250 0002 82B0     		sub	sp, sp, #8
+ 251              	.LCFI11:
+ 252              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 9
+
+
+ 253 0004 00AF     		add	r7, sp, #0
+ 254              		.cfi_offset 14, -4
+ 255              		.cfi_offset 7, -8
+ 256              	.LCFI12:
+ 257              		.cfi_def_cfa_register 7
+ 201:.\Generated_Source\PSoC5/SleepTimer.c ****     uint8 interruptState;
+ 202:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 203:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Enter critical section */
+ 204:.\Generated_Source\PSoC5/SleepTimer.c ****     interruptState = CyEnterCriticalSection();
+ 258              		.loc 1 204 0
+ 259 0006 FFF7FEFF 		bl	CyEnterCriticalSection
+ 260 000a 0346     		mov	r3, r0
+ 261 000c FB71     		strb	r3, [r7, #7]
+ 205:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 206:.\Generated_Source\PSoC5/SleepTimer.c ****      /* Enable interrupt on wake up */
+ 207:.\Generated_Source\PSoC5/SleepTimer.c ****     SleepTimer_TW_CFG_REG |= SleepTimer_CTW_IE;
+ 262              		.loc 1 207 0
+ 263 000e 44F28233 		movw	r3, #:lower16:1073759106
+ 264 0012 C4F20003 		movt	r3, #:upper16:1073759106
+ 265 0016 44F28232 		movw	r2, #:lower16:1073759106
+ 266 001a C4F20002 		movt	r2, #:upper16:1073759106
+ 267 001e 1278     		ldrb	r2, [r2, #0]
+ 268 0020 D2B2     		uxtb	r2, r2
+ 269 0022 42F00802 		orr	r2, r2, #8
+ 270 0026 D2B2     		uxtb	r2, r2
+ 271 0028 1A70     		strb	r2, [r3, #0]
+ 208:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 209:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Exit critical section */
+ 210:.\Generated_Source\PSoC5/SleepTimer.c ****     CyExitCriticalSection(interruptState);
+ 272              		.loc 1 210 0
+ 273 002a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 274 002c 1846     		mov	r0, r3
+ 275 002e FFF7FEFF 		bl	CyExitCriticalSection
+ 211:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 276              		.loc 1 211 0
+ 277 0032 07F10807 		add	r7, r7, #8
+ 278 0036 BD46     		mov	sp, r7
+ 279 0038 80BD     		pop	{r7, pc}
+ 280              		.cfi_endproc
+ 281              	.LFE4:
+ 282              		.size	SleepTimer_EnableInt, .-SleepTimer_EnableInt
+ 283 003a 00BF     		.section	.text.SleepTimer_DisableInt,"ax",%progbits
+ 284              		.align	2
+ 285              		.global	SleepTimer_DisableInt
+ 286              		.thumb
+ 287              		.thumb_func
+ 288              		.type	SleepTimer_DisableInt, %function
+ 289              	SleepTimer_DisableInt:
+ 290              	.LFB5:
+ 212:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 213:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 214:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 215:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_DisableInt
+ 216:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 217:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 218:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 219:.\Generated_Source\PSoC5/SleepTimer.c **** *  Disables interrupt on the Central Time Wheel (CTW) terminal count reached.
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 10
+
+
+ 220:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 221:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 222:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 223:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 224:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 225:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 226:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 227:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 228:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_DisableInt(void) 
+ 229:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 291              		.loc 1 229 0
+ 292              		.cfi_startproc
+ 293              		@ args = 0, pretend = 0, frame = 8
+ 294              		@ frame_needed = 1, uses_anonymous_args = 0
+ 295 0000 80B5     		push	{r7, lr}
+ 296              	.LCFI13:
+ 297              		.cfi_def_cfa_offset 8
+ 298 0002 82B0     		sub	sp, sp, #8
+ 299              	.LCFI14:
+ 300              		.cfi_def_cfa_offset 16
+ 301 0004 00AF     		add	r7, sp, #0
+ 302              		.cfi_offset 14, -4
+ 303              		.cfi_offset 7, -8
+ 304              	.LCFI15:
+ 305              		.cfi_def_cfa_register 7
+ 230:.\Generated_Source\PSoC5/SleepTimer.c ****     uint8 interruptState;
+ 231:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 232:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Enter critical section */
+ 233:.\Generated_Source\PSoC5/SleepTimer.c ****     interruptState = CyEnterCriticalSection();
+ 306              		.loc 1 233 0
+ 307 0006 FFF7FEFF 		bl	CyEnterCriticalSection
+ 308 000a 0346     		mov	r3, r0
+ 309 000c FB71     		strb	r3, [r7, #7]
+ 234:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 235:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Disable interrupt on wake up */
+ 236:.\Generated_Source\PSoC5/SleepTimer.c ****     SleepTimer_TW_CFG_REG &= ~SleepTimer_CTW_IE;
+ 310              		.loc 1 236 0
+ 311 000e 44F28233 		movw	r3, #:lower16:1073759106
+ 312 0012 C4F20003 		movt	r3, #:upper16:1073759106
+ 313 0016 44F28232 		movw	r2, #:lower16:1073759106
+ 314 001a C4F20002 		movt	r2, #:upper16:1073759106
+ 315 001e 1278     		ldrb	r2, [r2, #0]
+ 316 0020 D2B2     		uxtb	r2, r2
+ 317 0022 02F0F702 		and	r2, r2, #247
+ 318 0026 1A70     		strb	r2, [r3, #0]
+ 237:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 238:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Exit critical section */
+ 239:.\Generated_Source\PSoC5/SleepTimer.c ****     CyExitCriticalSection(interruptState);
+ 319              		.loc 1 239 0
+ 320 0028 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 321 002a 1846     		mov	r0, r3
+ 322 002c FFF7FEFF 		bl	CyExitCriticalSection
+ 240:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 323              		.loc 1 240 0
+ 324 0030 07F10807 		add	r7, r7, #8
+ 325 0034 BD46     		mov	sp, r7
+ 326 0036 80BD     		pop	{r7, pc}
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 11
+
+
+ 327              		.cfi_endproc
+ 328              	.LFE5:
+ 329              		.size	SleepTimer_DisableInt, .-SleepTimer_DisableInt
+ 330              		.section	.text.SleepTimer_SetInterval,"ax",%progbits
+ 331              		.align	2
+ 332              		.global	SleepTimer_SetInterval
+ 333              		.thumb
+ 334              		.thumb_func
+ 335              		.type	SleepTimer_SetInterval, %function
+ 336              	SleepTimer_SetInterval:
+ 337              	.LFB6:
+ 241:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 242:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 243:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 244:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_SetInterval
+ 245:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 246:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 247:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 248:.\Generated_Source\PSoC5/SleepTimer.c **** *  Sets CTW interval period. The first interval can range from 1 to (period + 1)
+ 249:.\Generated_Source\PSoC5/SleepTimer.c **** *  milliseconds. Additional intervals occur at the nominal period.
+ 250:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 251:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 252:.\Generated_Source\PSoC5/SleepTimer.c **** *  uint8 interval: interval?s value for the CTW.
+ 253:.\Generated_Source\PSoC5/SleepTimer.c **** *  PSoC 5: Only the 4, 8 and 16 ms selections are supported.
+ 254:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 255:.\Generated_Source\PSoC5/SleepTimer.c **** *           Name                    Value        Period
+ 256:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_2_MS      4'b0001        2 ms
+ 257:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_4_MS      4'b0010        4 ms
+ 258:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_8_MS      4'b0011        8 ms
+ 259:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_16_MS     4'b0100        16 ms
+ 260:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_32_MS     4'b0101        32 ms
+ 261:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_64_MS     4'b0110        64 ms
+ 262:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_128_MS    4'b0111        128 ms
+ 263:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_256_MS    4'b1000        256 ms
+ 264:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_512_MS    4'b1001        512 ms
+ 265:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_1024_MS   4'b1010        1024 ms
+ 266:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_2048_MS   4'b1011        2048 ms
+ 267:.\Generated_Source\PSoC5/SleepTimer.c **** *   SleepTimer__CTW_4096_MS   4'b1100        4096 ms
+ 268:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 269:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 270:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 271:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 272:.\Generated_Source\PSoC5/SleepTimer.c **** * Side Effects:
+ 273:.\Generated_Source\PSoC5/SleepTimer.c **** *  Interval value can be only changed when component is stopped (CTW is
+ 274:.\Generated_Source\PSoC5/SleepTimer.c **** *  disabled).
+ 275:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 276:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 277:.\Generated_Source\PSoC5/SleepTimer.c **** void SleepTimer_SetInterval(uint8 interval) 
+ 278:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 338              		.loc 1 278 0
+ 339              		.cfi_startproc
+ 340              		@ args = 0, pretend = 0, frame = 8
+ 341              		@ frame_needed = 1, uses_anonymous_args = 0
+ 342 0000 80B5     		push	{r7, lr}
+ 343              	.LCFI16:
+ 344              		.cfi_def_cfa_offset 8
+ 345 0002 82B0     		sub	sp, sp, #8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 12
+
+
+ 346              	.LCFI17:
+ 347              		.cfi_def_cfa_offset 16
+ 348 0004 00AF     		add	r7, sp, #0
+ 349              		.cfi_offset 14, -4
+ 350              		.cfi_offset 7, -8
+ 351              	.LCFI18:
+ 352              		.cfi_def_cfa_register 7
+ 353 0006 0346     		mov	r3, r0
+ 354 0008 FB71     		strb	r3, [r7, #7]
+ 279:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Check if CTW is disabled */
+ 280:.\Generated_Source\PSoC5/SleepTimer.c ****     if (0u == (SleepTimer_TW_CFG_REG & SleepTimer_CTW_EN))
+ 355              		.loc 1 280 0
+ 356 000a 44F28233 		movw	r3, #:lower16:1073759106
+ 357 000e C4F20003 		movt	r3, #:upper16:1073759106
+ 358 0012 1B78     		ldrb	r3, [r3, #0]
+ 359 0014 DBB2     		uxtb	r3, r3
+ 360 0016 03F00403 		and	r3, r3, #4
+ 361 001a 002B     		cmp	r3, #0
+ 362 001c 2ED1     		bne	.L22
+ 281:.\Generated_Source\PSoC5/SleepTimer.c ****     {
+ 282:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Device is PSoC 5 and the revision is ES1 or earlier. */
+ 283:.\Generated_Source\PSoC5/SleepTimer.c ****         #if(CY_PSOC5_ES1)
+ 284:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 285:.\Generated_Source\PSoC5/SleepTimer.c ****             CYASSERT((SleepTimer__CTW_4_MS  == interval) ||
+ 363              		.loc 1 285 0
+ 364 001e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 365 0020 022B     		cmp	r3, #2
+ 366 0022 17D0     		beq	.L18
+ 367 0024 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 368 0026 032B     		cmp	r3, #3
+ 369 0028 14D0     		beq	.L18
+ 370 002a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 371 002c 042B     		cmp	r3, #4
+ 372 002e 11D0     		beq	.L18
+ 373 0030 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 374 0032 022B     		cmp	r3, #2
+ 375 0034 05D0     		beq	.L19
+ 376 0036 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 377 0038 032B     		cmp	r3, #3
+ 378 003a 02D0     		beq	.L19
+ 379 003c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 380 003e 042B     		cmp	r3, #4
+ 381 0040 02D1     		bne	.L20
+ 382              	.L19:
+ 383 0042 4FF00103 		mov	r3, #1
+ 384 0046 01E0     		b	.L21
+ 385              	.L20:
+ 386 0048 4FF00003 		mov	r3, #0
+ 387              	.L21:
+ 388 004c DBB2     		uxtb	r3, r3
+ 389 004e 1846     		mov	r0, r3
+ 390 0050 FFF7FEFF 		bl	CyHalt
+ 391              	.L18:
+ 286:.\Generated_Source\PSoC5/SleepTimer.c ****                      (SleepTimer__CTW_8_MS  == interval) ||
+ 287:.\Generated_Source\PSoC5/SleepTimer.c ****                      (SleepTimer__CTW_16_MS == interval));
+ 288:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 289:.\Generated_Source\PSoC5/SleepTimer.c ****         #endif  /* CY_PSOC5_ES1 */
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 13
+
+
+ 290:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 291:.\Generated_Source\PSoC5/SleepTimer.c ****         /* Set CTW interval */
+ 292:.\Generated_Source\PSoC5/SleepTimer.c ****         SleepTimer_CTW_INTERVAL_REG = \
+ 392              		.loc 1 292 0
+ 393 0054 44F28133 		movw	r3, #:lower16:1073759105
+ 394 0058 C4F20003 		movt	r3, #:upper16:1073759105
+ 293:.\Generated_Source\PSoC5/SleepTimer.c ****             (SleepTimer_CTW_INTERVAL_REG & ~SleepTimer_INTERVAL_MASK) | \
+ 395              		.loc 1 293 0
+ 396 005c 44F28132 		movw	r2, #:lower16:1073759105
+ 397 0060 C4F20002 		movt	r2, #:upper16:1073759105
+ 398 0064 1278     		ldrb	r2, [r2, #0]
+ 399 0066 D2B2     		uxtb	r2, r2
+ 400              		.loc 1 292 0
+ 401 0068 1146     		mov	r1, r2
+ 402 006a 01F0F001 		and	r1, r1, #240
+ 403 006e FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 404 0070 02F00F02 		and	r2, r2, #15
+ 405 0074 41EA0202 		orr	r2, r1, r2
+ 406 0078 D2B2     		uxtb	r2, r2
+ 407 007a 1A70     		strb	r2, [r3, #0]
+ 408              	.L22:
+ 294:.\Generated_Source\PSoC5/SleepTimer.c ****             (interval & SleepTimer_INTERVAL_MASK);
+ 295:.\Generated_Source\PSoC5/SleepTimer.c ****     }
+ 296:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Do nothing if CTW is enabled. */
+ 297:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 409              		.loc 1 297 0
+ 410 007c 07F10807 		add	r7, r7, #8
+ 411 0080 BD46     		mov	sp, r7
+ 412 0082 80BD     		pop	{r7, pc}
+ 413              		.cfi_endproc
+ 414              	.LFE6:
+ 415              		.size	SleepTimer_SetInterval, .-SleepTimer_SetInterval
+ 416              		.section	.text.SleepTimer_GetStatus,"ax",%progbits
+ 417              		.align	2
+ 418              		.global	SleepTimer_GetStatus
+ 419              		.thumb
+ 420              		.thumb_func
+ 421              		.type	SleepTimer_GetStatus, %function
+ 422              	SleepTimer_GetStatus:
+ 423              	.LFB7:
+ 298:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 299:.\Generated_Source\PSoC5/SleepTimer.c **** 
+ 300:.\Generated_Source\PSoC5/SleepTimer.c **** /*******************************************************************************
+ 301:.\Generated_Source\PSoC5/SleepTimer.c **** * Function Name: SleepTimer_GetStatus
+ 302:.\Generated_Source\PSoC5/SleepTimer.c **** ********************************************************************************
+ 303:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 304:.\Generated_Source\PSoC5/SleepTimer.c **** * Summary:
+ 305:.\Generated_Source\PSoC5/SleepTimer.c **** *  This function should always be called (when the Sleep Timer?s interrupt is
+ 306:.\Generated_Source\PSoC5/SleepTimer.c **** *  disabled or enabled) after wake up to clear the ctw_int status bit.
+ 307:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 308:.\Generated_Source\PSoC5/SleepTimer.c **** * Parameters:
+ 309:.\Generated_Source\PSoC5/SleepTimer.c **** *  None
+ 310:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 311:.\Generated_Source\PSoC5/SleepTimer.c **** * Return:
+ 312:.\Generated_Source\PSoC5/SleepTimer.c **** *  uint8 with bits set if corresponding event has occurred
+ 313:.\Generated_Source\PSoC5/SleepTimer.c **** *            Name                             Description
+ 314:.\Generated_Source\PSoC5/SleepTimer.c **** *  SleepTimer_PM_INT_SR_ONEPPSP  A onepps event has occured
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 14
+
+
+ 315:.\Generated_Source\PSoC5/SleepTimer.c **** *  SleepTimer_PM_INT_SR_CTW      A central timewheel event occured
+ 316:.\Generated_Source\PSoC5/SleepTimer.c **** *  SleepTimer_PM_INT_SR_FTW      A fast timewheel event occured
+ 317:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 318:.\Generated_Source\PSoC5/SleepTimer.c **** * Side Effects:
+ 319:.\Generated_Source\PSoC5/SleepTimer.c **** *  If an interrupt gets generated at the same time as a register read/clear,
+ 320:.\Generated_Source\PSoC5/SleepTimer.c **** *  the bit will remain set (which causes another interrupt). Reports and then
+ 321:.\Generated_Source\PSoC5/SleepTimer.c **** *  clears all interrupt status bits in the Power Manager Interrupt Status
+ 322:.\Generated_Source\PSoC5/SleepTimer.c **** *  Register. Some of the bits are not relevant to operation of this component.
+ 323:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 324:.\Generated_Source\PSoC5/SleepTimer.c **** *  If the GetStatus() function is not called in an interrupt associated with
+ 325:.\Generated_Source\PSoC5/SleepTimer.c **** *  the SleepTimer, the interrupt is not cleared and as soon as the interrupt is
+ 326:.\Generated_Source\PSoC5/SleepTimer.c **** *  exited it will be re-entered.
+ 327:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 328:.\Generated_Source\PSoC5/SleepTimer.c **** *  Once the Sleep timer has expired, until the GetStatus() function is called
+ 329:.\Generated_Source\PSoC5/SleepTimer.c **** *  the sleep interval is functionally 0 ms, since GetStatus clears the ctw_int
+ 330:.\Generated_Source\PSoC5/SleepTimer.c **** *  bit.
+ 331:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 332:.\Generated_Source\PSoC5/SleepTimer.c **** *  This function must always be called (when the Sleep Timer's interrupt is
+ 333:.\Generated_Source\PSoC5/SleepTimer.c **** *  disabled or enabled) after wakeup to clear the ctw_int status bit. It is
+ 334:.\Generated_Source\PSoC5/SleepTimer.c **** *  required to call SleepTimer_GetStatus() within 1 ms (1 clock cycle of the
+ 335:.\Generated_Source\PSoC5/SleepTimer.c **** *  ILO) after the CTW event occurred.
+ 336:.\Generated_Source\PSoC5/SleepTimer.c **** *
+ 337:.\Generated_Source\PSoC5/SleepTimer.c **** *******************************************************************************/
+ 338:.\Generated_Source\PSoC5/SleepTimer.c **** uint8 SleepTimer_GetStatus(void) 
+ 339:.\Generated_Source\PSoC5/SleepTimer.c **** {
+ 424              		.loc 1 339 0
+ 425              		.cfi_startproc
+ 426              		@ args = 0, pretend = 0, frame = 0
+ 427              		@ frame_needed = 1, uses_anonymous_args = 0
+ 428 0000 80B5     		push	{r7, lr}
+ 429              	.LCFI19:
+ 430              		.cfi_def_cfa_offset 8
+ 431 0002 00AF     		add	r7, sp, #0
+ 432              		.cfi_offset 14, -4
+ 433              		.cfi_offset 7, -8
+ 434              	.LCFI20:
+ 435              		.cfi_def_cfa_register 7
+ 340:.\Generated_Source\PSoC5/SleepTimer.c ****     /* Read to clear  */
+ 341:.\Generated_Source\PSoC5/SleepTimer.c ****     return CyPmReadStatus(CY_PM_CTW_INT);
+ 436              		.loc 1 341 0
+ 437 0004 4FF00200 		mov	r0, #2
+ 438 0008 FFF7FEFF 		bl	CyPmReadStatus
+ 439 000c 0346     		mov	r3, r0
+ 342:.\Generated_Source\PSoC5/SleepTimer.c **** }
+ 440              		.loc 1 342 0
+ 441 000e 1846     		mov	r0, r3
+ 442 0010 80BD     		pop	{r7, pc}
+ 443              		.cfi_endproc
+ 444              	.LFE7:
+ 445              		.size	SleepTimer_GetStatus, .-SleepTimer_GetStatus
+ 446 0012 00BF     		.text
+ 447              	.Letext0:
+ 448              		.section	.debug_loc,"",%progbits
+ 449              	.Ldebug_loc0:
+ 450              	.LLST0:
+ 451 0000 00000000 		.4byte	.LFB0
+ 452 0004 02000000 		.4byte	.LCFI0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 15
+
+
+ 453 0008 0100     		.2byte	0x1
+ 454 000a 5D       		.byte	0x5d
+ 455 000b 02000000 		.4byte	.LCFI0
+ 456 000f 04000000 		.4byte	.LCFI1
+ 457 0013 0200     		.2byte	0x2
+ 458 0015 7D       		.byte	0x7d
+ 459 0016 08       		.sleb128 8
+ 460 0017 04000000 		.4byte	.LCFI1
+ 461 001b 2A000000 		.4byte	.LFE0
+ 462 001f 0200     		.2byte	0x2
+ 463 0021 77       		.byte	0x77
+ 464 0022 08       		.sleb128 8
+ 465 0023 00000000 		.4byte	0x0
+ 466 0027 00000000 		.4byte	0x0
+ 467              	.LLST1:
+ 468 002b 00000000 		.4byte	.LFB1
+ 469 002f 02000000 		.4byte	.LCFI2
+ 470 0033 0100     		.2byte	0x1
+ 471 0035 5D       		.byte	0x5d
+ 472 0036 02000000 		.4byte	.LCFI2
+ 473 003a 04000000 		.4byte	.LCFI3
+ 474 003e 0200     		.2byte	0x2
+ 475 0040 7D       		.byte	0x7d
+ 476 0041 08       		.sleb128 8
+ 477 0042 04000000 		.4byte	.LCFI3
+ 478 0046 12000000 		.4byte	.LFE1
+ 479 004a 0200     		.2byte	0x2
+ 480 004c 77       		.byte	0x77
+ 481 004d 08       		.sleb128 8
+ 482 004e 00000000 		.4byte	0x0
+ 483 0052 00000000 		.4byte	0x0
+ 484              	.LLST2:
+ 485 0056 00000000 		.4byte	.LFB2
+ 486 005a 02000000 		.4byte	.LCFI4
+ 487 005e 0100     		.2byte	0x1
+ 488 0060 5D       		.byte	0x5d
+ 489 0061 02000000 		.4byte	.LCFI4
+ 490 0065 04000000 		.4byte	.LCFI5
+ 491 0069 0200     		.2byte	0x2
+ 492 006b 7D       		.byte	0x7d
+ 493 006c 08       		.sleb128 8
+ 494 006d 04000000 		.4byte	.LCFI5
+ 495 0071 06000000 		.4byte	.LCFI6
+ 496 0075 0200     		.2byte	0x2
+ 497 0077 7D       		.byte	0x7d
+ 498 0078 10       		.sleb128 16
+ 499 0079 06000000 		.4byte	.LCFI6
+ 500 007d 98000000 		.4byte	.LFE2
+ 501 0081 0200     		.2byte	0x2
+ 502 0083 77       		.byte	0x77
+ 503 0084 10       		.sleb128 16
+ 504 0085 00000000 		.4byte	0x0
+ 505 0089 00000000 		.4byte	0x0
+ 506              	.LLST3:
+ 507 008d 00000000 		.4byte	.LFB3
+ 508 0091 02000000 		.4byte	.LCFI7
+ 509 0095 0100     		.2byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 16
+
+
+ 510 0097 5D       		.byte	0x5d
+ 511 0098 02000000 		.4byte	.LCFI7
+ 512 009c 04000000 		.4byte	.LCFI8
+ 513 00a0 0200     		.2byte	0x2
+ 514 00a2 7D       		.byte	0x7d
+ 515 00a3 08       		.sleb128 8
+ 516 00a4 04000000 		.4byte	.LCFI8
+ 517 00a8 06000000 		.4byte	.LCFI9
+ 518 00ac 0200     		.2byte	0x2
+ 519 00ae 7D       		.byte	0x7d
+ 520 00af 10       		.sleb128 16
+ 521 00b0 06000000 		.4byte	.LCFI9
+ 522 00b4 38000000 		.4byte	.LFE3
+ 523 00b8 0200     		.2byte	0x2
+ 524 00ba 77       		.byte	0x77
+ 525 00bb 10       		.sleb128 16
+ 526 00bc 00000000 		.4byte	0x0
+ 527 00c0 00000000 		.4byte	0x0
+ 528              	.LLST4:
+ 529 00c4 00000000 		.4byte	.LFB4
+ 530 00c8 02000000 		.4byte	.LCFI10
+ 531 00cc 0100     		.2byte	0x1
+ 532 00ce 5D       		.byte	0x5d
+ 533 00cf 02000000 		.4byte	.LCFI10
+ 534 00d3 04000000 		.4byte	.LCFI11
+ 535 00d7 0200     		.2byte	0x2
+ 536 00d9 7D       		.byte	0x7d
+ 537 00da 08       		.sleb128 8
+ 538 00db 04000000 		.4byte	.LCFI11
+ 539 00df 06000000 		.4byte	.LCFI12
+ 540 00e3 0200     		.2byte	0x2
+ 541 00e5 7D       		.byte	0x7d
+ 542 00e6 10       		.sleb128 16
+ 543 00e7 06000000 		.4byte	.LCFI12
+ 544 00eb 3A000000 		.4byte	.LFE4
+ 545 00ef 0200     		.2byte	0x2
+ 546 00f1 77       		.byte	0x77
+ 547 00f2 10       		.sleb128 16
+ 548 00f3 00000000 		.4byte	0x0
+ 549 00f7 00000000 		.4byte	0x0
+ 550              	.LLST5:
+ 551 00fb 00000000 		.4byte	.LFB5
+ 552 00ff 02000000 		.4byte	.LCFI13
+ 553 0103 0100     		.2byte	0x1
+ 554 0105 5D       		.byte	0x5d
+ 555 0106 02000000 		.4byte	.LCFI13
+ 556 010a 04000000 		.4byte	.LCFI14
+ 557 010e 0200     		.2byte	0x2
+ 558 0110 7D       		.byte	0x7d
+ 559 0111 08       		.sleb128 8
+ 560 0112 04000000 		.4byte	.LCFI14
+ 561 0116 06000000 		.4byte	.LCFI15
+ 562 011a 0200     		.2byte	0x2
+ 563 011c 7D       		.byte	0x7d
+ 564 011d 10       		.sleb128 16
+ 565 011e 06000000 		.4byte	.LCFI15
+ 566 0122 38000000 		.4byte	.LFE5
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 17
+
+
+ 567 0126 0200     		.2byte	0x2
+ 568 0128 77       		.byte	0x77
+ 569 0129 10       		.sleb128 16
+ 570 012a 00000000 		.4byte	0x0
+ 571 012e 00000000 		.4byte	0x0
+ 572              	.LLST6:
+ 573 0132 00000000 		.4byte	.LFB6
+ 574 0136 02000000 		.4byte	.LCFI16
+ 575 013a 0100     		.2byte	0x1
+ 576 013c 5D       		.byte	0x5d
+ 577 013d 02000000 		.4byte	.LCFI16
+ 578 0141 04000000 		.4byte	.LCFI17
+ 579 0145 0200     		.2byte	0x2
+ 580 0147 7D       		.byte	0x7d
+ 581 0148 08       		.sleb128 8
+ 582 0149 04000000 		.4byte	.LCFI17
+ 583 014d 06000000 		.4byte	.LCFI18
+ 584 0151 0200     		.2byte	0x2
+ 585 0153 7D       		.byte	0x7d
+ 586 0154 10       		.sleb128 16
+ 587 0155 06000000 		.4byte	.LCFI18
+ 588 0159 84000000 		.4byte	.LFE6
+ 589 015d 0200     		.2byte	0x2
+ 590 015f 77       		.byte	0x77
+ 591 0160 10       		.sleb128 16
+ 592 0161 00000000 		.4byte	0x0
+ 593 0165 00000000 		.4byte	0x0
+ 594              	.LLST7:
+ 595 0169 00000000 		.4byte	.LFB7
+ 596 016d 02000000 		.4byte	.LCFI19
+ 597 0171 0100     		.2byte	0x1
+ 598 0173 5D       		.byte	0x5d
+ 599 0174 02000000 		.4byte	.LCFI19
+ 600 0178 04000000 		.4byte	.LCFI20
+ 601 017c 0200     		.2byte	0x2
+ 602 017e 7D       		.byte	0x7d
+ 603 017f 08       		.sleb128 8
+ 604 0180 04000000 		.4byte	.LCFI20
+ 605 0184 12000000 		.4byte	.LFE7
+ 606 0188 0200     		.2byte	0x2
+ 607 018a 77       		.byte	0x77
+ 608 018b 08       		.sleb128 8
+ 609 018c 00000000 		.4byte	0x0
+ 610 0190 00000000 		.4byte	0x0
+ 611              		.file 2 "./Generated_Source/PSoC5/cytypes.h"
+ 612              		.section	.debug_info
+ 613 0000 A1010000 		.4byte	0x1a1
+ 614 0004 0200     		.2byte	0x2
+ 615 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 616 000a 04       		.byte	0x4
+ 617 000b 01       		.uleb128 0x1
+ 618 000c A7000000 		.4byte	.LASF18
+ 619 0010 01       		.byte	0x1
+ 620 0011 0E000000 		.4byte	.LASF19
+ 621 0015 EA000000 		.4byte	.LASF20
+ 622 0019 00000000 		.4byte	0x0
+ 623 001d 00000000 		.4byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 18
+
+
+ 624 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 625 0025 00000000 		.4byte	.Ldebug_line0
+ 626 0029 02       		.uleb128 0x2
+ 627 002a 01       		.byte	0x1
+ 628 002b 06       		.byte	0x6
+ 629 002c 67010000 		.4byte	.LASF0
+ 630 0030 02       		.uleb128 0x2
+ 631 0031 01       		.byte	0x1
+ 632 0032 08       		.byte	0x8
+ 633 0033 BC000000 		.4byte	.LASF1
+ 634 0037 02       		.uleb128 0x2
+ 635 0038 02       		.byte	0x2
+ 636 0039 05       		.byte	0x5
+ 637 003a 9B010000 		.4byte	.LASF2
+ 638 003e 02       		.uleb128 0x2
+ 639 003f 02       		.byte	0x2
+ 640 0040 07       		.byte	0x7
+ 641 0041 54010000 		.4byte	.LASF3
+ 642 0045 02       		.uleb128 0x2
+ 643 0046 04       		.byte	0x4
+ 644 0047 05       		.byte	0x5
+ 645 0048 E1000000 		.4byte	.LASF4
+ 646 004c 02       		.uleb128 0x2
+ 647 004d 04       		.byte	0x4
+ 648 004e 07       		.byte	0x7
+ 649 004f 7E000000 		.4byte	.LASF5
+ 650 0053 02       		.uleb128 0x2
+ 651 0054 08       		.byte	0x8
+ 652 0055 05       		.byte	0x5
+ 653 0056 00000000 		.4byte	.LASF6
+ 654 005a 02       		.uleb128 0x2
+ 655 005b 08       		.byte	0x8
+ 656 005c 07       		.byte	0x7
+ 657 005d 90000000 		.4byte	.LASF7
+ 658 0061 03       		.uleb128 0x3
+ 659 0062 04       		.byte	0x4
+ 660 0063 05       		.byte	0x5
+ 661 0064 696E7400 		.ascii	"int\000"
+ 662 0068 02       		.uleb128 0x2
+ 663 0069 04       		.byte	0x4
+ 664 006a 07       		.byte	0x7
+ 665 006b 34000000 		.4byte	.LASF8
+ 666 006f 02       		.uleb128 0x2
+ 667 0070 01       		.byte	0x1
+ 668 0071 08       		.byte	0x8
+ 669 0072 CC010000 		.4byte	.LASF9
+ 670 0076 04       		.uleb128 0x4
+ 671 0077 78000000 		.4byte	.LASF21
+ 672 007b 02       		.byte	0x2
+ 673 007c 51       		.byte	0x51
+ 674 007d 30000000 		.4byte	0x30
+ 675 0081 05       		.uleb128 0x5
+ 676 0082 04       		.byte	0x4
+ 677 0083 07       		.byte	0x7
+ 678 0084 06       		.uleb128 0x6
+ 679 0085 01       		.byte	0x1
+ 680 0086 A5010000 		.4byte	.LASF10
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 19
+
+
+ 681 008a 01       		.byte	0x1
+ 682 008b 35       		.byte	0x35
+ 683 008c 01       		.byte	0x1
+ 684 008d 00000000 		.4byte	.LFB0
+ 685 0091 2A000000 		.4byte	.LFE0
+ 686 0095 00000000 		.4byte	.LLST0
+ 687 0099 06       		.uleb128 0x6
+ 688 009a 01       		.byte	0x1
+ 689 009b 44010000 		.4byte	.LASF11
+ 690 009f 01       		.byte	0x1
+ 691 00a0 53       		.byte	0x53
+ 692 00a1 01       		.byte	0x1
+ 693 00a2 00000000 		.4byte	.LFB1
+ 694 00a6 12000000 		.4byte	.LFE1
+ 695 00aa 2B000000 		.4byte	.LLST1
+ 696 00ae 07       		.uleb128 0x7
+ 697 00af 01       		.byte	0x1
+ 698 00b0 41000000 		.4byte	.LASF12
+ 699 00b4 01       		.byte	0x1
+ 700 00b5 77       		.byte	0x77
+ 701 00b6 01       		.byte	0x1
+ 702 00b7 00000000 		.4byte	.LFB2
+ 703 00bb 98000000 		.4byte	.LFE2
+ 704 00bf 56000000 		.4byte	.LLST2
+ 705 00c3 D6000000 		.4byte	0xd6
+ 706 00c7 08       		.uleb128 0x8
+ 707 00c8 D1010000 		.4byte	.LASF14
+ 708 00cc 01       		.byte	0x1
+ 709 00cd 79       		.byte	0x79
+ 710 00ce 76000000 		.4byte	0x76
+ 711 00d2 02       		.byte	0x2
+ 712 00d3 91       		.byte	0x91
+ 713 00d4 77       		.sleb128 -9
+ 714 00d5 00       		.byte	0x0
+ 715 00d6 07       		.uleb128 0x7
+ 716 00d7 01       		.byte	0x1
+ 717 00d8 68000000 		.4byte	.LASF13
+ 718 00dc 01       		.byte	0x1
+ 719 00dd AA       		.byte	0xaa
+ 720 00de 01       		.byte	0x1
+ 721 00df 00000000 		.4byte	.LFB3
+ 722 00e3 38000000 		.4byte	.LFE3
+ 723 00e7 8D000000 		.4byte	.LLST3
+ 724 00eb FE000000 		.4byte	0xfe
+ 725 00ef 08       		.uleb128 0x8
+ 726 00f0 D1010000 		.4byte	.LASF14
+ 727 00f4 01       		.byte	0x1
+ 728 00f5 AC       		.byte	0xac
+ 729 00f6 76000000 		.4byte	0x76
+ 730 00fa 02       		.byte	0x2
+ 731 00fb 91       		.byte	0x91
+ 732 00fc 77       		.sleb128 -9
+ 733 00fd 00       		.byte	0x0
+ 734 00fe 07       		.uleb128 0x7
+ 735 00ff 01       		.byte	0x1
+ 736 0100 53000000 		.4byte	.LASF15
+ 737 0104 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 20
+
+
+ 738 0105 C7       		.byte	0xc7
+ 739 0106 01       		.byte	0x1
+ 740 0107 00000000 		.4byte	.LFB4
+ 741 010b 3A000000 		.4byte	.LFE4
+ 742 010f C4000000 		.4byte	.LLST4
+ 743 0113 26010000 		.4byte	0x126
+ 744 0117 08       		.uleb128 0x8
+ 745 0118 D1010000 		.4byte	.LASF14
+ 746 011c 01       		.byte	0x1
+ 747 011d C9       		.byte	0xc9
+ 748 011e 76000000 		.4byte	0x76
+ 749 0122 02       		.byte	0x2
+ 750 0123 91       		.byte	0x91
+ 751 0124 77       		.sleb128 -9
+ 752 0125 00       		.byte	0x0
+ 753 0126 07       		.uleb128 0x7
+ 754 0127 01       		.byte	0x1
+ 755 0128 B6010000 		.4byte	.LASF16
+ 756 012c 01       		.byte	0x1
+ 757 012d E4       		.byte	0xe4
+ 758 012e 01       		.byte	0x1
+ 759 012f 00000000 		.4byte	.LFB5
+ 760 0133 38000000 		.4byte	.LFE5
+ 761 0137 FB000000 		.4byte	.LLST5
+ 762 013b 4E010000 		.4byte	0x14e
+ 763 013f 08       		.uleb128 0x8
+ 764 0140 D1010000 		.4byte	.LASF14
+ 765 0144 01       		.byte	0x1
+ 766 0145 E6       		.byte	0xe6
+ 767 0146 76000000 		.4byte	0x76
+ 768 014a 02       		.byte	0x2
+ 769 014b 91       		.byte	0x91
+ 770 014c 77       		.sleb128 -9
+ 771 014d 00       		.byte	0x0
+ 772 014e 09       		.uleb128 0x9
+ 773 014f 01       		.byte	0x1
+ 774 0150 CA000000 		.4byte	.LASF17
+ 775 0154 01       		.byte	0x1
+ 776 0155 1501     		.2byte	0x115
+ 777 0157 01       		.byte	0x1
+ 778 0158 00000000 		.4byte	.LFB6
+ 779 015c 84000000 		.4byte	.LFE6
+ 780 0160 32010000 		.4byte	.LLST6
+ 781 0164 78010000 		.4byte	0x178
+ 782 0168 0A       		.uleb128 0xa
+ 783 0169 B3000000 		.4byte	.LASF22
+ 784 016d 01       		.byte	0x1
+ 785 016e 1501     		.2byte	0x115
+ 786 0170 76000000 		.4byte	0x76
+ 787 0174 02       		.byte	0x2
+ 788 0175 91       		.byte	0x91
+ 789 0176 77       		.sleb128 -9
+ 790 0177 00       		.byte	0x0
+ 791 0178 0B       		.uleb128 0xb
+ 792 0179 01       		.byte	0x1
+ 793 017a 86010000 		.4byte	.LASF23
+ 794 017e 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 21
+
+
+ 795 017f 5201     		.2byte	0x152
+ 796 0181 01       		.byte	0x1
+ 797 0182 76000000 		.4byte	0x76
+ 798 0186 00000000 		.4byte	.LFB7
+ 799 018a 12000000 		.4byte	.LFE7
+ 800 018e 69010000 		.4byte	.LLST7
+ 801 0192 0C       		.uleb128 0xc
+ 802 0193 73010000 		.4byte	.LASF24
+ 803 0197 01       		.byte	0x1
+ 804 0198 13       		.byte	0x13
+ 805 0199 76000000 		.4byte	0x76
+ 806 019d 01       		.byte	0x1
+ 807 019e 05       		.byte	0x5
+ 808 019f 03       		.byte	0x3
+ 809 01a0 00000000 		.4byte	SleepTimer_initVar
+ 810 01a4 00       		.byte	0x0
+ 811              		.section	.debug_abbrev
+ 812 0000 01       		.uleb128 0x1
+ 813 0001 11       		.uleb128 0x11
+ 814 0002 01       		.byte	0x1
+ 815 0003 25       		.uleb128 0x25
+ 816 0004 0E       		.uleb128 0xe
+ 817 0005 13       		.uleb128 0x13
+ 818 0006 0B       		.uleb128 0xb
+ 819 0007 03       		.uleb128 0x3
+ 820 0008 0E       		.uleb128 0xe
+ 821 0009 1B       		.uleb128 0x1b
+ 822 000a 0E       		.uleb128 0xe
+ 823 000b 11       		.uleb128 0x11
+ 824 000c 01       		.uleb128 0x1
+ 825 000d 52       		.uleb128 0x52
+ 826 000e 01       		.uleb128 0x1
+ 827 000f 55       		.uleb128 0x55
+ 828 0010 06       		.uleb128 0x6
+ 829 0011 10       		.uleb128 0x10
+ 830 0012 06       		.uleb128 0x6
+ 831 0013 00       		.byte	0x0
+ 832 0014 00       		.byte	0x0
+ 833 0015 02       		.uleb128 0x2
+ 834 0016 24       		.uleb128 0x24
+ 835 0017 00       		.byte	0x0
+ 836 0018 0B       		.uleb128 0xb
+ 837 0019 0B       		.uleb128 0xb
+ 838 001a 3E       		.uleb128 0x3e
+ 839 001b 0B       		.uleb128 0xb
+ 840 001c 03       		.uleb128 0x3
+ 841 001d 0E       		.uleb128 0xe
+ 842 001e 00       		.byte	0x0
+ 843 001f 00       		.byte	0x0
+ 844 0020 03       		.uleb128 0x3
+ 845 0021 24       		.uleb128 0x24
+ 846 0022 00       		.byte	0x0
+ 847 0023 0B       		.uleb128 0xb
+ 848 0024 0B       		.uleb128 0xb
+ 849 0025 3E       		.uleb128 0x3e
+ 850 0026 0B       		.uleb128 0xb
+ 851 0027 03       		.uleb128 0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 22
+
+
+ 852 0028 08       		.uleb128 0x8
+ 853 0029 00       		.byte	0x0
+ 854 002a 00       		.byte	0x0
+ 855 002b 04       		.uleb128 0x4
+ 856 002c 16       		.uleb128 0x16
+ 857 002d 00       		.byte	0x0
+ 858 002e 03       		.uleb128 0x3
+ 859 002f 0E       		.uleb128 0xe
+ 860 0030 3A       		.uleb128 0x3a
+ 861 0031 0B       		.uleb128 0xb
+ 862 0032 3B       		.uleb128 0x3b
+ 863 0033 0B       		.uleb128 0xb
+ 864 0034 49       		.uleb128 0x49
+ 865 0035 13       		.uleb128 0x13
+ 866 0036 00       		.byte	0x0
+ 867 0037 00       		.byte	0x0
+ 868 0038 05       		.uleb128 0x5
+ 869 0039 24       		.uleb128 0x24
+ 870 003a 00       		.byte	0x0
+ 871 003b 0B       		.uleb128 0xb
+ 872 003c 0B       		.uleb128 0xb
+ 873 003d 3E       		.uleb128 0x3e
+ 874 003e 0B       		.uleb128 0xb
+ 875 003f 00       		.byte	0x0
+ 876 0040 00       		.byte	0x0
+ 877 0041 06       		.uleb128 0x6
+ 878 0042 2E       		.uleb128 0x2e
+ 879 0043 00       		.byte	0x0
+ 880 0044 3F       		.uleb128 0x3f
+ 881 0045 0C       		.uleb128 0xc
+ 882 0046 03       		.uleb128 0x3
+ 883 0047 0E       		.uleb128 0xe
+ 884 0048 3A       		.uleb128 0x3a
+ 885 0049 0B       		.uleb128 0xb
+ 886 004a 3B       		.uleb128 0x3b
+ 887 004b 0B       		.uleb128 0xb
+ 888 004c 27       		.uleb128 0x27
+ 889 004d 0C       		.uleb128 0xc
+ 890 004e 11       		.uleb128 0x11
+ 891 004f 01       		.uleb128 0x1
+ 892 0050 12       		.uleb128 0x12
+ 893 0051 01       		.uleb128 0x1
+ 894 0052 40       		.uleb128 0x40
+ 895 0053 06       		.uleb128 0x6
+ 896 0054 00       		.byte	0x0
+ 897 0055 00       		.byte	0x0
+ 898 0056 07       		.uleb128 0x7
+ 899 0057 2E       		.uleb128 0x2e
+ 900 0058 01       		.byte	0x1
+ 901 0059 3F       		.uleb128 0x3f
+ 902 005a 0C       		.uleb128 0xc
+ 903 005b 03       		.uleb128 0x3
+ 904 005c 0E       		.uleb128 0xe
+ 905 005d 3A       		.uleb128 0x3a
+ 906 005e 0B       		.uleb128 0xb
+ 907 005f 3B       		.uleb128 0x3b
+ 908 0060 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 23
+
+
+ 909 0061 27       		.uleb128 0x27
+ 910 0062 0C       		.uleb128 0xc
+ 911 0063 11       		.uleb128 0x11
+ 912 0064 01       		.uleb128 0x1
+ 913 0065 12       		.uleb128 0x12
+ 914 0066 01       		.uleb128 0x1
+ 915 0067 40       		.uleb128 0x40
+ 916 0068 06       		.uleb128 0x6
+ 917 0069 01       		.uleb128 0x1
+ 918 006a 13       		.uleb128 0x13
+ 919 006b 00       		.byte	0x0
+ 920 006c 00       		.byte	0x0
+ 921 006d 08       		.uleb128 0x8
+ 922 006e 34       		.uleb128 0x34
+ 923 006f 00       		.byte	0x0
+ 924 0070 03       		.uleb128 0x3
+ 925 0071 0E       		.uleb128 0xe
+ 926 0072 3A       		.uleb128 0x3a
+ 927 0073 0B       		.uleb128 0xb
+ 928 0074 3B       		.uleb128 0x3b
+ 929 0075 0B       		.uleb128 0xb
+ 930 0076 49       		.uleb128 0x49
+ 931 0077 13       		.uleb128 0x13
+ 932 0078 02       		.uleb128 0x2
+ 933 0079 0A       		.uleb128 0xa
+ 934 007a 00       		.byte	0x0
+ 935 007b 00       		.byte	0x0
+ 936 007c 09       		.uleb128 0x9
+ 937 007d 2E       		.uleb128 0x2e
+ 938 007e 01       		.byte	0x1
+ 939 007f 3F       		.uleb128 0x3f
+ 940 0080 0C       		.uleb128 0xc
+ 941 0081 03       		.uleb128 0x3
+ 942 0082 0E       		.uleb128 0xe
+ 943 0083 3A       		.uleb128 0x3a
+ 944 0084 0B       		.uleb128 0xb
+ 945 0085 3B       		.uleb128 0x3b
+ 946 0086 05       		.uleb128 0x5
+ 947 0087 27       		.uleb128 0x27
+ 948 0088 0C       		.uleb128 0xc
+ 949 0089 11       		.uleb128 0x11
+ 950 008a 01       		.uleb128 0x1
+ 951 008b 12       		.uleb128 0x12
+ 952 008c 01       		.uleb128 0x1
+ 953 008d 40       		.uleb128 0x40
+ 954 008e 06       		.uleb128 0x6
+ 955 008f 01       		.uleb128 0x1
+ 956 0090 13       		.uleb128 0x13
+ 957 0091 00       		.byte	0x0
+ 958 0092 00       		.byte	0x0
+ 959 0093 0A       		.uleb128 0xa
+ 960 0094 05       		.uleb128 0x5
+ 961 0095 00       		.byte	0x0
+ 962 0096 03       		.uleb128 0x3
+ 963 0097 0E       		.uleb128 0xe
+ 964 0098 3A       		.uleb128 0x3a
+ 965 0099 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 24
+
+
+ 966 009a 3B       		.uleb128 0x3b
+ 967 009b 05       		.uleb128 0x5
+ 968 009c 49       		.uleb128 0x49
+ 969 009d 13       		.uleb128 0x13
+ 970 009e 02       		.uleb128 0x2
+ 971 009f 0A       		.uleb128 0xa
+ 972 00a0 00       		.byte	0x0
+ 973 00a1 00       		.byte	0x0
+ 974 00a2 0B       		.uleb128 0xb
+ 975 00a3 2E       		.uleb128 0x2e
+ 976 00a4 00       		.byte	0x0
+ 977 00a5 3F       		.uleb128 0x3f
+ 978 00a6 0C       		.uleb128 0xc
+ 979 00a7 03       		.uleb128 0x3
+ 980 00a8 0E       		.uleb128 0xe
+ 981 00a9 3A       		.uleb128 0x3a
+ 982 00aa 0B       		.uleb128 0xb
+ 983 00ab 3B       		.uleb128 0x3b
+ 984 00ac 05       		.uleb128 0x5
+ 985 00ad 27       		.uleb128 0x27
+ 986 00ae 0C       		.uleb128 0xc
+ 987 00af 49       		.uleb128 0x49
+ 988 00b0 13       		.uleb128 0x13
+ 989 00b1 11       		.uleb128 0x11
+ 990 00b2 01       		.uleb128 0x1
+ 991 00b3 12       		.uleb128 0x12
+ 992 00b4 01       		.uleb128 0x1
+ 993 00b5 40       		.uleb128 0x40
+ 994 00b6 06       		.uleb128 0x6
+ 995 00b7 00       		.byte	0x0
+ 996 00b8 00       		.byte	0x0
+ 997 00b9 0C       		.uleb128 0xc
+ 998 00ba 34       		.uleb128 0x34
+ 999 00bb 00       		.byte	0x0
+ 1000 00bc 03       		.uleb128 0x3
+ 1001 00bd 0E       		.uleb128 0xe
+ 1002 00be 3A       		.uleb128 0x3a
+ 1003 00bf 0B       		.uleb128 0xb
+ 1004 00c0 3B       		.uleb128 0x3b
+ 1005 00c1 0B       		.uleb128 0xb
+ 1006 00c2 49       		.uleb128 0x49
+ 1007 00c3 13       		.uleb128 0x13
+ 1008 00c4 3F       		.uleb128 0x3f
+ 1009 00c5 0C       		.uleb128 0xc
+ 1010 00c6 02       		.uleb128 0x2
+ 1011 00c7 0A       		.uleb128 0xa
+ 1012 00c8 00       		.byte	0x0
+ 1013 00c9 00       		.byte	0x0
+ 1014 00ca 00       		.byte	0x0
+ 1015              		.section	.debug_pubnames,"",%progbits
+ 1016 0000 DF000000 		.4byte	0xdf
+ 1017 0004 0200     		.2byte	0x2
+ 1018 0006 00000000 		.4byte	.Ldebug_info0
+ 1019 000a A5010000 		.4byte	0x1a5
+ 1020 000e 84000000 		.4byte	0x84
+ 1021 0012 536C6565 		.ascii	"SleepTimer_Start\000"
+ 1021      7054696D 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 25
+
+
+ 1021      65725F53 
+ 1021      74617274 
+ 1021      00
+ 1022 0023 99000000 		.4byte	0x99
+ 1023 0027 536C6565 		.ascii	"SleepTimer_Init\000"
+ 1023      7054696D 
+ 1023      65725F49 
+ 1023      6E697400 
+ 1024 0037 AE000000 		.4byte	0xae
+ 1025 003b 536C6565 		.ascii	"SleepTimer_Enable\000"
+ 1025      7054696D 
+ 1025      65725F45 
+ 1025      6E61626C 
+ 1025      6500
+ 1026 004d D6000000 		.4byte	0xd6
+ 1027 0051 536C6565 		.ascii	"SleepTimer_Stop\000"
+ 1027      7054696D 
+ 1027      65725F53 
+ 1027      746F7000 
+ 1028 0061 FE000000 		.4byte	0xfe
+ 1029 0065 536C6565 		.ascii	"SleepTimer_EnableInt\000"
+ 1029      7054696D 
+ 1029      65725F45 
+ 1029      6E61626C 
+ 1029      65496E74 
+ 1030 007a 26010000 		.4byte	0x126
+ 1031 007e 536C6565 		.ascii	"SleepTimer_DisableInt\000"
+ 1031      7054696D 
+ 1031      65725F44 
+ 1031      69736162 
+ 1031      6C65496E 
+ 1032 0094 4E010000 		.4byte	0x14e
+ 1033 0098 536C6565 		.ascii	"SleepTimer_SetInterval\000"
+ 1033      7054696D 
+ 1033      65725F53 
+ 1033      6574496E 
+ 1033      74657276 
+ 1034 00af 78010000 		.4byte	0x178
+ 1035 00b3 536C6565 		.ascii	"SleepTimer_GetStatus\000"
+ 1035      7054696D 
+ 1035      65725F47 
+ 1035      65745374 
+ 1035      61747573 
+ 1036 00c8 92010000 		.4byte	0x192
+ 1037 00cc 536C6565 		.ascii	"SleepTimer_initVar\000"
+ 1037      7054696D 
+ 1037      65725F69 
+ 1037      6E697456 
+ 1037      617200
+ 1038 00df 00000000 		.4byte	0x0
+ 1039              		.section	.debug_aranges,"",%progbits
+ 1040 0000 54000000 		.4byte	0x54
+ 1041 0004 0200     		.2byte	0x2
+ 1042 0006 00000000 		.4byte	.Ldebug_info0
+ 1043 000a 04       		.byte	0x4
+ 1044 000b 00       		.byte	0x0
+ 1045 000c 0000     		.2byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 26
+
+
+ 1046 000e 0000     		.2byte	0x0
+ 1047 0010 00000000 		.4byte	.LFB0
+ 1048 0014 2A000000 		.4byte	.LFE0-.LFB0
+ 1049 0018 00000000 		.4byte	.LFB1
+ 1050 001c 12000000 		.4byte	.LFE1-.LFB1
+ 1051 0020 00000000 		.4byte	.LFB2
+ 1052 0024 98000000 		.4byte	.LFE2-.LFB2
+ 1053 0028 00000000 		.4byte	.LFB3
+ 1054 002c 38000000 		.4byte	.LFE3-.LFB3
+ 1055 0030 00000000 		.4byte	.LFB4
+ 1056 0034 3A000000 		.4byte	.LFE4-.LFB4
+ 1057 0038 00000000 		.4byte	.LFB5
+ 1058 003c 38000000 		.4byte	.LFE5-.LFB5
+ 1059 0040 00000000 		.4byte	.LFB6
+ 1060 0044 84000000 		.4byte	.LFE6-.LFB6
+ 1061 0048 00000000 		.4byte	.LFB7
+ 1062 004c 12000000 		.4byte	.LFE7-.LFB7
+ 1063 0050 00000000 		.4byte	0x0
+ 1064 0054 00000000 		.4byte	0x0
+ 1065              		.section	.debug_ranges,"",%progbits
+ 1066              	.Ldebug_ranges0:
+ 1067 0000 00000000 		.4byte	.Ltext0
+ 1068 0004 00000000 		.4byte	.Letext0
+ 1069 0008 00000000 		.4byte	.LFB0
+ 1070 000c 2A000000 		.4byte	.LFE0
+ 1071 0010 00000000 		.4byte	.LFB1
+ 1072 0014 12000000 		.4byte	.LFE1
+ 1073 0018 00000000 		.4byte	.LFB2
+ 1074 001c 98000000 		.4byte	.LFE2
+ 1075 0020 00000000 		.4byte	.LFB3
+ 1076 0024 38000000 		.4byte	.LFE3
+ 1077 0028 00000000 		.4byte	.LFB4
+ 1078 002c 3A000000 		.4byte	.LFE4
+ 1079 0030 00000000 		.4byte	.LFB5
+ 1080 0034 38000000 		.4byte	.LFE5
+ 1081 0038 00000000 		.4byte	.LFB6
+ 1082 003c 84000000 		.4byte	.LFE6
+ 1083 0040 00000000 		.4byte	.LFB7
+ 1084 0044 12000000 		.4byte	.LFE7
+ 1085 0048 00000000 		.4byte	0x0
+ 1086 004c 00000000 		.4byte	0x0
+ 1087              		.section	.debug_str,"MS",%progbits,1
+ 1088              	.LASF6:
+ 1089 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1089      206C6F6E 
+ 1089      6720696E 
+ 1089      7400
+ 1090              	.LASF19:
+ 1091 000e 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\SleepTimer.c\000"
+ 1091      6E657261 
+ 1091      7465645F 
+ 1091      536F7572 
+ 1091      63655C50 
+ 1092              	.LASF8:
+ 1093 0034 756E7369 		.ascii	"unsigned int\000"
+ 1093      676E6564 
+ 1093      20696E74 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 27
+
+
+ 1093      00
+ 1094              	.LASF12:
+ 1095 0041 536C6565 		.ascii	"SleepTimer_Enable\000"
+ 1095      7054696D 
+ 1095      65725F45 
+ 1095      6E61626C 
+ 1095      6500
+ 1096              	.LASF15:
+ 1097 0053 536C6565 		.ascii	"SleepTimer_EnableInt\000"
+ 1097      7054696D 
+ 1097      65725F45 
+ 1097      6E61626C 
+ 1097      65496E74 
+ 1098              	.LASF13:
+ 1099 0068 536C6565 		.ascii	"SleepTimer_Stop\000"
+ 1099      7054696D 
+ 1099      65725F53 
+ 1099      746F7000 
+ 1100              	.LASF21:
+ 1101 0078 75696E74 		.ascii	"uint8\000"
+ 1101      3800
+ 1102              	.LASF5:
+ 1103 007e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1103      20756E73 
+ 1103      69676E65 
+ 1103      6420696E 
+ 1103      7400
+ 1104              	.LASF7:
+ 1105 0090 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1105      206C6F6E 
+ 1105      6720756E 
+ 1105      7369676E 
+ 1105      65642069 
+ 1106              	.LASF18:
+ 1107 00a7 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1107      4320342E 
+ 1107      342E3100 
+ 1108              	.LASF22:
+ 1109 00b3 696E7465 		.ascii	"interval\000"
+ 1109      7276616C 
+ 1109      00
+ 1110              	.LASF1:
+ 1111 00bc 756E7369 		.ascii	"unsigned char\000"
+ 1111      676E6564 
+ 1111      20636861 
+ 1111      7200
+ 1112              	.LASF17:
+ 1113 00ca 536C6565 		.ascii	"SleepTimer_SetInterval\000"
+ 1113      7054696D 
+ 1113      65725F53 
+ 1113      6574496E 
+ 1113      74657276 
+ 1114              	.LASF4:
+ 1115 00e1 6C6F6E67 		.ascii	"long int\000"
+ 1115      20696E74 
+ 1115      00
+ 1116              	.LASF20:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 28
+
+
+ 1117 00ea 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1117      73657273 
+ 1117      5C47656F 
+ 1117      5C446F63 
+ 1117      756D656E 
+ 1118 0118 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 1118      645C4669 
+ 1118      726D7761 
+ 1118      72655C50 
+ 1118      536F435C 
+ 1119              	.LASF11:
+ 1120 0144 536C6565 		.ascii	"SleepTimer_Init\000"
+ 1120      7054696D 
+ 1120      65725F49 
+ 1120      6E697400 
+ 1121              	.LASF3:
+ 1122 0154 73686F72 		.ascii	"short unsigned int\000"
+ 1122      7420756E 
+ 1122      7369676E 
+ 1122      65642069 
+ 1122      6E7400
+ 1123              	.LASF0:
+ 1124 0167 7369676E 		.ascii	"signed char\000"
+ 1124      65642063 
+ 1124      68617200 
+ 1125              	.LASF24:
+ 1126 0173 536C6565 		.ascii	"SleepTimer_initVar\000"
+ 1126      7054696D 
+ 1126      65725F69 
+ 1126      6E697456 
+ 1126      617200
+ 1127              	.LASF23:
+ 1128 0186 536C6565 		.ascii	"SleepTimer_GetStatus\000"
+ 1128      7054696D 
+ 1128      65725F47 
+ 1128      65745374 
+ 1128      61747573 
+ 1129              	.LASF2:
+ 1130 019b 73686F72 		.ascii	"short int\000"
+ 1130      7420696E 
+ 1130      7400
+ 1131              	.LASF10:
+ 1132 01a5 536C6565 		.ascii	"SleepTimer_Start\000"
+ 1132      7054696D 
+ 1132      65725F53 
+ 1132      74617274 
+ 1132      00
+ 1133              	.LASF16:
+ 1134 01b6 536C6565 		.ascii	"SleepTimer_DisableInt\000"
+ 1134      7054696D 
+ 1134      65725F44 
+ 1134      69736162 
+ 1134      6C65496E 
+ 1135              	.LASF9:
+ 1136 01cc 63686172 		.ascii	"char\000"
+ 1136      00
+ 1137              	.LASF14:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccRt48Or.s 			page 29
+
+
+ 1138 01d1 696E7465 		.ascii	"interruptState\000"
+ 1138      72727570 
+ 1138      74537461 
+ 1138      746500
+ 1139              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

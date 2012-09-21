@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 1 ] ; then 
+  echo "Error: expected input file";
+  echo "Usage: avr-load <filename>"; 
+  exit; 
+fi;
+
+avr-objcopy -O ihex -R .eeprom $1 temp.hex ;
+mv temp.hex /tmp ;
+pushd /tmp ;
+avrdude -p m8 -c sp12 -U flash:w:temp.hex ;
+rm temp.hex ;
+popd ;

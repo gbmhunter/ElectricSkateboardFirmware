@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# AvrStudio Solution File, Format Version 11.00
+Project("{D1100916-62DA-4D80-A9B4-55A1E7CCEEB3}") = "remote", "remote\remote.avrgccproj", "{520D18AC-B372-444D-8E83-7BD090A9797D}"
+EndProject
+Project("{D1100916-62DA-4D80-A9B4-55A1E7CCEEB3}") = "skateboard", "skateboard\skateboard.avrgccproj", "{B8D0E5AA-9059-4640-B60A-AFFF3F8AE7FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{520D18AC-B372-444D-8E83-7BD090A9797D}.Debug|AVR.ActiveCfg = Debug|AVR
+		{520D18AC-B372-444D-8E83-7BD090A9797D}.Debug|AVR.Build.0 = Debug|AVR
+		{520D18AC-B372-444D-8E83-7BD090A9797D}.Release|AVR.ActiveCfg = Release|AVR
+		{520D18AC-B372-444D-8E83-7BD090A9797D}.Release|AVR.Build.0 = Release|AVR
+		{B8D0E5AA-9059-4640-B60A-AFFF3F8AE7FB}.Debug|AVR.ActiveCfg = Debug|AVR
+		{B8D0E5AA-9059-4640-B60A-AFFF3F8AE7FB}.Debug|AVR.Build.0 = Debug|AVR
+		{B8D0E5AA-9059-4640-B60A-AFFF3F8AE7FB}.Release|AVR.ActiveCfg = Release|AVR
+		{B8D0E5AA-9059-4640-B60A-AFFF3F8AE7FB}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

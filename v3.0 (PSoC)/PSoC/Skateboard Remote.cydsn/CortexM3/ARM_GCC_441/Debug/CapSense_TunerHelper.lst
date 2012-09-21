@@ -1,0 +1,555 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"CapSense_TunerHelper.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 71000000 		.text
+  20      02004600 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.section	.text.CapSense_TunerStart,"ax",%progbits
+  24              		.align	2
+  25              		.global	CapSense_TunerStart
+  26              		.thumb
+  27              		.thumb_func
+  28              		.type	CapSense_TunerStart, %function
+  29              	CapSense_TunerStart:
+  30              	.LFB0:
+  31              		.file 1 ".\\Generated_Source\\PSoC5\\CapSense_TunerHelper.c"
+   1:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * File Name: CapSense_TunerHelper.c
+   3:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Version 3.10
+   4:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+   5:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Description:
+   6:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  This file provides the source code of Tuner helper APIs for the CapSense CSD 
+   7:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  component.
+   8:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+   9:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Note:
+  10:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  11:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** ********************************************************************************
+  12:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Copyright 2008-2011, Cypress Semiconductor Corporation.  All rights reserved.
+  13:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * You may use this file only in accordance with the license, terms, conditions,
+  14:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  15:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * the software package with which this file was provided.
+  16:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *******************************************************************************/
+  17:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  18:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** #include "CapSense_TunerHelper.h"
+  19:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  20:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** #if (CapSense_TUNER_API_GENERATE)
+  21:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     void CapSense_ProcessAllWidgets(volatile CapSense_OUTBOX *outbox);
+  22:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 2
+
+
+  23:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     volatile CapSense_MAILBOXES CapSense_mailboxesComm;
+  24:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  25:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     extern uint8 CapSense_SensorOnMask[(((CapSense_TOTAL_SENSOR_COUNT - 1u) / 8u) + 1u)];
+  26:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** #endif  /* End (CapSense_TUNER_API_GENERATE) */
+  27:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  28:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  29:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** /*******************************************************************************
+  30:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Function Name: CapSense_TunerStart
+  31:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** ********************************************************************************
+  32:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  33:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Summary:
+  34:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  Initializes CapSense CSD component and EzI2C communication componenet to use
+  35:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  mailbox data structure for communication with Tuner GUI.
+  36:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  Start the scanning, after initialization complete.
+  37:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  38:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Parameters:
+  39:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  None
+  40:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  41:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Return:
+  42:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  None
+  43:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  44:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Reentrant:
+  45:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  No
+  46:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  47:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *******************************************************************************/
+  48:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** void CapSense_TunerStart(void)
+  49:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** {
+  32              		.loc 1 49 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 1, uses_anonymous_args = 0
+  36              		@ link register save eliminated.
+  37 0000 80B4     		push	{r7}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 4
+  40 0002 00AF     		add	r7, sp, #0
+  41              		.cfi_offset 7, -4
+  42              	.LCFI1:
+  43              		.cfi_def_cfa_register 7
+  50:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     #if (CapSense_TUNER_API_GENERATE)
+  51:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  52:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Init mbx and quick check */
+  53:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_InitMailbox(&CapSense_mailboxesComm.csdMailbox);
+  54:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_mailboxesComm.numMailBoxes = CapSense_DEFAULT_MAILBOXES_NUMBER;
+  55:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  56:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Start CapSense and baselines */
+  57:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_Start();
+  58:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  59:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Initialize baselines */ 
+  60:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_InitializeAllBaselines();
+  61:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_InitializeAllBaselines();
+  62:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  63:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Start EzI2C, clears buf pointers */
+  64:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         EZI2C_Start();
+  65:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  66:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Setup EzI2C buffers */
+  67:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         EZI2C_SetBuffer1(sizeof(CapSense_mailboxesComm), sizeof(CapSense_mailboxesComm),
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 3
+
+
+  68:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****                                         (void *) &CapSense_mailboxesComm);
+  69:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         
+  70:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         /* Starts scan all enabled sensors */
+  71:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         CapSense_ScanEnabledWidgets();
+  72:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     
+  73:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     #endif  /* End (CapSense_TUNER_API_GENERATE) */
+  74:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** }
+  44              		.loc 1 74 0
+  45 0004 BD46     		mov	sp, r7
+  46 0006 80BC     		pop	{r7}
+  47 0008 7047     		bx	lr
+  48              		.cfi_endproc
+  49              	.LFE0:
+  50              		.size	CapSense_TunerStart, .-CapSense_TunerStart
+  51 000a 00BF     		.section	.text.CapSense_TunerComm,"ax",%progbits
+  52              		.align	2
+  53              		.global	CapSense_TunerComm
+  54              		.thumb
+  55              		.thumb_func
+  56              		.type	CapSense_TunerComm, %function
+  57              	CapSense_TunerComm:
+  58              	.LFB1:
+  75:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  76:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+  77:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** /*******************************************************************************
+  78:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Function Name: CapSense_TunerComm
+  79:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** ********************************************************************************
+  80:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  81:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Summary:
+  82:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  This function is blocking. It waits till scaning loop is completed and apply
+  83:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  new parameters from Tuner GUI if available (manual tuning mode only). Updates
+  84:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  enabled baselines and state of widgets. Waits while Tuner GUI reports that 
+  85:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  content of mailbox could be modified. Then loads the report data into outbox 
+  86:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  and sets the busy flag. Starts new scanning loop.
+  87:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  
+  88:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Parameters:
+  89:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  None
+  90:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  91:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Return:
+  92:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  None
+  93:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  94:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** * Reentrant:
+  95:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *  No
+  96:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *
+  97:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** *******************************************************************************/
+  98:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** void CapSense_TunerComm(void)
+  99:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** {
+  59              		.loc 1 99 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 1, uses_anonymous_args = 0
+  63              		@ link register save eliminated.
+  64 0000 80B4     		push	{r7}
+  65              	.LCFI2:
+  66              		.cfi_def_cfa_offset 4
+  67 0002 00AF     		add	r7, sp, #0
+  68              		.cfi_offset 7, -4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 4
+
+
+  69              	.LCFI3:
+  70              		.cfi_def_cfa_register 7
+ 100:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     #if (CapSense_TUNER_API_GENERATE)
+ 101:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         if (0u == CapSense_IsBusy())
+ 102:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         {   
+ 103:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             /* Apply new settings */
+ 104:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             #if (CapSense_TUNING_METHOD == CapSense_MANUAL_TUNING)
+ 105:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****                 CapSense_ReadMessage(&CapSense_mailboxesComm.csdMailbox);
+ 106:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             #endif  /* End (CapSense_TUNING_METHOD == CapSense_MANUAL_TUNING) */
+ 107:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+ 108:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             /* Update all baselines and process all widgets */
+ 109:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             CapSense_UpdateEnabledBaselines();
+ 110:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             CapSense_ProcessAllWidgets(&CapSense_mailboxesComm.csdMailbox.outbox);
+ 111:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             CapSense_PostMessage(&CapSense_mailboxesComm.csdMailbox);
+ 112:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+ 113:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             /* Enable EZI2C interrupts, after scan complete */
+ 114:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             EZI2C_EnableInt();
+ 115:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** 
+ 116:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             while((CapSense_mailboxesComm.csdMailbox.type != CapSense_TYPE_ID) || \
+ 117:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****                   (EZI2C_GetActivity() & EZI2C_STATUS_BUSY)){}
+ 118:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             
+ 119:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             /* Disable EZI2C interrupts, while scanning */
+ 120:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             EZI2C_DisableInt();
+ 121:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             
+ 122:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             /* Start scan all sensors */
+ 123:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****             CapSense_ScanEnabledWidgets();
+ 124:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****         }
+ 125:.\Generated_Source\PSoC5/CapSense_TunerHelper.c ****     #endif  /* End (CapSense_TUNER_API_GENERATE) */
+ 126:.\Generated_Source\PSoC5/CapSense_TunerHelper.c **** }
+  71              		.loc 1 126 0
+  72 0004 BD46     		mov	sp, r7
+  73 0006 80BC     		pop	{r7}
+  74 0008 7047     		bx	lr
+  75              		.cfi_endproc
+  76              	.LFE1:
+  77              		.size	CapSense_TunerComm, .-CapSense_TunerComm
+  78 000a 00BF     		.text
+  79              	.Letext0:
+  80              		.section	.debug_loc,"",%progbits
+  81              	.Ldebug_loc0:
+  82              	.LLST0:
+  83 0000 00000000 		.4byte	.LFB0
+  84 0004 02000000 		.4byte	.LCFI0
+  85 0008 0100     		.2byte	0x1
+  86 000a 5D       		.byte	0x5d
+  87 000b 02000000 		.4byte	.LCFI0
+  88 000f 04000000 		.4byte	.LCFI1
+  89 0013 0200     		.2byte	0x2
+  90 0015 7D       		.byte	0x7d
+  91 0016 04       		.sleb128 4
+  92 0017 04000000 		.4byte	.LCFI1
+  93 001b 0A000000 		.4byte	.LFE0
+  94 001f 0200     		.2byte	0x2
+  95 0021 77       		.byte	0x77
+  96 0022 04       		.sleb128 4
+  97 0023 00000000 		.4byte	0x0
+  98 0027 00000000 		.4byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 5
+
+
+  99              	.LLST1:
+ 100 002b 00000000 		.4byte	.LFB1
+ 101 002f 02000000 		.4byte	.LCFI2
+ 102 0033 0100     		.2byte	0x1
+ 103 0035 5D       		.byte	0x5d
+ 104 0036 02000000 		.4byte	.LCFI2
+ 105 003a 04000000 		.4byte	.LCFI3
+ 106 003e 0200     		.2byte	0x2
+ 107 0040 7D       		.byte	0x7d
+ 108 0041 04       		.sleb128 4
+ 109 0042 04000000 		.4byte	.LCFI3
+ 110 0046 0A000000 		.4byte	.LFE1
+ 111 004a 0200     		.2byte	0x2
+ 112 004c 77       		.byte	0x77
+ 113 004d 04       		.sleb128 4
+ 114 004e 00000000 		.4byte	0x0
+ 115 0052 00000000 		.4byte	0x0
+ 116              		.section	.debug_info
+ 117 0000 A0000000 		.4byte	0xa0
+ 118 0004 0200     		.2byte	0x2
+ 119 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 120 000a 04       		.byte	0x4
+ 121 000b 01       		.uleb128 0x1
+ 122 000c 74000000 		.4byte	.LASF12
+ 123 0010 01       		.byte	0x1
+ 124 0011 1B000000 		.4byte	.LASF13
+ 125 0015 B0000000 		.4byte	.LASF14
+ 126 0019 00000000 		.4byte	0x0
+ 127 001d 00000000 		.4byte	0x0
+ 128 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 129 0025 00000000 		.4byte	.Ldebug_line0
+ 130 0029 02       		.uleb128 0x2
+ 131 002a 01       		.byte	0x1
+ 132 002b 06       		.byte	0x6
+ 133 002c 1D010000 		.4byte	.LASF0
+ 134 0030 02       		.uleb128 0x2
+ 135 0031 01       		.byte	0x1
+ 136 0032 08       		.byte	0x8
+ 137 0033 80000000 		.4byte	.LASF1
+ 138 0037 02       		.uleb128 0x2
+ 139 0038 02       		.byte	0x2
+ 140 0039 05       		.byte	0x5
+ 141 003a 3C010000 		.4byte	.LASF2
+ 142 003e 02       		.uleb128 0x2
+ 143 003f 02       		.byte	0x2
+ 144 0040 07       		.byte	0x7
+ 145 0041 0A010000 		.4byte	.LASF3
+ 146 0045 02       		.uleb128 0x2
+ 147 0046 04       		.byte	0x4
+ 148 0047 05       		.byte	0x5
+ 149 0048 93000000 		.4byte	.LASF4
+ 150 004c 02       		.uleb128 0x2
+ 151 004d 04       		.byte	0x4
+ 152 004e 07       		.byte	0x7
+ 153 004f 4B000000 		.4byte	.LASF5
+ 154 0053 02       		.uleb128 0x2
+ 155 0054 08       		.byte	0x8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 6
+
+
+ 156 0055 05       		.byte	0x5
+ 157 0056 00000000 		.4byte	.LASF6
+ 158 005a 02       		.uleb128 0x2
+ 159 005b 08       		.byte	0x8
+ 160 005c 07       		.byte	0x7
+ 161 005d 5D000000 		.4byte	.LASF7
+ 162 0061 03       		.uleb128 0x3
+ 163 0062 04       		.byte	0x4
+ 164 0063 05       		.byte	0x5
+ 165 0064 696E7400 		.ascii	"int\000"
+ 166 0068 02       		.uleb128 0x2
+ 167 0069 04       		.byte	0x4
+ 168 006a 07       		.byte	0x7
+ 169 006b 0E000000 		.4byte	.LASF8
+ 170 006f 02       		.uleb128 0x2
+ 171 0070 01       		.byte	0x1
+ 172 0071 08       		.byte	0x8
+ 173 0072 8E000000 		.4byte	.LASF9
+ 174 0076 04       		.uleb128 0x4
+ 175 0077 04       		.byte	0x4
+ 176 0078 07       		.byte	0x7
+ 177 0079 05       		.uleb128 0x5
+ 178 007a 01       		.byte	0x1
+ 179 007b 9C000000 		.4byte	.LASF10
+ 180 007f 01       		.byte	0x1
+ 181 0080 30       		.byte	0x30
+ 182 0081 01       		.byte	0x1
+ 183 0082 00000000 		.4byte	.LFB0
+ 184 0086 0A000000 		.4byte	.LFE0
+ 185 008a 00000000 		.4byte	.LLST0
+ 186 008e 05       		.uleb128 0x5
+ 187 008f 01       		.byte	0x1
+ 188 0090 29010000 		.4byte	.LASF11
+ 189 0094 01       		.byte	0x1
+ 190 0095 62       		.byte	0x62
+ 191 0096 01       		.byte	0x1
+ 192 0097 00000000 		.4byte	.LFB1
+ 193 009b 0A000000 		.4byte	.LFE1
+ 194 009f 2B000000 		.4byte	.LLST1
+ 195 00a3 00       		.byte	0x0
+ 196              		.section	.debug_abbrev
+ 197 0000 01       		.uleb128 0x1
+ 198 0001 11       		.uleb128 0x11
+ 199 0002 01       		.byte	0x1
+ 200 0003 25       		.uleb128 0x25
+ 201 0004 0E       		.uleb128 0xe
+ 202 0005 13       		.uleb128 0x13
+ 203 0006 0B       		.uleb128 0xb
+ 204 0007 03       		.uleb128 0x3
+ 205 0008 0E       		.uleb128 0xe
+ 206 0009 1B       		.uleb128 0x1b
+ 207 000a 0E       		.uleb128 0xe
+ 208 000b 11       		.uleb128 0x11
+ 209 000c 01       		.uleb128 0x1
+ 210 000d 52       		.uleb128 0x52
+ 211 000e 01       		.uleb128 0x1
+ 212 000f 55       		.uleb128 0x55
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 7
+
+
+ 213 0010 06       		.uleb128 0x6
+ 214 0011 10       		.uleb128 0x10
+ 215 0012 06       		.uleb128 0x6
+ 216 0013 00       		.byte	0x0
+ 217 0014 00       		.byte	0x0
+ 218 0015 02       		.uleb128 0x2
+ 219 0016 24       		.uleb128 0x24
+ 220 0017 00       		.byte	0x0
+ 221 0018 0B       		.uleb128 0xb
+ 222 0019 0B       		.uleb128 0xb
+ 223 001a 3E       		.uleb128 0x3e
+ 224 001b 0B       		.uleb128 0xb
+ 225 001c 03       		.uleb128 0x3
+ 226 001d 0E       		.uleb128 0xe
+ 227 001e 00       		.byte	0x0
+ 228 001f 00       		.byte	0x0
+ 229 0020 03       		.uleb128 0x3
+ 230 0021 24       		.uleb128 0x24
+ 231 0022 00       		.byte	0x0
+ 232 0023 0B       		.uleb128 0xb
+ 233 0024 0B       		.uleb128 0xb
+ 234 0025 3E       		.uleb128 0x3e
+ 235 0026 0B       		.uleb128 0xb
+ 236 0027 03       		.uleb128 0x3
+ 237 0028 08       		.uleb128 0x8
+ 238 0029 00       		.byte	0x0
+ 239 002a 00       		.byte	0x0
+ 240 002b 04       		.uleb128 0x4
+ 241 002c 24       		.uleb128 0x24
+ 242 002d 00       		.byte	0x0
+ 243 002e 0B       		.uleb128 0xb
+ 244 002f 0B       		.uleb128 0xb
+ 245 0030 3E       		.uleb128 0x3e
+ 246 0031 0B       		.uleb128 0xb
+ 247 0032 00       		.byte	0x0
+ 248 0033 00       		.byte	0x0
+ 249 0034 05       		.uleb128 0x5
+ 250 0035 2E       		.uleb128 0x2e
+ 251 0036 00       		.byte	0x0
+ 252 0037 3F       		.uleb128 0x3f
+ 253 0038 0C       		.uleb128 0xc
+ 254 0039 03       		.uleb128 0x3
+ 255 003a 0E       		.uleb128 0xe
+ 256 003b 3A       		.uleb128 0x3a
+ 257 003c 0B       		.uleb128 0xb
+ 258 003d 3B       		.uleb128 0x3b
+ 259 003e 0B       		.uleb128 0xb
+ 260 003f 27       		.uleb128 0x27
+ 261 0040 0C       		.uleb128 0xc
+ 262 0041 11       		.uleb128 0x11
+ 263 0042 01       		.uleb128 0x1
+ 264 0043 12       		.uleb128 0x12
+ 265 0044 01       		.uleb128 0x1
+ 266 0045 40       		.uleb128 0x40
+ 267 0046 06       		.uleb128 0x6
+ 268 0047 00       		.byte	0x0
+ 269 0048 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 8
+
+
+ 270 0049 00       		.byte	0x0
+ 271              		.section	.debug_pubnames,"",%progbits
+ 272 0000 3D000000 		.4byte	0x3d
+ 273 0004 0200     		.2byte	0x2
+ 274 0006 00000000 		.4byte	.Ldebug_info0
+ 275 000a A4000000 		.4byte	0xa4
+ 276 000e 79000000 		.4byte	0x79
+ 277 0012 43617053 		.ascii	"CapSense_TunerStart\000"
+ 277      656E7365 
+ 277      5F54756E 
+ 277      65725374 
+ 277      61727400 
+ 278 0026 8E000000 		.4byte	0x8e
+ 279 002a 43617053 		.ascii	"CapSense_TunerComm\000"
+ 279      656E7365 
+ 279      5F54756E 
+ 279      6572436F 
+ 279      6D6D00
+ 280 003d 00000000 		.4byte	0x0
+ 281              		.section	.debug_aranges,"",%progbits
+ 282 0000 24000000 		.4byte	0x24
+ 283 0004 0200     		.2byte	0x2
+ 284 0006 00000000 		.4byte	.Ldebug_info0
+ 285 000a 04       		.byte	0x4
+ 286 000b 00       		.byte	0x0
+ 287 000c 0000     		.2byte	0x0
+ 288 000e 0000     		.2byte	0x0
+ 289 0010 00000000 		.4byte	.LFB0
+ 290 0014 0A000000 		.4byte	.LFE0-.LFB0
+ 291 0018 00000000 		.4byte	.LFB1
+ 292 001c 0A000000 		.4byte	.LFE1-.LFB1
+ 293 0020 00000000 		.4byte	0x0
+ 294 0024 00000000 		.4byte	0x0
+ 295              		.section	.debug_ranges,"",%progbits
+ 296              	.Ldebug_ranges0:
+ 297 0000 00000000 		.4byte	.Ltext0
+ 298 0004 00000000 		.4byte	.Letext0
+ 299 0008 00000000 		.4byte	.LFB0
+ 300 000c 0A000000 		.4byte	.LFE0
+ 301 0010 00000000 		.4byte	.LFB1
+ 302 0014 0A000000 		.4byte	.LFE1
+ 303 0018 00000000 		.4byte	0x0
+ 304 001c 00000000 		.4byte	0x0
+ 305              		.section	.debug_str,"MS",%progbits,1
+ 306              	.LASF6:
+ 307 0000 6C6F6E67 		.ascii	"long long int\000"
+ 307      206C6F6E 
+ 307      6720696E 
+ 307      7400
+ 308              	.LASF8:
+ 309 000e 756E7369 		.ascii	"unsigned int\000"
+ 309      676E6564 
+ 309      20696E74 
+ 309      00
+ 310              	.LASF13:
+ 311 001b 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\CapSense_TunerHelper.c\000"
+ 311      6E657261 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 9
+
+
+ 311      7465645F 
+ 311      536F7572 
+ 311      63655C50 
+ 312              	.LASF5:
+ 313 004b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 313      20756E73 
+ 313      69676E65 
+ 313      6420696E 
+ 313      7400
+ 314              	.LASF7:
+ 315 005d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 315      206C6F6E 
+ 315      6720756E 
+ 315      7369676E 
+ 315      65642069 
+ 316              	.LASF12:
+ 317 0074 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 317      4320342E 
+ 317      342E3100 
+ 318              	.LASF1:
+ 319 0080 756E7369 		.ascii	"unsigned char\000"
+ 319      676E6564 
+ 319      20636861 
+ 319      7200
+ 320              	.LASF9:
+ 321 008e 63686172 		.ascii	"char\000"
+ 321      00
+ 322              	.LASF4:
+ 323 0093 6C6F6E67 		.ascii	"long int\000"
+ 323      20696E74 
+ 323      00
+ 324              	.LASF10:
+ 325 009c 43617053 		.ascii	"CapSense_TunerStart\000"
+ 325      656E7365 
+ 325      5F54756E 
+ 325      65725374 
+ 325      61727400 
+ 326              	.LASF14:
+ 327 00b0 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 327      73657273 
+ 327      5C47656F 
+ 327      5C446F63 
+ 327      756D656E 
+ 328 00de 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 328      645C4669 
+ 328      726D7761 
+ 328      72655C50 
+ 328      536F435C 
+ 329              	.LASF3:
+ 330 010a 73686F72 		.ascii	"short unsigned int\000"
+ 330      7420756E 
+ 330      7369676E 
+ 330      65642069 
+ 330      6E7400
+ 331              	.LASF0:
+ 332 011d 7369676E 		.ascii	"signed char\000"
+ 332      65642063 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccGkulu5.s 			page 10
+
+
+ 332      68617200 
+ 333              	.LASF11:
+ 334 0129 43617053 		.ascii	"CapSense_TunerComm\000"
+ 334      656E7365 
+ 334      5F54756E 
+ 334      6572436F 
+ 334      6D6D00
+ 335              	.LASF2:
+ 336 013c 73686F72 		.ascii	"short int\000"
+ 336      7420696E 
+ 336      7400
+ 337              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

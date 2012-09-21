@@ -1,0 +1,2085 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Lights.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 28010000 		.text
+  20      02006400 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	ledModeArray,9,4
+  24              		.comm	ledFlashRateMsArray,72,8
+  25              		.global	ledPrevFlashCountArray
+  26              		.bss
+  27              		.align	2
+  28              		.type	ledPrevFlashCountArray, %object
+  29              		.size	ledPrevFlashCountArray, 36
+  30              	ledPrevFlashCountArray:
+  31 0000 00000000 		.space	36
+  31      00000000 
+  31      00000000 
+  31      00000000 
+  31      00000000 
+  32              		.section	.text.Lights_AllOff,"ax",%progbits
+  33              		.align	2
+  34              		.global	Lights_AllOff
+  35              		.thumb
+  36              		.thumb_func
+  37              		.type	Lights_AllOff, %function
+  38              	Lights_AllOff:
+  39              	.LFB29:
+  40              		.file 1 ".\\Lights.c"
+   1:.\Lights.c    **** //!
+   2:.\Lights.c    **** //! @file 		Lights.c
+   3:.\Lights.c    **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Lights.c    **** //! @date 		14/05/2011
+   5:.\Lights.c    **** //! @brief 		Main GPRS task and supporting functions.
+   6:.\Lights.c    **** //! @details
+   7:.\Lights.c    **** //!		<b>Last Modified:			</b> 14/05/2011								\n
+   8:.\Lights.c    **** //!		<b>Version:					</b> v1.0									\n
+   9:.\Lights.c    **** //!		<b>Company:					</b> CladLabs								\n
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 2
+
+
+  10:.\Lights.c    **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\Lights.c    **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\Lights.c    **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\Lights.c    **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\Lights.c    **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\Lights.c    **** //!		
+  16:.\Lights.c    **** //!		Controls the led's on the board
+  17:.\Lights.c    **** //!
+  18:.\Lights.c    **** 
+  19:.\Lights.c    **** //=================================================================================================
+  20:.\Lights.c    **** //============================================ INFO ===============================================
+  21:.\Lights.c    **** //=================================================================================================
+  22:.\Lights.c    **** 
+  23:.\Lights.c    **** //=================================================================================================
+  24:.\Lights.c    **** //======================================= FILE INCLUSIONS =========================================
+  25:.\Lights.c    **** //=================================================================================================
+  26:.\Lights.c    **** 
+  27:.\Lights.c    **** #include <device.h>
+  28:.\Lights.c    **** 
+  29:.\Lights.c    **** #include "Config.h"
+  30:.\Lights.c    **** #include "../common/PublicObjects.h"
+  31:.\Lights.c    **** #include "Lights.h"
+  32:.\Lights.c    **** 
+  33:.\Lights.c    **** //===============================================================================================//
+  34:.\Lights.c    **** //=================================== PRECOMPILER CHECKS ========================================//
+  35:.\Lights.c    **** //===============================================================================================//
+  36:.\Lights.c    **** 
+  37:.\Lights.c    **** //=================================================================================================
+  38:.\Lights.c    **** //========================================== DEFINES ==============================================
+  39:.\Lights.c    **** //=================================================================================================
+  40:.\Lights.c    **** 
+  41:.\Lights.c    **** //=================================================================================================
+  42:.\Lights.c    **** //========================================== TYPEDEF's ============================================
+  43:.\Lights.c    **** //=================================================================================================
+  44:.\Lights.c    **** 
+  45:.\Lights.c    **** 
+  46:.\Lights.c    **** 
+  47:.\Lights.c    **** //=================================================================================================
+  48:.\Lights.c    **** //==================================== PRIVATE VARIABLES ==========================================
+  49:.\Lights.c    **** //=================================================================================================
+  50:.\Lights.c    **** 
+  51:.\Lights.c    **** ledMode_t ledModeArray[configNUM_OF_LEDS];
+  52:.\Lights.c    **** double ledFlashRateMsArray[configNUM_OF_LEDS];
+  53:.\Lights.c    **** uint32 ledPrevFlashCountArray[configNUM_OF_LEDS] = {0};
+  54:.\Lights.c    **** 
+  55:.\Lights.c    **** //=================================================================================================
+  56:.\Lights.c    **** //=============================== PRIVATE FUNCTION PROTOTYPES =====================================
+  57:.\Lights.c    **** //=================================================================================================
+  58:.\Lights.c    **** 
+  59:.\Lights.c    **** void Lights_SetLed(uint8 ledNum, uint8 offOn);
+  60:.\Lights.c    **** void Lights_ToggleLed(uint8 ledNum);
+  61:.\Lights.c    **** 
+  62:.\Lights.c    **** //=================================================================================================
+  63:.\Lights.c    **** //===================================== PUBLIC FUNCTIONS ==========================================
+  64:.\Lights.c    **** //=================================================================================================
+  65:.\Lights.c    **** 
+  66:.\Lights.c    **** void Lights_AllOff(void)
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 3
+
+
+  67:.\Lights.c    **** {
+  41              		.loc 1 67 0
+  42              		.cfi_startproc
+  43              		@ args = 0, pretend = 0, frame = 8
+  44              		@ frame_needed = 1, uses_anonymous_args = 0
+  45 0000 80B5     		push	{r7, lr}
+  46              	.LCFI0:
+  47              		.cfi_def_cfa_offset 8
+  48 0002 82B0     		sub	sp, sp, #8
+  49              	.LCFI1:
+  50              		.cfi_def_cfa_offset 16
+  51 0004 00AF     		add	r7, sp, #0
+  52              		.cfi_offset 14, -4
+  53              		.cfi_offset 7, -8
+  54              	.LCFI2:
+  55              		.cfi_def_cfa_register 7
+  68:.\Lights.c    **** 	uint8 x;
+  69:.\Lights.c    **** 
+  70:.\Lights.c    **** 	for(x = 0; x < configNUM_OF_LEDS; x++)
+  56              		.loc 1 70 0
+  57 0006 4FF00003 		mov	r3, #0
+  58 000a FB71     		strb	r3, [r7, #7]
+  59 000c 09E0     		b	.L2
+  60              	.L3:
+  71:.\Lights.c    **** 	{
+  72:.\Lights.c    **** 		Lights_SetLed(x, 0);
+  61              		.loc 1 72 0
+  62 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  63 0010 1846     		mov	r0, r3
+  64 0012 4FF00001 		mov	r1, #0
+  65 0016 FFF7FEFF 		bl	Lights_SetLed
+  66              		.loc 1 70 0
+  67 001a FB79     		ldrb	r3, [r7, #7]
+  68 001c 03F10103 		add	r3, r3, #1
+  69 0020 FB71     		strb	r3, [r7, #7]
+  70              	.L2:
+  71 0022 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  72 0024 082B     		cmp	r3, #8
+  73 0026 F2D9     		bls	.L3
+  73:.\Lights.c    **** 	}
+  74:.\Lights.c    **** }
+  74              		.loc 1 74 0
+  75 0028 07F10807 		add	r7, r7, #8
+  76 002c BD46     		mov	sp, r7
+  77 002e 80BD     		pop	{r7, pc}
+  78              		.cfi_endproc
+  79              	.LFE29:
+  80              		.size	Lights_AllOff, .-Lights_AllOff
+  81              		.section	.text.Lights_AllOn,"ax",%progbits
+  82              		.align	2
+  83              		.global	Lights_AllOn
+  84              		.thumb
+  85              		.thumb_func
+  86              		.type	Lights_AllOn, %function
+  87              	Lights_AllOn:
+  88              	.LFB30:
+  75:.\Lights.c    **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 4
+
+
+  76:.\Lights.c    **** void Lights_AllOn(void)
+  77:.\Lights.c    **** {
+  89              		.loc 1 77 0
+  90              		.cfi_startproc
+  91              		@ args = 0, pretend = 0, frame = 8
+  92              		@ frame_needed = 1, uses_anonymous_args = 0
+  93 0000 80B5     		push	{r7, lr}
+  94              	.LCFI3:
+  95              		.cfi_def_cfa_offset 8
+  96 0002 82B0     		sub	sp, sp, #8
+  97              	.LCFI4:
+  98              		.cfi_def_cfa_offset 16
+  99 0004 00AF     		add	r7, sp, #0
+ 100              		.cfi_offset 14, -4
+ 101              		.cfi_offset 7, -8
+ 102              	.LCFI5:
+ 103              		.cfi_def_cfa_register 7
+  78:.\Lights.c    **** 	uint8 x;
+  79:.\Lights.c    **** 
+  80:.\Lights.c    **** 	for(x = 0; x < configNUM_OF_LEDS; x++)
+ 104              		.loc 1 80 0
+ 105 0006 4FF00003 		mov	r3, #0
+ 106 000a FB71     		strb	r3, [r7, #7]
+ 107 000c 09E0     		b	.L6
+ 108              	.L7:
+  81:.\Lights.c    **** 	{
+  82:.\Lights.c    **** 		Lights_SetLed(x, 1);
+ 109              		.loc 1 82 0
+ 110 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 111 0010 1846     		mov	r0, r3
+ 112 0012 4FF00101 		mov	r1, #1
+ 113 0016 FFF7FEFF 		bl	Lights_SetLed
+ 114              		.loc 1 80 0
+ 115 001a FB79     		ldrb	r3, [r7, #7]
+ 116 001c 03F10103 		add	r3, r3, #1
+ 117 0020 FB71     		strb	r3, [r7, #7]
+ 118              	.L6:
+ 119 0022 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 120 0024 082B     		cmp	r3, #8
+ 121 0026 F2D9     		bls	.L7
+  83:.\Lights.c    **** 	}
+  84:.\Lights.c    **** }
+ 122              		.loc 1 84 0
+ 123 0028 07F10807 		add	r7, r7, #8
+ 124 002c BD46     		mov	sp, r7
+ 125 002e 80BD     		pop	{r7, pc}
+ 126              		.cfi_endproc
+ 127              	.LFE30:
+ 128              		.size	Lights_AllOn, .-Lights_AllOn
+ 129              		.section	.text.Lights_FlashAllLeds,"ax",%progbits
+ 130              		.align	2
+ 131              		.global	Lights_FlashAllLeds
+ 132              		.thumb
+ 133              		.thumb_func
+ 134              		.type	Lights_FlashAllLeds, %function
+ 135              	Lights_FlashAllLeds:
+ 136              	.LFB31:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 5
+
+
+  85:.\Lights.c    **** 
+  86:.\Lights.c    **** void Lights_FlashAllLeds(void)
+  87:.\Lights.c    **** {
+ 137              		.loc 1 87 0
+ 138              		.cfi_startproc
+ 139              		@ args = 0, pretend = 0, frame = 8
+ 140              		@ frame_needed = 1, uses_anonymous_args = 0
+ 141 0000 80B5     		push	{r7, lr}
+ 142              	.LCFI6:
+ 143              		.cfi_def_cfa_offset 8
+ 144 0002 82B0     		sub	sp, sp, #8
+ 145              	.LCFI7:
+ 146              		.cfi_def_cfa_offset 16
+ 147 0004 00AF     		add	r7, sp, #0
+ 148              		.cfi_offset 14, -4
+ 149              		.cfi_offset 7, -8
+ 150              	.LCFI8:
+ 151              		.cfi_def_cfa_register 7
+  88:.\Lights.c    **** 	uint8 x;
+  89:.\Lights.c    **** 	
+  90:.\Lights.c    **** 	for(x = 0; x < configNUM_OF_LEDS; x++)
+ 152              		.loc 1 90 0
+ 153 0006 4FF00003 		mov	r3, #0
+ 154 000a FB71     		strb	r3, [r7, #7]
+ 155 000c 09E0     		b	.L10
+ 156              	.L11:
+  91:.\Lights.c    **** 	{
+  92:.\Lights.c    **** 		Lights_SetLed(x, 1);
+ 157              		.loc 1 92 0
+ 158 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 159 0010 1846     		mov	r0, r3
+ 160 0012 4FF00101 		mov	r1, #1
+ 161 0016 FFF7FEFF 		bl	Lights_SetLed
+ 162              		.loc 1 90 0
+ 163 001a FB79     		ldrb	r3, [r7, #7]
+ 164 001c 03F10103 		add	r3, r3, #1
+ 165 0020 FB71     		strb	r3, [r7, #7]
+ 166              	.L10:
+ 167 0022 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 168 0024 082B     		cmp	r3, #8
+ 169 0026 F2D9     		bls	.L11
+  93:.\Lights.c    **** 	}
+  94:.\Lights.c    **** 	
+  95:.\Lights.c    **** 	CyDelay(500);
+ 170              		.loc 1 95 0
+ 171 0028 4FF4FA70 		mov	r0, #500
+ 172 002c FFF7FEFF 		bl	CyDelay
+  96:.\Lights.c    **** 	
+  97:.\Lights.c    **** 	for(x = 0; x < configNUM_OF_LEDS; x++)
+ 173              		.loc 1 97 0
+ 174 0030 4FF00003 		mov	r3, #0
+ 175 0034 FB71     		strb	r3, [r7, #7]
+ 176 0036 09E0     		b	.L12
+ 177              	.L13:
+  98:.\Lights.c    **** 	{
+  99:.\Lights.c    **** 		Lights_SetLed(x, 0);
+ 178              		.loc 1 99 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 6
+
+
+ 179 0038 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 180 003a 1846     		mov	r0, r3
+ 181 003c 4FF00001 		mov	r1, #0
+ 182 0040 FFF7FEFF 		bl	Lights_SetLed
+ 183              		.loc 1 97 0
+ 184 0044 FB79     		ldrb	r3, [r7, #7]
+ 185 0046 03F10103 		add	r3, r3, #1
+ 186 004a FB71     		strb	r3, [r7, #7]
+ 187              	.L12:
+ 188 004c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 189 004e 082B     		cmp	r3, #8
+ 190 0050 F2D9     		bls	.L13
+ 100:.\Lights.c    **** 	}
+ 101:.\Lights.c    **** 
+ 102:.\Lights.c    **** 	CyDelay(500);
+ 191              		.loc 1 102 0
+ 192 0052 4FF4FA70 		mov	r0, #500
+ 193 0056 FFF7FEFF 		bl	CyDelay
+ 103:.\Lights.c    **** }
+ 194              		.loc 1 103 0
+ 195 005a 07F10807 		add	r7, r7, #8
+ 196 005e BD46     		mov	sp, r7
+ 197 0060 80BD     		pop	{r7, pc}
+ 198              		.cfi_endproc
+ 199              	.LFE31:
+ 200              		.size	Lights_FlashAllLeds, .-Lights_FlashAllLeds
+ 201              		.global	__aeabi_ddiv
+ 202              		.global	__aeabi_d2uiz
+ 203 0062 00BF     		.section	.text.Lights_Run,"ax",%progbits
+ 204              		.align	2
+ 205              		.global	Lights_Run
+ 206              		.thumb
+ 207              		.thumb_func
+ 208              		.type	Lights_Run, %function
+ 209              	Lights_Run:
+ 210              	.LFB32:
+ 104:.\Lights.c    **** 
+ 105:.\Lights.c    **** //! @brief		Main code loop
+ 106:.\Lights.c    **** void Lights_Run(void)
+ 107:.\Lights.c    **** {
+ 211              		.loc 1 107 0
+ 212              		.cfi_startproc
+ 213              		@ args = 0, pretend = 0, frame = 8
+ 214              		@ frame_needed = 1, uses_anonymous_args = 0
+ 215 0000 80B5     		push	{r7, lr}
+ 216              	.LCFI9:
+ 217              		.cfi_def_cfa_offset 8
+ 218 0002 82B0     		sub	sp, sp, #8
+ 219              	.LCFI10:
+ 220              		.cfi_def_cfa_offset 16
+ 221 0004 00AF     		add	r7, sp, #0
+ 222              		.cfi_offset 14, -4
+ 223              		.cfi_offset 7, -8
+ 224              	.LCFI11:
+ 225              		.cfi_def_cfa_register 7
+ 108:.\Lights.c    **** 	// Counter for main led state machine
+ 109:.\Lights.c    **** 	static uint32 counter = 0;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 7
+
+
+ 110:.\Lights.c    **** 	
+ 111:.\Lights.c    **** 	uint8 x;
+ 112:.\Lights.c    **** 	
+ 113:.\Lights.c    **** 	for(x = 0; x < configNUM_OF_LEDS; x++)
+ 226              		.loc 1 113 0
+ 227 0006 4FF00003 		mov	r3, #0
+ 228 000a FB70     		strb	r3, [r7, #3]
+ 229 000c 63E0     		b	.L16
+ 230              	.L20:
+ 114:.\Lights.c    **** 	{
+ 115:.\Lights.c    **** 		if(ledModeArray[x] == OFF)
+ 231              		.loc 1 115 0
+ 232 000e FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 233 0010 40F20003 		movw	r3, #:lower16:ledModeArray
+ 234 0014 C0F20003 		movt	r3, #:upper16:ledModeArray
+ 235 0018 9B5C     		ldrb	r3, [r3, r2]	@ zero_extendqisi2
+ 236 001a 002B     		cmp	r3, #0
+ 237 001c 05D1     		bne	.L17
+ 116:.\Lights.c    **** 			Lights_SetLed(x, 0);
+ 238              		.loc 1 116 0
+ 239 001e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 240 0020 1846     		mov	r0, r3
+ 241 0022 4FF00001 		mov	r1, #0
+ 242 0026 FFF7FEFF 		bl	Lights_SetLed
+ 243              	.L17:
+ 117:.\Lights.c    **** 		if(ledModeArray[x] == ON)
+ 244              		.loc 1 117 0
+ 245 002a FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 246 002c 40F20003 		movw	r3, #:lower16:ledModeArray
+ 247 0030 C0F20003 		movt	r3, #:upper16:ledModeArray
+ 248 0034 9B5C     		ldrb	r3, [r3, r2]	@ zero_extendqisi2
+ 249 0036 012B     		cmp	r3, #1
+ 250 0038 05D1     		bne	.L18
+ 118:.\Lights.c    **** 			Lights_SetLed(x, 1);
+ 251              		.loc 1 118 0
+ 252 003a FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 253 003c 1846     		mov	r0, r3
+ 254 003e 4FF00101 		mov	r1, #1
+ 255 0042 FFF7FEFF 		bl	Lights_SetLed
+ 256              	.L18:
+ 119:.\Lights.c    **** 		if(ledModeArray[x] == FLASHING)
+ 257              		.loc 1 119 0
+ 258 0046 FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 259 0048 40F20003 		movw	r3, #:lower16:ledModeArray
+ 260 004c C0F20003 		movt	r3, #:upper16:ledModeArray
+ 261 0050 9B5C     		ldrb	r3, [r3, r2]	@ zero_extendqisi2
+ 262 0052 022B     		cmp	r3, #2
+ 263 0054 3BD1     		bne	.L19
+ 264              	.LBB2:
+ 120:.\Lights.c    **** 		{
+ 121:.\Lights.c    **** 			uint32 numberOfCounts = (uint32)(ledFlashRateMsArray[x]/(2*configMAIN_TICK_PERIOD_MS));
+ 265              		.loc 1 121 0
+ 266 0056 FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 267 0058 40F20003 		movw	r3, #:lower16:ledFlashRateMsArray
+ 268 005c C0F20003 		movt	r3, #:upper16:ledFlashRateMsArray
+ 269 0060 4FEAC202 		lsl	r2, r2, #3
+ 270 0064 1344     		add	r3, r2, r3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 8
+
+
+ 271 0066 D3E90023 		ldrd	r2, [r3]
+ 272 006a 1046     		mov	r0, r2
+ 273 006c 1946     		mov	r1, r3
+ 274 006e 4FF00002 		mov	r2, #0
+ 275 0072 4FF08043 		mov	r3, #1073741824
+ 276 0076 03F55013 		add	r3, r3, #3407872
+ 277 007a FFF7FEFF 		bl	__aeabi_ddiv
+ 278 007e 0246     		mov	r2, r0
+ 279 0080 0B46     		mov	r3, r1
+ 280 0082 1046     		mov	r0, r2
+ 281 0084 1946     		mov	r1, r3
+ 282 0086 FFF7FEFF 		bl	__aeabi_d2uiz
+ 283 008a 0346     		mov	r3, r0
+ 284 008c 7B60     		str	r3, [r7, #4]
+ 122:.\Lights.c    **** 			if(counter > ledPrevFlashCountArray[x] + numberOfCounts)
+ 285              		.loc 1 122 0
+ 286 008e FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 287 0090 40F20003 		movw	r3, #:lower16:ledPrevFlashCountArray
+ 288 0094 C0F20003 		movt	r3, #:upper16:ledPrevFlashCountArray
+ 289 0098 53F82220 		ldr	r2, [r3, r2, lsl #2]
+ 290 009c 7B68     		ldr	r3, [r7, #4]
+ 291 009e 1A44     		add	r2, r2, r3
+ 292 00a0 40F20003 		movw	r3, #:lower16:counter.3051
+ 293 00a4 C0F20003 		movt	r3, #:upper16:counter.3051
+ 294 00a8 1B68     		ldr	r3, [r3, #0]
+ 295 00aa 9A42     		cmp	r2, r3
+ 296 00ac 0FD2     		bcs	.L19
+ 123:.\Lights.c    **** 			{
+ 124:.\Lights.c    **** 				Lights_ToggleLed(x);
+ 297              		.loc 1 124 0
+ 298 00ae FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 299 00b0 1846     		mov	r0, r3
+ 300 00b2 FFF7FEFF 		bl	Lights_ToggleLed
+ 125:.\Lights.c    **** 				ledPrevFlashCountArray[x] = counter;
+ 301              		.loc 1 125 0
+ 302 00b6 FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 303 00b8 40F20003 		movw	r3, #:lower16:counter.3051
+ 304 00bc C0F20003 		movt	r3, #:upper16:counter.3051
+ 305 00c0 1968     		ldr	r1, [r3, #0]
+ 306 00c2 40F20003 		movw	r3, #:lower16:ledPrevFlashCountArray
+ 307 00c6 C0F20003 		movt	r3, #:upper16:ledPrevFlashCountArray
+ 308 00ca 43F82210 		str	r1, [r3, r2, lsl #2]
+ 309              	.L19:
+ 310              	.LBE2:
+ 311              		.loc 1 113 0
+ 312 00ce FB78     		ldrb	r3, [r7, #3]
+ 313 00d0 03F10103 		add	r3, r3, #1
+ 314 00d4 FB70     		strb	r3, [r7, #3]
+ 315              	.L16:
+ 316 00d6 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 317 00d8 082B     		cmp	r3, #8
+ 318 00da 98D9     		bls	.L20
+ 126:.\Lights.c    **** 			}
+ 127:.\Lights.c    **** 		}
+ 128:.\Lights.c    **** 	}
+ 129:.\Lights.c    **** 
+ 130:.\Lights.c    **** 	
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 9
+
+
+ 131:.\Lights.c    **** 	// Increment counter
+ 132:.\Lights.c    **** 	counter++;
+ 319              		.loc 1 132 0
+ 320 00dc 40F20003 		movw	r3, #:lower16:counter.3051
+ 321 00e0 C0F20003 		movt	r3, #:upper16:counter.3051
+ 322 00e4 1B68     		ldr	r3, [r3, #0]
+ 323 00e6 03F10102 		add	r2, r3, #1
+ 324 00ea 40F20003 		movw	r3, #:lower16:counter.3051
+ 325 00ee C0F20003 		movt	r3, #:upper16:counter.3051
+ 326 00f2 1A60     		str	r2, [r3, #0]
+ 133:.\Lights.c    **** }
+ 327              		.loc 1 133 0
+ 328 00f4 07F10807 		add	r7, r7, #8
+ 329 00f8 BD46     		mov	sp, r7
+ 330 00fa 80BD     		pop	{r7, pc}
+ 331              		.cfi_endproc
+ 332              	.LFE32:
+ 333              		.size	Lights_Run, .-Lights_Run
+ 334              		.section	.text.Lights_SetLedMode,"ax",%progbits
+ 335              		.align	2
+ 336              		.global	Lights_SetLedMode
+ 337              		.thumb
+ 338              		.thumb_func
+ 339              		.type	Lights_SetLedMode, %function
+ 340              	Lights_SetLedMode:
+ 341              	.LFB33:
+ 134:.\Lights.c    **** 
+ 135:.\Lights.c    **** 
+ 136:.\Lights.c    **** 
+ 137:.\Lights.c    **** void Lights_SetLedMode(led_t led, ledMode_t ledMode, double ledFlashRate)
+ 138:.\Lights.c    **** {
+ 342              		.loc 1 138 0
+ 343              		.cfi_startproc
+ 344              		@ args = 0, pretend = 0, frame = 16
+ 345              		@ frame_needed = 1, uses_anonymous_args = 0
+ 346              		@ link register save eliminated.
+ 347 0000 80B4     		push	{r7}
+ 348              	.LCFI12:
+ 349              		.cfi_def_cfa_offset 4
+ 350 0002 85B0     		sub	sp, sp, #20
+ 351              	.LCFI13:
+ 352              		.cfi_def_cfa_offset 24
+ 353 0004 00AF     		add	r7, sp, #0
+ 354              		.cfi_offset 7, -4
+ 355              	.LCFI14:
+ 356              		.cfi_def_cfa_register 7
+ 357 0006 C7E90023 		strd	r2, [r7]
+ 358 000a 0346     		mov	r3, r0
+ 359 000c FB73     		strb	r3, [r7, #15]
+ 360 000e 0B46     		mov	r3, r1
+ 361 0010 BB73     		strb	r3, [r7, #14]
+ 139:.\Lights.c    **** 	ledModeArray[led] = ledMode;
+ 362              		.loc 1 139 0
+ 363 0012 FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 364 0014 40F20003 		movw	r3, #:lower16:ledModeArray
+ 365 0018 C0F20003 		movt	r3, #:upper16:ledModeArray
+ 366 001c B97B     		ldrb	r1, [r7, #14]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 10
+
+
+ 367 001e 9954     		strb	r1, [r3, r2]
+ 140:.\Lights.c    **** 	ledFlashRateMsArray[led] = ledFlashRate;
+ 368              		.loc 1 140 0
+ 369 0020 FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 370 0022 40F20003 		movw	r3, #:lower16:ledFlashRateMsArray
+ 371 0026 C0F20003 		movt	r3, #:upper16:ledFlashRateMsArray
+ 372 002a 4FEAC202 		lsl	r2, r2, #3
+ 373 002e 02EB0301 		add	r1, r2, r3
+ 374 0032 D7E90023 		ldrd	r2, [r7]
+ 375 0036 C1E90023 		strd	r2, [r1]
+ 141:.\Lights.c    **** }
+ 376              		.loc 1 141 0
+ 377 003a 07F11407 		add	r7, r7, #20
+ 378 003e BD46     		mov	sp, r7
+ 379 0040 80BC     		pop	{r7}
+ 380 0042 7047     		bx	lr
+ 381              		.cfi_endproc
+ 382              	.LFE33:
+ 383              		.size	Lights_SetLedMode, .-Lights_SetLedMode
+ 384              		.section	.text.Lights_SetLed,"ax",%progbits
+ 385              		.align	2
+ 386              		.global	Lights_SetLed
+ 387              		.thumb
+ 388              		.thumb_func
+ 389              		.type	Lights_SetLed, %function
+ 390              	Lights_SetLed:
+ 391              	.LFB34:
+ 142:.\Lights.c    **** 
+ 143:.\Lights.c    **** //=================================================================================================
+ 144:.\Lights.c    **** //==================================== PRIVATE FUNCTIONS ==========================================
+ 145:.\Lights.c    **** //=================================================================================================
+ 146:.\Lights.c    **** 
+ 147:.\Lights.c    **** void Lights_SetLed(uint8 ledNum, uint8 offOn)
+ 148:.\Lights.c    **** {
+ 392              		.loc 1 148 0
+ 393              		.cfi_startproc
+ 394              		@ args = 0, pretend = 0, frame = 8
+ 395              		@ frame_needed = 1, uses_anonymous_args = 0
+ 396 0000 80B5     		push	{r7, lr}
+ 397              	.LCFI15:
+ 398              		.cfi_def_cfa_offset 8
+ 399 0002 82B0     		sub	sp, sp, #8
+ 400              	.LCFI16:
+ 401              		.cfi_def_cfa_offset 16
+ 402 0004 00AF     		add	r7, sp, #0
+ 403              		.cfi_offset 14, -4
+ 404              		.cfi_offset 7, -8
+ 405              	.LCFI17:
+ 406              		.cfi_def_cfa_register 7
+ 407 0006 0246     		mov	r2, r0
+ 408 0008 0B46     		mov	r3, r1
+ 409 000a FA71     		strb	r2, [r7, #7]
+ 410 000c BB71     		strb	r3, [r7, #6]
+ 149:.\Lights.c    **** 	switch(ledNum)
+ 411              		.loc 1 149 0
+ 412 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 413 0010 082B     		cmp	r3, #8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 11
+
+
+ 414 0012 41D8     		bhi	.L36
+ 415 0014 01A2     		adr	r2, .L35
+ 416 0016 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 417 001a 00BF     		.align	2
+ 418              	.L35:
+ 419 001c 41000000 		.word	.L26+1
+ 420 0020 4B000000 		.word	.L27+1
+ 421 0024 55000000 		.word	.L28+1
+ 422 0028 5F000000 		.word	.L29+1
+ 423 002c 69000000 		.word	.L30+1
+ 424 0030 73000000 		.word	.L31+1
+ 425 0034 7D000000 		.word	.L32+1
+ 426 0038 87000000 		.word	.L33+1
+ 427 003c 91000000 		.word	.L34+1
+ 428              	.L26:
+ 150:.\Lights.c    **** 	{
+ 151:.\Lights.c    **** 		case LED_IN_RANGE:
+ 152:.\Lights.c    **** 				PinLedInRange_Write(offOn);
+ 429              		.loc 1 152 0
+ 430 0040 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 431 0042 1846     		mov	r0, r3
+ 432 0044 FFF7FEFF 		bl	PinLedInRange_Write
+ 153:.\Lights.c    **** 			break;
+ 433              		.loc 1 153 0
+ 434 0048 26E0     		b	.L36
+ 435              	.L27:
+ 154:.\Lights.c    **** 		case LED_MOTOR_ON:
+ 155:.\Lights.c    **** 				PinLedMotorOn_Write(offOn);
+ 436              		.loc 1 155 0
+ 437 004a BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 438 004c 1846     		mov	r0, r3
+ 439 004e FFF7FEFF 		bl	PinLedMotorOn_Write
+ 156:.\Lights.c    **** 			break;
+ 440              		.loc 1 156 0
+ 441 0052 21E0     		b	.L36
+ 442              	.L28:
+ 157:.\Lights.c    **** 		case LED_ALARM_ON:
+ 158:.\Lights.c    **** 				PinLedAlarm_Write(offOn);
+ 443              		.loc 1 158 0
+ 444 0054 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 445 0056 1846     		mov	r0, r3
+ 446 0058 FFF7FEFF 		bl	PinLedAlarm_Write
+ 159:.\Lights.c    **** 			break;
+ 447              		.loc 1 159 0
+ 448 005c 1CE0     		b	.L36
+ 449              	.L29:
+ 160:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_TOP:
+ 161:.\Lights.c    **** 				PinLedBoardBattLevelHigh_Write(offOn);
+ 450              		.loc 1 161 0
+ 451 005e BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 452 0060 1846     		mov	r0, r3
+ 453 0062 FFF7FEFF 		bl	PinLedBoardBattLevelHigh_Write
+ 162:.\Lights.c    **** 			break;
+ 454              		.loc 1 162 0
+ 455 0066 17E0     		b	.L36
+ 456              	.L30:
+ 163:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_MID:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 12
+
+
+ 164:.\Lights.c    **** 				PinLedBoardBattLevelMed_Write(offOn);
+ 457              		.loc 1 164 0
+ 458 0068 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 459 006a 1846     		mov	r0, r3
+ 460 006c FFF7FEFF 		bl	PinLedBoardBattLevelMed_Write
+ 165:.\Lights.c    **** 			break;
+ 461              		.loc 1 165 0
+ 462 0070 12E0     		b	.L36
+ 463              	.L31:
+ 166:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_BOT:
+ 167:.\Lights.c    **** 				PinLedBoardBattLevelLow_Write(offOn);
+ 464              		.loc 1 167 0
+ 465 0072 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 466 0074 1846     		mov	r0, r3
+ 467 0076 FFF7FEFF 		bl	PinLedBoardBattLevelLow_Write
+ 168:.\Lights.c    **** 			break;
+ 468              		.loc 1 168 0
+ 469 007a 0DE0     		b	.L36
+ 470              	.L32:
+ 169:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_TOP:
+ 170:.\Lights.c    **** 				PinLedRemoteBattLevelHigh_Write(offOn);
+ 471              		.loc 1 170 0
+ 472 007c BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 473 007e 1846     		mov	r0, r3
+ 474 0080 FFF7FEFF 		bl	PinLedRemoteBattLevelHigh_Write
+ 171:.\Lights.c    **** 			break;
+ 475              		.loc 1 171 0
+ 476 0084 08E0     		b	.L36
+ 477              	.L33:
+ 172:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_MID:
+ 173:.\Lights.c    **** 				PinLedRemoteBattLevelMed_Write(offOn);
+ 478              		.loc 1 173 0
+ 479 0086 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 480 0088 1846     		mov	r0, r3
+ 481 008a FFF7FEFF 		bl	PinLedRemoteBattLevelMed_Write
+ 174:.\Lights.c    **** 			break;
+ 482              		.loc 1 174 0
+ 483 008e 03E0     		b	.L36
+ 484              	.L34:
+ 175:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_BOT:
+ 176:.\Lights.c    **** 				PinLedRemoteBattLevelLow_Write(offOn);
+ 485              		.loc 1 176 0
+ 486 0090 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 487 0092 1846     		mov	r0, r3
+ 488 0094 FFF7FEFF 		bl	PinLedRemoteBattLevelLow_Write
+ 489              	.L36:
+ 177:.\Lights.c    **** 			break;
+ 178:.\Lights.c    **** 	}
+ 179:.\Lights.c    **** }
+ 490              		.loc 1 179 0
+ 491 0098 07F10807 		add	r7, r7, #8
+ 492 009c BD46     		mov	sp, r7
+ 493 009e 80BD     		pop	{r7, pc}
+ 494              		.cfi_endproc
+ 495              	.LFE34:
+ 496              		.size	Lights_SetLed, .-Lights_SetLed
+ 497              		.section	.text.Lights_ToggleLed,"ax",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 13
+
+
+ 498              		.align	2
+ 499              		.global	Lights_ToggleLed
+ 500              		.thumb
+ 501              		.thumb_func
+ 502              		.type	Lights_ToggleLed, %function
+ 503              	Lights_ToggleLed:
+ 504              	.LFB35:
+ 180:.\Lights.c    **** 
+ 181:.\Lights.c    **** void Lights_ToggleLed(uint8 ledNum)
+ 182:.\Lights.c    **** {
+ 505              		.loc 1 182 0
+ 506              		.cfi_startproc
+ 507              		@ args = 0, pretend = 0, frame = 8
+ 508              		@ frame_needed = 1, uses_anonymous_args = 0
+ 509 0000 80B5     		push	{r7, lr}
+ 510              	.LCFI18:
+ 511              		.cfi_def_cfa_offset 8
+ 512 0002 82B0     		sub	sp, sp, #8
+ 513              	.LCFI19:
+ 514              		.cfi_def_cfa_offset 16
+ 515 0004 00AF     		add	r7, sp, #0
+ 516              		.cfi_offset 14, -4
+ 517              		.cfi_offset 7, -8
+ 518              	.LCFI20:
+ 519              		.cfi_def_cfa_register 7
+ 520 0006 0346     		mov	r3, r0
+ 521 0008 FB71     		strb	r3, [r7, #7]
+ 183:.\Lights.c    **** 	switch(ledNum)
+ 522              		.loc 1 183 0
+ 523 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 524 000c 082B     		cmp	r3, #8
+ 525 000e 77D8     		bhi	.L49
+ 526 0010 01A2     		adr	r2, .L48
+ 527 0012 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 528 0016 00BF     		.align	2
+ 529              	.L48:
+ 530 0018 3D000000 		.word	.L39+1
+ 531 001c 53000000 		.word	.L40+1
+ 532 0020 69000000 		.word	.L41+1
+ 533 0024 7F000000 		.word	.L42+1
+ 534 0028 95000000 		.word	.L43+1
+ 535 002c AB000000 		.word	.L44+1
+ 536 0030 C1000000 		.word	.L45+1
+ 537 0034 D7000000 		.word	.L46+1
+ 538 0038 ED000000 		.word	.L47+1
+ 539              	.L39:
+ 184:.\Lights.c    **** 	{
+ 185:.\Lights.c    **** 		case LED_IN_RANGE:
+ 186:.\Lights.c    **** 				PinLedInRange_Write(!PinLedInRange_Read());
+ 540              		.loc 1 186 0
+ 541 003c FFF7FEFF 		bl	PinLedInRange_Read
+ 542 0040 0346     		mov	r3, r0
+ 543 0042 002B     		cmp	r3, #0
+ 544 0044 14BF     		ite	ne
+ 545 0046 0023     		movne	r3, #0
+ 546 0048 0123     		moveq	r3, #1
+ 547 004a 1846     		mov	r0, r3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 14
+
+
+ 548 004c FFF7FEFF 		bl	PinLedInRange_Write
+ 187:.\Lights.c    **** 			break;
+ 549              		.loc 1 187 0
+ 550 0050 56E0     		b	.L49
+ 551              	.L40:
+ 188:.\Lights.c    **** 		case LED_MOTOR_ON:
+ 189:.\Lights.c    **** 				PinLedMotorOn_Write(!PinLedMotorOn_Read());
+ 552              		.loc 1 189 0
+ 553 0052 FFF7FEFF 		bl	PinLedMotorOn_Read
+ 554 0056 0346     		mov	r3, r0
+ 555 0058 002B     		cmp	r3, #0
+ 556 005a 14BF     		ite	ne
+ 557 005c 0023     		movne	r3, #0
+ 558 005e 0123     		moveq	r3, #1
+ 559 0060 1846     		mov	r0, r3
+ 560 0062 FFF7FEFF 		bl	PinLedMotorOn_Write
+ 190:.\Lights.c    **** 			break;
+ 561              		.loc 1 190 0
+ 562 0066 4BE0     		b	.L49
+ 563              	.L41:
+ 191:.\Lights.c    **** 		case LED_ALARM_ON:
+ 192:.\Lights.c    **** 				PinLedAlarm_Write(!PinLedAlarm_Read());
+ 564              		.loc 1 192 0
+ 565 0068 FFF7FEFF 		bl	PinLedAlarm_Read
+ 566 006c 0346     		mov	r3, r0
+ 567 006e 002B     		cmp	r3, #0
+ 568 0070 14BF     		ite	ne
+ 569 0072 0023     		movne	r3, #0
+ 570 0074 0123     		moveq	r3, #1
+ 571 0076 1846     		mov	r0, r3
+ 572 0078 FFF7FEFF 		bl	PinLedAlarm_Write
+ 193:.\Lights.c    **** 			break;
+ 573              		.loc 1 193 0
+ 574 007c 40E0     		b	.L49
+ 575              	.L42:
+ 194:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_TOP:
+ 195:.\Lights.c    **** 				PinLedBoardBattLevelHigh_Write(!PinLedBoardBattLevelHigh_Read());
+ 576              		.loc 1 195 0
+ 577 007e FFF7FEFF 		bl	PinLedBoardBattLevelHigh_Read
+ 578 0082 0346     		mov	r3, r0
+ 579 0084 002B     		cmp	r3, #0
+ 580 0086 14BF     		ite	ne
+ 581 0088 0023     		movne	r3, #0
+ 582 008a 0123     		moveq	r3, #1
+ 583 008c 1846     		mov	r0, r3
+ 584 008e FFF7FEFF 		bl	PinLedBoardBattLevelHigh_Write
+ 196:.\Lights.c    **** 			break;
+ 585              		.loc 1 196 0
+ 586 0092 35E0     		b	.L49
+ 587              	.L43:
+ 197:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_MID:
+ 198:.\Lights.c    **** 				PinLedBoardBattLevelMed_Write(!PinLedBoardBattLevelMed_Read());
+ 588              		.loc 1 198 0
+ 589 0094 FFF7FEFF 		bl	PinLedBoardBattLevelMed_Read
+ 590 0098 0346     		mov	r3, r0
+ 591 009a 002B     		cmp	r3, #0
+ 592 009c 14BF     		ite	ne
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 15
+
+
+ 593 009e 0023     		movne	r3, #0
+ 594 00a0 0123     		moveq	r3, #1
+ 595 00a2 1846     		mov	r0, r3
+ 596 00a4 FFF7FEFF 		bl	PinLedBoardBattLevelMed_Write
+ 199:.\Lights.c    **** 			break;
+ 597              		.loc 1 199 0
+ 598 00a8 2AE0     		b	.L49
+ 599              	.L44:
+ 200:.\Lights.c    **** 		case LED_BOARD_BATT_LVL_BOT:
+ 201:.\Lights.c    **** 				PinLedBoardBattLevelLow_Write(!PinLedBoardBattLevelLow_Read());
+ 600              		.loc 1 201 0
+ 601 00aa FFF7FEFF 		bl	PinLedBoardBattLevelLow_Read
+ 602 00ae 0346     		mov	r3, r0
+ 603 00b0 002B     		cmp	r3, #0
+ 604 00b2 14BF     		ite	ne
+ 605 00b4 0023     		movne	r3, #0
+ 606 00b6 0123     		moveq	r3, #1
+ 607 00b8 1846     		mov	r0, r3
+ 608 00ba FFF7FEFF 		bl	PinLedBoardBattLevelLow_Write
+ 202:.\Lights.c    **** 			break;
+ 609              		.loc 1 202 0
+ 610 00be 1FE0     		b	.L49
+ 611              	.L45:
+ 203:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_TOP:
+ 204:.\Lights.c    **** 				PinLedRemoteBattLevelHigh_Write(!PinLedRemoteBattLevelHigh_Read());
+ 612              		.loc 1 204 0
+ 613 00c0 FFF7FEFF 		bl	PinLedRemoteBattLevelHigh_Read
+ 614 00c4 0346     		mov	r3, r0
+ 615 00c6 002B     		cmp	r3, #0
+ 616 00c8 14BF     		ite	ne
+ 617 00ca 0023     		movne	r3, #0
+ 618 00cc 0123     		moveq	r3, #1
+ 619 00ce 1846     		mov	r0, r3
+ 620 00d0 FFF7FEFF 		bl	PinLedRemoteBattLevelHigh_Write
+ 205:.\Lights.c    **** 			break;
+ 621              		.loc 1 205 0
+ 622 00d4 14E0     		b	.L49
+ 623              	.L46:
+ 206:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_MID:
+ 207:.\Lights.c    **** 				PinLedRemoteBattLevelMed_Write(!PinLedRemoteBattLevelMed_Read());
+ 624              		.loc 1 207 0
+ 625 00d6 FFF7FEFF 		bl	PinLedRemoteBattLevelMed_Read
+ 626 00da 0346     		mov	r3, r0
+ 627 00dc 002B     		cmp	r3, #0
+ 628 00de 14BF     		ite	ne
+ 629 00e0 0023     		movne	r3, #0
+ 630 00e2 0123     		moveq	r3, #1
+ 631 00e4 1846     		mov	r0, r3
+ 632 00e6 FFF7FEFF 		bl	PinLedRemoteBattLevelMed_Write
+ 208:.\Lights.c    **** 			break;
+ 633              		.loc 1 208 0
+ 634 00ea 09E0     		b	.L49
+ 635              	.L47:
+ 209:.\Lights.c    **** 		case LED_REMOTE_BATT_LVL_BOT:
+ 210:.\Lights.c    **** 				PinLedRemoteBattLevelLow_Write(!PinLedRemoteBattLevelLow_Read());
+ 636              		.loc 1 210 0
+ 637 00ec FFF7FEFF 		bl	PinLedRemoteBattLevelLow_Read
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 16
+
+
+ 638 00f0 0346     		mov	r3, r0
+ 639 00f2 002B     		cmp	r3, #0
+ 640 00f4 14BF     		ite	ne
+ 641 00f6 0023     		movne	r3, #0
+ 642 00f8 0123     		moveq	r3, #1
+ 643 00fa 1846     		mov	r0, r3
+ 644 00fc FFF7FEFF 		bl	PinLedRemoteBattLevelLow_Write
+ 645              	.L49:
+ 211:.\Lights.c    **** 			break;
+ 212:.\Lights.c    **** 	}
+ 213:.\Lights.c    **** }
+ 646              		.loc 1 213 0
+ 647 0100 07F10807 		add	r7, r7, #8
+ 648 0104 BD46     		mov	sp, r7
+ 649 0106 80BD     		pop	{r7, pc}
+ 650              		.cfi_endproc
+ 651              	.LFE35:
+ 652              		.size	Lights_ToggleLed, .-Lights_ToggleLed
+ 653              		.bss
+ 654              		.align	2
+ 655              	counter.3051:
+ 656 0024 00000000 		.space	4
+ 657              		.text
+ 658              	.Letext0:
+ 659              		.section	.debug_loc,"",%progbits
+ 660              	.Ldebug_loc0:
+ 661              	.LLST0:
+ 662 0000 00000000 		.4byte	.LFB29
+ 663 0004 02000000 		.4byte	.LCFI0
+ 664 0008 0100     		.2byte	0x1
+ 665 000a 5D       		.byte	0x5d
+ 666 000b 02000000 		.4byte	.LCFI0
+ 667 000f 04000000 		.4byte	.LCFI1
+ 668 0013 0200     		.2byte	0x2
+ 669 0015 7D       		.byte	0x7d
+ 670 0016 08       		.sleb128 8
+ 671 0017 04000000 		.4byte	.LCFI1
+ 672 001b 06000000 		.4byte	.LCFI2
+ 673 001f 0200     		.2byte	0x2
+ 674 0021 7D       		.byte	0x7d
+ 675 0022 10       		.sleb128 16
+ 676 0023 06000000 		.4byte	.LCFI2
+ 677 0027 30000000 		.4byte	.LFE29
+ 678 002b 0200     		.2byte	0x2
+ 679 002d 77       		.byte	0x77
+ 680 002e 10       		.sleb128 16
+ 681 002f 00000000 		.4byte	0x0
+ 682 0033 00000000 		.4byte	0x0
+ 683              	.LLST1:
+ 684 0037 00000000 		.4byte	.LFB30
+ 685 003b 02000000 		.4byte	.LCFI3
+ 686 003f 0100     		.2byte	0x1
+ 687 0041 5D       		.byte	0x5d
+ 688 0042 02000000 		.4byte	.LCFI3
+ 689 0046 04000000 		.4byte	.LCFI4
+ 690 004a 0200     		.2byte	0x2
+ 691 004c 7D       		.byte	0x7d
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 17
+
+
+ 692 004d 08       		.sleb128 8
+ 693 004e 04000000 		.4byte	.LCFI4
+ 694 0052 06000000 		.4byte	.LCFI5
+ 695 0056 0200     		.2byte	0x2
+ 696 0058 7D       		.byte	0x7d
+ 697 0059 10       		.sleb128 16
+ 698 005a 06000000 		.4byte	.LCFI5
+ 699 005e 30000000 		.4byte	.LFE30
+ 700 0062 0200     		.2byte	0x2
+ 701 0064 77       		.byte	0x77
+ 702 0065 10       		.sleb128 16
+ 703 0066 00000000 		.4byte	0x0
+ 704 006a 00000000 		.4byte	0x0
+ 705              	.LLST2:
+ 706 006e 00000000 		.4byte	.LFB31
+ 707 0072 02000000 		.4byte	.LCFI6
+ 708 0076 0100     		.2byte	0x1
+ 709 0078 5D       		.byte	0x5d
+ 710 0079 02000000 		.4byte	.LCFI6
+ 711 007d 04000000 		.4byte	.LCFI7
+ 712 0081 0200     		.2byte	0x2
+ 713 0083 7D       		.byte	0x7d
+ 714 0084 08       		.sleb128 8
+ 715 0085 04000000 		.4byte	.LCFI7
+ 716 0089 06000000 		.4byte	.LCFI8
+ 717 008d 0200     		.2byte	0x2
+ 718 008f 7D       		.byte	0x7d
+ 719 0090 10       		.sleb128 16
+ 720 0091 06000000 		.4byte	.LCFI8
+ 721 0095 62000000 		.4byte	.LFE31
+ 722 0099 0200     		.2byte	0x2
+ 723 009b 77       		.byte	0x77
+ 724 009c 10       		.sleb128 16
+ 725 009d 00000000 		.4byte	0x0
+ 726 00a1 00000000 		.4byte	0x0
+ 727              	.LLST3:
+ 728 00a5 00000000 		.4byte	.LFB32
+ 729 00a9 02000000 		.4byte	.LCFI9
+ 730 00ad 0100     		.2byte	0x1
+ 731 00af 5D       		.byte	0x5d
+ 732 00b0 02000000 		.4byte	.LCFI9
+ 733 00b4 04000000 		.4byte	.LCFI10
+ 734 00b8 0200     		.2byte	0x2
+ 735 00ba 7D       		.byte	0x7d
+ 736 00bb 08       		.sleb128 8
+ 737 00bc 04000000 		.4byte	.LCFI10
+ 738 00c0 06000000 		.4byte	.LCFI11
+ 739 00c4 0200     		.2byte	0x2
+ 740 00c6 7D       		.byte	0x7d
+ 741 00c7 10       		.sleb128 16
+ 742 00c8 06000000 		.4byte	.LCFI11
+ 743 00cc FC000000 		.4byte	.LFE32
+ 744 00d0 0200     		.2byte	0x2
+ 745 00d2 77       		.byte	0x77
+ 746 00d3 10       		.sleb128 16
+ 747 00d4 00000000 		.4byte	0x0
+ 748 00d8 00000000 		.4byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 18
+
+
+ 749              	.LLST4:
+ 750 00dc 00000000 		.4byte	.LFB33
+ 751 00e0 02000000 		.4byte	.LCFI12
+ 752 00e4 0100     		.2byte	0x1
+ 753 00e6 5D       		.byte	0x5d
+ 754 00e7 02000000 		.4byte	.LCFI12
+ 755 00eb 04000000 		.4byte	.LCFI13
+ 756 00ef 0200     		.2byte	0x2
+ 757 00f1 7D       		.byte	0x7d
+ 758 00f2 04       		.sleb128 4
+ 759 00f3 04000000 		.4byte	.LCFI13
+ 760 00f7 06000000 		.4byte	.LCFI14
+ 761 00fb 0200     		.2byte	0x2
+ 762 00fd 7D       		.byte	0x7d
+ 763 00fe 18       		.sleb128 24
+ 764 00ff 06000000 		.4byte	.LCFI14
+ 765 0103 44000000 		.4byte	.LFE33
+ 766 0107 0200     		.2byte	0x2
+ 767 0109 77       		.byte	0x77
+ 768 010a 18       		.sleb128 24
+ 769 010b 00000000 		.4byte	0x0
+ 770 010f 00000000 		.4byte	0x0
+ 771              	.LLST5:
+ 772 0113 00000000 		.4byte	.LFB34
+ 773 0117 02000000 		.4byte	.LCFI15
+ 774 011b 0100     		.2byte	0x1
+ 775 011d 5D       		.byte	0x5d
+ 776 011e 02000000 		.4byte	.LCFI15
+ 777 0122 04000000 		.4byte	.LCFI16
+ 778 0126 0200     		.2byte	0x2
+ 779 0128 7D       		.byte	0x7d
+ 780 0129 08       		.sleb128 8
+ 781 012a 04000000 		.4byte	.LCFI16
+ 782 012e 06000000 		.4byte	.LCFI17
+ 783 0132 0200     		.2byte	0x2
+ 784 0134 7D       		.byte	0x7d
+ 785 0135 10       		.sleb128 16
+ 786 0136 06000000 		.4byte	.LCFI17
+ 787 013a A0000000 		.4byte	.LFE34
+ 788 013e 0200     		.2byte	0x2
+ 789 0140 77       		.byte	0x77
+ 790 0141 10       		.sleb128 16
+ 791 0142 00000000 		.4byte	0x0
+ 792 0146 00000000 		.4byte	0x0
+ 793              	.LLST6:
+ 794 014a 00000000 		.4byte	.LFB35
+ 795 014e 02000000 		.4byte	.LCFI18
+ 796 0152 0100     		.2byte	0x1
+ 797 0154 5D       		.byte	0x5d
+ 798 0155 02000000 		.4byte	.LCFI18
+ 799 0159 04000000 		.4byte	.LCFI19
+ 800 015d 0200     		.2byte	0x2
+ 801 015f 7D       		.byte	0x7d
+ 802 0160 08       		.sleb128 8
+ 803 0161 04000000 		.4byte	.LCFI19
+ 804 0165 06000000 		.4byte	.LCFI20
+ 805 0169 0200     		.2byte	0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 19
+
+
+ 806 016b 7D       		.byte	0x7d
+ 807 016c 10       		.sleb128 16
+ 808 016d 06000000 		.4byte	.LCFI20
+ 809 0171 08010000 		.4byte	.LFE35
+ 810 0175 0200     		.2byte	0x2
+ 811 0177 77       		.byte	0x77
+ 812 0178 10       		.sleb128 16
+ 813 0179 00000000 		.4byte	0x0
+ 814 017d 00000000 		.4byte	0x0
+ 815              		.file 2 "./Generated_Source/PSoC5/cytypes.h"
+ 816              		.file 3 ".\\/Lights.h"
+ 817              		.file 4 "./Generated_Source/PSoC5/core_cm3.h"
+ 818              		.section	.debug_info
+ 819 0000 DE020000 		.4byte	0x2de
+ 820 0004 0200     		.2byte	0x2
+ 821 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 822 000a 04       		.byte	0x4
+ 823 000b 01       		.uleb128 0x1
+ 824 000c CB010000 		.4byte	.LASF42
+ 825 0010 01       		.byte	0x1
+ 826 0011 58000000 		.4byte	.LASF43
+ 827 0015 4F020000 		.4byte	.LASF44
+ 828 0019 00000000 		.4byte	0x0
+ 829 001d 00000000 		.4byte	0x0
+ 830 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 831 0025 00000000 		.4byte	.Ldebug_line0
+ 832 0029 02       		.uleb128 0x2
+ 833 002a 01       		.byte	0x1
+ 834 002b 06       		.byte	0x6
+ 835 002c A3000000 		.4byte	.LASF0
+ 836 0030 02       		.uleb128 0x2
+ 837 0031 01       		.byte	0x1
+ 838 0032 08       		.byte	0x8
+ 839 0033 85010000 		.4byte	.LASF1
+ 840 0037 02       		.uleb128 0x2
+ 841 0038 02       		.byte	0x2
+ 842 0039 05       		.byte	0x5
+ 843 003a F0010000 		.4byte	.LASF2
+ 844 003e 02       		.uleb128 0x2
+ 845 003f 02       		.byte	0x2
+ 846 0040 07       		.byte	0x7
+ 847 0041 E6000000 		.4byte	.LASF3
+ 848 0045 02       		.uleb128 0x2
+ 849 0046 04       		.byte	0x4
+ 850 0047 05       		.byte	0x5
+ 851 0048 20020000 		.4byte	.LASF4
+ 852 004c 02       		.uleb128 0x2
+ 853 004d 04       		.byte	0x4
+ 854 004e 07       		.byte	0x7
+ 855 004f D4000000 		.4byte	.LASF5
+ 856 0053 02       		.uleb128 0x2
+ 857 0054 08       		.byte	0x8
+ 858 0055 05       		.byte	0x5
+ 859 0056 00000000 		.4byte	.LASF6
+ 860 005a 02       		.uleb128 0x2
+ 861 005b 08       		.byte	0x8
+ 862 005c 07       		.byte	0x7
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 20
+
+
+ 863 005d B4010000 		.4byte	.LASF7
+ 864 0061 03       		.uleb128 0x3
+ 865 0062 04       		.byte	0x4
+ 866 0063 05       		.byte	0x5
+ 867 0064 696E7400 		.ascii	"int\000"
+ 868 0068 02       		.uleb128 0x2
+ 869 0069 04       		.byte	0x4
+ 870 006a 07       		.byte	0x7
+ 871 006b 93010000 		.4byte	.LASF8
+ 872 006f 02       		.uleb128 0x2
+ 873 0070 01       		.byte	0x1
+ 874 0071 08       		.byte	0x8
+ 875 0072 0E000000 		.4byte	.LASF9
+ 876 0076 04       		.uleb128 0x4
+ 877 0077 77000000 		.4byte	.LASF10
+ 878 007b 02       		.byte	0x2
+ 879 007c 51       		.byte	0x51
+ 880 007d 30000000 		.4byte	0x30
+ 881 0081 04       		.uleb128 0x4
+ 882 0082 71010000 		.4byte	.LASF11
+ 883 0086 02       		.byte	0x2
+ 884 0087 53       		.byte	0x53
+ 885 0088 4C000000 		.4byte	0x4c
+ 886 008c 05       		.uleb128 0x5
+ 887 008d 04       		.byte	0x4
+ 888 008e 07       		.byte	0x7
+ 889 008f 06       		.uleb128 0x6
+ 890 0090 01       		.byte	0x1
+ 891 0091 03       		.byte	0x3
+ 892 0092 24       		.byte	0x24
+ 893 0093 CE000000 		.4byte	0xce
+ 894 0097 07       		.uleb128 0x7
+ 895 0098 B7020000 		.4byte	.LASF12
+ 896 009c 00       		.sleb128 0
+ 897 009d 07       		.uleb128 0x7
+ 898 009e C7000000 		.4byte	.LASF13
+ 899 00a2 01       		.sleb128 1
+ 900 00a3 07       		.uleb128 0x7
+ 901 00a4 8E000000 		.4byte	.LASF14
+ 902 00a8 02       		.sleb128 2
+ 903 00a9 07       		.uleb128 0x7
+ 904 00aa 34000000 		.4byte	.LASF15
+ 905 00ae 03       		.sleb128 3
+ 906 00af 07       		.uleb128 0x7
+ 907 00b0 13000000 		.4byte	.LASF16
+ 908 00b4 04       		.sleb128 4
+ 909 00b5 07       		.uleb128 0x7
+ 910 00b6 3C010000 		.4byte	.LASF17
+ 911 00ba 05       		.sleb128 5
+ 912 00bb 07       		.uleb128 0x7
+ 913 00bc 53010000 		.4byte	.LASF18
+ 914 00c0 06       		.sleb128 6
+ 915 00c1 07       		.uleb128 0x7
+ 916 00c2 08020000 		.4byte	.LASF19
+ 917 00c6 07       		.sleb128 7
+ 918 00c7 07       		.uleb128 0x7
+ 919 00c8 AF000000 		.4byte	.LASF20
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 21
+
+
+ 920 00cc 08       		.sleb128 8
+ 921 00cd 00       		.byte	0x0
+ 922 00ce 04       		.uleb128 0x4
+ 923 00cf F9000000 		.4byte	.LASF21
+ 924 00d3 03       		.byte	0x3
+ 925 00d4 2E       		.byte	0x2e
+ 926 00d5 8F000000 		.4byte	0x8f
+ 927 00d9 06       		.uleb128 0x6
+ 928 00da 01       		.byte	0x1
+ 929 00db 03       		.byte	0x3
+ 930 00dc 31       		.byte	0x31
+ 931 00dd F3000000 		.4byte	0xf3
+ 932 00e1 08       		.uleb128 0x8
+ 933 00e2 4F464600 		.ascii	"OFF\000"
+ 934 00e6 00       		.sleb128 0
+ 935 00e7 08       		.uleb128 0x8
+ 936 00e8 4F4E00   		.ascii	"ON\000"
+ 937 00eb 01       		.sleb128 1
+ 938 00ec 07       		.uleb128 0x7
+ 939 00ed 63000000 		.4byte	.LASF22
+ 940 00f1 02       		.sleb128 2
+ 941 00f2 00       		.byte	0x0
+ 942 00f3 04       		.uleb128 0x4
+ 943 00f4 2A000000 		.4byte	.LASF23
+ 944 00f8 03       		.byte	0x3
+ 945 00f9 35       		.byte	0x35
+ 946 00fa D9000000 		.4byte	0xd9
+ 947 00fe 09       		.uleb128 0x9
+ 948 00ff 01       		.byte	0x1
+ 949 0100 FA010000 		.4byte	.LASF24
+ 950 0104 01       		.byte	0x1
+ 951 0105 42       		.byte	0x42
+ 952 0106 01       		.byte	0x1
+ 953 0107 00000000 		.4byte	.LFB29
+ 954 010b 30000000 		.4byte	.LFE29
+ 955 010f 00000000 		.4byte	.LLST0
+ 956 0113 24010000 		.4byte	0x124
+ 957 0117 0A       		.uleb128 0xa
+ 958 0118 7800     		.ascii	"x\000"
+ 959 011a 01       		.byte	0x1
+ 960 011b 44       		.byte	0x44
+ 961 011c 76000000 		.4byte	0x76
+ 962 0120 02       		.byte	0x2
+ 963 0121 91       		.byte	0x91
+ 964 0122 77       		.sleb128 -9
+ 965 0123 00       		.byte	0x0
+ 966 0124 09       		.uleb128 0x9
+ 967 0125 01       		.byte	0x1
+ 968 0126 78010000 		.4byte	.LASF25
+ 969 012a 01       		.byte	0x1
+ 970 012b 4C       		.byte	0x4c
+ 971 012c 01       		.byte	0x1
+ 972 012d 00000000 		.4byte	.LFB30
+ 973 0131 30000000 		.4byte	.LFE30
+ 974 0135 37000000 		.4byte	.LLST1
+ 975 0139 4A010000 		.4byte	0x14a
+ 976 013d 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 22
+
+
+ 977 013e 7800     		.ascii	"x\000"
+ 978 0140 01       		.byte	0x1
+ 979 0141 4E       		.byte	0x4e
+ 980 0142 76000000 		.4byte	0x76
+ 981 0146 02       		.byte	0x2
+ 982 0147 91       		.byte	0x91
+ 983 0148 77       		.sleb128 -9
+ 984 0149 00       		.byte	0x0
+ 985 014a 09       		.uleb128 0x9
+ 986 014b 01       		.byte	0x1
+ 987 014c 19010000 		.4byte	.LASF26
+ 988 0150 01       		.byte	0x1
+ 989 0151 56       		.byte	0x56
+ 990 0152 01       		.byte	0x1
+ 991 0153 00000000 		.4byte	.LFB31
+ 992 0157 62000000 		.4byte	.LFE31
+ 993 015b 6E000000 		.4byte	.LLST2
+ 994 015f 70010000 		.4byte	0x170
+ 995 0163 0A       		.uleb128 0xa
+ 996 0164 7800     		.ascii	"x\000"
+ 997 0166 01       		.byte	0x1
+ 998 0167 58       		.byte	0x58
+ 999 0168 76000000 		.4byte	0x76
+ 1000 016c 02       		.byte	0x2
+ 1001 016d 91       		.byte	0x91
+ 1002 016e 77       		.sleb128 -9
+ 1003 016f 00       		.byte	0x0
+ 1004 0170 09       		.uleb128 0x9
+ 1005 0171 01       		.byte	0x1
+ 1006 0172 6C000000 		.4byte	.LASF27
+ 1007 0176 01       		.byte	0x1
+ 1008 0177 6A       		.byte	0x6a
+ 1009 0178 01       		.byte	0x1
+ 1010 0179 00000000 		.4byte	.LFB32
+ 1011 017d FC000000 		.4byte	.LFE32
+ 1012 0181 A5000000 		.4byte	.LLST3
+ 1013 0185 BF010000 		.4byte	0x1bf
+ 1014 0189 0B       		.uleb128 0xb
+ 1015 018a 9B000000 		.4byte	.LASF28
+ 1016 018e 01       		.byte	0x1
+ 1017 018f 6D       		.byte	0x6d
+ 1018 0190 81000000 		.4byte	0x81
+ 1019 0194 05       		.byte	0x5
+ 1020 0195 03       		.byte	0x3
+ 1021 0196 24000000 		.4byte	counter.3051
+ 1022 019a 0A       		.uleb128 0xa
+ 1023 019b 7800     		.ascii	"x\000"
+ 1024 019d 01       		.byte	0x1
+ 1025 019e 6F       		.byte	0x6f
+ 1026 019f 76000000 		.4byte	0x76
+ 1027 01a3 02       		.byte	0x2
+ 1028 01a4 91       		.byte	0x91
+ 1029 01a5 73       		.sleb128 -13
+ 1030 01a6 0C       		.uleb128 0xc
+ 1031 01a7 56000000 		.4byte	.LBB2
+ 1032 01ab CE000000 		.4byte	.LBE2
+ 1033 01af 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 23
+
+
+ 1034 01b0 29020000 		.4byte	.LASF29
+ 1035 01b4 01       		.byte	0x1
+ 1036 01b5 79       		.byte	0x79
+ 1037 01b6 81000000 		.4byte	0x81
+ 1038 01ba 02       		.byte	0x2
+ 1039 01bb 91       		.byte	0x91
+ 1040 01bc 74       		.sleb128 -12
+ 1041 01bd 00       		.byte	0x0
+ 1042 01be 00       		.byte	0x0
+ 1043 01bf 09       		.uleb128 0x9
+ 1044 01c0 01       		.byte	0x1
+ 1045 01c1 D7010000 		.4byte	.LASF30
+ 1046 01c5 01       		.byte	0x1
+ 1047 01c6 89       		.byte	0x89
+ 1048 01c7 01       		.byte	0x1
+ 1049 01c8 00000000 		.4byte	.LFB33
+ 1050 01cc 44000000 		.4byte	.LFE33
+ 1051 01d0 DC000000 		.4byte	.LLST4
+ 1052 01d4 03020000 		.4byte	0x203
+ 1053 01d8 0D       		.uleb128 0xd
+ 1054 01d9 6C656400 		.ascii	"led\000"
+ 1055 01dd 01       		.byte	0x1
+ 1056 01de 89       		.byte	0x89
+ 1057 01df CE000000 		.4byte	0xce
+ 1058 01e3 02       		.byte	0x2
+ 1059 01e4 91       		.byte	0x91
+ 1060 01e5 77       		.sleb128 -9
+ 1061 01e6 0E       		.uleb128 0xe
+ 1062 01e7 2D010000 		.4byte	.LASF31
+ 1063 01eb 01       		.byte	0x1
+ 1064 01ec 89       		.byte	0x89
+ 1065 01ed F3000000 		.4byte	0xf3
+ 1066 01f1 02       		.byte	0x2
+ 1067 01f2 91       		.byte	0x91
+ 1068 01f3 76       		.sleb128 -10
+ 1069 01f4 0E       		.uleb128 0xe
+ 1070 01f5 4B000000 		.4byte	.LASF32
+ 1071 01f9 01       		.byte	0x1
+ 1072 01fa 89       		.byte	0x89
+ 1073 01fb 03020000 		.4byte	0x203
+ 1074 01ff 02       		.byte	0x2
+ 1075 0200 91       		.byte	0x91
+ 1076 0201 68       		.sleb128 -24
+ 1077 0202 00       		.byte	0x0
+ 1078 0203 02       		.uleb128 0x2
+ 1079 0204 08       		.byte	0x8
+ 1080 0205 04       		.byte	0x4
+ 1081 0206 35010000 		.4byte	.LASF33
+ 1082 020a 09       		.uleb128 0x9
+ 1083 020b 01       		.byte	0x1
+ 1084 020c A9020000 		.4byte	.LASF34
+ 1085 0210 01       		.byte	0x1
+ 1086 0211 93       		.byte	0x93
+ 1087 0212 01       		.byte	0x1
+ 1088 0213 00000000 		.4byte	.LFB34
+ 1089 0217 A0000000 		.4byte	.LFE34
+ 1090 021b 13010000 		.4byte	.LLST5
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 24
+
+
+ 1091 021f 40020000 		.4byte	0x240
+ 1092 0223 0E       		.uleb128 0xe
+ 1093 0224 E9010000 		.4byte	.LASF35
+ 1094 0228 01       		.byte	0x1
+ 1095 0229 93       		.byte	0x93
+ 1096 022a 76000000 		.4byte	0x76
+ 1097 022e 02       		.byte	0x2
+ 1098 022f 91       		.byte	0x91
+ 1099 0230 77       		.sleb128 -9
+ 1100 0231 0E       		.uleb128 0xe
+ 1101 0232 6B010000 		.4byte	.LASF36
+ 1102 0236 01       		.byte	0x1
+ 1103 0237 93       		.byte	0x93
+ 1104 0238 76000000 		.4byte	0x76
+ 1105 023c 02       		.byte	0x2
+ 1106 023d 91       		.byte	0x91
+ 1107 023e 76       		.sleb128 -10
+ 1108 023f 00       		.byte	0x0
+ 1109 0240 09       		.uleb128 0x9
+ 1110 0241 01       		.byte	0x1
+ 1111 0242 7D000000 		.4byte	.LASF37
+ 1112 0246 01       		.byte	0x1
+ 1113 0247 B5       		.byte	0xb5
+ 1114 0248 01       		.byte	0x1
+ 1115 0249 00000000 		.4byte	.LFB35
+ 1116 024d 08010000 		.4byte	.LFE35
+ 1117 0251 4A010000 		.4byte	.LLST6
+ 1118 0255 68020000 		.4byte	0x268
+ 1119 0259 0E       		.uleb128 0xe
+ 1120 025a E9010000 		.4byte	.LASF35
+ 1121 025e 01       		.byte	0x1
+ 1122 025f B5       		.byte	0xb5
+ 1123 0260 76000000 		.4byte	0x76
+ 1124 0264 02       		.byte	0x2
+ 1125 0265 91       		.byte	0x91
+ 1126 0266 77       		.sleb128 -9
+ 1127 0267 00       		.byte	0x0
+ 1128 0268 0F       		.uleb128 0xf
+ 1129 0269 0C010000 		.4byte	.LASF38
+ 1130 026d 04       		.byte	0x4
+ 1131 026e CE06     		.2byte	0x6ce
+ 1132 0270 76020000 		.4byte	0x276
+ 1133 0274 01       		.byte	0x1
+ 1134 0275 01       		.byte	0x1
+ 1135 0276 10       		.uleb128 0x10
+ 1136 0277 61000000 		.4byte	0x61
+ 1137 027b 11       		.uleb128 0x11
+ 1138 027c F3000000 		.4byte	0xf3
+ 1139 0280 8B020000 		.4byte	0x28b
+ 1140 0284 12       		.uleb128 0x12
+ 1141 0285 8C000000 		.4byte	0x8c
+ 1142 0289 08       		.byte	0x8
+ 1143 028a 00       		.byte	0x0
+ 1144 028b 13       		.uleb128 0x13
+ 1145 028c FF000000 		.4byte	.LASF39
+ 1146 0290 01       		.byte	0x1
+ 1147 0291 33       		.byte	0x33
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 25
+
+
+ 1148 0292 7B020000 		.4byte	0x27b
+ 1149 0296 01       		.byte	0x1
+ 1150 0297 05       		.byte	0x5
+ 1151 0298 03       		.byte	0x3
+ 1152 0299 00000000 		.4byte	ledModeArray
+ 1153 029d 11       		.uleb128 0x11
+ 1154 029e 03020000 		.4byte	0x203
+ 1155 02a2 AD020000 		.4byte	0x2ad
+ 1156 02a6 12       		.uleb128 0x12
+ 1157 02a7 8C000000 		.4byte	0x8c
+ 1158 02ab 08       		.byte	0x8
+ 1159 02ac 00       		.byte	0x0
+ 1160 02ad 13       		.uleb128 0x13
+ 1161 02ae A0010000 		.4byte	.LASF40
+ 1162 02b2 01       		.byte	0x1
+ 1163 02b3 34       		.byte	0x34
+ 1164 02b4 9D020000 		.4byte	0x29d
+ 1165 02b8 01       		.byte	0x1
+ 1166 02b9 05       		.byte	0x5
+ 1167 02ba 03       		.byte	0x3
+ 1168 02bb 00000000 		.4byte	ledFlashRateMsArray
+ 1169 02bf 11       		.uleb128 0x11
+ 1170 02c0 81000000 		.4byte	0x81
+ 1171 02c4 CF020000 		.4byte	0x2cf
+ 1172 02c8 12       		.uleb128 0x12
+ 1173 02c9 8C000000 		.4byte	0x8c
+ 1174 02cd 08       		.byte	0x8
+ 1175 02ce 00       		.byte	0x0
+ 1176 02cf 13       		.uleb128 0x13
+ 1177 02d0 38020000 		.4byte	.LASF41
+ 1178 02d4 01       		.byte	0x1
+ 1179 02d5 35       		.byte	0x35
+ 1180 02d6 BF020000 		.4byte	0x2bf
+ 1181 02da 01       		.byte	0x1
+ 1182 02db 05       		.byte	0x5
+ 1183 02dc 03       		.byte	0x3
+ 1184 02dd 00000000 		.4byte	ledPrevFlashCountArray
+ 1185 02e1 00       		.byte	0x0
+ 1186              		.section	.debug_abbrev
+ 1187 0000 01       		.uleb128 0x1
+ 1188 0001 11       		.uleb128 0x11
+ 1189 0002 01       		.byte	0x1
+ 1190 0003 25       		.uleb128 0x25
+ 1191 0004 0E       		.uleb128 0xe
+ 1192 0005 13       		.uleb128 0x13
+ 1193 0006 0B       		.uleb128 0xb
+ 1194 0007 03       		.uleb128 0x3
+ 1195 0008 0E       		.uleb128 0xe
+ 1196 0009 1B       		.uleb128 0x1b
+ 1197 000a 0E       		.uleb128 0xe
+ 1198 000b 11       		.uleb128 0x11
+ 1199 000c 01       		.uleb128 0x1
+ 1200 000d 52       		.uleb128 0x52
+ 1201 000e 01       		.uleb128 0x1
+ 1202 000f 55       		.uleb128 0x55
+ 1203 0010 06       		.uleb128 0x6
+ 1204 0011 10       		.uleb128 0x10
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 26
+
+
+ 1205 0012 06       		.uleb128 0x6
+ 1206 0013 00       		.byte	0x0
+ 1207 0014 00       		.byte	0x0
+ 1208 0015 02       		.uleb128 0x2
+ 1209 0016 24       		.uleb128 0x24
+ 1210 0017 00       		.byte	0x0
+ 1211 0018 0B       		.uleb128 0xb
+ 1212 0019 0B       		.uleb128 0xb
+ 1213 001a 3E       		.uleb128 0x3e
+ 1214 001b 0B       		.uleb128 0xb
+ 1215 001c 03       		.uleb128 0x3
+ 1216 001d 0E       		.uleb128 0xe
+ 1217 001e 00       		.byte	0x0
+ 1218 001f 00       		.byte	0x0
+ 1219 0020 03       		.uleb128 0x3
+ 1220 0021 24       		.uleb128 0x24
+ 1221 0022 00       		.byte	0x0
+ 1222 0023 0B       		.uleb128 0xb
+ 1223 0024 0B       		.uleb128 0xb
+ 1224 0025 3E       		.uleb128 0x3e
+ 1225 0026 0B       		.uleb128 0xb
+ 1226 0027 03       		.uleb128 0x3
+ 1227 0028 08       		.uleb128 0x8
+ 1228 0029 00       		.byte	0x0
+ 1229 002a 00       		.byte	0x0
+ 1230 002b 04       		.uleb128 0x4
+ 1231 002c 16       		.uleb128 0x16
+ 1232 002d 00       		.byte	0x0
+ 1233 002e 03       		.uleb128 0x3
+ 1234 002f 0E       		.uleb128 0xe
+ 1235 0030 3A       		.uleb128 0x3a
+ 1236 0031 0B       		.uleb128 0xb
+ 1237 0032 3B       		.uleb128 0x3b
+ 1238 0033 0B       		.uleb128 0xb
+ 1239 0034 49       		.uleb128 0x49
+ 1240 0035 13       		.uleb128 0x13
+ 1241 0036 00       		.byte	0x0
+ 1242 0037 00       		.byte	0x0
+ 1243 0038 05       		.uleb128 0x5
+ 1244 0039 24       		.uleb128 0x24
+ 1245 003a 00       		.byte	0x0
+ 1246 003b 0B       		.uleb128 0xb
+ 1247 003c 0B       		.uleb128 0xb
+ 1248 003d 3E       		.uleb128 0x3e
+ 1249 003e 0B       		.uleb128 0xb
+ 1250 003f 00       		.byte	0x0
+ 1251 0040 00       		.byte	0x0
+ 1252 0041 06       		.uleb128 0x6
+ 1253 0042 04       		.uleb128 0x4
+ 1254 0043 01       		.byte	0x1
+ 1255 0044 0B       		.uleb128 0xb
+ 1256 0045 0B       		.uleb128 0xb
+ 1257 0046 3A       		.uleb128 0x3a
+ 1258 0047 0B       		.uleb128 0xb
+ 1259 0048 3B       		.uleb128 0x3b
+ 1260 0049 0B       		.uleb128 0xb
+ 1261 004a 01       		.uleb128 0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 27
+
+
+ 1262 004b 13       		.uleb128 0x13
+ 1263 004c 00       		.byte	0x0
+ 1264 004d 00       		.byte	0x0
+ 1265 004e 07       		.uleb128 0x7
+ 1266 004f 28       		.uleb128 0x28
+ 1267 0050 00       		.byte	0x0
+ 1268 0051 03       		.uleb128 0x3
+ 1269 0052 0E       		.uleb128 0xe
+ 1270 0053 1C       		.uleb128 0x1c
+ 1271 0054 0D       		.uleb128 0xd
+ 1272 0055 00       		.byte	0x0
+ 1273 0056 00       		.byte	0x0
+ 1274 0057 08       		.uleb128 0x8
+ 1275 0058 28       		.uleb128 0x28
+ 1276 0059 00       		.byte	0x0
+ 1277 005a 03       		.uleb128 0x3
+ 1278 005b 08       		.uleb128 0x8
+ 1279 005c 1C       		.uleb128 0x1c
+ 1280 005d 0D       		.uleb128 0xd
+ 1281 005e 00       		.byte	0x0
+ 1282 005f 00       		.byte	0x0
+ 1283 0060 09       		.uleb128 0x9
+ 1284 0061 2E       		.uleb128 0x2e
+ 1285 0062 01       		.byte	0x1
+ 1286 0063 3F       		.uleb128 0x3f
+ 1287 0064 0C       		.uleb128 0xc
+ 1288 0065 03       		.uleb128 0x3
+ 1289 0066 0E       		.uleb128 0xe
+ 1290 0067 3A       		.uleb128 0x3a
+ 1291 0068 0B       		.uleb128 0xb
+ 1292 0069 3B       		.uleb128 0x3b
+ 1293 006a 0B       		.uleb128 0xb
+ 1294 006b 27       		.uleb128 0x27
+ 1295 006c 0C       		.uleb128 0xc
+ 1296 006d 11       		.uleb128 0x11
+ 1297 006e 01       		.uleb128 0x1
+ 1298 006f 12       		.uleb128 0x12
+ 1299 0070 01       		.uleb128 0x1
+ 1300 0071 40       		.uleb128 0x40
+ 1301 0072 06       		.uleb128 0x6
+ 1302 0073 01       		.uleb128 0x1
+ 1303 0074 13       		.uleb128 0x13
+ 1304 0075 00       		.byte	0x0
+ 1305 0076 00       		.byte	0x0
+ 1306 0077 0A       		.uleb128 0xa
+ 1307 0078 34       		.uleb128 0x34
+ 1308 0079 00       		.byte	0x0
+ 1309 007a 03       		.uleb128 0x3
+ 1310 007b 08       		.uleb128 0x8
+ 1311 007c 3A       		.uleb128 0x3a
+ 1312 007d 0B       		.uleb128 0xb
+ 1313 007e 3B       		.uleb128 0x3b
+ 1314 007f 0B       		.uleb128 0xb
+ 1315 0080 49       		.uleb128 0x49
+ 1316 0081 13       		.uleb128 0x13
+ 1317 0082 02       		.uleb128 0x2
+ 1318 0083 0A       		.uleb128 0xa
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 28
+
+
+ 1319 0084 00       		.byte	0x0
+ 1320 0085 00       		.byte	0x0
+ 1321 0086 0B       		.uleb128 0xb
+ 1322 0087 34       		.uleb128 0x34
+ 1323 0088 00       		.byte	0x0
+ 1324 0089 03       		.uleb128 0x3
+ 1325 008a 0E       		.uleb128 0xe
+ 1326 008b 3A       		.uleb128 0x3a
+ 1327 008c 0B       		.uleb128 0xb
+ 1328 008d 3B       		.uleb128 0x3b
+ 1329 008e 0B       		.uleb128 0xb
+ 1330 008f 49       		.uleb128 0x49
+ 1331 0090 13       		.uleb128 0x13
+ 1332 0091 02       		.uleb128 0x2
+ 1333 0092 0A       		.uleb128 0xa
+ 1334 0093 00       		.byte	0x0
+ 1335 0094 00       		.byte	0x0
+ 1336 0095 0C       		.uleb128 0xc
+ 1337 0096 0B       		.uleb128 0xb
+ 1338 0097 01       		.byte	0x1
+ 1339 0098 11       		.uleb128 0x11
+ 1340 0099 01       		.uleb128 0x1
+ 1341 009a 12       		.uleb128 0x12
+ 1342 009b 01       		.uleb128 0x1
+ 1343 009c 00       		.byte	0x0
+ 1344 009d 00       		.byte	0x0
+ 1345 009e 0D       		.uleb128 0xd
+ 1346 009f 05       		.uleb128 0x5
+ 1347 00a0 00       		.byte	0x0
+ 1348 00a1 03       		.uleb128 0x3
+ 1349 00a2 08       		.uleb128 0x8
+ 1350 00a3 3A       		.uleb128 0x3a
+ 1351 00a4 0B       		.uleb128 0xb
+ 1352 00a5 3B       		.uleb128 0x3b
+ 1353 00a6 0B       		.uleb128 0xb
+ 1354 00a7 49       		.uleb128 0x49
+ 1355 00a8 13       		.uleb128 0x13
+ 1356 00a9 02       		.uleb128 0x2
+ 1357 00aa 0A       		.uleb128 0xa
+ 1358 00ab 00       		.byte	0x0
+ 1359 00ac 00       		.byte	0x0
+ 1360 00ad 0E       		.uleb128 0xe
+ 1361 00ae 05       		.uleb128 0x5
+ 1362 00af 00       		.byte	0x0
+ 1363 00b0 03       		.uleb128 0x3
+ 1364 00b1 0E       		.uleb128 0xe
+ 1365 00b2 3A       		.uleb128 0x3a
+ 1366 00b3 0B       		.uleb128 0xb
+ 1367 00b4 3B       		.uleb128 0x3b
+ 1368 00b5 0B       		.uleb128 0xb
+ 1369 00b6 49       		.uleb128 0x49
+ 1370 00b7 13       		.uleb128 0x13
+ 1371 00b8 02       		.uleb128 0x2
+ 1372 00b9 0A       		.uleb128 0xa
+ 1373 00ba 00       		.byte	0x0
+ 1374 00bb 00       		.byte	0x0
+ 1375 00bc 0F       		.uleb128 0xf
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 29
+
+
+ 1376 00bd 34       		.uleb128 0x34
+ 1377 00be 00       		.byte	0x0
+ 1378 00bf 03       		.uleb128 0x3
+ 1379 00c0 0E       		.uleb128 0xe
+ 1380 00c1 3A       		.uleb128 0x3a
+ 1381 00c2 0B       		.uleb128 0xb
+ 1382 00c3 3B       		.uleb128 0x3b
+ 1383 00c4 05       		.uleb128 0x5
+ 1384 00c5 49       		.uleb128 0x49
+ 1385 00c6 13       		.uleb128 0x13
+ 1386 00c7 3F       		.uleb128 0x3f
+ 1387 00c8 0C       		.uleb128 0xc
+ 1388 00c9 3C       		.uleb128 0x3c
+ 1389 00ca 0C       		.uleb128 0xc
+ 1390 00cb 00       		.byte	0x0
+ 1391 00cc 00       		.byte	0x0
+ 1392 00cd 10       		.uleb128 0x10
+ 1393 00ce 35       		.uleb128 0x35
+ 1394 00cf 00       		.byte	0x0
+ 1395 00d0 49       		.uleb128 0x49
+ 1396 00d1 13       		.uleb128 0x13
+ 1397 00d2 00       		.byte	0x0
+ 1398 00d3 00       		.byte	0x0
+ 1399 00d4 11       		.uleb128 0x11
+ 1400 00d5 01       		.uleb128 0x1
+ 1401 00d6 01       		.byte	0x1
+ 1402 00d7 49       		.uleb128 0x49
+ 1403 00d8 13       		.uleb128 0x13
+ 1404 00d9 01       		.uleb128 0x1
+ 1405 00da 13       		.uleb128 0x13
+ 1406 00db 00       		.byte	0x0
+ 1407 00dc 00       		.byte	0x0
+ 1408 00dd 12       		.uleb128 0x12
+ 1409 00de 21       		.uleb128 0x21
+ 1410 00df 00       		.byte	0x0
+ 1411 00e0 49       		.uleb128 0x49
+ 1412 00e1 13       		.uleb128 0x13
+ 1413 00e2 2F       		.uleb128 0x2f
+ 1414 00e3 0B       		.uleb128 0xb
+ 1415 00e4 00       		.byte	0x0
+ 1416 00e5 00       		.byte	0x0
+ 1417 00e6 13       		.uleb128 0x13
+ 1418 00e7 34       		.uleb128 0x34
+ 1419 00e8 00       		.byte	0x0
+ 1420 00e9 03       		.uleb128 0x3
+ 1421 00ea 0E       		.uleb128 0xe
+ 1422 00eb 3A       		.uleb128 0x3a
+ 1423 00ec 0B       		.uleb128 0xb
+ 1424 00ed 3B       		.uleb128 0x3b
+ 1425 00ee 0B       		.uleb128 0xb
+ 1426 00ef 49       		.uleb128 0x49
+ 1427 00f0 13       		.uleb128 0x13
+ 1428 00f1 3F       		.uleb128 0x3f
+ 1429 00f2 0C       		.uleb128 0xc
+ 1430 00f3 02       		.uleb128 0x2
+ 1431 00f4 0A       		.uleb128 0xa
+ 1432 00f5 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 30
+
+
+ 1433 00f6 00       		.byte	0x0
+ 1434 00f7 00       		.byte	0x0
+ 1435              		.section	.debug_pubnames,"",%progbits
+ 1436 0000 D9000000 		.4byte	0xd9
+ 1437 0004 0200     		.2byte	0x2
+ 1438 0006 00000000 		.4byte	.Ldebug_info0
+ 1439 000a E2020000 		.4byte	0x2e2
+ 1440 000e FE000000 		.4byte	0xfe
+ 1441 0012 4C696768 		.ascii	"Lights_AllOff\000"
+ 1441      74735F41 
+ 1441      6C6C4F66 
+ 1441      6600
+ 1442 0020 24010000 		.4byte	0x124
+ 1443 0024 4C696768 		.ascii	"Lights_AllOn\000"
+ 1443      74735F41 
+ 1443      6C6C4F6E 
+ 1443      00
+ 1444 0031 4A010000 		.4byte	0x14a
+ 1445 0035 4C696768 		.ascii	"Lights_FlashAllLeds\000"
+ 1445      74735F46 
+ 1445      6C617368 
+ 1445      416C6C4C 
+ 1445      65647300 
+ 1446 0049 70010000 		.4byte	0x170
+ 1447 004d 4C696768 		.ascii	"Lights_Run\000"
+ 1447      74735F52 
+ 1447      756E00
+ 1448 0058 BF010000 		.4byte	0x1bf
+ 1449 005c 4C696768 		.ascii	"Lights_SetLedMode\000"
+ 1449      74735F53 
+ 1449      65744C65 
+ 1449      644D6F64 
+ 1449      6500
+ 1450 006e 0A020000 		.4byte	0x20a
+ 1451 0072 4C696768 		.ascii	"Lights_SetLed\000"
+ 1451      74735F53 
+ 1451      65744C65 
+ 1451      6400
+ 1452 0080 40020000 		.4byte	0x240
+ 1453 0084 4C696768 		.ascii	"Lights_ToggleLed\000"
+ 1453      74735F54 
+ 1453      6F67676C 
+ 1453      654C6564 
+ 1453      00
+ 1454 0095 8B020000 		.4byte	0x28b
+ 1455 0099 6C65644D 		.ascii	"ledModeArray\000"
+ 1455      6F646541 
+ 1455      72726179 
+ 1455      00
+ 1456 00a6 AD020000 		.4byte	0x2ad
+ 1457 00aa 6C656446 		.ascii	"ledFlashRateMsArray\000"
+ 1457      6C617368 
+ 1457      52617465 
+ 1457      4D734172 
+ 1457      72617900 
+ 1458 00be CF020000 		.4byte	0x2cf
+ 1459 00c2 6C656450 		.ascii	"ledPrevFlashCountArray\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 31
+
+
+ 1459      72657646 
+ 1459      6C617368 
+ 1459      436F756E 
+ 1459      74417272 
+ 1460 00d9 00000000 		.4byte	0x0
+ 1461              		.section	.debug_aranges,"",%progbits
+ 1462 0000 4C000000 		.4byte	0x4c
+ 1463 0004 0200     		.2byte	0x2
+ 1464 0006 00000000 		.4byte	.Ldebug_info0
+ 1465 000a 04       		.byte	0x4
+ 1466 000b 00       		.byte	0x0
+ 1467 000c 0000     		.2byte	0x0
+ 1468 000e 0000     		.2byte	0x0
+ 1469 0010 00000000 		.4byte	.LFB29
+ 1470 0014 30000000 		.4byte	.LFE29-.LFB29
+ 1471 0018 00000000 		.4byte	.LFB30
+ 1472 001c 30000000 		.4byte	.LFE30-.LFB30
+ 1473 0020 00000000 		.4byte	.LFB31
+ 1474 0024 62000000 		.4byte	.LFE31-.LFB31
+ 1475 0028 00000000 		.4byte	.LFB32
+ 1476 002c FC000000 		.4byte	.LFE32-.LFB32
+ 1477 0030 00000000 		.4byte	.LFB33
+ 1478 0034 44000000 		.4byte	.LFE33-.LFB33
+ 1479 0038 00000000 		.4byte	.LFB34
+ 1480 003c A0000000 		.4byte	.LFE34-.LFB34
+ 1481 0040 00000000 		.4byte	.LFB35
+ 1482 0044 08010000 		.4byte	.LFE35-.LFB35
+ 1483 0048 00000000 		.4byte	0x0
+ 1484 004c 00000000 		.4byte	0x0
+ 1485              		.section	.debug_ranges,"",%progbits
+ 1486              	.Ldebug_ranges0:
+ 1487 0000 00000000 		.4byte	.Ltext0
+ 1488 0004 00000000 		.4byte	.Letext0
+ 1489 0008 00000000 		.4byte	.LFB29
+ 1490 000c 30000000 		.4byte	.LFE29
+ 1491 0010 00000000 		.4byte	.LFB30
+ 1492 0014 30000000 		.4byte	.LFE30
+ 1493 0018 00000000 		.4byte	.LFB31
+ 1494 001c 62000000 		.4byte	.LFE31
+ 1495 0020 00000000 		.4byte	.LFB32
+ 1496 0024 FC000000 		.4byte	.LFE32
+ 1497 0028 00000000 		.4byte	.LFB33
+ 1498 002c 44000000 		.4byte	.LFE33
+ 1499 0030 00000000 		.4byte	.LFB34
+ 1500 0034 A0000000 		.4byte	.LFE34
+ 1501 0038 00000000 		.4byte	.LFB35
+ 1502 003c 08010000 		.4byte	.LFE35
+ 1503 0040 00000000 		.4byte	0x0
+ 1504 0044 00000000 		.4byte	0x0
+ 1505              		.section	.debug_str,"MS",%progbits,1
+ 1506              	.LASF6:
+ 1507 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1507      206C6F6E 
+ 1507      6720696E 
+ 1507      7400
+ 1508              	.LASF9:
+ 1509 000e 63686172 		.ascii	"char\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 32
+
+
+ 1509      00
+ 1510              	.LASF16:
+ 1511 0013 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_MID\000"
+ 1511      424F4152 
+ 1511      445F4241 
+ 1511      54545F4C 
+ 1511      564C5F4D 
+ 1512              	.LASF23:
+ 1513 002a 6C65644D 		.ascii	"ledMode_t\000"
+ 1513      6F64655F 
+ 1513      7400
+ 1514              	.LASF15:
+ 1515 0034 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_TOP\000"
+ 1515      424F4152 
+ 1515      445F4241 
+ 1515      54545F4C 
+ 1515      564C5F54 
+ 1516              	.LASF32:
+ 1517 004b 6C656446 		.ascii	"ledFlashRate\000"
+ 1517      6C617368 
+ 1517      52617465 
+ 1517      00
+ 1518              	.LASF43:
+ 1519 0058 2E5C4C69 		.ascii	".\\Lights.c\000"
+ 1519      67687473 
+ 1519      2E6300
+ 1520              	.LASF22:
+ 1521 0063 464C4153 		.ascii	"FLASHING\000"
+ 1521      48494E47 
+ 1521      00
+ 1522              	.LASF27:
+ 1523 006c 4C696768 		.ascii	"Lights_Run\000"
+ 1523      74735F52 
+ 1523      756E00
+ 1524              	.LASF10:
+ 1525 0077 75696E74 		.ascii	"uint8\000"
+ 1525      3800
+ 1526              	.LASF37:
+ 1527 007d 4C696768 		.ascii	"Lights_ToggleLed\000"
+ 1527      74735F54 
+ 1527      6F67676C 
+ 1527      654C6564 
+ 1527      00
+ 1528              	.LASF14:
+ 1529 008e 4C45445F 		.ascii	"LED_ALARM_ON\000"
+ 1529      414C4152 
+ 1529      4D5F4F4E 
+ 1529      00
+ 1530              	.LASF28:
+ 1531 009b 636F756E 		.ascii	"counter\000"
+ 1531      74657200 
+ 1532              	.LASF0:
+ 1533 00a3 7369676E 		.ascii	"signed char\000"
+ 1533      65642063 
+ 1533      68617200 
+ 1534              	.LASF20:
+ 1535 00af 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_BOT\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 33
+
+
+ 1535      52454D4F 
+ 1535      54455F42 
+ 1535      4154545F 
+ 1535      4C564C5F 
+ 1536              	.LASF13:
+ 1537 00c7 4C45445F 		.ascii	"LED_MOTOR_ON\000"
+ 1537      4D4F544F 
+ 1537      525F4F4E 
+ 1537      00
+ 1538              	.LASF5:
+ 1539 00d4 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1539      20756E73 
+ 1539      69676E65 
+ 1539      6420696E 
+ 1539      7400
+ 1540              	.LASF3:
+ 1541 00e6 73686F72 		.ascii	"short unsigned int\000"
+ 1541      7420756E 
+ 1541      7369676E 
+ 1541      65642069 
+ 1541      6E7400
+ 1542              	.LASF21:
+ 1543 00f9 6C65645F 		.ascii	"led_t\000"
+ 1543      7400
+ 1544              	.LASF39:
+ 1545 00ff 6C65644D 		.ascii	"ledModeArray\000"
+ 1545      6F646541 
+ 1545      72726179 
+ 1545      00
+ 1546              	.LASF38:
+ 1547 010c 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1547      52784275 
+ 1547      66666572 
+ 1547      00
+ 1548              	.LASF26:
+ 1549 0119 4C696768 		.ascii	"Lights_FlashAllLeds\000"
+ 1549      74735F46 
+ 1549      6C617368 
+ 1549      416C6C4C 
+ 1549      65647300 
+ 1550              	.LASF31:
+ 1551 012d 6C65644D 		.ascii	"ledMode\000"
+ 1551      6F646500 
+ 1552              	.LASF33:
+ 1553 0135 646F7562 		.ascii	"double\000"
+ 1553      6C6500
+ 1554              	.LASF17:
+ 1555 013c 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_BOT\000"
+ 1555      424F4152 
+ 1555      445F4241 
+ 1555      54545F4C 
+ 1555      564C5F42 
+ 1556              	.LASF18:
+ 1557 0153 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_TOP\000"
+ 1557      52454D4F 
+ 1557      54455F42 
+ 1557      4154545F 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 34
+
+
+ 1557      4C564C5F 
+ 1558              	.LASF36:
+ 1559 016b 6F66664F 		.ascii	"offOn\000"
+ 1559      6E00
+ 1560              	.LASF11:
+ 1561 0171 75696E74 		.ascii	"uint32\000"
+ 1561      333200
+ 1562              	.LASF25:
+ 1563 0178 4C696768 		.ascii	"Lights_AllOn\000"
+ 1563      74735F41 
+ 1563      6C6C4F6E 
+ 1563      00
+ 1564              	.LASF1:
+ 1565 0185 756E7369 		.ascii	"unsigned char\000"
+ 1565      676E6564 
+ 1565      20636861 
+ 1565      7200
+ 1566              	.LASF8:
+ 1567 0193 756E7369 		.ascii	"unsigned int\000"
+ 1567      676E6564 
+ 1567      20696E74 
+ 1567      00
+ 1568              	.LASF40:
+ 1569 01a0 6C656446 		.ascii	"ledFlashRateMsArray\000"
+ 1569      6C617368 
+ 1569      52617465 
+ 1569      4D734172 
+ 1569      72617900 
+ 1570              	.LASF7:
+ 1571 01b4 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1571      206C6F6E 
+ 1571      6720756E 
+ 1571      7369676E 
+ 1571      65642069 
+ 1572              	.LASF42:
+ 1573 01cb 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1573      4320342E 
+ 1573      342E3100 
+ 1574              	.LASF30:
+ 1575 01d7 4C696768 		.ascii	"Lights_SetLedMode\000"
+ 1575      74735F53 
+ 1575      65744C65 
+ 1575      644D6F64 
+ 1575      6500
+ 1576              	.LASF35:
+ 1577 01e9 6C65644E 		.ascii	"ledNum\000"
+ 1577      756D00
+ 1578              	.LASF2:
+ 1579 01f0 73686F72 		.ascii	"short int\000"
+ 1579      7420696E 
+ 1579      7400
+ 1580              	.LASF24:
+ 1581 01fa 4C696768 		.ascii	"Lights_AllOff\000"
+ 1581      74735F41 
+ 1581      6C6C4F66 
+ 1581      6600
+ 1582              	.LASF19:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccBZ9s64.s 			page 35
+
+
+ 1583 0208 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_MID\000"
+ 1583      52454D4F 
+ 1583      54455F42 
+ 1583      4154545F 
+ 1583      4C564C5F 
+ 1584              	.LASF4:
+ 1585 0220 6C6F6E67 		.ascii	"long int\000"
+ 1585      20696E74 
+ 1585      00
+ 1586              	.LASF29:
+ 1587 0229 6E756D62 		.ascii	"numberOfCounts\000"
+ 1587      65724F66 
+ 1587      436F756E 
+ 1587      747300
+ 1588              	.LASF41:
+ 1589 0238 6C656450 		.ascii	"ledPrevFlashCountArray\000"
+ 1589      72657646 
+ 1589      6C617368 
+ 1589      436F756E 
+ 1589      74417272 
+ 1590              	.LASF44:
+ 1591 024f 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1591      73657273 
+ 1591      5C47656F 
+ 1591      5C446F63 
+ 1591      756D656E 
+ 1592 027d 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 1592      645C4669 
+ 1592      726D7761 
+ 1592      72655C50 
+ 1592      536F435C 
+ 1593              	.LASF34:
+ 1594 02a9 4C696768 		.ascii	"Lights_SetLed\000"
+ 1594      74735F53 
+ 1594      65744C65 
+ 1594      6400
+ 1595              	.LASF12:
+ 1596 02b7 4C45445F 		.ascii	"LED_IN_RANGE\000"
+ 1596      494E5F52 
+ 1596      414E4745 
+ 1596      00
+ 1597              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

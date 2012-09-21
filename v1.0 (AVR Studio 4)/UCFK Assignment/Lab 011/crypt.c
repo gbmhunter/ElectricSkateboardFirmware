@@ -1,0 +1,75 @@
+#include "crypt.h"
+
+
+/*
+ * An encrypting function - all encrypting and decrypting functions follow
+ * this template:
+ *    inbuffer :: 		the input message
+ *    outbuffer ::		the output encoded/decoded message
+ *    key ::			a generic pointer to an object that is the encoding key
+ * 
+ * This function is used to encrypt a message using Caesar's shift algorithm.
+ */
+
+void BV(int index, void *key){
+	
+	uint8_t n=4;
+	uint8_t x=0xFF;
+	x = (x & (1 << n)) >> n;
+	printf("%i\n",(int)x);
+}
+
+void caesar(buffer_t *inmessage, buffer_t *outmessage, void *key)
+{
+	long i;
+	int offset = *((uint8_t*)key) - 'a';
+	
+	for(i=0; i < inmessage->length; i++)
+	{
+		outmessage->buffer[i] = (inmessage->buffer[i] - offset) % ASCII_TABLE_SIZE;
+	}
+}
+
+/*
+ * Start here - replace me with a useful comment
+ */
+void decaesar(buffer_t *inmessage, buffer_t *outmessage, void *key)
+{
+	long i;
+	int offset = *((uint8_t*)key) - 'a';
+	
+	for(i=0; i < inmessage->length; i++)
+	{
+		outmessage->buffer[i] = (inmessage->buffer[i] - offset) % ASCII_TABLE_SIZE;
+	}
+
+
+}
+
+
+/*
+ * A function to find the encoding/decoding function from a command-line text string
+ */
+encoder_function_t get_encoder(char* encoder_name) 
+{
+	if (strcmp(encoder_name, "caesar") == 0)
+	{
+		return caesar;
+	}
+	
+	if (strcmp(encoder_name, "decaesar") == 0)
+	{
+		return decaesar;
+	}
+	if (strcmp(encoder_name, "code2") == 0)
+	{
+		return BV;
+	}
+	
+	printf("Encoder/Decoder not found\n");
+	exit(1);
+	return NULL;
+}
+
+	
+

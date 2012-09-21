@@ -1,0 +1,164 @@
+--------------- Rebuild Started: 05/29/2012 17:55:39 Project: Skateboard Remote, Configuration: ARM GCC 4.4.1 Debug ---------------
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\main.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Lights.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Buttons.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Adc.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\BattMonitor.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Comms.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedAlarm.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Cm3Start.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\core_cm3.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CyBootAsmGnu.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CyDmac.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CyFlash.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CyLib.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\cyPm.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CySpc.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\cyutils.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedMotorOn.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedInRange.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelHigh.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelMed.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelLow.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelHigh.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelMed.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelLow.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_CSHL.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_INT.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_Pins.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_SMS_Wrapper.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_TunerHelper.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_AMuxCH0.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\CapSense_IntClock.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartXbee.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartXbee_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartXbee_INT.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\AdcSar.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\AdcSar_INT.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\AdcSar_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\AMuxAdc.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\AdcSar_theACLK.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartDebug.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartDebug_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\UartDebug_INT.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\IsrMainTick.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\TimerMainTick.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\TimerMainTick_PM.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinSpare3.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\PinXbeeSleep.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\cyfitter_cfg.o"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.hex"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.elf"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.map"
+Deleting file ".\Skateboard Remote.cycdx"
+Deleting file ".\Skateboard Remote.rpt"
+Deleting file ".\Skateboard Remote_timing.html"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\.deps\C_FILE.P"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\.deps\ARM_C_FILE.P"
+Deleting file ".\CortexM3\ARM_GCC_441\Debug\.deps\GNU_ARM_ASM_FILE.P"
+cydsfit.exe "-.appdatapath" "C:\Users\Geo\AppData\Local\Cypress Semiconductor\PSoC Creator\2.0" "-.fdsnotice" "-.fdswarpdepfile=warp_dependencies.txt" "-.fdselabdepfile=elab_dependencies.txt" "-.fdsbldfile=generated_files.txt" "-p" "C:\Users\Geo\Documents\Projects\Electric Skateboard\Firmware\PSoC\Skateboard Remote.cydsn\Skateboard Remote.cyprj" "-d" "CY8C5246AXI-054" "-s" "C:\Users\Geo\Documents\Projects\Electric Skateboard\Firmware\PSoC\Skateboard Remote.cydsn\Generated_Source\PSoC5" "-w" "0" "--" "-yv2" "-w" "0" "-v3" "-ygs" "-q10" "-o2" "-.fftcfgtype=LE"
+Elaborating Design...
+ADD: pft.M0028: warning: Clock Warning: (UartXbee_IntClock's accuracy range '76.677 kHz +/- 5.000%, (72.843 kHz - 80.511 kHz)' is not within the specified tolerance range '76.800 kHz +/- 2.000%, (75.264 kHz - 78.336 kHz)'.).
+ * C:\Program Files (x86)\Cypress\PSoC Creator\2.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\UART_v2_10\UART_v2_10.cysch (Instance 'IntClock')
+ * C:\Users\Geo\Documents\Projects\Electric Skateboard\Firmware\PSoC\Skateboard Remote.cydsn\Skateboard Remote.cydwr (UartXbee_IntClock)
+ADD: pft.M0028: warning: Clock Warning: (UartDebug_IntClock's accuracy range '76.677 kHz +/- 5.000%, (72.843 kHz - 80.511 kHz)' is not within the specified tolerance range '76.800 kHz +/- 2.000%, (75.264 kHz - 78.336 kHz)'.).
+ * C:\Program Files (x86)\Cypress\PSoC Creator\2.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\UART_v2_10\UART_v2_10.cysch (Instance 'IntClock')
+ * C:\Users\Geo\Documents\Projects\Electric Skateboard\Firmware\PSoC\Skateboard Remote.cydsn\Skateboard Remote.cydwr (UartDebug_IntClock)
+HDL Generation ...
+Synthesis ...
+Place and Route ...
+Tech mapping ...
+ADD: pft.M0040: information: The following 1 pin(s) will be assigned a location by the fitter: PinXbeeSleep(0)
+Info: mpr.M0037: Unused pieces of the design have been optimized out. See the Tech mapping section of the report file for details. (App=cydsfit)
+Analog Placement ...
+Log: apr.M0058: The analog placement iterative improvement is 91% done. (App=cydsfit)
+Analog Routing ...
+Log: apr.M0017: ============ VeraRouter Improve 1 OverUse=3 ============ (App=cydsfit)
+Log: apr.M0017: ============ VeraRouter Improve 2 OverUse=1 ============ (App=cydsfit)
+Log: apr.M0017: ============ VeraRouter Improve 3 OverUse=1 ============ (App=cydsfit)
+Log: apr.M0017: ============ VeraRouter Improve 4 OverUse=1 ============ (App=cydsfit)
+Digital Placement ...
+Log: plm.M0040: The pin named PinBattVolt(0) at location P0[5] prevents a direct input connection to an Opamp. (App=cydsfit)
+Log: plm.M0040: The pin named PinUartXbeeTx(0) at location P3[4] prevents a direct input connection to an Opamp. (App=cydsfit)
+Log: plm.M0040: The pin named PinUartXbeeRx(0) at location P3[5] prevents a direct input connection to an Opamp. (App=cydsfit)
+Log: plm.M0038: The pin named \CapSense:PortCH0(1)\ at location P3[7] prevents usage of special purposes: OpAmp:out. (App=cydsfit)
+Log: plm.M0038: The pin named PinLedMotorOn(0) at location P12[4] prevents usage of special purposes: SIO or I2C:SCL. (App=cydsfit)
+Log: plm.M0038: The pin named PinLedInRange(0) at location P12[5] prevents usage of special purposes: SIO or I2C:SDA. (App=cydsfit)
+Log: plm.M0038: The pin named PinLedBoardBattLevelLow(0) at location P12[6] prevents usage of special purposes: SIO. (App=cydsfit)
+Log: plm.M0038: The pin named PinLedBoardBattLevelMed(0) at location P12[7] prevents usage of special purposes: SIO. (App=cydsfit)
+Info: plm.M0037: 
+      Certain internal analog resources use the following pins for preferred routing: P0[5], P3[4], P3[5], P3[7], P12[4], P12[5], P12[6], P12[7].
+      Please check the "Final Placement Details" section of the report file (Skateboard Remote.rpt) to see what resources are impacted by your pin selections.
+     (App=cydsfit)
+Digital Routing ...
+Bitstream Generation ...
+Static timing analysis ...
+API Generation ...
+Dependency Generation ...
+Clean Temporary Files ...
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\main.lst -ffunction-sections -c .\main.c -o .\CortexM3\ARM_GCC_441\Debug\main.o
+.\main.c: In function 'main':
+.\main.c:183: warning: enumeration value 'reset' not handled in switch
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\Lights.lst -ffunction-sections -c .\Lights.c -o .\CortexM3\ARM_GCC_441\Debug\Lights.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\Buttons.lst -ffunction-sections -c .\Buttons.c -o .\CortexM3\ARM_GCC_441\Debug\Buttons.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\Adc.lst -ffunction-sections -c .\Adc.c -o .\CortexM3\ARM_GCC_441\Debug\Adc.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\BattMonitor.lst -ffunction-sections -c .\BattMonitor.c -o .\CortexM3\ARM_GCC_441\Debug\BattMonitor.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\Comms.lst -ffunction-sections -c ..\common\Comms.c -o .\CortexM3\ARM_GCC_441\Debug\Comms.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedAlarm.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedAlarm.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedAlarm.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\Cm3Start.lst -ffunction-sections -c .\Generated_Source\PSoC5\Cm3Start.c -o .\CortexM3\ARM_GCC_441\Debug\Cm3Start.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\core_cm3.lst -ffunction-sections -c .\Generated_Source\PSoC5\core_cm3.c -o .\CortexM3\ARM_GCC_441\Debug\core_cm3.o
+arm-none-eabi-as.exe -I. -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -g -alh=.\CortexM3\ARM_GCC_441\Debug/CyBootAsmGnu.lst -o .\CortexM3\ARM_GCC_441\Debug\CyBootAsmGnu.o .\Generated_Source\PSoC5\CyBootAsmGnu.s
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CyDmac.lst -ffunction-sections -c .\Generated_Source\PSoC5\CyDmac.c -o .\CortexM3\ARM_GCC_441\Debug\CyDmac.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CyFlash.lst -ffunction-sections -c .\Generated_Source\PSoC5\CyFlash.c -o .\CortexM3\ARM_GCC_441\Debug\CyFlash.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CyLib.lst -ffunction-sections -c .\Generated_Source\PSoC5\CyLib.c -o .\CortexM3\ARM_GCC_441\Debug\CyLib.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\cyPm.lst -ffunction-sections -c .\Generated_Source\PSoC5\cyPm.c -o .\CortexM3\ARM_GCC_441\Debug\cyPm.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CySpc.lst -ffunction-sections -c .\Generated_Source\PSoC5\CySpc.c -o .\CortexM3\ARM_GCC_441\Debug\CySpc.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\cyutils.lst -ffunction-sections -c .\Generated_Source\PSoC5\cyutils.c -o .\CortexM3\ARM_GCC_441\Debug\cyutils.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedMotorOn.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedMotorOn.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedMotorOn.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedInRange.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedInRange.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedInRange.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelHigh.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedRemoteBattLevelHigh.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelHigh.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelMed.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedRemoteBattLevelMed.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelMed.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelLow.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedRemoteBattLevelLow.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelLow.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelHigh.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedBoardBattLevelHigh.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelHigh.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelMed.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedBoardBattLevelMed.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelMed.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelLow.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinLedBoardBattLevelLow.c -o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelLow.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_CSHL.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_CSHL.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_CSHL.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_INT.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_INT.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_INT.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_Pins.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_Pins.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_Pins.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_PM.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_SMS_Wrapper.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_SMS_Wrapper.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_SMS_Wrapper.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_TunerHelper.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_TunerHelper.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_TunerHelper.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_CompCH0.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_CompCH0_PM.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_AMuxCH0.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_AMuxCH0.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_AMuxCH0.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\CapSense_IntClock.lst -ffunction-sections -c .\Generated_Source\PSoC5\CapSense_IntClock.c -o .\CortexM3\ARM_GCC_441\Debug\CapSense_IntClock.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartXbee.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartXbee.c -o .\CortexM3\ARM_GCC_441\Debug\UartXbee.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartXbee_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartXbee_PM.c -o .\CortexM3\ARM_GCC_441\Debug\UartXbee_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartXbee_INT.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartXbee_INT.c -o .\CortexM3\ARM_GCC_441\Debug\UartXbee_INT.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\AdcSar.lst -ffunction-sections -c .\Generated_Source\PSoC5\AdcSar.c -o .\CortexM3\ARM_GCC_441\Debug\AdcSar.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\AdcSar_INT.lst -ffunction-sections -c .\Generated_Source\PSoC5\AdcSar_INT.c -o .\CortexM3\ARM_GCC_441\Debug\AdcSar_INT.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\AdcSar_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\AdcSar_PM.c -o .\CortexM3\ARM_GCC_441\Debug\AdcSar_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\AMuxAdc.lst -ffunction-sections -c .\Generated_Source\PSoC5\AMuxAdc.c -o .\CortexM3\ARM_GCC_441\Debug\AMuxAdc.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\AdcSar_theACLK.lst -ffunction-sections -c .\Generated_Source\PSoC5\AdcSar_theACLK.c -o .\CortexM3\ARM_GCC_441\Debug\AdcSar_theACLK.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartDebug.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartDebug.c -o .\CortexM3\ARM_GCC_441\Debug\UartDebug.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartDebug_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartDebug_PM.c -o .\CortexM3\ARM_GCC_441\Debug\UartDebug_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\UartDebug_INT.lst -ffunction-sections -c .\Generated_Source\PSoC5\UartDebug_INT.c -o .\CortexM3\ARM_GCC_441\Debug\UartDebug_INT.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\IsrMainTick.lst -ffunction-sections -c .\Generated_Source\PSoC5\IsrMainTick.c -o .\CortexM3\ARM_GCC_441\Debug\IsrMainTick.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\TimerMainTick.lst -ffunction-sections -c .\Generated_Source\PSoC5\TimerMainTick.c -o .\CortexM3\ARM_GCC_441\Debug\TimerMainTick.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\TimerMainTick_PM.lst -ffunction-sections -c .\Generated_Source\PSoC5\TimerMainTick_PM.c -o .\CortexM3\ARM_GCC_441\Debug\TimerMainTick_PM.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinSpare3.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinSpare3.c -o .\CortexM3\ARM_GCC_441\Debug\PinSpare3.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\PinXbeeSleep.lst -ffunction-sections -c .\Generated_Source\PSoC5\PinXbeeSleep.c -o .\CortexM3\ARM_GCC_441\Debug\PinXbeeSleep.o
+arm-none-eabi-gcc.exe -I. -Wno-main -I./Generated_Source/PSoC5 -mcpu=cortex-m3 -mthumb -Wall -g -Wa,-alh=.\CortexM3\ARM_GCC_441\Debug\cyfitter_cfg.lst -ffunction-sections -c .\Generated_Source\PSoC5\cyfitter_cfg.c -o .\CortexM3\ARM_GCC_441\Debug\cyfitter_cfg.o
+arm-none-eabi-ar.exe -rs ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.a" .\CortexM3\ARM_GCC_441\Debug\PinLedAlarm.o .\CortexM3\ARM_GCC_441\Debug\core_cm3.o .\CortexM3\ARM_GCC_441\Debug\CyBootAsmGnu.o .\CortexM3\ARM_GCC_441\Debug\CyDmac.o .\CortexM3\ARM_GCC_441\Debug\CyFlash.o .\CortexM3\ARM_GCC_441\Debug\CyLib.o .\CortexM3\ARM_GCC_441\Debug\cyPm.o .\CortexM3\ARM_GCC_441\Debug\CySpc.o .\CortexM3\ARM_GCC_441\Debug\cyutils.o .\CortexM3\ARM_GCC_441\Debug\PinLedMotorOn.o .\CortexM3\ARM_GCC_441\Debug\PinLedInRange.o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelHigh.o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelMed.o .\CortexM3\ARM_GCC_441\Debug\PinLedRemoteBattLevelLow.o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelHigh.o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelMed.o .\CortexM3\ARM_GCC_441\Debug\PinLedBoardBattLevelLow.o .\CortexM3\ARM_GCC_441\Debug\CapSense.o .\CortexM3\ARM_GCC_441\Debug\CapSense_CSHL.o .\CortexM3\ARM_GCC_441\Debug\CapSense_INT.o .\CortexM3\ARM_GCC_441\Debug\CapSense_Pins.o .\CortexM3\ARM_GCC_441\Debug\CapSense_PM.o .\CortexM3\ARM_GCC_441\Debug\CapSense_SMS_Wrapper.o .\CortexM3\ARM_GCC_441\Debug\CapSense_TunerHelper.o .\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0.o .\CortexM3\ARM_GCC_441\Debug\CapSense_CompCH0_PM.o .\CortexM3\ARM_GCC_441\Debug\CapSense_AMuxCH0.o .\CortexM3\ARM_GCC_441\Debug\CapSense_IntClock.o .\CortexM3\ARM_GCC_441\Debug\UartXbee.o .\CortexM3\ARM_GCC_441\Debug\UartXbee_PM.o .\CortexM3\ARM_GCC_441\Debug\UartXbee_INT.o .\CortexM3\ARM_GCC_441\Debug\AdcSar.o .\CortexM3\ARM_GCC_441\Debug\AdcSar_INT.o .\CortexM3\ARM_GCC_441\Debug\AdcSar_PM.o .\CortexM3\ARM_GCC_441\Debug\AMuxAdc.o .\CortexM3\ARM_GCC_441\Debug\AdcSar_theACLK.o .\CortexM3\ARM_GCC_441\Debug\UartDebug.o .\CortexM3\ARM_GCC_441\Debug\UartDebug_PM.o .\CortexM3\ARM_GCC_441\Debug\UartDebug_INT.o .\CortexM3\ARM_GCC_441\Debug\IsrMainTick.o .\CortexM3\ARM_GCC_441\Debug\TimerMainTick.o .\CortexM3\ARM_GCC_441\Debug\TimerMainTick_PM.o .\CortexM3\ARM_GCC_441\Debug\PinSpare3.o .\CortexM3\ARM_GCC_441\Debug\PinXbeeSleep.o .\CortexM3\ARM_GCC_441\Debug\cyfitter_cfg.o
+arm-none-eabi-ar.exe: creating .\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.a
+arm-none-eabi-gcc.exe -mthumb -march=armv7-m -mfix-cortex-m3-ldrd -T .\Generated_Source\PSoC5\cm3gcc.ld -g "-Wl,-Map,.\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.map" -Wl,--gc-sections -Wl,--start-group -o ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.elf" .\CortexM3\ARM_GCC_441\Debug\main.o .\CortexM3\ARM_GCC_441\Debug\Lights.o .\CortexM3\ARM_GCC_441\Debug\Buttons.o .\CortexM3\ARM_GCC_441\Debug\Adc.o .\CortexM3\ARM_GCC_441\Debug\BattMonitor.o .\CortexM3\ARM_GCC_441\Debug\Comms.o .\CortexM3\ARM_GCC_441\Debug\Cm3Start.o ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.a" "C:\Program Files (x86)\Cypress\PSoC Creator\2.0\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_441\Debug\CyComponentLibrary.a" -Wl,--end-group
+arm-none-eabi-objcopy.exe -O ihex ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.elf" ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.ihx"
+cyhextool -o ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.hex" -f ".\CortexM3\ARM_GCC_441\Debug\Skateboard Remote.ihx" -prot .\Generated_Source\PSoC5\protect.hex -id E136069 -a EEPROM=90200000:800,PROGRAM=00000000:10000,CONFIG=80000000:2000,PROTECT=90400000:40 -meta 0101 -cunv 00000006 -wonv AFAC90BC -ecc .\Generated_Source\PSoC5\config.hex
+Flash used: 43856 of 65536 bytes (66.9 %).
+SRAM used: 2136 of 16384 bytes (13.0 %).
+--------------- Rebuild Succeeded: 05/29/2012 17:56:37 ---------------

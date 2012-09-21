@@ -1,0 +1,3087 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 86020000 		.text
+  20      02003801 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	debugBuff,200,4
+  24              		.bss
+  25              		.align	2
+  26              	_msg:
+  27 0000 00000000 		.space	10
+  27      00000000 
+  27      0000
+  28              	boardStatusByte:
+  29 000a 00       		.space	1
+  30              		.data
+  31              		.type	mainState, %object
+  32              		.size	mainState, 1
+  33              	mainState:
+  34 0000 01       		.byte	1
+  35              		.bss
+  36 000b 00       		.align	2
+  37              	_mainTickCounter:
+  38 000c 00000000 		.space	4
+  39              	motionSensorTriggered:
+  40 0010 00       		.space	1
+  41              		.section	.rodata
+  42              		.align	2
+  43              	.LC0:
+  44 0000 4D41494E 		.ascii	"MAIN: Running...\015\012\000"
+  44      3A205275 
+  44      6E6E696E 
+  44      672E2E2E 
+  44      0D0A00
+  45 0013 00       		.align	2
+  46              	.LC1:
+  47 0014 4D41494E 		.ascii	"MAIN: Entering mainOff state.\015\012\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 2
+
+
+  47      3A20456E 
+  47      74657269 
+  47      6E67206D 
+  47      61696E4F 
+  48              		.align	2
+  49              	.LC2:
+  50 0034 4D41494E 		.ascii	"MAIN: Entering mainInRange state.\015\012\000"
+  50      3A20456E 
+  50      74657269 
+  50      6E67206D 
+  50      61696E49 
+  51              		.align	2
+  52              	.LC3:
+  53 0058 4D41494E 		.ascii	"MAIN: Entering mainMotorOn state.\015\012\000"
+  53      3A20456E 
+  53      74657269 
+  53      6E67206D 
+  53      61696E4D 
+  54              		.align	2
+  55              	.LC4:
+  56 007c 4D41494E 		.ascii	"MAIN: Remote has turned off motor.\015\012\000"
+  56      3A205265 
+  56      6D6F7465 
+  56      20686173 
+  56      20747572 
+  57 00a1 000000   		.align	2
+  58              	.LC5:
+  59 00a4 4D41494E 		.ascii	"MAIN: Entering mainAlarmArmed state.\015\012\000"
+  59      3A20456E 
+  59      74657269 
+  59      6E67206D 
+  59      61696E41 
+  60 00cb 00       		.align	2
+  61              	.LC6:
+  62 00cc 4D41494E 		.ascii	"MAIN: Entering mainAlarmTriggered state.\015\012\000"
+  62      3A20456E 
+  62      74657269 
+  62      6E67206D 
+  62      61696E41 
+  63              		.global	__aeabi_ui2d
+  64              		.global	__aeabi_dadd
+  65 00f7 00       		.align	2
+  66              	.LC7:
+  67 00f8 4D41494E 		.ascii	"MAIN: Trigger Count = %f, Main State Count = %lu\015"
+  67      3A205472 
+  67      69676765 
+  67      7220436F 
+  67      756E7420 
+  68 0129 0A00     		.ascii	"\012\000"
+  69              		.global	__aeabi_d2uiz
+  70 012b 00       		.align	2
+  71              	.LC8:
+  72 012c 4D41494E 		.ascii	"MAIN: Alarm triggered time elasped.\015\012\000"
+  72      3A20416C 
+  72      61726D20 
+  72      74726967 
+  72      67657265 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 3
+
+
+  73 0152 0000     		.section	.text.main,"ax",%progbits
+  74              		.align	2
+  75              		.global	main
+  76              		.thumb
+  77              		.thumb_func
+  78              		.type	main, %function
+  79              	main:
+  80              	.LFB29:
+  81              		.file 1 ".\\main.c"
+   1:.\main.c      **** //!
+   2:.\main.c      **** //! @file 		Led.c
+   3:.\main.c      **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\main.c      **** //! @date 		14/05/2011
+   5:.\main.c      **** //! @brief 		Main GPRS task and supporting functions.
+   6:.\main.c      **** //! @details
+   7:.\main.c      **** //!		<b>Last Modified:			</b> 14/05/2011			\n
+   8:.\main.c      **** //!		<b>Version:					</b> v1.0				\n
+   9:.\main.c      **** //!		<b>Company:					</b> CladLabs			\n
+  10:.\main.c      **** //!		<b>Project:					</b> Electric Skateboard\n
+  11:.\main.c      **** //!		<b>Computer Architecture:	</b> ARM				\n
+  12:.\main.c      **** //!		<b>Compiler:				</b> GCC				\n
+  13:.\main.c      **** //! 	<b>uC Model:				</b> PSoC5				\n
+  14:.\main.c      **** //!		<b>Documentation Format:	</b> Doxygen			\n
+  15:.\main.c      **** //!		
+  16:.\main.c      **** //!		Controls the led's on the board
+  17:.\main.c      **** //!
+  18:.\main.c      **** 
+  19:.\main.c      **** //=================================================================================================
+  20:.\main.c      **** //============================================ INFO ===============================================
+  21:.\main.c      **** //=================================================================================================
+  22:.\main.c      **** 
+  23:.\main.c      **** //=================================================================================================
+  24:.\main.c      **** //======================================= FILE INCLUSIONS =========================================
+  25:.\main.c      **** //=================================================================================================
+  26:.\main.c      **** 
+  27:.\main.c      **** 
+  28:.\main.c      **** #include <device.h>
+  29:.\main.c      **** #include <stdio.h>
+  30:.\main.c      **** 
+  31:.\main.c      **** #include "../common/PublicObjects.h"
+  32:.\main.c      **** 
+  33:.\main.c      **** #include "Comms.h"
+  34:.\main.c      **** 
+  35:.\main.c      **** #include "Config.h"
+  36:.\main.c      **** #include "Lights.h"
+  37:.\main.c      **** #include "Piezo.h"
+  38:.\main.c      **** #include "Motor.h"
+  39:.\main.c      **** #include "Adc.h"
+  40:.\main.c      **** 
+  41:.\main.c      **** //===============================================================================================//
+  42:.\main.c      **** //=================================== PRECOMPILER CHECKS ========================================//
+  43:.\main.c      **** //===============================================================================================//
+  44:.\main.c      **** 
+  45:.\main.c      **** //=================================================================================================
+  46:.\main.c      **** //========================================== DEFINES ==============================================
+  47:.\main.c      **** //=================================================================================================
+  48:.\main.c      **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 4
+
+
+  49:.\main.c      **** 
+  50:.\main.c      **** 
+  51:.\main.c      **** //=================================================================================================
+  52:.\main.c      **** //========================================== TYPEDEF's ============================================
+  53:.\main.c      **** //=================================================================================================
+  54:.\main.c      **** 
+  55:.\main.c      **** typedef enum{
+  56:.\main.c      **** 	init,
+  57:.\main.c      **** 	off,
+  58:.\main.c      **** 	inRange,
+  59:.\main.c      **** 	motorOn,
+  60:.\main.c      **** 	alarmArmed,
+  61:.\main.c      **** 	alarmTriggered
+  62:.\main.c      **** } mainStates_t;
+  63:.\main.c      **** 
+  64:.\main.c      **** //=================================================================================================
+  65:.\main.c      **** //==================================== PRIVATE VARIABLES ==========================================
+  66:.\main.c      **** //=================================================================================================
+  67:.\main.c      **** 
+  68:.\main.c      **** static uint8_t _msg[configCOMMS_TX_MSG_LENGTH];
+  69:.\main.c      **** // Status byte (shared with remote, both units can change bits, as set in definitions.h)
+  70:.\main.c      **** static uint8_t boardStatusByte;
+  71:.\main.c      **** 
+  72:.\main.c      **** static mainStates_t mainState = off;
+  73:.\main.c      **** 
+  74:.\main.c      **** static uint32_t _mainTickCounter = 0;
+  75:.\main.c      **** 
+  76:.\main.c      **** static bool_t motionSensorTriggered = FALSE;
+  77:.\main.c      **** 
+  78:.\main.c      **** //=================================================================================================
+  79:.\main.c      **** //=============================== PRIVATE FUNCTION PROTOTYPES =====================================
+  80:.\main.c      **** //=================================================================================================
+  81:.\main.c      **** 
+  82:.\main.c      **** bool_t Main_CheckForAlarmOnOffPressed(void);
+  83:.\main.c      **** void Main_CheckForLedOnOffPressed(void);
+  84:.\main.c      **** void Main_CheckForChangeLedMode(void);
+  85:.\main.c      **** void Main_BuildMsg(uint8_t *msg);
+  86:.\main.c      **** 
+  87:.\main.c      **** CY_ISR_PROTO(Main_MainTickIsr);
+  88:.\main.c      **** CY_ISR_PROTO(Main_MotionSensorIsr);
+  89:.\main.c      **** 
+  90:.\main.c      **** //=================================================================================================
+  91:.\main.c      **** //===================================== PUBLIC FUNCTIONS ==========================================
+  92:.\main.c      **** //=================================================================================================
+  93:.\main.c      **** 
+  94:.\main.c      **** void main()
+  95:.\main.c      **** {
+  82              		.loc 1 95 0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 8
+  85              		@ frame_needed = 1, uses_anonymous_args = 0
+  86 0000 80B5     		push	{r7, lr}
+  87              	.LCFI0:
+  88              		.cfi_def_cfa_offset 8
+  89 0002 86B0     		sub	sp, sp, #24
+  90              	.LCFI1:
+  91              		.cfi_def_cfa_offset 32
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 5
+
+
+  92 0004 04AF     		add	r7, sp, #16
+  93              		.cfi_offset 14, -4
+  94              		.cfi_offset 7, -8
+  95              	.LCFI2:
+  96              		.cfi_def_cfa 7, 16
+  96:.\main.c      **** 
+  97:.\main.c      **** 	CyGlobalIntEnable;
+  97              		.loc 1 97 0
+  98              	@ 97 ".\main.c" 1
+  99 0006 62B6     		CPSIE   i
+ 100              	@ 0 "" 2
+  98:.\main.c      **** 	
+  99:.\main.c      **** 	// Start main tick interrupt and pass in ISR
+ 100:.\main.c      **** 	IsrMainTick_StartEx(Main_MainTickIsr);
+ 101              		.loc 1 100 0
+ 102              		.thumb
+ 103 0008 40F20000 		movw	r0, #:lower16:Main_MainTickIsr
+ 104 000c C0F20000 		movt	r0, #:upper16:Main_MainTickIsr
+ 105 0010 FFF7FEFF 		bl	IsrMainTick_StartEx
+ 101:.\main.c      **** 	
+ 102:.\main.c      **** 	TimerMainTick_Start();
+ 106              		.loc 1 102 0
+ 107 0014 FFF7FEFF 		bl	TimerMainTick_Start
+ 103:.\main.c      **** 	
+ 104:.\main.c      **** 	static uint8_t iden_chars[3];
+ 105:.\main.c      **** 	iden_chars[0] = 's';
+ 108              		.loc 1 105 0
+ 109 0018 40F20003 		movw	r3, #:lower16:iden_chars.3789
+ 110 001c C0F20003 		movt	r3, #:upper16:iden_chars.3789
+ 111 0020 4FF07302 		mov	r2, #115
+ 112 0024 1A70     		strb	r2, [r3, #0]
+ 106:.\main.c      **** 	iden_chars[1] = 'k';
+ 113              		.loc 1 106 0
+ 114 0026 40F20003 		movw	r3, #:lower16:iden_chars.3789
+ 115 002a C0F20003 		movt	r3, #:upper16:iden_chars.3789
+ 116 002e 4FF06B02 		mov	r2, #107
+ 117 0032 5A70     		strb	r2, [r3, #1]
+ 107:.\main.c      **** 	iden_chars[2] = 't';
+ 118              		.loc 1 107 0
+ 119 0034 40F20003 		movw	r3, #:lower16:iden_chars.3789
+ 120 0038 C0F20003 		movt	r3, #:upper16:iden_chars.3789
+ 121 003c 4FF07402 		mov	r2, #116
+ 122 0040 9A70     		strb	r2, [r3, #2]
+ 108:.\main.c      **** 	
+ 109:.\main.c      **** 	Comms_Init(iden_chars);
+ 123              		.loc 1 109 0
+ 124 0042 40F20000 		movw	r0, #:lower16:iden_chars.3789
+ 125 0046 C0F20000 		movt	r0, #:upper16:iden_chars.3789
+ 126 004a FFF7FEFF 		bl	Comms_Init
+ 110:.\main.c      **** 	
+ 111:.\main.c      **** 	UartDebug_Start();
+ 127              		.loc 1 111 0
+ 128 004e FFF7FEFF 		bl	UartDebug_Start
+ 112:.\main.c      **** 	
+ 113:.\main.c      **** 	#if(configDEBUG_MAIN == 1)
+ 114:.\main.c      **** 		UartDebug_PutString("MAIN: Running...\r\n");
+ 129              		.loc 1 114 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 6
+
+
+ 130 0052 40F20000 		movw	r0, #:lower16:.LC0
+ 131 0056 C0F20000 		movt	r0, #:upper16:.LC0
+ 132 005a FFF7FEFF 		bl	UartDebug_PutString
+ 115:.\main.c      **** 	#endif
+ 116:.\main.c      **** 
+ 117:.\main.c      **** 	
+ 118:.\main.c      **** 	// Start motion sensor interrupt and pass in ISR
+ 119:.\main.c      **** 	IsrMotionSensor_StartEx(Main_MotionSensorIsr);
+ 133              		.loc 1 119 0
+ 134 005e 40F20000 		movw	r0, #:lower16:Main_MotionSensorIsr
+ 135 0062 C0F20000 		movt	r0, #:upper16:Main_MotionSensorIsr
+ 136 0066 FFF7FEFF 		bl	IsrMotionSensor_StartEx
+ 120:.\main.c      **** 	IsrMotionSensor_ClearPending();
+ 137              		.loc 1 120 0
+ 138 006a FFF7FEFF 		bl	IsrMotionSensor_ClearPending
+ 121:.\main.c      **** 	
+ 122:.\main.c      **** 	static mainStates_t prevMainState = init;
+ 123:.\main.c      **** 	
+ 124:.\main.c      **** 	// Flash lights as start-up O.K.
+ 125:.\main.c      ****     Lights_AllOn();
+ 139              		.loc 1 125 0
+ 140 006e FFF7FEFF 		bl	Lights_AllOn
+ 126:.\main.c      **** 	CyDelay(500);
+ 141              		.loc 1 126 0
+ 142 0072 4FF4FA70 		mov	r0, #500
+ 143 0076 FFF7FEFF 		bl	CyDelay
+ 127:.\main.c      **** 	Lights_AllOff();
+ 144              		.loc 1 127 0
+ 145 007a FFF7FEFF 		bl	Lights_AllOff
+ 128:.\main.c      **** 	CyDelay(250);
+ 146              		.loc 1 128 0
+ 147 007e 4FF0FA00 		mov	r0, #250
+ 148 0082 FFF7FEFF 		bl	CyDelay
+ 129:.\main.c      **** 	
+ 130:.\main.c      **** 	//PinXbeeSleep_Write(0);
+ 131:.\main.c      **** 	// Lights_SetLedMode(LIGHT_FRONT_LEFT, OFF, 0);
+ 132:.\main.c      **** 	// Lights_SetLedMode(LIGHT_FRONT_RIGHT, OFF, 500);
+ 133:.\main.c      **** 
+ 134:.\main.c      **** 	uint32_t currentTick = 0;
+ 149              		.loc 1 134 0
+ 150 0086 4FF00003 		mov	r3, #0
+ 151 008a 7B60     		str	r3, [r7, #4]
+ 152 008c 00E0     		b	.L31
+ 153              	.L37:
+ 135:.\main.c      **** 	static uint8_t alarmTriggerCount = 0;
+ 136:.\main.c      **** 	static uint32_t alarmTriggeredStartCount = 0;
+ 137:.\main.c      ****     
+ 138:.\main.c      ****     for(;;)
+ 139:.\main.c      ****     {
+ 140:.\main.c      **** 		
+ 141:.\main.c      **** 		// Update the current tick
+ 142:.\main.c      **** 		currentTick = _mainTickCounter;
+ 143:.\main.c      ****        
+ 144:.\main.c      **** 	   //===================================== CALL SUB-STATE MACHINES =============================//
+ 145:.\main.c      **** 	   
+ 146:.\main.c      **** 	   // Inputs
+ 147:.\main.c      **** 	   Lights_Run();
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 7
+
+
+ 148:.\main.c      **** 	   Adc_Run();
+ 149:.\main.c      **** 	   Comms_Run();
+ 150:.\main.c      **** 	   
+ 151:.\main.c      **** 	   // Outputs
+ 152:.\main.c      **** 	   Motor_Run();
+ 153:.\main.c      **** 	   Piezo_Run();
+ 154:.\main.c      **** 	   
+ 155:.\main.c      **** 	   //======================================== MAIN STATE MACHINE ===============================//
+ 156:.\main.c      **** 		switch(mainState)
+ 157:.\main.c      **** 		{
+ 158:.\main.c      **** 			
+ 159:.\main.c      **** 			case off:
+ 160:.\main.c      **** 				if(prevMainState != off)
+ 161:.\main.c      **** 				{
+ 162:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 163:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainOff state.\r\n");
+ 164:.\main.c      **** 					#endif
+ 165:.\main.c      **** 					// Clear on bit in status byte
+ 166:.\main.c      **** 					boardStatusByte &= ( (1 << commsON_BIT_POS)^0xFF );
+ 167:.\main.c      **** 					// Clear in range bit
+ 168:.\main.c      **** 					boardStatusByte &= ( (1 << commsIN_RANGE_BIT_POS)^0xFF );
+ 169:.\main.c      **** 					
+ 170:.\main.c      **** 					// Flash orange LED
+ 171:.\main.c      **** 					Lights_SetLedMode(LED_ORANGE, FLASHING, 500);
+ 172:.\main.c      **** 					Lights_SetLedMode(LED_RED, OFF, 0);
+ 173:.\main.c      **** 					Lights_SetLedMode(LED_GREEN, OFF, 0);
+ 174:.\main.c      **** 					
+ 175:.\main.c      **** 					// Turn off skirting light
+ 176:.\main.c      **** 					Lights_SetLedMode(LIGHT_SKIRTING, OFF, 0);
+ 177:.\main.c      **** 					
+ 178:.\main.c      **** 					Piezo_EmitBeep();
+ 179:.\main.c      **** 					Piezo_EmitBeep();
+ 180:.\main.c      **** 					
+ 181:.\main.c      **** 					prevMainState = off;
+ 182:.\main.c      **** 				}
+ 183:.\main.c      **** 					
+ 184:.\main.c      **** 				// Check if new packet has arrived from remote
+ 185:.\main.c      **** 				if(Comms_IsNewPacket())
+ 186:.\main.c      **** 				{
+ 187:.\main.c      **** 					
+ 188:.\main.c      **** 					Main_BuildMsg(_msg);
+ 189:.\main.c      **** 					Comms_Send(_msg, configCOMMS_TX_MSG_LENGTH);
+ 190:.\main.c      **** 					mainState = inRange;
+ 191:.\main.c      **** 					break;
+ 192:.\main.c      **** 				}
+ 193:.\main.c      **** 				
+ 194:.\main.c      **** 				break;
+ 195:.\main.c      **** 			//=========================================== IN RANGE STATE =================================//
+ 196:.\main.c      **** 			// Skateboard is in range of remote, but not turned on yet
+ 197:.\main.c      **** 			// Only state that you can go to alarm state from
+ 198:.\main.c      **** 			case inRange:
+ 199:.\main.c      **** 				if(prevMainState != inRange)
+ 200:.\main.c      **** 				{
+ 201:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 202:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainInRange state.\r\n");
+ 203:.\main.c      **** 					#endif
+ 204:.\main.c      **** 					
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 8
+
+
+ 205:.\main.c      **** 					// Set in-range bit in status byte
+ 206:.\main.c      **** 					boardStatusByte |= (1 << commsIN_RANGE_BIT_POS);
+ 207:.\main.c      **** 					
+ 208:.\main.c      **** 					// Solid on orange LED
+ 209:.\main.c      **** 					Lights_SetLedMode(LED_ORANGE, ON, 0);
+ 210:.\main.c      **** 					Lights_SetLedMode(LED_RED, OFF, 0);
+ 211:.\main.c      **** 					Lights_SetLedMode(LED_GREEN, OFF, 0);
+ 212:.\main.c      **** 					
+ 213:.\main.c      **** 					// Turn off skirting light
+ 214:.\main.c      **** 					Lights_SetLedMode(LIGHT_SKIRTING, OFF, 0);
+ 215:.\main.c      **** 					
+ 216:.\main.c      **** 					// Emit beep if arriving from any other state than motorOn
+ 217:.\main.c      **** 					if(prevMainState != motorOn)
+ 218:.\main.c      **** 						Piezo_EmitBeep();
+ 219:.\main.c      **** 					
+ 220:.\main.c      **** 					prevMainState = inRange;
+ 221:.\main.c      **** 				}
+ 222:.\main.c      **** 				
+ 223:.\main.c      **** 				if(Comms_IsNewPacket())
+ 224:.\main.c      **** 				{
+ 225:.\main.c      **** 					if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsON_BIT_POS))
+ 226:.\main.c      **** 					{
+ 227:.\main.c      **** 						mainState = motorOn;
+ 228:.\main.c      **** 					}
+ 229:.\main.c      **** 					
+ 230:.\main.c      **** 					Main_CheckForLedOnOffPressed();
+ 231:.\main.c      **** 					Main_CheckForChangeLedMode();
+ 232:.\main.c      **** 						
+ 233:.\main.c      **** 					if(Main_CheckForAlarmOnOffPressed())
+ 234:.\main.c      **** 					{
+ 235:.\main.c      **** 						mainState = alarmArmed;
+ 236:.\main.c      **** 						// Set on bit in status byte before sending message
+ 237:.\main.c      **** 						boardStatusByte |= (1 << commsALARM_ON_BIT_POS);
+ 238:.\main.c      **** 					}
+ 239:.\main.c      **** 					
+ 240:.\main.c      **** 					Main_BuildMsg(_msg);
+ 241:.\main.c      **** 					Comms_Send(_msg, configCOMMS_TX_MSG_LENGTH);
+ 242:.\main.c      **** 				}
+ 243:.\main.c      **** 				
+ 244:.\main.c      **** 				if(Comms_Timeout())
+ 245:.\main.c      **** 				{
+ 246:.\main.c      **** 					// Turn off skateboard if communication lost with remote
+ 247:.\main.c      **** 					mainState = off;
+ 248:.\main.c      **** 					break;
+ 249:.\main.c      **** 				}
+ 250:.\main.c      **** 				
+ 251:.\main.c      **** 				break;
+ 252:.\main.c      **** 			//=========================================== MOTOR ON =======================================//
+ 253:.\main.c      **** 			// Skateboard is on, and motor can be controlled
+ 254:.\main.c      **** 			// Cannot enter alarm state from here (have to turn motor off first)
+ 255:.\main.c      **** 			case motorOn:
+ 256:.\main.c      **** 				if(prevMainState != motorOn)
+ 257:.\main.c      **** 				{
+ 258:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 259:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainMotorOn state.\r\n");
+ 260:.\main.c      **** 					#endif
+ 261:.\main.c      **** 					// Set on bit in status byte
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 9
+
+
+ 262:.\main.c      **** 					boardStatusByte |= (1 << commsON_BIT_POS);
+ 263:.\main.c      **** 					
+ 264:.\main.c      **** 					// Solid on orange LED
+ 265:.\main.c      **** 					Lights_SetLedMode(LED_ORANGE, ON, 0);
+ 266:.\main.c      **** 					Lights_SetLedMode(LED_RED, OFF, 0);
+ 267:.\main.c      **** 					Lights_SetLedMode(LED_GREEN, ON, 0);
+ 268:.\main.c      **** 					
+ 269:.\main.c      **** 					// Turn on skirting light
+ 270:.\main.c      **** 					Lights_SetLedMode(LIGHT_SKIRTING, ON, 0);
+ 271:.\main.c      **** 					
+ 272:.\main.c      **** 					Piezo_EmitMotorOnSound(up);
+ 273:.\main.c      **** 				
+ 274:.\main.c      **** 					// Enable motor
+ 275:.\main.c      **** 					Motor_TurnOn();
+ 276:.\main.c      **** 					
+ 277:.\main.c      **** 					prevMainState = motorOn;
+ 278:.\main.c      **** 				}
+ 279:.\main.c      **** 				
+ 280:.\main.c      **** 				if(Comms_IsNewPacket())
+ 281:.\main.c      **** 				{
+ 282:.\main.c      **** 					
+ 283:.\main.c      **** 					// Check if off button on remote has been pressed
+ 284:.\main.c      **** 					if(!(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsON_BIT_POS)))
+ 285:.\main.c      **** 					{
+ 286:.\main.c      **** 						#if(configDEBUG_MAIN == 1)
+ 287:.\main.c      **** 							UartDebug_PutString("MAIN: Remote has turned off motor.\r\n");
+ 288:.\main.c      **** 						#endif
+ 289:.\main.c      **** 						// Clear on bit in status byte
+ 290:.\main.c      **** 						boardStatusByte &= ((1 << commsON_BIT_POS)^0xFF);
+ 291:.\main.c      **** 						// Turn off motor (user has lost all speed control)
+ 292:.\main.c      **** 						Piezo_EmitMotorOnSound(down);
+ 293:.\main.c      **** 						Motor_TurnOff();
+ 294:.\main.c      **** 						mainState = inRange;
+ 295:.\main.c      **** 					}
+ 296:.\main.c      **** 					
+ 297:.\main.c      **** 					Main_CheckForLedOnOffPressed();
+ 298:.\main.c      **** 					Main_CheckForChangeLedMode();
+ 299:.\main.c      **** 
+ 300:.\main.c      **** 					Main_BuildMsg(_msg);
+ 301:.\main.c      **** 					Comms_Send(_msg, configCOMMS_TX_MSG_LENGTH);
+ 302:.\main.c      **** 				}
+ 303:.\main.c      **** 
+ 304:.\main.c      **** 				// Check if comms has timed out (no packet received in limit set by COMMS_TIMEOUT_PERIOD)
+ 305:.\main.c      **** 				if(Comms_Timeout())
+ 306:.\main.c      **** 				{
+ 307:.\main.c      **** 					// Clear on bit in status byte
+ 308:.\main.c      **** 					boardStatusByte &= ((1 << commsON_BIT_POS)^0xFF);
+ 309:.\main.c      **** 					// Turn off motor (user has lost all speed control)
+ 310:.\main.c      **** 					Motor_TurnOff();
+ 311:.\main.c      **** 					Piezo_EmitMotorOnSound(down);
+ 312:.\main.c      **** 					// Turn off skateboard if communication lost with remote
+ 313:.\main.c      **** 					mainState = off;
+ 314:.\main.c      **** 					break;
+ 315:.\main.c      **** 				}
+ 316:.\main.c      **** 
+ 317:.\main.c      **** 				break;
+ 318:.\main.c      **** 			//=========================================== ALARM ARMED STATE ================================
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 10
+
+
+ 319:.\main.c      **** 			// Allows lights to be turned on/off. No comms timeout in this state, so user can turn remote of
+ 320:.\main.c      **** 			case alarmArmed:
+ 321:.\main.c      **** 				if(prevMainState != alarmArmed)
+ 322:.\main.c      **** 				{
+ 323:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 324:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainAlarmArmed state.\r\n");
+ 325:.\main.c      **** 					#endif
+ 326:.\main.c      **** 					PinMotionSensor_ClearInterrupt();
+ 327:.\main.c      **** 					IsrMotionSensor_ClearPending();
+ 328:.\main.c      **** 					IsrMotionSensor_Enable();
+ 329:.\main.c      **** 					// Solid on orange LED
+ 330:.\main.c      **** 					Lights_SetLedMode(LED_ORANGE, OFF, 0);
+ 331:.\main.c      **** 					Lights_SetLedMode(LED_RED, ON, 0);
+ 332:.\main.c      **** 					Lights_SetLedMode(LED_GREEN, OFF, 0);
+ 333:.\main.c      **** 					
+ 334:.\main.c      **** 					Piezo_AlarmActivatedSound();
+ 335:.\main.c      **** 					
+ 336:.\main.c      **** 					// Turn off skirting light
+ 337:.\main.c      **** 					Lights_SetLedMode(LIGHT_SKIRTING, OFF, 0);
+ 338:.\main.c      **** 					
+ 339:.\main.c      **** 					// Reset trigger count
+ 340:.\main.c      **** 					alarmTriggerCount = 0;
+ 341:.\main.c      **** 					
+ 342:.\main.c      **** 					prevMainState = alarmArmed;
+ 343:.\main.c      **** 				}
+ 344:.\main.c      **** 				
+ 345:.\main.c      **** 				
+ 346:.\main.c      **** 				// Turn alarm on if motion sensor is triggered
+ 347:.\main.c      **** 				if(motionSensorTriggered)
+ 348:.\main.c      **** 				{
+ 349:.\main.c      **** 					// Reset triggered flag for next time around
+ 350:.\main.c      **** 					motionSensorTriggered = FALSE;
+ 351:.\main.c      **** 					// Increment trigger counter
+ 352:.\main.c      **** 					alarmTriggerCount++;
+ 353:.\main.c      **** 					PinMotionSensor_ClearInterrupt();
+ 354:.\main.c      **** 					IsrMotionSensor_ClearPending();
+ 355:.\main.c      **** 					IsrMotionSensor_Enable();
+ 356:.\main.c      **** 					if(alarmTriggerCount > configALARM_NUMBER_OF_WARNING_BEEPS)
+ 357:.\main.c      **** 						// Go to triggered state (activate piezo, flashes lights)
+ 358:.\main.c      **** 						mainState = alarmTriggered;
+ 359:.\main.c      **** 					else
+ 360:.\main.c      **** 						// Give warning
+ 361:.\main.c      **** 						Piezo_EmitBeep();
+ 362:.\main.c      **** 				}
+ 363:.\main.c      **** 				
+ 364:.\main.c      **** 				if(Comms_IsNewPacket())
+ 365:.\main.c      **** 				{	
+ 366:.\main.c      **** 					Main_CheckForLedOnOffPressed();
+ 367:.\main.c      **** 					Main_CheckForChangeLedMode();
+ 368:.\main.c      **** 					
+ 369:.\main.c      **** 					// Check for alarm being turned off
+ 370:.\main.c      **** 					if(!Main_CheckForAlarmOnOffPressed())
+ 371:.\main.c      **** 					{
+ 372:.\main.c      **** 						Piezo_AlarmEnable(FALSE);
+ 373:.\main.c      **** 						// Clear status byte of alarm set bit
+ 374:.\main.c      **** 						boardStatusByte &= ((1 << commsALARM_ON_BIT_POS)^0xFF);
+ 375:.\main.c      **** 						mainState = inRange;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 11
+
+
+ 376:.\main.c      **** 					}
+ 377:.\main.c      **** 					
+ 378:.\main.c      **** 					Main_BuildMsg(_msg);
+ 379:.\main.c      **** 					Comms_Send(_msg, configCOMMS_TX_MSG_LENGTH);
+ 380:.\main.c      **** 				}
+ 381:.\main.c      **** 					
+ 382:.\main.c      **** 				break;
+ 383:.\main.c      **** 			//===================================== ALARM TRIGGERED STATE ================================//
+ 384:.\main.c      **** 			// No timeout for this state (user can set alarm and then turn of remote)
+ 385:.\main.c      **** 			case alarmTriggered:
+ 386:.\main.c      **** 				if(prevMainState != mainState)
+ 387:.\main.c      **** 				{
+ 388:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 389:.\main.c      **** 						UartDebug_PutString("MAIN: Entering mainAlarmTriggered state.\r\n");
+ 390:.\main.c      **** 					#endif
+ 391:.\main.c      **** 					// Turn the alarm on
+ 392:.\main.c      **** 					Piezo_AlarmEnable(TRUE);
+ 393:.\main.c      **** 					
+ 394:.\main.c      **** 					// Turn on skirting light, flash all other high-power lights
+ 395:.\main.c      **** 					Lights_SetLedMode(LIGHT_SKIRTING, ON, 0);
+ 396:.\main.c      **** 					Lights_SetLedMode(LIGHT_FRONT, FLASHING, 200);
+ 397:.\main.c      **** 					Lights_SetLedMode(LIGHT_BACK, FLASHING, 200);
+ 398:.\main.c      **** 					
+ 399:.\main.c      **** 					// Remeber the count at which this state was entered
+ 400:.\main.c      **** 					alarmTriggeredStartCount = _mainTickCounter;
+ 401:.\main.c      **** 					
+ 402:.\main.c      **** 					prevMainState = mainState;
+ 403:.\main.c      **** 				}
+ 404:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 405:.\main.c      **** 						snprintf(debugBuff, sizeof(debugBuff), "MAIN: Trigger Count = %f, Main State Count = %lu\r\n"
+ 406:.\main.c      **** 							alarmTriggeredStartCount + configALARM_TIME_TO_REMAIN_TRIGGERED_SEC*1000.0/configMAIN_TICK_P
+ 407:.\main.c      **** 						UartDebug_PutString(debugBuff);
+ 408:.\main.c      **** 					#endif
+ 409:.\main.c      **** 				
+ 410:.\main.c      **** 				
+ 411:.\main.c      **** 				if(Comms_IsNewPacket())
+ 412:.\main.c      **** 				{
+ 413:.\main.c      **** 					
+ 414:.\main.c      **** 					Main_CheckForLedOnOffPressed();
+ 415:.\main.c      **** 					Main_CheckForChangeLedMode();
+ 416:.\main.c      **** 					
+ 417:.\main.c      **** 					// Check for alarm being turned off
+ 418:.\main.c      **** 					if(!Main_CheckForAlarmOnOffPressed())
+ 419:.\main.c      **** 					{
+ 420:.\main.c      **** 						Piezo_AlarmEnable(FALSE);
+ 421:.\main.c      **** 						// Clear status byte of alarm set bit
+ 422:.\main.c      **** 						boardStatusByte &= ((1 << commsALARM_ON_BIT_POS)^0xFF);
+ 423:.\main.c      **** 						Lights_TurnOffHighPowerLights();
+ 424:.\main.c      **** 						mainState = inRange;
+ 425:.\main.c      **** 					}
+ 426:.\main.c      **** 					
+ 427:.\main.c      **** 					Main_BuildMsg(_msg);
+ 428:.\main.c      **** 					Comms_Send(_msg, configCOMMS_TX_MSG_LENGTH);
+ 429:.\main.c      **** 				}
+ 430:.\main.c      **** 				
+ 431:.\main.c      **** 				if(_mainTickCounter >= (uint32_t)(alarmTriggeredStartCount + configALARM_TIME_TO_REMAIN_TRIGGER
+ 432:.\main.c      **** 				{
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 12
+
+
+ 433:.\main.c      **** 					#if(configDEBUG_MAIN == 1)
+ 434:.\main.c      **** 						UartDebug_PutString("MAIN: Alarm triggered time elasped.\r\n");
+ 435:.\main.c      **** 					#endif
+ 436:.\main.c      **** 					// Disable alarm sound and go back to alarm armed state
+ 437:.\main.c      **** 					Piezo_AlarmEnable(FALSE);
+ 438:.\main.c      **** 					Lights_TurnOffHighPowerLights();
+ 439:.\main.c      **** 					mainState = alarmArmed;
+ 440:.\main.c      **** 				}
+ 441:.\main.c      **** 				
+ 442:.\main.c      **** 				break;
+ 443:.\main.c      **** 				
+ 444:.\main.c      **** 			default:
+ 445:.\main.c      **** 				break;
+ 446:.\main.c      **** 		}
+ 447:.\main.c      **** 		
+ 448:.\main.c      **** 		
+ 449:.\main.c      **** 		// Wait for next tick from interrupt
+ 450:.\main.c      **** 		if(currentTick == _mainTickCounter)
+ 451:.\main.c      **** 			// Normal operation, wait for next tick
+ 452:.\main.c      **** 			while(currentTick == _mainTickCounter);
+ 453:.\main.c      **** 		else
+ 454:.\main.c      **** 		{
+ 455:.\main.c      **** 			// Tick has incremented before main loop has finished executing, code is running too slow
+ 456:.\main.c      **** 			//! @todo Add error checking
+ 457:.\main.c      **** 		}
+ 458:.\main.c      **** 	   
+ 459:.\main.c      ****     }
+ 154              		.loc 1 459 0
+ 155 008e 00BF     		nop
+ 156              	.L31:
+ 157              		.loc 1 142 0
+ 158 0090 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 159 0094 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 160 0098 1B68     		ldr	r3, [r3, #0]
+ 161 009a 7B60     		str	r3, [r7, #4]
+ 162              		.loc 1 147 0
+ 163 009c FFF7FEFF 		bl	Lights_Run
+ 164              		.loc 1 148 0
+ 165 00a0 FFF7FEFF 		bl	Adc_Run
+ 166              		.loc 1 149 0
+ 167 00a4 FFF7FEFF 		bl	Comms_Run
+ 168              		.loc 1 152 0
+ 169 00a8 FFF7FEFF 		bl	Motor_Run
+ 170              		.loc 1 153 0
+ 171 00ac FFF7FEFF 		bl	Piezo_Run
+ 172              		.loc 1 156 0
+ 173 00b0 40F20003 		movw	r3, #:lower16:mainState
+ 174 00b4 C0F20003 		movt	r3, #:upper16:mainState
+ 175 00b8 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 176 00ba 03F1FF33 		add	r3, r3, #-1
+ 177 00be 042B     		cmp	r3, #4
+ 178 00c0 00F27383 		bhi	.L2
+ 179 00c4 01A2     		adr	r2, .L8
+ 180 00c6 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 181 00ca 00BF     		.align	2
+ 182              	.L8:
+ 183 00cc E1000000 		.word	.L3+1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 13
+
+
+ 184 00d0 CD010000 		.word	.L4+1
+ 185 00d4 0F030000 		.word	.L5+1
+ 186 00d8 6F040000 		.word	.L6+1
+ 187 00dc D5050000 		.word	.L7+1
+ 188              	.L3:
+ 189              		.loc 1 160 0
+ 190 00e0 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 191 00e4 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 192 00e8 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 193 00ea 012B     		cmp	r3, #1
+ 194 00ec 52D0     		beq	.L9
+ 195              		.loc 1 163 0
+ 196 00ee 40F20000 		movw	r0, #:lower16:.LC1
+ 197 00f2 C0F20000 		movt	r0, #:upper16:.LC1
+ 198 00f6 FFF7FEFF 		bl	UartDebug_PutString
+ 199              		.loc 1 166 0
+ 200 00fa 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 201 00fe C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 202 0102 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 203 0104 1A46     		mov	r2, r3
+ 204 0106 02F0FE02 		and	r2, r2, #254
+ 205 010a 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 206 010e C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 207 0112 1A70     		strb	r2, [r3, #0]
+ 208              		.loc 1 168 0
+ 209 0114 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 210 0118 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 211 011c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 212 011e 1A46     		mov	r2, r3
+ 213 0120 02F0FB02 		and	r2, r2, #251
+ 214 0124 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 215 0128 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 216 012c 1A70     		strb	r2, [r3, #0]
+ 217              		.loc 1 171 0
+ 218 012e 4FF00100 		mov	r0, #1
+ 219 0132 4FF00201 		mov	r1, #2
+ 220 0136 0FF29863 		adr	r3, .L38
+ 221 013a D3E90023 		ldrd	r2, [r3]
+ 222 013e FFF7FEFF 		bl	Lights_SetLedMode
+ 223              		.loc 1 172 0
+ 224 0142 4FF00000 		mov	r0, #0
+ 225 0146 4FF00001 		mov	r1, #0
+ 226 014a 4FF00002 		mov	r2, #0
+ 227 014e 4FF00003 		mov	r3, #0
+ 228 0152 FFF7FEFF 		bl	Lights_SetLedMode
+ 229              		.loc 1 173 0
+ 230 0156 4FF00200 		mov	r0, #2
+ 231 015a 4FF00001 		mov	r1, #0
+ 232 015e 4FF00002 		mov	r2, #0
+ 233 0162 4FF00003 		mov	r3, #0
+ 234 0166 FFF7FEFF 		bl	Lights_SetLedMode
+ 235              		.loc 1 176 0
+ 236 016a 4FF00500 		mov	r0, #5
+ 237 016e 4FF00001 		mov	r1, #0
+ 238 0172 4FF00002 		mov	r2, #0
+ 239 0176 4FF00003 		mov	r3, #0
+ 240 017a FFF7FEFF 		bl	Lights_SetLedMode
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 14
+
+
+ 241              		.loc 1 178 0
+ 242 017e FFF7FEFF 		bl	Piezo_EmitBeep
+ 243              		.loc 1 179 0
+ 244 0182 FFF7FEFF 		bl	Piezo_EmitBeep
+ 245              		.loc 1 181 0
+ 246 0186 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 247 018a C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 248 018e 4FF00102 		mov	r2, #1
+ 249 0192 1A70     		strb	r2, [r3, #0]
+ 250              	.L9:
+ 251              		.loc 1 185 0
+ 252 0194 FFF7FEFF 		bl	Comms_IsNewPacket
+ 253 0198 0346     		mov	r3, r0
+ 254 019a 002B     		cmp	r3, #0
+ 255 019c 00F0FE82 		beq	.L33
+ 256              		.loc 1 188 0
+ 257 01a0 40F20000 		movw	r0, #:lower16:_msg
+ 258 01a4 C0F20000 		movt	r0, #:upper16:_msg
+ 259 01a8 FFF7FEFF 		bl	Main_BuildMsg
+ 260              		.loc 1 189 0
+ 261 01ac 40F20000 		movw	r0, #:lower16:_msg
+ 262 01b0 C0F20000 		movt	r0, #:upper16:_msg
+ 263 01b4 4FF00A01 		mov	r1, #10
+ 264 01b8 FFF7FEFF 		bl	Comms_Send
+ 265              		.loc 1 190 0
+ 266 01bc 40F20003 		movw	r3, #:lower16:mainState
+ 267 01c0 C0F20003 		movt	r3, #:upper16:mainState
+ 268 01c4 4FF00202 		mov	r2, #2
+ 269 01c8 1A70     		strb	r2, [r3, #0]
+ 270              		.loc 1 191 0
+ 271 01ca EEE2     		b	.L2
+ 272              	.L4:
+ 273              		.loc 1 199 0
+ 274 01cc 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 275 01d0 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 276 01d4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 277 01d6 022B     		cmp	r3, #2
+ 278 01d8 4AD0     		beq	.L11
+ 279              		.loc 1 202 0
+ 280 01da 40F20000 		movw	r0, #:lower16:.LC2
+ 281 01de C0F20000 		movt	r0, #:upper16:.LC2
+ 282 01e2 FFF7FEFF 		bl	UartDebug_PutString
+ 283              		.loc 1 206 0
+ 284 01e6 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 285 01ea C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 286 01ee 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 287 01f0 43F00403 		orr	r3, r3, #4
+ 288 01f4 DAB2     		uxtb	r2, r3
+ 289 01f6 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 290 01fa C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 291 01fe 1A70     		strb	r2, [r3, #0]
+ 292              		.loc 1 209 0
+ 293 0200 4FF00100 		mov	r0, #1
+ 294 0204 4FF00101 		mov	r1, #1
+ 295 0208 4FF00002 		mov	r2, #0
+ 296 020c 4FF00003 		mov	r3, #0
+ 297 0210 FFF7FEFF 		bl	Lights_SetLedMode
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 15
+
+
+ 298              		.loc 1 210 0
+ 299 0214 4FF00000 		mov	r0, #0
+ 300 0218 4FF00001 		mov	r1, #0
+ 301 021c 4FF00002 		mov	r2, #0
+ 302 0220 4FF00003 		mov	r3, #0
+ 303 0224 FFF7FEFF 		bl	Lights_SetLedMode
+ 304              		.loc 1 211 0
+ 305 0228 4FF00200 		mov	r0, #2
+ 306 022c 4FF00001 		mov	r1, #0
+ 307 0230 4FF00002 		mov	r2, #0
+ 308 0234 4FF00003 		mov	r3, #0
+ 309 0238 FFF7FEFF 		bl	Lights_SetLedMode
+ 310              		.loc 1 214 0
+ 311 023c 4FF00500 		mov	r0, #5
+ 312 0240 4FF00001 		mov	r1, #0
+ 313 0244 4FF00002 		mov	r2, #0
+ 314 0248 4FF00003 		mov	r3, #0
+ 315 024c FFF7FEFF 		bl	Lights_SetLedMode
+ 316              		.loc 1 217 0
+ 317 0250 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 318 0254 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 319 0258 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 320 025a 032B     		cmp	r3, #3
+ 321 025c 01D0     		beq	.L12
+ 322              		.loc 1 218 0
+ 323 025e FFF7FEFF 		bl	Piezo_EmitBeep
+ 324              	.L12:
+ 325              		.loc 1 220 0
+ 326 0262 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 327 0266 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 328 026a 4FF00202 		mov	r2, #2
+ 329 026e 1A70     		strb	r2, [r3, #0]
+ 330              	.L11:
+ 331              		.loc 1 223 0
+ 332 0270 FFF7FEFF 		bl	Comms_IsNewPacket
+ 333 0274 0346     		mov	r3, r0
+ 334 0276 002B     		cmp	r3, #0
+ 335 0278 3BD0     		beq	.L13
+ 336              		.loc 1 225 0
+ 337 027a 4FF00400 		mov	r0, #4
+ 338 027e FFF7FEFF 		bl	Comms_GetByte
+ 339 0282 0346     		mov	r3, r0
+ 340 0284 03F00103 		and	r3, r3, #1
+ 341 0288 DBB2     		uxtb	r3, r3
+ 342 028a 002B     		cmp	r3, #0
+ 343 028c 06D0     		beq	.L14
+ 344              		.loc 1 227 0
+ 345 028e 40F20003 		movw	r3, #:lower16:mainState
+ 346 0292 C0F20003 		movt	r3, #:upper16:mainState
+ 347 0296 4FF00302 		mov	r2, #3
+ 348 029a 1A70     		strb	r2, [r3, #0]
+ 349              	.L14:
+ 350              		.loc 1 230 0
+ 351 029c FFF7FEFF 		bl	Main_CheckForLedOnOffPressed
+ 352              		.loc 1 231 0
+ 353 02a0 FFF7FEFF 		bl	Main_CheckForChangeLedMode
+ 354              		.loc 1 233 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 16
+
+
+ 355 02a4 FFF7FEFF 		bl	Main_CheckForAlarmOnOffPressed
+ 356 02a8 0346     		mov	r3, r0
+ 357 02aa 002B     		cmp	r3, #0
+ 358 02ac 13D0     		beq	.L15
+ 359              		.loc 1 235 0
+ 360 02ae 40F20003 		movw	r3, #:lower16:mainState
+ 361 02b2 C0F20003 		movt	r3, #:upper16:mainState
+ 362 02b6 4FF00402 		mov	r2, #4
+ 363 02ba 1A70     		strb	r2, [r3, #0]
+ 364              		.loc 1 237 0
+ 365 02bc 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 366 02c0 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 367 02c4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 368 02c6 43F00203 		orr	r3, r3, #2
+ 369 02ca DAB2     		uxtb	r2, r3
+ 370 02cc 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 371 02d0 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 372 02d4 1A70     		strb	r2, [r3, #0]
+ 373              	.L15:
+ 374              		.loc 1 240 0
+ 375 02d6 40F20000 		movw	r0, #:lower16:_msg
+ 376 02da C0F20000 		movt	r0, #:upper16:_msg
+ 377 02de FFF7FEFF 		bl	Main_BuildMsg
+ 378              		.loc 1 241 0
+ 379 02e2 40F20000 		movw	r0, #:lower16:_msg
+ 380 02e6 C0F20000 		movt	r0, #:upper16:_msg
+ 381 02ea 4FF00A01 		mov	r1, #10
+ 382 02ee FFF7FEFF 		bl	Comms_Send
+ 383              	.L13:
+ 384              		.loc 1 244 0
+ 385 02f2 FFF7FEFF 		bl	Comms_Timeout
+ 386 02f6 0346     		mov	r3, r0
+ 387 02f8 002B     		cmp	r3, #0
+ 388 02fa 00F05182 		beq	.L34
+ 389              		.loc 1 247 0
+ 390 02fe 40F20003 		movw	r3, #:lower16:mainState
+ 391 0302 C0F20003 		movt	r3, #:upper16:mainState
+ 392 0306 4FF00102 		mov	r2, #1
+ 393 030a 1A70     		strb	r2, [r3, #0]
+ 394              		.loc 1 248 0
+ 395 030c 4DE2     		b	.L2
+ 396              	.L5:
+ 397              		.loc 1 256 0
+ 398 030e 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 399 0312 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 400 0316 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 401 0318 032B     		cmp	r3, #3
+ 402 031a 47D0     		beq	.L17
+ 403              		.loc 1 259 0
+ 404 031c 40F20000 		movw	r0, #:lower16:.LC3
+ 405 0320 C0F20000 		movt	r0, #:upper16:.LC3
+ 406 0324 FFF7FEFF 		bl	UartDebug_PutString
+ 407              		.loc 1 262 0
+ 408 0328 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 409 032c C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 410 0330 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 411 0332 43F00103 		orr	r3, r3, #1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 17
+
+
+ 412 0336 DAB2     		uxtb	r2, r3
+ 413 0338 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 414 033c C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 415 0340 1A70     		strb	r2, [r3, #0]
+ 416              		.loc 1 265 0
+ 417 0342 4FF00100 		mov	r0, #1
+ 418 0346 4FF00101 		mov	r1, #1
+ 419 034a 4FF00002 		mov	r2, #0
+ 420 034e 4FF00003 		mov	r3, #0
+ 421 0352 FFF7FEFF 		bl	Lights_SetLedMode
+ 422              		.loc 1 266 0
+ 423 0356 4FF00000 		mov	r0, #0
+ 424 035a 4FF00001 		mov	r1, #0
+ 425 035e 4FF00002 		mov	r2, #0
+ 426 0362 4FF00003 		mov	r3, #0
+ 427 0366 FFF7FEFF 		bl	Lights_SetLedMode
+ 428              		.loc 1 267 0
+ 429 036a 4FF00200 		mov	r0, #2
+ 430 036e 4FF00101 		mov	r1, #1
+ 431 0372 4FF00002 		mov	r2, #0
+ 432 0376 4FF00003 		mov	r3, #0
+ 433 037a FFF7FEFF 		bl	Lights_SetLedMode
+ 434              		.loc 1 270 0
+ 435 037e 4FF00500 		mov	r0, #5
+ 436 0382 4FF00101 		mov	r1, #1
+ 437 0386 4FF00002 		mov	r2, #0
+ 438 038a 4FF00003 		mov	r3, #0
+ 439 038e FFF7FEFF 		bl	Lights_SetLedMode
+ 440              		.loc 1 272 0
+ 441 0392 4FF00000 		mov	r0, #0
+ 442 0396 FFF7FEFF 		bl	Piezo_EmitMotorOnSound
+ 443              		.loc 1 275 0
+ 444 039a FFF7FEFF 		bl	Motor_TurnOn
+ 445              		.loc 1 277 0
+ 446 039e 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 447 03a2 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 448 03a6 4FF00302 		mov	r2, #3
+ 449 03aa 1A70     		strb	r2, [r3, #0]
+ 450              	.L17:
+ 451              		.loc 1 280 0
+ 452 03ac FFF7FEFF 		bl	Comms_IsNewPacket
+ 453 03b0 0346     		mov	r3, r0
+ 454 03b2 002B     		cmp	r3, #0
+ 455 03b4 3AD0     		beq	.L18
+ 456              		.loc 1 284 0
+ 457 03b6 4FF00400 		mov	r0, #4
+ 458 03ba FFF7FEFF 		bl	Comms_GetByte
+ 459 03be 0346     		mov	r3, r0
+ 460 03c0 03F00103 		and	r3, r3, #1
+ 461 03c4 002B     		cmp	r3, #0
+ 462 03c6 1FD1     		bne	.L19
+ 463              		.loc 1 287 0
+ 464 03c8 40F20000 		movw	r0, #:lower16:.LC4
+ 465 03cc C0F20000 		movt	r0, #:upper16:.LC4
+ 466 03d0 FFF7FEFF 		bl	UartDebug_PutString
+ 467              		.loc 1 290 0
+ 468 03d4 40F20003 		movw	r3, #:lower16:boardStatusByte
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 18
+
+
+ 469 03d8 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 470 03dc 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 471 03de 1A46     		mov	r2, r3
+ 472 03e0 02F0FE02 		and	r2, r2, #254
+ 473 03e4 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 474 03e8 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 475 03ec 1A70     		strb	r2, [r3, #0]
+ 476              		.loc 1 292 0
+ 477 03ee 4FF00100 		mov	r0, #1
+ 478 03f2 FFF7FEFF 		bl	Piezo_EmitMotorOnSound
+ 479              		.loc 1 293 0
+ 480 03f6 FFF7FEFF 		bl	Motor_TurnOff
+ 481              		.loc 1 294 0
+ 482 03fa 40F20003 		movw	r3, #:lower16:mainState
+ 483 03fe C0F20003 		movt	r3, #:upper16:mainState
+ 484 0402 4FF00202 		mov	r2, #2
+ 485 0406 1A70     		strb	r2, [r3, #0]
+ 486              	.L19:
+ 487              		.loc 1 297 0
+ 488 0408 FFF7FEFF 		bl	Main_CheckForLedOnOffPressed
+ 489              		.loc 1 298 0
+ 490 040c FFF7FEFF 		bl	Main_CheckForChangeLedMode
+ 491              		.loc 1 300 0
+ 492 0410 40F20000 		movw	r0, #:lower16:_msg
+ 493 0414 C0F20000 		movt	r0, #:upper16:_msg
+ 494 0418 FFF7FEFF 		bl	Main_BuildMsg
+ 495              		.loc 1 301 0
+ 496 041c 40F20000 		movw	r0, #:lower16:_msg
+ 497 0420 C0F20000 		movt	r0, #:upper16:_msg
+ 498 0424 4FF00A01 		mov	r1, #10
+ 499 0428 FFF7FEFF 		bl	Comms_Send
+ 500              	.L18:
+ 501              		.loc 1 305 0
+ 502 042c FFF7FEFF 		bl	Comms_Timeout
+ 503 0430 0346     		mov	r3, r0
+ 504 0432 002B     		cmp	r3, #0
+ 505 0434 00F0B681 		beq	.L35
+ 506              		.loc 1 308 0
+ 507 0438 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 508 043c C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 509 0440 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 510 0442 1A46     		mov	r2, r3
+ 511 0444 02F0FE02 		and	r2, r2, #254
+ 512 0448 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 513 044c C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 514 0450 1A70     		strb	r2, [r3, #0]
+ 515              		.loc 1 310 0
+ 516 0452 FFF7FEFF 		bl	Motor_TurnOff
+ 517              		.loc 1 311 0
+ 518 0456 4FF00100 		mov	r0, #1
+ 519 045a FFF7FEFF 		bl	Piezo_EmitMotorOnSound
+ 520              		.loc 1 313 0
+ 521 045e 40F20003 		movw	r3, #:lower16:mainState
+ 522 0462 C0F20003 		movt	r3, #:upper16:mainState
+ 523 0466 4FF00102 		mov	r2, #1
+ 524 046a 1A70     		strb	r2, [r3, #0]
+ 525              		.loc 1 314 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 19
+
+
+ 526 046c 9DE1     		b	.L2
+ 527              	.L6:
+ 528              		.loc 1 321 0
+ 529 046e 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 530 0472 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 531 0476 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 532 0478 042B     		cmp	r3, #4
+ 533 047a 43D0     		beq	.L21
+ 534              		.loc 1 324 0
+ 535 047c 40F20000 		movw	r0, #:lower16:.LC5
+ 536 0480 C0F20000 		movt	r0, #:upper16:.LC5
+ 537 0484 FFF7FEFF 		bl	UartDebug_PutString
+ 538              		.loc 1 326 0
+ 539 0488 FFF7FEFF 		bl	PinMotionSensor_ClearInterrupt
+ 540              		.loc 1 327 0
+ 541 048c FFF7FEFF 		bl	IsrMotionSensor_ClearPending
+ 542              		.loc 1 328 0
+ 543 0490 FFF7FEFF 		bl	IsrMotionSensor_Enable
+ 544              		.loc 1 330 0
+ 545 0494 4FF00100 		mov	r0, #1
+ 546 0498 4FF00001 		mov	r1, #0
+ 547 049c 4FF00002 		mov	r2, #0
+ 548 04a0 4FF00003 		mov	r3, #0
+ 549 04a4 FFF7FEFF 		bl	Lights_SetLedMode
+ 550              		.loc 1 331 0
+ 551 04a8 4FF00000 		mov	r0, #0
+ 552 04ac 4FF00101 		mov	r1, #1
+ 553 04b0 4FF00002 		mov	r2, #0
+ 554 04b4 4FF00003 		mov	r3, #0
+ 555 04b8 FFF7FEFF 		bl	Lights_SetLedMode
+ 556              		.loc 1 332 0
+ 557 04bc 4FF00200 		mov	r0, #2
+ 558 04c0 4FF00001 		mov	r1, #0
+ 559 04c4 4FF00002 		mov	r2, #0
+ 560 04c8 4FF00003 		mov	r3, #0
+ 561 04cc FFF7FEFF 		bl	Lights_SetLedMode
+ 562              		.loc 1 334 0
+ 563 04d0 FFF7FEFF 		bl	Piezo_AlarmActivatedSound
+ 564              		.loc 1 337 0
+ 565 04d4 4FF00500 		mov	r0, #5
+ 566 04d8 4FF00001 		mov	r1, #0
+ 567 04dc 4FF00002 		mov	r2, #0
+ 568 04e0 4FF00003 		mov	r3, #0
+ 569 04e4 FFF7FEFF 		bl	Lights_SetLedMode
+ 570              		.loc 1 340 0
+ 571 04e8 40F20003 		movw	r3, #:lower16:alarmTriggerCount.3792
+ 572 04ec C0F20003 		movt	r3, #:upper16:alarmTriggerCount.3792
+ 573 04f0 4FF00002 		mov	r2, #0
+ 574 04f4 1A70     		strb	r2, [r3, #0]
+ 575              		.loc 1 342 0
+ 576 04f6 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 577 04fa C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 578 04fe 4FF00402 		mov	r2, #4
+ 579 0502 1A70     		strb	r2, [r3, #0]
+ 580              	.L21:
+ 581              		.loc 1 347 0
+ 582 0504 40F20003 		movw	r3, #:lower16:motionSensorTriggered
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 20
+
+
+ 583 0508 C0F20003 		movt	r3, #:upper16:motionSensorTriggered
+ 584 050c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 585 050e 002B     		cmp	r3, #0
+ 586 0510 2AD0     		beq	.L22
+ 587              		.loc 1 350 0
+ 588 0512 40F20003 		movw	r3, #:lower16:motionSensorTriggered
+ 589 0516 C0F20003 		movt	r3, #:upper16:motionSensorTriggered
+ 590 051a 4FF00002 		mov	r2, #0
+ 591 051e 1A70     		strb	r2, [r3, #0]
+ 592              		.loc 1 352 0
+ 593 0520 40F20003 		movw	r3, #:lower16:alarmTriggerCount.3792
+ 594 0524 C0F20003 		movt	r3, #:upper16:alarmTriggerCount.3792
+ 595 0528 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 596 052a 03F10103 		add	r3, r3, #1
+ 597 052e DAB2     		uxtb	r2, r3
+ 598 0530 40F20003 		movw	r3, #:lower16:alarmTriggerCount.3792
+ 599 0534 C0F20003 		movt	r3, #:upper16:alarmTriggerCount.3792
+ 600 0538 1A70     		strb	r2, [r3, #0]
+ 601              		.loc 1 353 0
+ 602 053a FFF7FEFF 		bl	PinMotionSensor_ClearInterrupt
+ 603              		.loc 1 354 0
+ 604 053e FFF7FEFF 		bl	IsrMotionSensor_ClearPending
+ 605              		.loc 1 355 0
+ 606 0542 FFF7FEFF 		bl	IsrMotionSensor_Enable
+ 607              		.loc 1 356 0
+ 608 0546 40F20003 		movw	r3, #:lower16:alarmTriggerCount.3792
+ 609 054a C0F20003 		movt	r3, #:upper16:alarmTriggerCount.3792
+ 610 054e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 611 0550 022B     		cmp	r3, #2
+ 612 0552 07D9     		bls	.L23
+ 613              		.loc 1 358 0
+ 614 0554 40F20003 		movw	r3, #:lower16:mainState
+ 615 0558 C0F20003 		movt	r3, #:upper16:mainState
+ 616 055c 4FF00502 		mov	r2, #5
+ 617 0560 1A70     		strb	r2, [r3, #0]
+ 618 0562 01E0     		b	.L22
+ 619              	.L23:
+ 620              		.loc 1 361 0
+ 621 0564 FFF7FEFF 		bl	Piezo_EmitBeep
+ 622              	.L22:
+ 623              		.loc 1 364 0
+ 624 0568 FFF7FEFF 		bl	Comms_IsNewPacket
+ 625 056c 0346     		mov	r3, r0
+ 626 056e 002B     		cmp	r3, #0
+ 627 0570 00F01A81 		beq	.L36
+ 628              		.loc 1 366 0
+ 629 0574 FFF7FEFF 		bl	Main_CheckForLedOnOffPressed
+ 630              		.loc 1 367 0
+ 631 0578 FFF7FEFF 		bl	Main_CheckForChangeLedMode
+ 632              		.loc 1 370 0
+ 633 057c FFF7FEFF 		bl	Main_CheckForAlarmOnOffPressed
+ 634 0580 0346     		mov	r3, r0
+ 635 0582 002B     		cmp	r3, #0
+ 636 0584 17D1     		bne	.L25
+ 637              		.loc 1 372 0
+ 638 0586 4FF00000 		mov	r0, #0
+ 639 058a FFF7FEFF 		bl	Piezo_AlarmEnable
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 21
+
+
+ 640              		.loc 1 374 0
+ 641 058e 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 642 0592 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 643 0596 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 644 0598 1A46     		mov	r2, r3
+ 645 059a 02F0FD02 		and	r2, r2, #253
+ 646 059e 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 647 05a2 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 648 05a6 1A70     		strb	r2, [r3, #0]
+ 649              		.loc 1 375 0
+ 650 05a8 40F20003 		movw	r3, #:lower16:mainState
+ 651 05ac C0F20003 		movt	r3, #:upper16:mainState
+ 652 05b0 4FF00202 		mov	r2, #2
+ 653 05b4 1A70     		strb	r2, [r3, #0]
+ 654              	.L25:
+ 655              		.loc 1 378 0
+ 656 05b6 40F20000 		movw	r0, #:lower16:_msg
+ 657 05ba C0F20000 		movt	r0, #:upper16:_msg
+ 658 05be FFF7FEFF 		bl	Main_BuildMsg
+ 659              		.loc 1 379 0
+ 660 05c2 40F20000 		movw	r0, #:lower16:_msg
+ 661 05c6 C0F20000 		movt	r0, #:upper16:_msg
+ 662 05ca 4FF00A01 		mov	r1, #10
+ 663 05ce FFF7FEFF 		bl	Comms_Send
+ 664              		.loc 1 382 0
+ 665 05d2 EAE0     		b	.L2
+ 666              	.L7:
+ 667              		.loc 1 386 0
+ 668 05d4 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 669 05d8 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 670 05dc 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 671 05de 40F20003 		movw	r3, #:lower16:mainState
+ 672 05e2 C0F20003 		movt	r3, #:upper16:mainState
+ 673 05e6 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 674 05e8 9A42     		cmp	r2, r3
+ 675 05ea 3FD0     		beq	.L26
+ 676              		.loc 1 389 0
+ 677 05ec 40F20000 		movw	r0, #:lower16:.LC6
+ 678 05f0 C0F20000 		movt	r0, #:upper16:.LC6
+ 679 05f4 FFF7FEFF 		bl	UartDebug_PutString
+ 680              		.loc 1 392 0
+ 681 05f8 4FF00100 		mov	r0, #1
+ 682 05fc FFF7FEFF 		bl	Piezo_AlarmEnable
+ 683              		.loc 1 395 0
+ 684 0600 4FF00500 		mov	r0, #5
+ 685 0604 4FF00101 		mov	r1, #1
+ 686 0608 4FF00002 		mov	r2, #0
+ 687 060c 4FF00003 		mov	r3, #0
+ 688 0610 FFF7FEFF 		bl	Lights_SetLedMode
+ 689              		.loc 1 396 0
+ 690 0614 4FF00300 		mov	r0, #3
+ 691 0618 4FF00201 		mov	r1, #2
+ 692 061c 4FF00002 		mov	r2, #0
+ 693 0620 4FF08043 		mov	r3, #1073741824
+ 694 0624 03F5D203 		add	r3, r3, #6881280
+ 695 0628 FFF7FEFF 		bl	Lights_SetLedMode
+ 696              		.loc 1 397 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 22
+
+
+ 697 062c 4FF00400 		mov	r0, #4
+ 698 0630 4FF00201 		mov	r1, #2
+ 699 0634 4FF00002 		mov	r2, #0
+ 700 0638 4FF08043 		mov	r3, #1073741824
+ 701 063c 03F5D203 		add	r3, r3, #6881280
+ 702 0640 FFF7FEFF 		bl	Lights_SetLedMode
+ 703              		.loc 1 400 0
+ 704 0644 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 705 0648 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 706 064c 1A68     		ldr	r2, [r3, #0]
+ 707 064e 40F20003 		movw	r3, #:lower16:alarmTriggeredStartCount.3793
+ 708 0652 C0F20003 		movt	r3, #:upper16:alarmTriggeredStartCount.3793
+ 709 0656 1A60     		str	r2, [r3, #0]
+ 710              		.loc 1 402 0
+ 711 0658 40F20003 		movw	r3, #:lower16:mainState
+ 712 065c C0F20003 		movt	r3, #:upper16:mainState
+ 713 0660 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 714 0662 40F20003 		movw	r3, #:lower16:prevMainState.3790
+ 715 0666 C0F20003 		movt	r3, #:upper16:prevMainState.3790
+ 716 066a 1A70     		strb	r2, [r3, #0]
+ 717              	.L26:
+ 718              		.loc 1 405 0
+ 719 066c 40F20003 		movw	r3, #:lower16:alarmTriggeredStartCount.3793
+ 720 0670 C0F20003 		movt	r3, #:upper16:alarmTriggeredStartCount.3793
+ 721 0674 1B68     		ldr	r3, [r3, #0]
+ 722 0676 1846     		mov	r0, r3
+ 723 0678 FFF7FEFF 		bl	__aeabi_ui2d
+ 724 067c 0246     		mov	r2, r0
+ 725 067e 0B46     		mov	r3, r1
+ 726 0680 1046     		mov	r0, r2
+ 727 0682 1946     		mov	r1, r3
+ 728 0684 54A3     		adr	r3, .L38+8
+ 729 0686 D3E90023 		ldrd	r2, [r3]
+ 730 068a FFF7FEFF 		bl	__aeabi_dadd
+ 731 068e 0246     		mov	r2, r0
+ 732 0690 0B46     		mov	r3, r1
+ 733 0692 1046     		mov	r0, r2
+ 734 0694 1946     		mov	r1, r3
+ 735 0696 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 736 069a C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 737 069e 1B68     		ldr	r3, [r3, #0]
+ 738 06a0 CDE90001 		strd	r0, [sp]
+ 739 06a4 0293     		str	r3, [sp, #8]
+ 740 06a6 40F20000 		movw	r0, #:lower16:debugBuff
+ 741 06aa C0F20000 		movt	r0, #:upper16:debugBuff
+ 742 06ae 4FF0C801 		mov	r1, #200
+ 743 06b2 40F20002 		movw	r2, #:lower16:.LC7
+ 744 06b6 C0F20002 		movt	r2, #:upper16:.LC7
+ 745 06ba FFF7FEFF 		bl	snprintf
+ 746              		.loc 1 407 0
+ 747 06be 40F20000 		movw	r0, #:lower16:debugBuff
+ 748 06c2 C0F20000 		movt	r0, #:upper16:debugBuff
+ 749 06c6 FFF7FEFF 		bl	UartDebug_PutString
+ 750              		.loc 1 411 0
+ 751 06ca FFF7FEFF 		bl	Comms_IsNewPacket
+ 752 06ce 0346     		mov	r3, r0
+ 753 06d0 002B     		cmp	r3, #0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 23
+
+
+ 754 06d2 30D0     		beq	.L27
+ 755              		.loc 1 414 0
+ 756 06d4 FFF7FEFF 		bl	Main_CheckForLedOnOffPressed
+ 757              		.loc 1 415 0
+ 758 06d8 FFF7FEFF 		bl	Main_CheckForChangeLedMode
+ 759              		.loc 1 418 0
+ 760 06dc FFF7FEFF 		bl	Main_CheckForAlarmOnOffPressed
+ 761 06e0 0346     		mov	r3, r0
+ 762 06e2 002B     		cmp	r3, #0
+ 763 06e4 19D1     		bne	.L28
+ 764              		.loc 1 420 0
+ 765 06e6 4FF00000 		mov	r0, #0
+ 766 06ea FFF7FEFF 		bl	Piezo_AlarmEnable
+ 767              		.loc 1 422 0
+ 768 06ee 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 769 06f2 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 770 06f6 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 771 06f8 1A46     		mov	r2, r3
+ 772 06fa 02F0FD02 		and	r2, r2, #253
+ 773 06fe 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 774 0702 C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 775 0706 1A70     		strb	r2, [r3, #0]
+ 776              		.loc 1 423 0
+ 777 0708 FFF7FEFF 		bl	Lights_TurnOffHighPowerLights
+ 778              		.loc 1 424 0
+ 779 070c 40F20003 		movw	r3, #:lower16:mainState
+ 780 0710 C0F20003 		movt	r3, #:upper16:mainState
+ 781 0714 4FF00202 		mov	r2, #2
+ 782 0718 1A70     		strb	r2, [r3, #0]
+ 783              	.L28:
+ 784              		.loc 1 427 0
+ 785 071a 40F20000 		movw	r0, #:lower16:_msg
+ 786 071e C0F20000 		movt	r0, #:upper16:_msg
+ 787 0722 FFF7FEFF 		bl	Main_BuildMsg
+ 788              		.loc 1 428 0
+ 789 0726 40F20000 		movw	r0, #:lower16:_msg
+ 790 072a C0F20000 		movt	r0, #:upper16:_msg
+ 791 072e 4FF00A01 		mov	r1, #10
+ 792 0732 FFF7FEFF 		bl	Comms_Send
+ 793              	.L27:
+ 794              		.loc 1 431 0
+ 795 0736 40F20003 		movw	r3, #:lower16:alarmTriggeredStartCount.3793
+ 796 073a C0F20003 		movt	r3, #:upper16:alarmTriggeredStartCount.3793
+ 797 073e 1B68     		ldr	r3, [r3, #0]
+ 798 0740 1846     		mov	r0, r3
+ 799 0742 FFF7FEFF 		bl	__aeabi_ui2d
+ 800 0746 0246     		mov	r2, r0
+ 801 0748 0B46     		mov	r3, r1
+ 802 074a 1046     		mov	r0, r2
+ 803 074c 1946     		mov	r1, r3
+ 804 074e 22A3     		adr	r3, .L38+8
+ 805 0750 D3E90023 		ldrd	r2, [r3]
+ 806 0754 FFF7FEFF 		bl	__aeabi_dadd
+ 807 0758 0246     		mov	r2, r0
+ 808 075a 0B46     		mov	r3, r1
+ 809 075c 1046     		mov	r0, r2
+ 810 075e 1946     		mov	r1, r3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 24
+
+
+ 811 0760 FFF7FEFF 		bl	__aeabi_d2uiz
+ 812 0764 0246     		mov	r2, r0
+ 813 0766 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 814 076a C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 815 076e 1B68     		ldr	r3, [r3, #0]
+ 816 0770 9A42     		cmp	r2, r3
+ 817 0772 1AD8     		bhi	.L2
+ 818              		.loc 1 434 0
+ 819 0774 40F20000 		movw	r0, #:lower16:.LC8
+ 820 0778 C0F20000 		movt	r0, #:upper16:.LC8
+ 821 077c FFF7FEFF 		bl	UartDebug_PutString
+ 822              		.loc 1 437 0
+ 823 0780 4FF00000 		mov	r0, #0
+ 824 0784 FFF7FEFF 		bl	Piezo_AlarmEnable
+ 825              		.loc 1 438 0
+ 826 0788 FFF7FEFF 		bl	Lights_TurnOffHighPowerLights
+ 827              		.loc 1 439 0
+ 828 078c 40F20003 		movw	r3, #:lower16:mainState
+ 829 0790 C0F20003 		movt	r3, #:upper16:mainState
+ 830 0794 4FF00402 		mov	r2, #4
+ 831 0798 1A70     		strb	r2, [r3, #0]
+ 832 079a 06E0     		b	.L2
+ 833              	.L33:
+ 834              		.loc 1 194 0
+ 835 079c 00BF     		nop
+ 836 079e 04E0     		b	.L2
+ 837              	.L34:
+ 838              		.loc 1 251 0
+ 839 07a0 00BF     		nop
+ 840 07a2 02E0     		b	.L2
+ 841              	.L35:
+ 842              		.loc 1 317 0
+ 843 07a4 00BF     		nop
+ 844 07a6 00E0     		b	.L2
+ 845              	.L36:
+ 846              		.loc 1 382 0
+ 847 07a8 00BF     		nop
+ 848              	.L2:
+ 849              		.loc 1 450 0
+ 850 07aa 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 851 07ae C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 852 07b2 1B68     		ldr	r3, [r3, #0]
+ 853 07b4 7A68     		ldr	r2, [r7, #4]
+ 854 07b6 9A42     		cmp	r2, r3
+ 855 07b8 7FF469AC 		bne	.L37
+ 856              	.L30:
+ 857              		.loc 1 452 0
+ 858 07bc 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 859 07c0 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 860 07c4 1B68     		ldr	r3, [r3, #0]
+ 861 07c6 7A68     		ldr	r2, [r7, #4]
+ 862 07c8 9A42     		cmp	r2, r3
+ 863 07ca F7D0     		beq	.L30
+ 864              		.loc 1 459 0
+ 865 07cc 60E4     		b	.L31
+ 866              	.L39:
+ 867 07ce 00BF     		.align	3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 25
+
+
+ 868              	.L38:
+ 869 07d0 00000000 		.word	0
+ 870 07d4 00407F40 		.word	1082081280
+ 871 07d8 00000000 		.word	0
+ 872 07dc 00408F40 		.word	1083129856
+ 873              		.cfi_endproc
+ 874              	.LFE29:
+ 875              		.size	main, .-main
+ 876              		.section	.text.Main_CheckForLedOnOffPressed,"ax",%progbits
+ 877              		.align	2
+ 878              		.global	Main_CheckForLedOnOffPressed
+ 879              		.thumb
+ 880              		.thumb_func
+ 881              		.type	Main_CheckForLedOnOffPressed, %function
+ 882              	Main_CheckForLedOnOffPressed:
+ 883              	.LFB30:
+ 460:.\main.c      **** }
+ 461:.\main.c      **** 
+ 462:.\main.c      **** //=================================================================================================
+ 463:.\main.c      **** //==================================== PRIVATE FUNCTIONS ==========================================
+ 464:.\main.c      **** //=================================================================================================
+ 465:.\main.c      **** 
+ 466:.\main.c      **** //! @brief		Checks the status byte to see if the leds have been turned on
+ 467:.\main.c      **** void Main_CheckForLedOnOffPressed(void)
+ 468:.\main.c      **** {
+ 884              		.loc 1 468 0
+ 885              		.cfi_startproc
+ 886              		@ args = 0, pretend = 0, frame = 0
+ 887              		@ frame_needed = 1, uses_anonymous_args = 0
+ 888 0000 80B5     		push	{r7, lr}
+ 889              	.LCFI3:
+ 890              		.cfi_def_cfa_offset 8
+ 891 0002 00AF     		add	r7, sp, #0
+ 892              		.cfi_offset 14, -4
+ 893              		.cfi_offset 7, -8
+ 894              	.LCFI4:
+ 895              		.cfi_def_cfa_register 7
+ 469:.\main.c      **** 	// Check for light on/off button being pressed on remote
+ 470:.\main.c      **** 	if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsLIGHTS_ON_BIT_POS))
+ 896              		.loc 1 470 0
+ 897 0004 4FF00400 		mov	r0, #4
+ 898 0008 FFF7FEFF 		bl	Comms_GetByte
+ 899 000c 0346     		mov	r3, r0
+ 900 000e 03F00803 		and	r3, r3, #8
+ 901 0012 002B     		cmp	r3, #0
+ 902 0014 09D0     		beq	.L41
+ 471:.\main.c      **** 	{
+ 472:.\main.c      **** 		if(Lights_IsHighPowerLightsOn() == FALSE)
+ 903              		.loc 1 472 0
+ 904 0016 FFF7FEFF 		bl	Lights_IsHighPowerLightsOn
+ 905 001a 0346     		mov	r3, r0
+ 906 001c 002B     		cmp	r3, #0
+ 907 001e 0ED1     		bne	.L45
+ 473:.\main.c      **** 		{
+ 474:.\main.c      **** 			Lights_TurnOnHighPowerLights();
+ 908              		.loc 1 474 0
+ 909 0020 FFF7FEFF 		bl	Lights_TurnOnHighPowerLights
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 26
+
+
+ 475:.\main.c      **** 			Piezo_EmitBeep();
+ 910              		.loc 1 475 0
+ 911 0024 FFF7FEFF 		bl	Piezo_EmitBeep
+ 912 0028 0AE0     		b	.L44
+ 913              	.L41:
+ 476:.\main.c      **** 		}
+ 477:.\main.c      **** 	}
+ 478:.\main.c      **** 	else
+ 479:.\main.c      **** 	{
+ 480:.\main.c      **** 		if(Lights_IsHighPowerLightsOn() == TRUE)
+ 914              		.loc 1 480 0
+ 915 002a FFF7FEFF 		bl	Lights_IsHighPowerLightsOn
+ 916 002e 0346     		mov	r3, r0
+ 917 0030 012B     		cmp	r3, #1
+ 918 0032 05D1     		bne	.L44
+ 481:.\main.c      **** 		{
+ 482:.\main.c      **** 			Lights_TurnOffHighPowerLights();
+ 919              		.loc 1 482 0
+ 920 0034 FFF7FEFF 		bl	Lights_TurnOffHighPowerLights
+ 483:.\main.c      **** 			Piezo_EmitBeep();
+ 921              		.loc 1 483 0
+ 922 0038 FFF7FEFF 		bl	Piezo_EmitBeep
+ 923 003c 00E0     		b	.L44
+ 924              	.L45:
+ 925              		.loc 1 475 0
+ 926 003e 00BF     		nop
+ 927              	.L44:
+ 484:.\main.c      **** 		}
+ 485:.\main.c      **** 	}
+ 486:.\main.c      **** }
+ 928              		.loc 1 486 0
+ 929 0040 80BD     		pop	{r7, pc}
+ 930              		.cfi_endproc
+ 931              	.LFE30:
+ 932              		.size	Main_CheckForLedOnOffPressed, .-Main_CheckForLedOnOffPressed
+ 933 0042 00BF     		.section	.text.Main_CheckForChangeLedMode,"ax",%progbits
+ 934              		.align	2
+ 935              		.global	Main_CheckForChangeLedMode
+ 936              		.thumb
+ 937              		.thumb_func
+ 938              		.type	Main_CheckForChangeLedMode, %function
+ 939              	Main_CheckForChangeLedMode:
+ 940              	.LFB31:
+ 487:.\main.c      **** 
+ 488:.\main.c      **** //! @brief		Checks wether user has pressed the light mode button on remote
+ 489:.\main.c      **** void Main_CheckForChangeLedMode(void)
+ 490:.\main.c      **** {
+ 941              		.loc 1 490 0
+ 942              		.cfi_startproc
+ 943              		@ args = 0, pretend = 0, frame = 0
+ 944              		@ frame_needed = 1, uses_anonymous_args = 0
+ 945 0000 80B5     		push	{r7, lr}
+ 946              	.LCFI5:
+ 947              		.cfi_def_cfa_offset 8
+ 948 0002 00AF     		add	r7, sp, #0
+ 949              		.cfi_offset 14, -4
+ 950              		.cfi_offset 7, -8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 27
+
+
+ 951              	.LCFI6:
+ 952              		.cfi_def_cfa_register 7
+ 491:.\main.c      **** 	// Check for light on/off button being pressed on remote
+ 492:.\main.c      **** 	if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsCHANGE_LIGHT_MODE_BIT_POS))
+ 953              		.loc 1 492 0
+ 954 0004 4FF00400 		mov	r0, #4
+ 955 0008 FFF7FEFF 		bl	Comms_GetByte
+ 956 000c 0346     		mov	r3, r0
+ 957 000e 03F01003 		and	r3, r3, #16
+ 958 0012 002B     		cmp	r3, #0
+ 959 0014 05D0     		beq	.L48
+ 493:.\main.c      **** 	{
+ 494:.\main.c      **** 		Piezo_EmitBeep();
+ 960              		.loc 1 494 0
+ 961 0016 FFF7FEFF 		bl	Piezo_EmitBeep
+ 495:.\main.c      **** 		Lights_ChangeHighPowerLightMode();
+ 962              		.loc 1 495 0
+ 963 001a FFF7FEFF 		bl	Lights_ChangeHighPowerLightMode
+ 496:.\main.c      **** 		Lights_TurnOnHighPowerLights();
+ 964              		.loc 1 496 0
+ 965 001e FFF7FEFF 		bl	Lights_TurnOnHighPowerLights
+ 966              	.L48:
+ 497:.\main.c      **** 	}
+ 498:.\main.c      **** }
+ 967              		.loc 1 498 0
+ 968 0022 80BD     		pop	{r7, pc}
+ 969              		.cfi_endproc
+ 970              	.LFE31:
+ 971              		.size	Main_CheckForChangeLedMode, .-Main_CheckForChangeLedMode
+ 972              		.section	.text.Main_CheckForAlarmOnOffPressed,"ax",%progbits
+ 973              		.align	2
+ 974              		.global	Main_CheckForAlarmOnOffPressed
+ 975              		.thumb
+ 976              		.thumb_func
+ 977              		.type	Main_CheckForAlarmOnOffPressed, %function
+ 978              	Main_CheckForAlarmOnOffPressed:
+ 979              	.LFB32:
+ 499:.\main.c      **** 
+ 500:.\main.c      **** //! @brief 		Checks for light on/off button being pressed on remote
+ 501:.\main.c      **** bool_t Main_CheckForAlarmOnOffPressed(void)
+ 502:.\main.c      **** {
+ 980              		.loc 1 502 0
+ 981              		.cfi_startproc
+ 982              		@ args = 0, pretend = 0, frame = 0
+ 983              		@ frame_needed = 1, uses_anonymous_args = 0
+ 984 0000 80B5     		push	{r7, lr}
+ 985              	.LCFI7:
+ 986              		.cfi_def_cfa_offset 8
+ 987 0002 00AF     		add	r7, sp, #0
+ 988              		.cfi_offset 14, -4
+ 989              		.cfi_offset 7, -8
+ 990              	.LCFI8:
+ 991              		.cfi_def_cfa_register 7
+ 503:.\main.c      **** 	// Check for light on/off button being pressed on remote
+ 504:.\main.c      **** 	if(Comms_GetByte(commsSTATUS_BYTE_POS) & (1 << commsALARM_ON_BIT_POS))
+ 992              		.loc 1 504 0
+ 993 0004 4FF00400 		mov	r0, #4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 28
+
+
+ 994 0008 FFF7FEFF 		bl	Comms_GetByte
+ 995 000c 0346     		mov	r3, r0
+ 996 000e 03F00203 		and	r3, r3, #2
+ 997 0012 002B     		cmp	r3, #0
+ 998 0014 02D0     		beq	.L50
+ 505:.\main.c      **** 		return TRUE;
+ 999              		.loc 1 505 0
+ 1000 0016 4FF00103 		mov	r3, #1
+ 1001 001a 01E0     		b	.L51
+ 1002              	.L50:
+ 506:.\main.c      **** 	else
+ 507:.\main.c      **** 		return FALSE;
+ 1003              		.loc 1 507 0
+ 1004 001c 4FF00003 		mov	r3, #0
+ 1005              	.L51:
+ 508:.\main.c      **** }
+ 1006              		.loc 1 508 0
+ 1007 0020 1846     		mov	r0, r3
+ 1008 0022 80BD     		pop	{r7, pc}
+ 1009              		.cfi_endproc
+ 1010              	.LFE32:
+ 1011              		.size	Main_CheckForAlarmOnOffPressed, .-Main_CheckForAlarmOnOffPressed
+ 1012              		.section	.text.Main_BuildMsg,"ax",%progbits
+ 1013              		.align	2
+ 1014              		.global	Main_BuildMsg
+ 1015              		.thumb
+ 1016              		.thumb_func
+ 1017              		.type	Main_BuildMsg, %function
+ 1018              	Main_BuildMsg:
+ 1019              	.LFB33:
+ 509:.\main.c      **** 
+ 510:.\main.c      **** //! @brief		Builds message to send over comms
+ 511:.\main.c      **** void Main_BuildMsg(uint8_t *msg)
+ 512:.\main.c      **** {
+ 1020              		.loc 1 512 0
+ 1021              		.cfi_startproc
+ 1022              		@ args = 0, pretend = 0, frame = 16
+ 1023              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1024 0000 90B5     		push	{r4, r7, lr}
+ 1025              	.LCFI9:
+ 1026              		.cfi_def_cfa_offset 12
+ 1027 0002 85B0     		sub	sp, sp, #20
+ 1028              	.LCFI10:
+ 1029              		.cfi_def_cfa_offset 32
+ 1030 0004 00AF     		add	r7, sp, #0
+ 1031              		.cfi_offset 14, -4
+ 1032              		.cfi_offset 7, -8
+ 1033              		.cfi_offset 4, -12
+ 1034              	.LCFI11:
+ 1035              		.cfi_def_cfa_register 7
+ 1036 0006 7860     		str	r0, [r7, #4]
+ 513:.\main.c      **** 	msg[0] = 'r';
+ 1037              		.loc 1 513 0
+ 1038 0008 7B68     		ldr	r3, [r7, #4]
+ 1039 000a 4FF07202 		mov	r2, #114
+ 1040 000e 1A70     		strb	r2, [r3, #0]
+ 514:.\main.c      **** 	msg[1] = 'm';
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 29
+
+
+ 1041              		.loc 1 514 0
+ 1042 0010 7B68     		ldr	r3, [r7, #4]
+ 1043 0012 03F10103 		add	r3, r3, #1
+ 1044 0016 4FF06D02 		mov	r2, #109
+ 1045 001a 1A70     		strb	r2, [r3, #0]
+ 515:.\main.c      **** 	msg[2] = 't';
+ 1046              		.loc 1 515 0
+ 1047 001c 7B68     		ldr	r3, [r7, #4]
+ 1048 001e 03F10203 		add	r3, r3, #2
+ 1049 0022 4FF07402 		mov	r2, #116
+ 1050 0026 1A70     		strb	r2, [r3, #0]
+ 516:.\main.c      **** 	msg[3] = 0x03;
+ 1051              		.loc 1 516 0
+ 1052 0028 7B68     		ldr	r3, [r7, #4]
+ 1053 002a 03F10303 		add	r3, r3, #3
+ 1054 002e 4FF00302 		mov	r2, #3
+ 1055 0032 1A70     		strb	r2, [r3, #0]
+ 517:.\main.c      **** 	msg[commsSTATUS_BYTE_POS] = boardStatusByte;
+ 1056              		.loc 1 517 0
+ 1057 0034 7B68     		ldr	r3, [r7, #4]
+ 1058 0036 03F10402 		add	r2, r3, #4
+ 1059 003a 40F20003 		movw	r3, #:lower16:boardStatusByte
+ 1060 003e C0F20003 		movt	r3, #:upper16:boardStatusByte
+ 1061 0042 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 1062 0044 1370     		strb	r3, [r2, #0]
+ 518:.\main.c      **** 	msg[5] = Comms_GetByte(commsMOTOR_HIGH_BYTE_POS);
+ 1063              		.loc 1 518 0
+ 1064 0046 7B68     		ldr	r3, [r7, #4]
+ 1065 0048 03F10504 		add	r4, r3, #5
+ 1066 004c 4FF00500 		mov	r0, #5
+ 1067 0050 FFF7FEFF 		bl	Comms_GetByte
+ 1068 0054 0346     		mov	r3, r0
+ 1069 0056 2370     		strb	r3, [r4, #0]
+ 519:.\main.c      **** 	msg[6] = Comms_GetByte(commsMOTOR_LOW_BYTE_POS);
+ 1070              		.loc 1 519 0
+ 1071 0058 7B68     		ldr	r3, [r7, #4]
+ 1072 005a 03F10604 		add	r4, r3, #6
+ 1073 005e 4FF00600 		mov	r0, #6
+ 1074 0062 FFF7FEFF 		bl	Comms_GetByte
+ 1075 0066 0346     		mov	r3, r0
+ 1076 0068 2370     		strb	r3, [r4, #0]
+ 520:.\main.c      **** 	
+ 521:.\main.c      **** 	uint16_t throttleVal16Bit = (uint16_t)Adc_GetBattVolt();
+ 1077              		.loc 1 521 0
+ 1078 006a FFF7FEFF 		bl	Adc_GetBattVolt
+ 1079 006e 0246     		mov	r2, r0
+ 1080 0070 0B46     		mov	r3, r1
+ 1081 0072 1046     		mov	r0, r2
+ 1082 0074 1946     		mov	r1, r3
+ 1083 0076 FFF7FEFF 		bl	__aeabi_d2uiz
+ 1084 007a 0346     		mov	r3, r0
+ 1085 007c FB81     		strh	r3, [r7, #14]	@ movhi
+ 522:.\main.c      **** 	msg[commsBOARD_BATT_VOLT_HIGH_BYTE_POS] = (uint8_t)(throttleVal16Bit >> 8);
+ 1086              		.loc 1 522 0
+ 1087 007e 7B68     		ldr	r3, [r7, #4]
+ 1088 0080 03F10703 		add	r3, r3, #7
+ 1089 0084 FA89     		ldrh	r2, [r7, #14]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 30
+
+
+ 1090 0086 4FEA1222 		lsr	r2, r2, #8
+ 1091 008a 92B2     		uxth	r2, r2
+ 1092 008c D2B2     		uxtb	r2, r2
+ 1093 008e 1A70     		strb	r2, [r3, #0]
+ 523:.\main.c      **** 	msg[commsBOARD_BATT_VOLT_LOW_BYTE_POS] = (uint8_t)(throttleVal16Bit >> 0);
+ 1094              		.loc 1 523 0
+ 1095 0090 7B68     		ldr	r3, [r7, #4]
+ 1096 0092 03F10803 		add	r3, r3, #8
+ 1097 0096 FA89     		ldrh	r2, [r7, #14]	@ movhi
+ 1098 0098 D2B2     		uxtb	r2, r2
+ 1099 009a 1A70     		strb	r2, [r3, #0]
+ 524:.\main.c      **** 
+ 525:.\main.c      **** 	msg[9] = '\0';
+ 1100              		.loc 1 525 0
+ 1101 009c 7B68     		ldr	r3, [r7, #4]
+ 1102 009e 03F10903 		add	r3, r3, #9
+ 1103 00a2 4FF00002 		mov	r2, #0
+ 1104 00a6 1A70     		strb	r2, [r3, #0]
+ 526:.\main.c      **** 	
+ 527:.\main.c      **** }
+ 1105              		.loc 1 527 0
+ 1106 00a8 07F11407 		add	r7, r7, #20
+ 1107 00ac BD46     		mov	sp, r7
+ 1108 00ae 90BD     		pop	{r4, r7, pc}
+ 1109              		.cfi_endproc
+ 1110              	.LFE33:
+ 1111              		.size	Main_BuildMsg, .-Main_BuildMsg
+ 1112              		.section	.text.Main_MotionSensorIsr,"ax",%progbits
+ 1113              		.align	2
+ 1114              		.global	Main_MotionSensorIsr
+ 1115              		.thumb
+ 1116              		.thumb_func
+ 1117              		.type	Main_MotionSensorIsr, %function
+ 1118              	Main_MotionSensorIsr:
+ 1119              	.LFB34:
+ 528:.\main.c      **** 
+ 529:.\main.c      **** //===============================================================================================//
+ 530:.\main.c      **** //============================================ ISR's ============================================//
+ 531:.\main.c      **** //===============================================================================================//
+ 532:.\main.c      **** 
+ 533:.\main.c      **** 
+ 534:.\main.c      **** CY_ISR(Main_MotionSensorIsr)
+ 535:.\main.c      **** {
+ 1120              		.loc 1 535 0
+ 1121              		.cfi_startproc
+ 1122              		@ args = 0, pretend = 0, frame = 0
+ 1123              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1124 0000 80B5     		push	{r7, lr}
+ 1125              	.LCFI12:
+ 1126              		.cfi_def_cfa_offset 8
+ 1127 0002 00AF     		add	r7, sp, #0
+ 1128              		.cfi_offset 14, -4
+ 1129              		.cfi_offset 7, -8
+ 1130              	.LCFI13:
+ 1131              		.cfi_def_cfa_register 7
+ 536:.\main.c      **** 	motionSensorTriggered = TRUE;
+ 1132              		.loc 1 536 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 31
+
+
+ 1133 0004 40F20003 		movw	r3, #:lower16:motionSensorTriggered
+ 1134 0008 C0F20003 		movt	r3, #:upper16:motionSensorTriggered
+ 1135 000c 4FF00102 		mov	r2, #1
+ 1136 0010 1A70     		strb	r2, [r3, #0]
+ 537:.\main.c      **** 	IsrMotionSensor_Disable();
+ 1137              		.loc 1 537 0
+ 1138 0012 FFF7FEFF 		bl	IsrMotionSensor_Disable
+ 538:.\main.c      **** }
+ 1139              		.loc 1 538 0
+ 1140 0016 80BD     		pop	{r7, pc}
+ 1141              		.cfi_endproc
+ 1142              	.LFE34:
+ 1143              		.size	Main_MotionSensorIsr, .-Main_MotionSensorIsr
+ 1144              		.section	.text.Main_MainTickIsr,"ax",%progbits
+ 1145              		.align	2
+ 1146              		.global	Main_MainTickIsr
+ 1147              		.thumb
+ 1148              		.thumb_func
+ 1149              		.type	Main_MainTickIsr, %function
+ 1150              	Main_MainTickIsr:
+ 1151              	.LFB35:
+ 539:.\main.c      **** 
+ 540:.\main.c      **** //! @brief 		ISR to handle the main tick
+ 541:.\main.c      **** CY_ISR(Main_MainTickIsr)
+ 542:.\main.c      **** {
+ 1152              		.loc 1 542 0
+ 1153              		.cfi_startproc
+ 1154              		@ args = 0, pretend = 0, frame = 0
+ 1155              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1156              		@ link register save eliminated.
+ 1157 0000 80B4     		push	{r7}
+ 1158              	.LCFI14:
+ 1159              		.cfi_def_cfa_offset 4
+ 1160 0002 00AF     		add	r7, sp, #0
+ 1161              		.cfi_offset 7, -4
+ 1162              	.LCFI15:
+ 1163              		.cfi_def_cfa_register 7
+ 543:.\main.c      **** 	// Increment the tick counter. This will cause the main loop to execute once
+ 544:.\main.c      **** 	_mainTickCounter++;
+ 1164              		.loc 1 544 0
+ 1165 0004 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 1166 0008 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 1167 000c 1B68     		ldr	r3, [r3, #0]
+ 1168 000e 03F10102 		add	r2, r3, #1
+ 1169 0012 40F20003 		movw	r3, #:lower16:_mainTickCounter
+ 1170 0016 C0F20003 		movt	r3, #:upper16:_mainTickCounter
+ 1171 001a 1A60     		str	r2, [r3, #0]
+ 545:.\main.c      **** }
+ 1172              		.loc 1 545 0
+ 1173 001c BD46     		mov	sp, r7
+ 1174 001e 80BC     		pop	{r7}
+ 1175 0020 7047     		bx	lr
+ 1176              		.cfi_endproc
+ 1177              	.LFE35:
+ 1178              		.size	Main_MainTickIsr, .-Main_MainTickIsr
+ 1179 0022 00BF     		.bss
+ 1180 0011 000000   		.align	2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 32
+
+
+ 1181              	iden_chars.3789:
+ 1182 0014 000000   		.space	3
+ 1183              	prevMainState.3790:
+ 1184 0017 00       		.space	1
+ 1185              	alarmTriggerCount.3792:
+ 1186 0018 00       		.space	1
+ 1187 0019 000000   		.align	2
+ 1188              	alarmTriggeredStartCount.3793:
+ 1189 001c 00000000 		.space	4
+ 1190              		.text
+ 1191              	.Letext0:
+ 1192              		.section	.debug_loc,"",%progbits
+ 1193              	.Ldebug_loc0:
+ 1194              	.LLST0:
+ 1195 0000 00000000 		.4byte	.LFB29
+ 1196 0004 02000000 		.4byte	.LCFI0
+ 1197 0008 0100     		.2byte	0x1
+ 1198 000a 5D       		.byte	0x5d
+ 1199 000b 02000000 		.4byte	.LCFI0
+ 1200 000f 04000000 		.4byte	.LCFI1
+ 1201 0013 0200     		.2byte	0x2
+ 1202 0015 7D       		.byte	0x7d
+ 1203 0016 08       		.sleb128 8
+ 1204 0017 04000000 		.4byte	.LCFI1
+ 1205 001b 06000000 		.4byte	.LCFI2
+ 1206 001f 0200     		.2byte	0x2
+ 1207 0021 7D       		.byte	0x7d
+ 1208 0022 20       		.sleb128 32
+ 1209 0023 06000000 		.4byte	.LCFI2
+ 1210 0027 E0070000 		.4byte	.LFE29
+ 1211 002b 0200     		.2byte	0x2
+ 1212 002d 77       		.byte	0x77
+ 1213 002e 10       		.sleb128 16
+ 1214 002f 00000000 		.4byte	0x0
+ 1215 0033 00000000 		.4byte	0x0
+ 1216              	.LLST1:
+ 1217 0037 00000000 		.4byte	.LFB30
+ 1218 003b 02000000 		.4byte	.LCFI3
+ 1219 003f 0100     		.2byte	0x1
+ 1220 0041 5D       		.byte	0x5d
+ 1221 0042 02000000 		.4byte	.LCFI3
+ 1222 0046 04000000 		.4byte	.LCFI4
+ 1223 004a 0200     		.2byte	0x2
+ 1224 004c 7D       		.byte	0x7d
+ 1225 004d 08       		.sleb128 8
+ 1226 004e 04000000 		.4byte	.LCFI4
+ 1227 0052 42000000 		.4byte	.LFE30
+ 1228 0056 0200     		.2byte	0x2
+ 1229 0058 77       		.byte	0x77
+ 1230 0059 08       		.sleb128 8
+ 1231 005a 00000000 		.4byte	0x0
+ 1232 005e 00000000 		.4byte	0x0
+ 1233              	.LLST2:
+ 1234 0062 00000000 		.4byte	.LFB31
+ 1235 0066 02000000 		.4byte	.LCFI5
+ 1236 006a 0100     		.2byte	0x1
+ 1237 006c 5D       		.byte	0x5d
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 33
+
+
+ 1238 006d 02000000 		.4byte	.LCFI5
+ 1239 0071 04000000 		.4byte	.LCFI6
+ 1240 0075 0200     		.2byte	0x2
+ 1241 0077 7D       		.byte	0x7d
+ 1242 0078 08       		.sleb128 8
+ 1243 0079 04000000 		.4byte	.LCFI6
+ 1244 007d 24000000 		.4byte	.LFE31
+ 1245 0081 0200     		.2byte	0x2
+ 1246 0083 77       		.byte	0x77
+ 1247 0084 08       		.sleb128 8
+ 1248 0085 00000000 		.4byte	0x0
+ 1249 0089 00000000 		.4byte	0x0
+ 1250              	.LLST3:
+ 1251 008d 00000000 		.4byte	.LFB32
+ 1252 0091 02000000 		.4byte	.LCFI7
+ 1253 0095 0100     		.2byte	0x1
+ 1254 0097 5D       		.byte	0x5d
+ 1255 0098 02000000 		.4byte	.LCFI7
+ 1256 009c 04000000 		.4byte	.LCFI8
+ 1257 00a0 0200     		.2byte	0x2
+ 1258 00a2 7D       		.byte	0x7d
+ 1259 00a3 08       		.sleb128 8
+ 1260 00a4 04000000 		.4byte	.LCFI8
+ 1261 00a8 24000000 		.4byte	.LFE32
+ 1262 00ac 0200     		.2byte	0x2
+ 1263 00ae 77       		.byte	0x77
+ 1264 00af 08       		.sleb128 8
+ 1265 00b0 00000000 		.4byte	0x0
+ 1266 00b4 00000000 		.4byte	0x0
+ 1267              	.LLST4:
+ 1268 00b8 00000000 		.4byte	.LFB33
+ 1269 00bc 02000000 		.4byte	.LCFI9
+ 1270 00c0 0100     		.2byte	0x1
+ 1271 00c2 5D       		.byte	0x5d
+ 1272 00c3 02000000 		.4byte	.LCFI9
+ 1273 00c7 04000000 		.4byte	.LCFI10
+ 1274 00cb 0200     		.2byte	0x2
+ 1275 00cd 7D       		.byte	0x7d
+ 1276 00ce 0C       		.sleb128 12
+ 1277 00cf 04000000 		.4byte	.LCFI10
+ 1278 00d3 06000000 		.4byte	.LCFI11
+ 1279 00d7 0200     		.2byte	0x2
+ 1280 00d9 7D       		.byte	0x7d
+ 1281 00da 20       		.sleb128 32
+ 1282 00db 06000000 		.4byte	.LCFI11
+ 1283 00df B0000000 		.4byte	.LFE33
+ 1284 00e3 0200     		.2byte	0x2
+ 1285 00e5 77       		.byte	0x77
+ 1286 00e6 20       		.sleb128 32
+ 1287 00e7 00000000 		.4byte	0x0
+ 1288 00eb 00000000 		.4byte	0x0
+ 1289              	.LLST5:
+ 1290 00ef 00000000 		.4byte	.LFB34
+ 1291 00f3 02000000 		.4byte	.LCFI12
+ 1292 00f7 0100     		.2byte	0x1
+ 1293 00f9 5D       		.byte	0x5d
+ 1294 00fa 02000000 		.4byte	.LCFI12
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 34
+
+
+ 1295 00fe 04000000 		.4byte	.LCFI13
+ 1296 0102 0200     		.2byte	0x2
+ 1297 0104 7D       		.byte	0x7d
+ 1298 0105 08       		.sleb128 8
+ 1299 0106 04000000 		.4byte	.LCFI13
+ 1300 010a 18000000 		.4byte	.LFE34
+ 1301 010e 0200     		.2byte	0x2
+ 1302 0110 77       		.byte	0x77
+ 1303 0111 08       		.sleb128 8
+ 1304 0112 00000000 		.4byte	0x0
+ 1305 0116 00000000 		.4byte	0x0
+ 1306              	.LLST6:
+ 1307 011a 00000000 		.4byte	.LFB35
+ 1308 011e 02000000 		.4byte	.LCFI14
+ 1309 0122 0100     		.2byte	0x1
+ 1310 0124 5D       		.byte	0x5d
+ 1311 0125 02000000 		.4byte	.LCFI14
+ 1312 0129 04000000 		.4byte	.LCFI15
+ 1313 012d 0200     		.2byte	0x2
+ 1314 012f 7D       		.byte	0x7d
+ 1315 0130 04       		.sleb128 4
+ 1316 0131 04000000 		.4byte	.LCFI15
+ 1317 0135 22000000 		.4byte	.LFE35
+ 1318 0139 0200     		.2byte	0x2
+ 1319 013b 77       		.byte	0x77
+ 1320 013c 04       		.sleb128 4
+ 1321 013d 00000000 		.4byte	0x0
+ 1322 0141 00000000 		.4byte	0x0
+ 1323              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 1324              		.file 3 ".\\/../common/PublicObjects.h"
+ 1325              		.file 4 ".\\/Lights.h"
+ 1326              		.file 5 ".\\/Piezo.h"
+ 1327              		.file 6 "./Generated_Source/PSoC5/core_cm3.h"
+ 1328              		.file 7 ".\\/Config.h"
+ 1329              		.section	.debug_info
+ 1330 0000 10030000 		.4byte	0x310
+ 1331 0004 0200     		.2byte	0x2
+ 1332 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1333 000a 04       		.byte	0x4
+ 1334 000b 01       		.uleb128 0x1
+ 1335 000c 23020000 		.4byte	.LASF47
+ 1336 0010 01       		.byte	0x1
+ 1337 0011 BE000000 		.4byte	.LASF48
+ 1338 0015 02010000 		.4byte	.LASF49
+ 1339 0019 00000000 		.4byte	0x0
+ 1340 001d 00000000 		.4byte	0x0
+ 1341 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 1342 0025 00000000 		.4byte	.Ldebug_line0
+ 1343 0029 02       		.uleb128 0x2
+ 1344 002a 01       		.byte	0x1
+ 1345 002b 06       		.byte	0x6
+ 1346 002c A4000000 		.4byte	.LASF0
+ 1347 0030 03       		.uleb128 0x3
+ 1348 0031 F4010000 		.4byte	.LASF3
+ 1349 0035 02       		.byte	0x2
+ 1350 0036 2A       		.byte	0x2a
+ 1351 0037 3B000000 		.4byte	0x3b
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 35
+
+
+ 1352 003b 02       		.uleb128 0x2
+ 1353 003c 01       		.byte	0x1
+ 1354 003d 08       		.byte	0x8
+ 1355 003e B0000000 		.4byte	.LASF1
+ 1356 0042 02       		.uleb128 0x2
+ 1357 0043 02       		.byte	0x2
+ 1358 0044 05       		.byte	0x5
+ 1359 0045 55020000 		.4byte	.LASF2
+ 1360 0049 03       		.uleb128 0x3
+ 1361 004a 64020000 		.4byte	.LASF4
+ 1362 004e 02       		.byte	0x2
+ 1363 004f 36       		.byte	0x36
+ 1364 0050 54000000 		.4byte	0x54
+ 1365 0054 02       		.uleb128 0x2
+ 1366 0055 02       		.byte	0x2
+ 1367 0056 07       		.byte	0x7
+ 1368 0057 D4000000 		.4byte	.LASF5
+ 1369 005b 02       		.uleb128 0x2
+ 1370 005c 04       		.byte	0x4
+ 1371 005d 05       		.byte	0x5
+ 1372 005e 81020000 		.4byte	.LASF6
+ 1373 0062 03       		.uleb128 0x3
+ 1374 0063 78020000 		.4byte	.LASF7
+ 1375 0067 02       		.byte	0x2
+ 1376 0068 50       		.byte	0x50
+ 1377 0069 6D000000 		.4byte	0x6d
+ 1378 006d 02       		.uleb128 0x2
+ 1379 006e 04       		.byte	0x4
+ 1380 006f 07       		.byte	0x7
+ 1381 0070 61010000 		.4byte	.LASF8
+ 1382 0074 02       		.uleb128 0x2
+ 1383 0075 08       		.byte	0x8
+ 1384 0076 05       		.byte	0x5
+ 1385 0077 00000000 		.4byte	.LASF9
+ 1386 007b 02       		.uleb128 0x2
+ 1387 007c 08       		.byte	0x8
+ 1388 007d 07       		.byte	0x7
+ 1389 007e DD010000 		.4byte	.LASF10
+ 1390 0082 04       		.uleb128 0x4
+ 1391 0083 04       		.byte	0x4
+ 1392 0084 05       		.byte	0x5
+ 1393 0085 696E7400 		.ascii	"int\000"
+ 1394 0089 02       		.uleb128 0x2
+ 1395 008a 04       		.byte	0x4
+ 1396 008b 07       		.byte	0x7
+ 1397 008c D0010000 		.4byte	.LASF11
+ 1398 0090 02       		.uleb128 0x2
+ 1399 0091 01       		.byte	0x1
+ 1400 0092 08       		.byte	0x8
+ 1401 0093 37020000 		.4byte	.LASF12
+ 1402 0097 05       		.uleb128 0x5
+ 1403 0098 04       		.byte	0x4
+ 1404 0099 07       		.byte	0x7
+ 1405 009a 06       		.uleb128 0x6
+ 1406 009b 01       		.byte	0x1
+ 1407 009c 03       		.byte	0x3
+ 1408 009d 23       		.byte	0x23
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 36
+
+
+ 1409 009e AF000000 		.4byte	0xaf
+ 1410 00a2 07       		.uleb128 0x7
+ 1411 00a3 FC000000 		.4byte	.LASF13
+ 1412 00a7 00       		.sleb128 0
+ 1413 00a8 07       		.uleb128 0x7
+ 1414 00a9 4B000000 		.4byte	.LASF14
+ 1415 00ad 01       		.sleb128 1
+ 1416 00ae 00       		.byte	0x0
+ 1417 00af 03       		.uleb128 0x3
+ 1418 00b0 74000000 		.4byte	.LASF15
+ 1419 00b4 03       		.byte	0x3
+ 1420 00b5 26       		.byte	0x26
+ 1421 00b6 9A000000 		.4byte	0x9a
+ 1422 00ba 06       		.uleb128 0x6
+ 1423 00bb 01       		.byte	0x1
+ 1424 00bc 04       		.byte	0x4
+ 1425 00bd 24       		.byte	0x24
+ 1426 00be E7000000 		.4byte	0xe7
+ 1427 00c2 07       		.uleb128 0x7
+ 1428 00c3 0A020000 		.4byte	.LASF16
+ 1429 00c7 00       		.sleb128 0
+ 1430 00c8 07       		.uleb128 0x7
+ 1431 00c9 40000000 		.4byte	.LASF17
+ 1432 00cd 01       		.sleb128 1
+ 1433 00ce 07       		.uleb128 0x7
+ 1434 00cf 8F020000 		.4byte	.LASF18
+ 1435 00d3 02       		.sleb128 2
+ 1436 00d4 07       		.uleb128 0x7
+ 1437 00d5 3C020000 		.4byte	.LASF19
+ 1438 00d9 03       		.sleb128 3
+ 1439 00da 07       		.uleb128 0x7
+ 1440 00db F1000000 		.4byte	.LASF20
+ 1441 00df 04       		.sleb128 4
+ 1442 00e0 07       		.uleb128 0x7
+ 1443 00e1 8D010000 		.4byte	.LASF21
+ 1444 00e5 05       		.sleb128 5
+ 1445 00e6 00       		.byte	0x0
+ 1446 00e7 06       		.uleb128 0x6
+ 1447 00e8 01       		.byte	0x1
+ 1448 00e9 04       		.byte	0x4
+ 1449 00ea 2E       		.byte	0x2e
+ 1450 00eb 01010000 		.4byte	0x101
+ 1451 00ef 08       		.uleb128 0x8
+ 1452 00f0 4F464600 		.ascii	"OFF\000"
+ 1453 00f4 00       		.sleb128 0
+ 1454 00f5 08       		.uleb128 0x8
+ 1455 00f6 4F4E00   		.ascii	"ON\000"
+ 1456 00f9 01       		.sleb128 1
+ 1457 00fa 07       		.uleb128 0x7
+ 1458 00fb 50000000 		.4byte	.LASF22
+ 1459 00ff 02       		.sleb128 2
+ 1460 0100 00       		.byte	0x0
+ 1461 0101 06       		.uleb128 0x6
+ 1462 0102 01       		.byte	0x1
+ 1463 0103 05       		.byte	0x5
+ 1464 0104 23       		.byte	0x23
+ 1465 0105 15010000 		.4byte	0x115
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 37
+
+
+ 1466 0109 08       		.uleb128 0x8
+ 1467 010a 757000   		.ascii	"up\000"
+ 1468 010d 00       		.sleb128 0
+ 1469 010e 07       		.uleb128 0x7
+ 1470 010f 5F020000 		.4byte	.LASF23
+ 1471 0113 01       		.sleb128 1
+ 1472 0114 00       		.byte	0x0
+ 1473 0115 06       		.uleb128 0x6
+ 1474 0116 01       		.byte	0x1
+ 1475 0117 01       		.byte	0x1
+ 1476 0118 37       		.byte	0x37
+ 1477 0119 42010000 		.4byte	0x142
+ 1478 011d 07       		.uleb128 0x7
+ 1479 011e 6F000000 		.4byte	.LASF24
+ 1480 0122 00       		.sleb128 0
+ 1481 0123 08       		.uleb128 0x8
+ 1482 0124 6F666600 		.ascii	"off\000"
+ 1483 0128 01       		.sleb128 1
+ 1484 0129 07       		.uleb128 0x7
+ 1485 012a 38000000 		.4byte	.LASF25
+ 1486 012e 02       		.sleb128 2
+ 1487 012f 07       		.uleb128 0x7
+ 1488 0130 2F020000 		.4byte	.LASF26
+ 1489 0134 03       		.sleb128 3
+ 1490 0135 07       		.uleb128 0x7
+ 1491 0136 6D020000 		.4byte	.LASF27
+ 1492 013a 04       		.sleb128 4
+ 1493 013b 07       		.uleb128 0x7
+ 1494 013c BF020000 		.4byte	.LASF28
+ 1495 0140 05       		.sleb128 5
+ 1496 0141 00       		.byte	0x0
+ 1497 0142 03       		.uleb128 0x3
+ 1498 0143 C7000000 		.4byte	.LASF29
+ 1499 0147 01       		.byte	0x1
+ 1500 0148 3E       		.byte	0x3e
+ 1501 0149 15010000 		.4byte	0x115
+ 1502 014d 09       		.uleb128 0x9
+ 1503 014e 01       		.byte	0x1
+ 1504 014f 88010000 		.4byte	.LASF50
+ 1505 0153 01       		.byte	0x1
+ 1506 0154 5E       		.byte	0x5e
+ 1507 0155 00000000 		.4byte	.LFB29
+ 1508 0159 E0070000 		.4byte	.LFE29
+ 1509 015d 00000000 		.4byte	.LLST0
+ 1510 0161 B8010000 		.4byte	0x1b8
+ 1511 0165 0A       		.uleb128 0xa
+ 1512 0166 2D000000 		.4byte	.LASF30
+ 1513 016a 01       		.byte	0x1
+ 1514 016b 68       		.byte	0x68
+ 1515 016c B8010000 		.4byte	0x1b8
+ 1516 0170 05       		.byte	0x5
+ 1517 0171 03       		.byte	0x3
+ 1518 0172 14000000 		.4byte	iden_chars.3789
+ 1519 0176 0A       		.uleb128 0xa
+ 1520 0177 96000000 		.4byte	.LASF31
+ 1521 017b 01       		.byte	0x1
+ 1522 017c 7A       		.byte	0x7a
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 38
+
+
+ 1523 017d 42010000 		.4byte	0x142
+ 1524 0181 05       		.byte	0x5
+ 1525 0182 03       		.byte	0x3
+ 1526 0183 17000000 		.4byte	prevMainState.3790
+ 1527 0187 0A       		.uleb128 0xa
+ 1528 0188 59000000 		.4byte	.LASF32
+ 1529 018c 01       		.byte	0x1
+ 1530 018d 86       		.byte	0x86
+ 1531 018e 62000000 		.4byte	0x62
+ 1532 0192 02       		.byte	0x2
+ 1533 0193 91       		.byte	0x91
+ 1534 0194 74       		.sleb128 -12
+ 1535 0195 0A       		.uleb128 0xa
+ 1536 0196 AD010000 		.4byte	.LASF33
+ 1537 019a 01       		.byte	0x1
+ 1538 019b 87       		.byte	0x87
+ 1539 019c 30000000 		.4byte	0x30
+ 1540 01a0 05       		.byte	0x5
+ 1541 01a1 03       		.byte	0x3
+ 1542 01a2 18000000 		.4byte	alarmTriggerCount.3792
+ 1543 01a6 0A       		.uleb128 0xa
+ 1544 01a7 EB020000 		.4byte	.LASF34
+ 1545 01ab 01       		.byte	0x1
+ 1546 01ac 88       		.byte	0x88
+ 1547 01ad 62000000 		.4byte	0x62
+ 1548 01b1 05       		.byte	0x5
+ 1549 01b2 03       		.byte	0x3
+ 1550 01b3 1C000000 		.4byte	alarmTriggeredStartCount.3793
+ 1551 01b7 00       		.byte	0x0
+ 1552 01b8 0B       		.uleb128 0xb
+ 1553 01b9 30000000 		.4byte	0x30
+ 1554 01bd C8010000 		.4byte	0x1c8
+ 1555 01c1 0C       		.uleb128 0xc
+ 1556 01c2 97000000 		.4byte	0x97
+ 1557 01c6 02       		.byte	0x2
+ 1558 01c7 00       		.byte	0x0
+ 1559 01c8 0D       		.uleb128 0xd
+ 1560 01c9 01       		.byte	0x1
+ 1561 01ca CE020000 		.4byte	.LASF35
+ 1562 01ce 01       		.byte	0x1
+ 1563 01cf D301     		.2byte	0x1d3
+ 1564 01d1 01       		.byte	0x1
+ 1565 01d2 00000000 		.4byte	.LFB30
+ 1566 01d6 42000000 		.4byte	.LFE30
+ 1567 01da 37000000 		.4byte	.LLST1
+ 1568 01de 0D       		.uleb128 0xd
+ 1569 01df 01       		.byte	0x1
+ 1570 01e0 7B000000 		.4byte	.LASF36
+ 1571 01e4 01       		.byte	0x1
+ 1572 01e5 E901     		.2byte	0x1e9
+ 1573 01e7 01       		.byte	0x1
+ 1574 01e8 00000000 		.4byte	.LFB31
+ 1575 01ec 24000000 		.4byte	.LFE31
+ 1576 01f0 62000000 		.4byte	.LLST2
+ 1577 01f4 0E       		.uleb128 0xe
+ 1578 01f5 01       		.byte	0x1
+ 1579 01f6 0E000000 		.4byte	.LASF51
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 39
+
+
+ 1580 01fa 01       		.byte	0x1
+ 1581 01fb F501     		.2byte	0x1f5
+ 1582 01fd 01       		.byte	0x1
+ 1583 01fe AF000000 		.4byte	0xaf
+ 1584 0202 00000000 		.4byte	.LFB32
+ 1585 0206 24000000 		.4byte	.LFE32
+ 1586 020a 8D000000 		.4byte	.LLST3
+ 1587 020e 0F       		.uleb128 0xf
+ 1588 020f 01       		.byte	0x1
+ 1589 0210 FC010000 		.4byte	.LASF52
+ 1590 0214 01       		.byte	0x1
+ 1591 0215 FF01     		.2byte	0x1ff
+ 1592 0217 01       		.byte	0x1
+ 1593 0218 00000000 		.4byte	.LFB33
+ 1594 021c B0000000 		.4byte	.LFE33
+ 1595 0220 B8000000 		.4byte	.LLST4
+ 1596 0224 47020000 		.4byte	0x247
+ 1597 0228 10       		.uleb128 0x10
+ 1598 0229 6D736700 		.ascii	"msg\000"
+ 1599 022d 01       		.byte	0x1
+ 1600 022e FF01     		.2byte	0x1ff
+ 1601 0230 47020000 		.4byte	0x247
+ 1602 0234 02       		.byte	0x2
+ 1603 0235 91       		.byte	0x91
+ 1604 0236 64       		.sleb128 -28
+ 1605 0237 11       		.uleb128 0x11
+ 1606 0238 BF010000 		.4byte	.LASF37
+ 1607 023c 01       		.byte	0x1
+ 1608 023d 0902     		.2byte	0x209
+ 1609 023f 49000000 		.4byte	0x49
+ 1610 0243 02       		.byte	0x2
+ 1611 0244 91       		.byte	0x91
+ 1612 0245 6E       		.sleb128 -18
+ 1613 0246 00       		.byte	0x0
+ 1614 0247 12       		.uleb128 0x12
+ 1615 0248 04       		.byte	0x4
+ 1616 0249 30000000 		.4byte	0x30
+ 1617 024d 0D       		.uleb128 0xd
+ 1618 024e 01       		.byte	0x1
+ 1619 024f 73010000 		.4byte	.LASF38
+ 1620 0253 01       		.byte	0x1
+ 1621 0254 1602     		.2byte	0x216
+ 1622 0256 01       		.byte	0x1
+ 1623 0257 00000000 		.4byte	.LFB34
+ 1624 025b 18000000 		.4byte	.LFE34
+ 1625 025f EF000000 		.4byte	.LLST5
+ 1626 0263 0D       		.uleb128 0xd
+ 1627 0264 01       		.byte	0x1
+ 1628 0265 9C010000 		.4byte	.LASF39
+ 1629 0269 01       		.byte	0x1
+ 1630 026a 1D02     		.2byte	0x21d
+ 1631 026c 01       		.byte	0x1
+ 1632 026d 00000000 		.4byte	.LFB35
+ 1633 0271 22000000 		.4byte	.LFE35
+ 1634 0275 1A010000 		.4byte	.LLST6
+ 1635 0279 0B       		.uleb128 0xb
+ 1636 027a 30000000 		.4byte	0x30
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 40
+
+
+ 1637 027e 89020000 		.4byte	0x289
+ 1638 0282 0C       		.uleb128 0xc
+ 1639 0283 97000000 		.4byte	0x97
+ 1640 0287 09       		.byte	0x9
+ 1641 0288 00       		.byte	0x0
+ 1642 0289 0A       		.uleb128 0xa
+ 1643 028a 8A020000 		.4byte	.LASF40
+ 1644 028e 01       		.byte	0x1
+ 1645 028f 44       		.byte	0x44
+ 1646 0290 79020000 		.4byte	0x279
+ 1647 0294 05       		.byte	0x5
+ 1648 0295 03       		.byte	0x3
+ 1649 0296 00000000 		.4byte	_msg
+ 1650 029a 0A       		.uleb128 0xa
+ 1651 029b AF020000 		.4byte	.LASF41
+ 1652 029f 01       		.byte	0x1
+ 1653 02a0 46       		.byte	0x46
+ 1654 02a1 30000000 		.4byte	0x30
+ 1655 02a5 05       		.byte	0x5
+ 1656 02a6 03       		.byte	0x3
+ 1657 02a7 0A000000 		.4byte	boardStatusByte
+ 1658 02ab 0A       		.uleb128 0xa
+ 1659 02ac 65000000 		.4byte	.LASF42
+ 1660 02b0 01       		.byte	0x1
+ 1661 02b1 48       		.byte	0x48
+ 1662 02b2 42010000 		.4byte	0x142
+ 1663 02b6 05       		.byte	0x5
+ 1664 02b7 03       		.byte	0x3
+ 1665 02b8 00000000 		.4byte	mainState
+ 1666 02bc 0A       		.uleb128 0xa
+ 1667 02bd 12020000 		.4byte	.LASF43
+ 1668 02c1 01       		.byte	0x1
+ 1669 02c2 4A       		.byte	0x4a
+ 1670 02c3 62000000 		.4byte	0x62
+ 1671 02c7 05       		.byte	0x5
+ 1672 02c8 03       		.byte	0x3
+ 1673 02c9 0C000000 		.4byte	_mainTickCounter
+ 1674 02cd 0A       		.uleb128 0xa
+ 1675 02ce 99020000 		.4byte	.LASF44
+ 1676 02d2 01       		.byte	0x1
+ 1677 02d3 4C       		.byte	0x4c
+ 1678 02d4 AF000000 		.4byte	0xaf
+ 1679 02d8 05       		.byte	0x5
+ 1680 02d9 03       		.byte	0x3
+ 1681 02da 10000000 		.4byte	motionSensorTriggered
+ 1682 02de 13       		.uleb128 0x13
+ 1683 02df 48020000 		.4byte	.LASF45
+ 1684 02e3 06       		.byte	0x6
+ 1685 02e4 CE06     		.2byte	0x6ce
+ 1686 02e6 EC020000 		.4byte	0x2ec
+ 1687 02ea 01       		.byte	0x1
+ 1688 02eb 01       		.byte	0x1
+ 1689 02ec 14       		.uleb128 0x14
+ 1690 02ed 82000000 		.4byte	0x82
+ 1691 02f1 0B       		.uleb128 0xb
+ 1692 02f2 90000000 		.4byte	0x90
+ 1693 02f6 01030000 		.4byte	0x301
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 41
+
+
+ 1694 02fa 0C       		.uleb128 0xc
+ 1695 02fb 97000000 		.4byte	0x97
+ 1696 02ff C7       		.byte	0xc7
+ 1697 0300 00       		.byte	0x0
+ 1698 0301 15       		.uleb128 0x15
+ 1699 0302 E7000000 		.4byte	.LASF46
+ 1700 0306 07       		.byte	0x7
+ 1701 0307 2A       		.byte	0x2a
+ 1702 0308 F1020000 		.4byte	0x2f1
+ 1703 030c 01       		.byte	0x1
+ 1704 030d 05       		.byte	0x5
+ 1705 030e 03       		.byte	0x3
+ 1706 030f 00000000 		.4byte	debugBuff
+ 1707 0313 00       		.byte	0x0
+ 1708              		.section	.debug_abbrev
+ 1709 0000 01       		.uleb128 0x1
+ 1710 0001 11       		.uleb128 0x11
+ 1711 0002 01       		.byte	0x1
+ 1712 0003 25       		.uleb128 0x25
+ 1713 0004 0E       		.uleb128 0xe
+ 1714 0005 13       		.uleb128 0x13
+ 1715 0006 0B       		.uleb128 0xb
+ 1716 0007 03       		.uleb128 0x3
+ 1717 0008 0E       		.uleb128 0xe
+ 1718 0009 1B       		.uleb128 0x1b
+ 1719 000a 0E       		.uleb128 0xe
+ 1720 000b 11       		.uleb128 0x11
+ 1721 000c 01       		.uleb128 0x1
+ 1722 000d 52       		.uleb128 0x52
+ 1723 000e 01       		.uleb128 0x1
+ 1724 000f 55       		.uleb128 0x55
+ 1725 0010 06       		.uleb128 0x6
+ 1726 0011 10       		.uleb128 0x10
+ 1727 0012 06       		.uleb128 0x6
+ 1728 0013 00       		.byte	0x0
+ 1729 0014 00       		.byte	0x0
+ 1730 0015 02       		.uleb128 0x2
+ 1731 0016 24       		.uleb128 0x24
+ 1732 0017 00       		.byte	0x0
+ 1733 0018 0B       		.uleb128 0xb
+ 1734 0019 0B       		.uleb128 0xb
+ 1735 001a 3E       		.uleb128 0x3e
+ 1736 001b 0B       		.uleb128 0xb
+ 1737 001c 03       		.uleb128 0x3
+ 1738 001d 0E       		.uleb128 0xe
+ 1739 001e 00       		.byte	0x0
+ 1740 001f 00       		.byte	0x0
+ 1741 0020 03       		.uleb128 0x3
+ 1742 0021 16       		.uleb128 0x16
+ 1743 0022 00       		.byte	0x0
+ 1744 0023 03       		.uleb128 0x3
+ 1745 0024 0E       		.uleb128 0xe
+ 1746 0025 3A       		.uleb128 0x3a
+ 1747 0026 0B       		.uleb128 0xb
+ 1748 0027 3B       		.uleb128 0x3b
+ 1749 0028 0B       		.uleb128 0xb
+ 1750 0029 49       		.uleb128 0x49
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 42
+
+
+ 1751 002a 13       		.uleb128 0x13
+ 1752 002b 00       		.byte	0x0
+ 1753 002c 00       		.byte	0x0
+ 1754 002d 04       		.uleb128 0x4
+ 1755 002e 24       		.uleb128 0x24
+ 1756 002f 00       		.byte	0x0
+ 1757 0030 0B       		.uleb128 0xb
+ 1758 0031 0B       		.uleb128 0xb
+ 1759 0032 3E       		.uleb128 0x3e
+ 1760 0033 0B       		.uleb128 0xb
+ 1761 0034 03       		.uleb128 0x3
+ 1762 0035 08       		.uleb128 0x8
+ 1763 0036 00       		.byte	0x0
+ 1764 0037 00       		.byte	0x0
+ 1765 0038 05       		.uleb128 0x5
+ 1766 0039 24       		.uleb128 0x24
+ 1767 003a 00       		.byte	0x0
+ 1768 003b 0B       		.uleb128 0xb
+ 1769 003c 0B       		.uleb128 0xb
+ 1770 003d 3E       		.uleb128 0x3e
+ 1771 003e 0B       		.uleb128 0xb
+ 1772 003f 00       		.byte	0x0
+ 1773 0040 00       		.byte	0x0
+ 1774 0041 06       		.uleb128 0x6
+ 1775 0042 04       		.uleb128 0x4
+ 1776 0043 01       		.byte	0x1
+ 1777 0044 0B       		.uleb128 0xb
+ 1778 0045 0B       		.uleb128 0xb
+ 1779 0046 3A       		.uleb128 0x3a
+ 1780 0047 0B       		.uleb128 0xb
+ 1781 0048 3B       		.uleb128 0x3b
+ 1782 0049 0B       		.uleb128 0xb
+ 1783 004a 01       		.uleb128 0x1
+ 1784 004b 13       		.uleb128 0x13
+ 1785 004c 00       		.byte	0x0
+ 1786 004d 00       		.byte	0x0
+ 1787 004e 07       		.uleb128 0x7
+ 1788 004f 28       		.uleb128 0x28
+ 1789 0050 00       		.byte	0x0
+ 1790 0051 03       		.uleb128 0x3
+ 1791 0052 0E       		.uleb128 0xe
+ 1792 0053 1C       		.uleb128 0x1c
+ 1793 0054 0D       		.uleb128 0xd
+ 1794 0055 00       		.byte	0x0
+ 1795 0056 00       		.byte	0x0
+ 1796 0057 08       		.uleb128 0x8
+ 1797 0058 28       		.uleb128 0x28
+ 1798 0059 00       		.byte	0x0
+ 1799 005a 03       		.uleb128 0x3
+ 1800 005b 08       		.uleb128 0x8
+ 1801 005c 1C       		.uleb128 0x1c
+ 1802 005d 0D       		.uleb128 0xd
+ 1803 005e 00       		.byte	0x0
+ 1804 005f 00       		.byte	0x0
+ 1805 0060 09       		.uleb128 0x9
+ 1806 0061 2E       		.uleb128 0x2e
+ 1807 0062 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 43
+
+
+ 1808 0063 3F       		.uleb128 0x3f
+ 1809 0064 0C       		.uleb128 0xc
+ 1810 0065 03       		.uleb128 0x3
+ 1811 0066 0E       		.uleb128 0xe
+ 1812 0067 3A       		.uleb128 0x3a
+ 1813 0068 0B       		.uleb128 0xb
+ 1814 0069 3B       		.uleb128 0x3b
+ 1815 006a 0B       		.uleb128 0xb
+ 1816 006b 11       		.uleb128 0x11
+ 1817 006c 01       		.uleb128 0x1
+ 1818 006d 12       		.uleb128 0x12
+ 1819 006e 01       		.uleb128 0x1
+ 1820 006f 40       		.uleb128 0x40
+ 1821 0070 06       		.uleb128 0x6
+ 1822 0071 01       		.uleb128 0x1
+ 1823 0072 13       		.uleb128 0x13
+ 1824 0073 00       		.byte	0x0
+ 1825 0074 00       		.byte	0x0
+ 1826 0075 0A       		.uleb128 0xa
+ 1827 0076 34       		.uleb128 0x34
+ 1828 0077 00       		.byte	0x0
+ 1829 0078 03       		.uleb128 0x3
+ 1830 0079 0E       		.uleb128 0xe
+ 1831 007a 3A       		.uleb128 0x3a
+ 1832 007b 0B       		.uleb128 0xb
+ 1833 007c 3B       		.uleb128 0x3b
+ 1834 007d 0B       		.uleb128 0xb
+ 1835 007e 49       		.uleb128 0x49
+ 1836 007f 13       		.uleb128 0x13
+ 1837 0080 02       		.uleb128 0x2
+ 1838 0081 0A       		.uleb128 0xa
+ 1839 0082 00       		.byte	0x0
+ 1840 0083 00       		.byte	0x0
+ 1841 0084 0B       		.uleb128 0xb
+ 1842 0085 01       		.uleb128 0x1
+ 1843 0086 01       		.byte	0x1
+ 1844 0087 49       		.uleb128 0x49
+ 1845 0088 13       		.uleb128 0x13
+ 1846 0089 01       		.uleb128 0x1
+ 1847 008a 13       		.uleb128 0x13
+ 1848 008b 00       		.byte	0x0
+ 1849 008c 00       		.byte	0x0
+ 1850 008d 0C       		.uleb128 0xc
+ 1851 008e 21       		.uleb128 0x21
+ 1852 008f 00       		.byte	0x0
+ 1853 0090 49       		.uleb128 0x49
+ 1854 0091 13       		.uleb128 0x13
+ 1855 0092 2F       		.uleb128 0x2f
+ 1856 0093 0B       		.uleb128 0xb
+ 1857 0094 00       		.byte	0x0
+ 1858 0095 00       		.byte	0x0
+ 1859 0096 0D       		.uleb128 0xd
+ 1860 0097 2E       		.uleb128 0x2e
+ 1861 0098 00       		.byte	0x0
+ 1862 0099 3F       		.uleb128 0x3f
+ 1863 009a 0C       		.uleb128 0xc
+ 1864 009b 03       		.uleb128 0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 44
+
+
+ 1865 009c 0E       		.uleb128 0xe
+ 1866 009d 3A       		.uleb128 0x3a
+ 1867 009e 0B       		.uleb128 0xb
+ 1868 009f 3B       		.uleb128 0x3b
+ 1869 00a0 05       		.uleb128 0x5
+ 1870 00a1 27       		.uleb128 0x27
+ 1871 00a2 0C       		.uleb128 0xc
+ 1872 00a3 11       		.uleb128 0x11
+ 1873 00a4 01       		.uleb128 0x1
+ 1874 00a5 12       		.uleb128 0x12
+ 1875 00a6 01       		.uleb128 0x1
+ 1876 00a7 40       		.uleb128 0x40
+ 1877 00a8 06       		.uleb128 0x6
+ 1878 00a9 00       		.byte	0x0
+ 1879 00aa 00       		.byte	0x0
+ 1880 00ab 0E       		.uleb128 0xe
+ 1881 00ac 2E       		.uleb128 0x2e
+ 1882 00ad 00       		.byte	0x0
+ 1883 00ae 3F       		.uleb128 0x3f
+ 1884 00af 0C       		.uleb128 0xc
+ 1885 00b0 03       		.uleb128 0x3
+ 1886 00b1 0E       		.uleb128 0xe
+ 1887 00b2 3A       		.uleb128 0x3a
+ 1888 00b3 0B       		.uleb128 0xb
+ 1889 00b4 3B       		.uleb128 0x3b
+ 1890 00b5 05       		.uleb128 0x5
+ 1891 00b6 27       		.uleb128 0x27
+ 1892 00b7 0C       		.uleb128 0xc
+ 1893 00b8 49       		.uleb128 0x49
+ 1894 00b9 13       		.uleb128 0x13
+ 1895 00ba 11       		.uleb128 0x11
+ 1896 00bb 01       		.uleb128 0x1
+ 1897 00bc 12       		.uleb128 0x12
+ 1898 00bd 01       		.uleb128 0x1
+ 1899 00be 40       		.uleb128 0x40
+ 1900 00bf 06       		.uleb128 0x6
+ 1901 00c0 00       		.byte	0x0
+ 1902 00c1 00       		.byte	0x0
+ 1903 00c2 0F       		.uleb128 0xf
+ 1904 00c3 2E       		.uleb128 0x2e
+ 1905 00c4 01       		.byte	0x1
+ 1906 00c5 3F       		.uleb128 0x3f
+ 1907 00c6 0C       		.uleb128 0xc
+ 1908 00c7 03       		.uleb128 0x3
+ 1909 00c8 0E       		.uleb128 0xe
+ 1910 00c9 3A       		.uleb128 0x3a
+ 1911 00ca 0B       		.uleb128 0xb
+ 1912 00cb 3B       		.uleb128 0x3b
+ 1913 00cc 05       		.uleb128 0x5
+ 1914 00cd 27       		.uleb128 0x27
+ 1915 00ce 0C       		.uleb128 0xc
+ 1916 00cf 11       		.uleb128 0x11
+ 1917 00d0 01       		.uleb128 0x1
+ 1918 00d1 12       		.uleb128 0x12
+ 1919 00d2 01       		.uleb128 0x1
+ 1920 00d3 40       		.uleb128 0x40
+ 1921 00d4 06       		.uleb128 0x6
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 45
+
+
+ 1922 00d5 01       		.uleb128 0x1
+ 1923 00d6 13       		.uleb128 0x13
+ 1924 00d7 00       		.byte	0x0
+ 1925 00d8 00       		.byte	0x0
+ 1926 00d9 10       		.uleb128 0x10
+ 1927 00da 05       		.uleb128 0x5
+ 1928 00db 00       		.byte	0x0
+ 1929 00dc 03       		.uleb128 0x3
+ 1930 00dd 08       		.uleb128 0x8
+ 1931 00de 3A       		.uleb128 0x3a
+ 1932 00df 0B       		.uleb128 0xb
+ 1933 00e0 3B       		.uleb128 0x3b
+ 1934 00e1 05       		.uleb128 0x5
+ 1935 00e2 49       		.uleb128 0x49
+ 1936 00e3 13       		.uleb128 0x13
+ 1937 00e4 02       		.uleb128 0x2
+ 1938 00e5 0A       		.uleb128 0xa
+ 1939 00e6 00       		.byte	0x0
+ 1940 00e7 00       		.byte	0x0
+ 1941 00e8 11       		.uleb128 0x11
+ 1942 00e9 34       		.uleb128 0x34
+ 1943 00ea 00       		.byte	0x0
+ 1944 00eb 03       		.uleb128 0x3
+ 1945 00ec 0E       		.uleb128 0xe
+ 1946 00ed 3A       		.uleb128 0x3a
+ 1947 00ee 0B       		.uleb128 0xb
+ 1948 00ef 3B       		.uleb128 0x3b
+ 1949 00f0 05       		.uleb128 0x5
+ 1950 00f1 49       		.uleb128 0x49
+ 1951 00f2 13       		.uleb128 0x13
+ 1952 00f3 02       		.uleb128 0x2
+ 1953 00f4 0A       		.uleb128 0xa
+ 1954 00f5 00       		.byte	0x0
+ 1955 00f6 00       		.byte	0x0
+ 1956 00f7 12       		.uleb128 0x12
+ 1957 00f8 0F       		.uleb128 0xf
+ 1958 00f9 00       		.byte	0x0
+ 1959 00fa 0B       		.uleb128 0xb
+ 1960 00fb 0B       		.uleb128 0xb
+ 1961 00fc 49       		.uleb128 0x49
+ 1962 00fd 13       		.uleb128 0x13
+ 1963 00fe 00       		.byte	0x0
+ 1964 00ff 00       		.byte	0x0
+ 1965 0100 13       		.uleb128 0x13
+ 1966 0101 34       		.uleb128 0x34
+ 1967 0102 00       		.byte	0x0
+ 1968 0103 03       		.uleb128 0x3
+ 1969 0104 0E       		.uleb128 0xe
+ 1970 0105 3A       		.uleb128 0x3a
+ 1971 0106 0B       		.uleb128 0xb
+ 1972 0107 3B       		.uleb128 0x3b
+ 1973 0108 05       		.uleb128 0x5
+ 1974 0109 49       		.uleb128 0x49
+ 1975 010a 13       		.uleb128 0x13
+ 1976 010b 3F       		.uleb128 0x3f
+ 1977 010c 0C       		.uleb128 0xc
+ 1978 010d 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 46
+
+
+ 1979 010e 0C       		.uleb128 0xc
+ 1980 010f 00       		.byte	0x0
+ 1981 0110 00       		.byte	0x0
+ 1982 0111 14       		.uleb128 0x14
+ 1983 0112 35       		.uleb128 0x35
+ 1984 0113 00       		.byte	0x0
+ 1985 0114 49       		.uleb128 0x49
+ 1986 0115 13       		.uleb128 0x13
+ 1987 0116 00       		.byte	0x0
+ 1988 0117 00       		.byte	0x0
+ 1989 0118 15       		.uleb128 0x15
+ 1990 0119 34       		.uleb128 0x34
+ 1991 011a 00       		.byte	0x0
+ 1992 011b 03       		.uleb128 0x3
+ 1993 011c 0E       		.uleb128 0xe
+ 1994 011d 3A       		.uleb128 0x3a
+ 1995 011e 0B       		.uleb128 0xb
+ 1996 011f 3B       		.uleb128 0x3b
+ 1997 0120 0B       		.uleb128 0xb
+ 1998 0121 49       		.uleb128 0x49
+ 1999 0122 13       		.uleb128 0x13
+ 2000 0123 3F       		.uleb128 0x3f
+ 2001 0124 0C       		.uleb128 0xc
+ 2002 0125 02       		.uleb128 0x2
+ 2003 0126 0A       		.uleb128 0xa
+ 2004 0127 00       		.byte	0x0
+ 2005 0128 00       		.byte	0x0
+ 2006 0129 00       		.byte	0x0
+ 2007              		.section	.debug_pubnames,"",%progbits
+ 2008 0000 C8000000 		.4byte	0xc8
+ 2009 0004 0200     		.2byte	0x2
+ 2010 0006 00000000 		.4byte	.Ldebug_info0
+ 2011 000a 14030000 		.4byte	0x314
+ 2012 000e 4D010000 		.4byte	0x14d
+ 2013 0012 6D61696E 		.ascii	"main\000"
+ 2013      00
+ 2014 0017 C8010000 		.4byte	0x1c8
+ 2015 001b 4D61696E 		.ascii	"Main_CheckForLedOnOffPressed\000"
+ 2015      5F436865 
+ 2015      636B466F 
+ 2015      724C6564 
+ 2015      4F6E4F66 
+ 2016 0038 DE010000 		.4byte	0x1de
+ 2017 003c 4D61696E 		.ascii	"Main_CheckForChangeLedMode\000"
+ 2017      5F436865 
+ 2017      636B466F 
+ 2017      72436861 
+ 2017      6E67654C 
+ 2018 0057 F4010000 		.4byte	0x1f4
+ 2019 005b 4D61696E 		.ascii	"Main_CheckForAlarmOnOffPressed\000"
+ 2019      5F436865 
+ 2019      636B466F 
+ 2019      72416C61 
+ 2019      726D4F6E 
+ 2020 007a 0E020000 		.4byte	0x20e
+ 2021 007e 4D61696E 		.ascii	"Main_BuildMsg\000"
+ 2021      5F427569 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 47
+
+
+ 2021      6C644D73 
+ 2021      6700
+ 2022 008c 4D020000 		.4byte	0x24d
+ 2023 0090 4D61696E 		.ascii	"Main_MotionSensorIsr\000"
+ 2023      5F4D6F74 
+ 2023      696F6E53 
+ 2023      656E736F 
+ 2023      72497372 
+ 2024 00a5 63020000 		.4byte	0x263
+ 2025 00a9 4D61696E 		.ascii	"Main_MainTickIsr\000"
+ 2025      5F4D6169 
+ 2025      6E546963 
+ 2025      6B497372 
+ 2025      00
+ 2026 00ba 01030000 		.4byte	0x301
+ 2027 00be 64656275 		.ascii	"debugBuff\000"
+ 2027      67427566 
+ 2027      6600
+ 2028 00c8 00000000 		.4byte	0x0
+ 2029              		.section	.debug_aranges,"",%progbits
+ 2030 0000 4C000000 		.4byte	0x4c
+ 2031 0004 0200     		.2byte	0x2
+ 2032 0006 00000000 		.4byte	.Ldebug_info0
+ 2033 000a 04       		.byte	0x4
+ 2034 000b 00       		.byte	0x0
+ 2035 000c 0000     		.2byte	0x0
+ 2036 000e 0000     		.2byte	0x0
+ 2037 0010 00000000 		.4byte	.LFB29
+ 2038 0014 E0070000 		.4byte	.LFE29-.LFB29
+ 2039 0018 00000000 		.4byte	.LFB30
+ 2040 001c 42000000 		.4byte	.LFE30-.LFB30
+ 2041 0020 00000000 		.4byte	.LFB31
+ 2042 0024 24000000 		.4byte	.LFE31-.LFB31
+ 2043 0028 00000000 		.4byte	.LFB32
+ 2044 002c 24000000 		.4byte	.LFE32-.LFB32
+ 2045 0030 00000000 		.4byte	.LFB33
+ 2046 0034 B0000000 		.4byte	.LFE33-.LFB33
+ 2047 0038 00000000 		.4byte	.LFB34
+ 2048 003c 18000000 		.4byte	.LFE34-.LFB34
+ 2049 0040 00000000 		.4byte	.LFB35
+ 2050 0044 22000000 		.4byte	.LFE35-.LFB35
+ 2051 0048 00000000 		.4byte	0x0
+ 2052 004c 00000000 		.4byte	0x0
+ 2053              		.section	.debug_ranges,"",%progbits
+ 2054              	.Ldebug_ranges0:
+ 2055 0000 00000000 		.4byte	.Ltext0
+ 2056 0004 00000000 		.4byte	.Letext0
+ 2057 0008 00000000 		.4byte	.LFB29
+ 2058 000c E0070000 		.4byte	.LFE29
+ 2059 0010 00000000 		.4byte	.LFB30
+ 2060 0014 42000000 		.4byte	.LFE30
+ 2061 0018 00000000 		.4byte	.LFB31
+ 2062 001c 24000000 		.4byte	.LFE31
+ 2063 0020 00000000 		.4byte	.LFB32
+ 2064 0024 24000000 		.4byte	.LFE32
+ 2065 0028 00000000 		.4byte	.LFB33
+ 2066 002c B0000000 		.4byte	.LFE33
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 48
+
+
+ 2067 0030 00000000 		.4byte	.LFB34
+ 2068 0034 18000000 		.4byte	.LFE34
+ 2069 0038 00000000 		.4byte	.LFB35
+ 2070 003c 22000000 		.4byte	.LFE35
+ 2071 0040 00000000 		.4byte	0x0
+ 2072 0044 00000000 		.4byte	0x0
+ 2073              		.section	.debug_str,"MS",%progbits,1
+ 2074              	.LASF9:
+ 2075 0000 6C6F6E67 		.ascii	"long long int\000"
+ 2075      206C6F6E 
+ 2075      6720696E 
+ 2075      7400
+ 2076              	.LASF51:
+ 2077 000e 4D61696E 		.ascii	"Main_CheckForAlarmOnOffPressed\000"
+ 2077      5F436865 
+ 2077      636B466F 
+ 2077      72416C61 
+ 2077      726D4F6E 
+ 2078              	.LASF30:
+ 2079 002d 6964656E 		.ascii	"iden_chars\000"
+ 2079      5F636861 
+ 2079      727300
+ 2080              	.LASF25:
+ 2081 0038 696E5261 		.ascii	"inRange\000"
+ 2081      6E676500 
+ 2082              	.LASF17:
+ 2083 0040 4C45445F 		.ascii	"LED_ORANGE\000"
+ 2083      4F52414E 
+ 2083      474500
+ 2084              	.LASF14:
+ 2085 004b 54525545 		.ascii	"TRUE\000"
+ 2085      00
+ 2086              	.LASF22:
+ 2087 0050 464C4153 		.ascii	"FLASHING\000"
+ 2087      48494E47 
+ 2087      00
+ 2088              	.LASF32:
+ 2089 0059 63757272 		.ascii	"currentTick\000"
+ 2089      656E7454 
+ 2089      69636B00 
+ 2090              	.LASF42:
+ 2091 0065 6D61696E 		.ascii	"mainState\000"
+ 2091      53746174 
+ 2091      6500
+ 2092              	.LASF24:
+ 2093 006f 696E6974 		.ascii	"init\000"
+ 2093      00
+ 2094              	.LASF15:
+ 2095 0074 626F6F6C 		.ascii	"bool_t\000"
+ 2095      5F7400
+ 2096              	.LASF36:
+ 2097 007b 4D61696E 		.ascii	"Main_CheckForChangeLedMode\000"
+ 2097      5F436865 
+ 2097      636B466F 
+ 2097      72436861 
+ 2097      6E67654C 
+ 2098              	.LASF31:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 49
+
+
+ 2099 0096 70726576 		.ascii	"prevMainState\000"
+ 2099      4D61696E 
+ 2099      53746174 
+ 2099      6500
+ 2100              	.LASF0:
+ 2101 00a4 7369676E 		.ascii	"signed char\000"
+ 2101      65642063 
+ 2101      68617200 
+ 2102              	.LASF1:
+ 2103 00b0 756E7369 		.ascii	"unsigned char\000"
+ 2103      676E6564 
+ 2103      20636861 
+ 2103      7200
+ 2104              	.LASF48:
+ 2105 00be 2E5C6D61 		.ascii	".\\main.c\000"
+ 2105      696E2E63 
+ 2105      00
+ 2106              	.LASF29:
+ 2107 00c7 6D61696E 		.ascii	"mainStates_t\000"
+ 2107      53746174 
+ 2107      65735F74 
+ 2107      00
+ 2108              	.LASF5:
+ 2109 00d4 73686F72 		.ascii	"short unsigned int\000"
+ 2109      7420756E 
+ 2109      7369676E 
+ 2109      65642069 
+ 2109      6E7400
+ 2110              	.LASF46:
+ 2111 00e7 64656275 		.ascii	"debugBuff\000"
+ 2111      67427566 
+ 2111      6600
+ 2112              	.LASF20:
+ 2113 00f1 4C494748 		.ascii	"LIGHT_BACK\000"
+ 2113      545F4241 
+ 2113      434B00
+ 2114              	.LASF13:
+ 2115 00fc 46414C53 		.ascii	"FALSE\000"
+ 2115      4500
+ 2116              	.LASF49:
+ 2117 0102 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 2117      73657273 
+ 2117      5C47656F 
+ 2117      5C446F63 
+ 2117      756D656E 
+ 2118 0130 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 2118      645C4669 
+ 2118      726D7761 
+ 2118      72655C50 
+ 2118      536F435C 
+ 2119 0160 00       		.ascii	"\000"
+ 2120              	.LASF8:
+ 2121 0161 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2121      20756E73 
+ 2121      69676E65 
+ 2121      6420696E 
+ 2121      7400
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 50
+
+
+ 2122              	.LASF38:
+ 2123 0173 4D61696E 		.ascii	"Main_MotionSensorIsr\000"
+ 2123      5F4D6F74 
+ 2123      696F6E53 
+ 2123      656E736F 
+ 2123      72497372 
+ 2124              	.LASF50:
+ 2125 0188 6D61696E 		.ascii	"main\000"
+ 2125      00
+ 2126              	.LASF21:
+ 2127 018d 4C494748 		.ascii	"LIGHT_SKIRTING\000"
+ 2127      545F534B 
+ 2127      49525449 
+ 2127      4E4700
+ 2128              	.LASF39:
+ 2129 019c 4D61696E 		.ascii	"Main_MainTickIsr\000"
+ 2129      5F4D6169 
+ 2129      6E546963 
+ 2129      6B497372 
+ 2129      00
+ 2130              	.LASF33:
+ 2131 01ad 616C6172 		.ascii	"alarmTriggerCount\000"
+ 2131      6D547269 
+ 2131      67676572 
+ 2131      436F756E 
+ 2131      7400
+ 2132              	.LASF37:
+ 2133 01bf 7468726F 		.ascii	"throttleVal16Bit\000"
+ 2133      74746C65 
+ 2133      56616C31 
+ 2133      36426974 
+ 2133      00
+ 2134              	.LASF11:
+ 2135 01d0 756E7369 		.ascii	"unsigned int\000"
+ 2135      676E6564 
+ 2135      20696E74 
+ 2135      00
+ 2136              	.LASF10:
+ 2137 01dd 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2137      206C6F6E 
+ 2137      6720756E 
+ 2137      7369676E 
+ 2137      65642069 
+ 2138              	.LASF3:
+ 2139 01f4 75696E74 		.ascii	"uint8_t\000"
+ 2139      385F7400 
+ 2140              	.LASF52:
+ 2141 01fc 4D61696E 		.ascii	"Main_BuildMsg\000"
+ 2141      5F427569 
+ 2141      6C644D73 
+ 2141      6700
+ 2142              	.LASF16:
+ 2143 020a 4C45445F 		.ascii	"LED_RED\000"
+ 2143      52454400 
+ 2144              	.LASF43:
+ 2145 0212 5F6D6169 		.ascii	"_mainTickCounter\000"
+ 2145      6E546963 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 51
+
+
+ 2145      6B436F75 
+ 2145      6E746572 
+ 2145      00
+ 2146              	.LASF47:
+ 2147 0223 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 2147      4320342E 
+ 2147      342E3100 
+ 2148              	.LASF26:
+ 2149 022f 6D6F746F 		.ascii	"motorOn\000"
+ 2149      724F6E00 
+ 2150              	.LASF12:
+ 2151 0237 63686172 		.ascii	"char\000"
+ 2151      00
+ 2152              	.LASF19:
+ 2153 023c 4C494748 		.ascii	"LIGHT_FRONT\000"
+ 2153      545F4652 
+ 2153      4F4E5400 
+ 2154              	.LASF45:
+ 2155 0248 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2155      52784275 
+ 2155      66666572 
+ 2155      00
+ 2156              	.LASF2:
+ 2157 0255 73686F72 		.ascii	"short int\000"
+ 2157      7420696E 
+ 2157      7400
+ 2158              	.LASF23:
+ 2159 025f 646F776E 		.ascii	"down\000"
+ 2159      00
+ 2160              	.LASF4:
+ 2161 0264 75696E74 		.ascii	"uint16_t\000"
+ 2161      31365F74 
+ 2161      00
+ 2162              	.LASF27:
+ 2163 026d 616C6172 		.ascii	"alarmArmed\000"
+ 2163      6D41726D 
+ 2163      656400
+ 2164              	.LASF7:
+ 2165 0278 75696E74 		.ascii	"uint32_t\000"
+ 2165      33325F74 
+ 2165      00
+ 2166              	.LASF6:
+ 2167 0281 6C6F6E67 		.ascii	"long int\000"
+ 2167      20696E74 
+ 2167      00
+ 2168              	.LASF40:
+ 2169 028a 5F6D7367 		.ascii	"_msg\000"
+ 2169      00
+ 2170              	.LASF18:
+ 2171 028f 4C45445F 		.ascii	"LED_GREEN\000"
+ 2171      47524545 
+ 2171      4E00
+ 2172              	.LASF44:
+ 2173 0299 6D6F7469 		.ascii	"motionSensorTriggered\000"
+ 2173      6F6E5365 
+ 2173      6E736F72 
+ 2173      54726967 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc1XeoyO.s 			page 52
+
+
+ 2173      67657265 
+ 2174              	.LASF41:
+ 2175 02af 626F6172 		.ascii	"boardStatusByte\000"
+ 2175      64537461 
+ 2175      74757342 
+ 2175      79746500 
+ 2176              	.LASF28:
+ 2177 02bf 616C6172 		.ascii	"alarmTriggered\000"
+ 2177      6D547269 
+ 2177      67676572 
+ 2177      656400
+ 2178              	.LASF35:
+ 2179 02ce 4D61696E 		.ascii	"Main_CheckForLedOnOffPressed\000"
+ 2179      5F436865 
+ 2179      636B466F 
+ 2179      724C6564 
+ 2179      4F6E4F66 
+ 2180              	.LASF34:
+ 2181 02eb 616C6172 		.ascii	"alarmTriggeredStartCount\000"
+ 2181      6D547269 
+ 2181      67676572 
+ 2181      65645374 
+ 2181      61727443 
+ 2182              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

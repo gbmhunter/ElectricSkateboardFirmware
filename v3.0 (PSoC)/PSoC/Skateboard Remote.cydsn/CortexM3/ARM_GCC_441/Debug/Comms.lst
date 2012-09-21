@@ -1,0 +1,3071 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Comms.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 40020000 		.text
+  20      02000D01 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.bss
+  24              	_newPacketFlag:
+  25 0000 00       		.space	1
+  26              	_unreadDataFlag:
+  27 0001 00       		.space	1
+  28              	_commsPacketBufferOverrunFlag:
+  29 0002 00       		.space	1
+  30              	_commsInitCompleteFlag:
+  31 0003 00       		.space	1
+  32              	_commsTimeoutFlag:
+  33 0004 00       		.space	1
+  34 0005 000000   		.align	2
+  35              	_idenChars:
+  36 0008 00000000 		.space	4
+  37              		.align	2
+  38              	_txDataBuffer:
+  39 000c 00000000 		.space	8
+  39      00000000 
+  40              		.align	2
+  41              	_rxDataBuffer:
+  42 0014 00000000 		.space	50
+  42      00000000 
+  42      00000000 
+  42      00000000 
+  42      00000000 
+  43              	_turnOffXbeeFlag:
+  44 0046 00       		.space	1
+  45              	_turnOnXbeeFlag:
+  46 0047 00       		.space	1
+  47              	_toSendFlag:
+  48 0048 00       		.space	1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 2
+
+
+  49              		.section	.text.Comms_Init,"ax",%progbits
+  50              		.align	2
+  51              		.global	Comms_Init
+  52              		.thumb
+  53              		.thumb_func
+  54              		.type	Comms_Init, %function
+  55              	Comms_Init:
+  56              	.LFB29:
+  57              		.file 1 ".\\Comms.c"
+   1:.\Comms.c     **** //!
+   2:.\Comms.c     **** //! @file 		Comms.c
+   3:.\Comms.c     **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Comms.c     **** //! @date 		22/12/2010
+   5:.\Comms.c     **** //! @brief 		Controls the comms between board and remote. Common to both platforms.
+   6:.\Comms.c     **** //! @details
+   7:.\Comms.c     **** //!		<b>Last Modified:			</b> 24/05/2011								\n
+   8:.\Comms.c     **** //!		<b>Version:					</b> v1.0									\n
+   9:.\Comms.c     **** //!		<b>Company:					</b> CladLabs								\n
+  10:.\Comms.c     **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\Comms.c     **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\Comms.c     **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\Comms.c     **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\Comms.c     **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\Comms.c     **** //!		
+  16:.\Comms.c     **** //!		
+  17:.\Comms.c     **** //!
+  18:.\Comms.c     **** 
+  19:.\Comms.c     **** //===============================================================================================//
+  20:.\Comms.c     **** //======================================= FILE INCLUSIONS =======================================//
+  21:.\Comms.c     **** //===============================================================================================//
+  22:.\Comms.c     **** 
+  23:.\Comms.c     **** #include <device.h>
+  24:.\Comms.c     **** #include <stdio.h>
+  25:.\Comms.c     **** 
+  26:.\Comms.c     **** #include "../common/PublicObjects.h"
+  27:.\Comms.c     **** #include "Config.h"
+  28:.\Comms.c     **** #include "Comms.h"
+  29:.\Comms.c     **** #include "Lights.h"
+  30:.\Comms.c     **** 
+  31:.\Comms.c     **** 
+  32:.\Comms.c     **** 
+  33:.\Comms.c     **** 
+  34:.\Comms.c     **** // Bit positions of data in rx packet
+  35:.\Comms.c     **** 
+  36:.\Comms.c     **** #define MS1_BP 5	// Higher byte of motor speed
+  37:.\Comms.c     **** #define MS0_BP 6	// Lower byte of motor speed
+  38:.\Comms.c     **** 
+  39:.\Comms.c     **** typedef enum {
+  40:.\Comms.c     **** 	idle,
+  41:.\Comms.c     **** 	secondIdenChar,
+  42:.\Comms.c     **** 	thirdIdenChar,
+  43:.\Comms.c     **** 	packetDataCount,
+  44:.\Comms.c     **** 	packetData,
+  45:.\Comms.c     **** 	receivingChecksum,
+  46:.\Comms.c     **** 	packetComplete
+  47:.\Comms.c     **** } commsStates_t;
+  48:.\Comms.c     **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 3
+
+
+  49:.\Comms.c     **** typedef enum {
+  50:.\Comms.c     **** 	xbeeInit,
+  51:.\Comms.c     **** 	xbeeOff,
+  52:.\Comms.c     **** 	xbeeTurningOn,
+  53:.\Comms.c     **** 	xbeeOnStable,
+  54:.\Comms.c     **** 	xbeeSending,
+  55:.\Comms.c     **** 	xbeeWaitingForResponse
+  56:.\Comms.c     **** } xbeeStates_t;
+  57:.\Comms.c     **** 
+  58:.\Comms.c     **** //===============================================================================================//
+  59:.\Comms.c     **** //=============================== PRIVATE FUNCTION PROTOTYPES ===================================//
+  60:.\Comms.c     **** //===============================================================================================//
+  61:.\Comms.c     **** 
+  62:.\Comms.c     **** void Comms_RetrieveData();
+  63:.\Comms.c     **** uint8 Comms_DecodePacket();
+  64:.\Comms.c     **** 
+  65:.\Comms.c     **** //===============================================================================================//
+  66:.\Comms.c     **** //==================================== PRIVATE VARIABLES ========================================//
+  67:.\Comms.c     **** //===============================================================================================//
+  68:.\Comms.c     **** 
+  69:.\Comms.c     **** //flags
+  70:.\Comms.c     **** static bool_t _newPacketFlag = FALSE;
+  71:.\Comms.c     **** // Set when a byte has not been read from a new data packet
+  72:.\Comms.c     **** static bool_t _unreadDataFlag = FALSE;
+  73:.\Comms.c     **** static bool_t _commsPacketBufferOverrunFlag = FALSE;
+  74:.\Comms.c     **** static bool_t _commsInitCompleteFlag = FALSE;
+  75:.\Comms.c     **** static bool_t _commsTimeoutFlag = FALSE;
+  76:.\Comms.c     **** 
+  77:.\Comms.c     **** 
+  78:.\Comms.c     **** static uint8_t* _idenChars;
+  79:.\Comms.c     **** 
+  80:.\Comms.c     **** static uint8_t _txDataBuffer[configCOMMS_MSG_SIZE];
+  81:.\Comms.c     **** static uint8_t _rxDataBuffer[configCOMM_RX_BUFFER_SIZE];
+  82:.\Comms.c     **** 
+  83:.\Comms.c     **** static bool_t _turnOffXbeeFlag = FALSE;
+  84:.\Comms.c     **** static bool_t _turnOnXbeeFlag = FALSE;
+  85:.\Comms.c     **** static bool_t _toSendFlag = FALSE;
+  86:.\Comms.c     **** 
+  87:.\Comms.c     **** /***Function Definitions***/
+  88:.\Comms.c     **** 
+  89:.\Comms.c     **** void Comms_Init(uint8_t* idenCharsIn)
+  90:.\Comms.c     **** {
+  58              		.loc 1 90 0
+  59              		.cfi_startproc
+  60              		@ args = 0, pretend = 0, frame = 8
+  61              		@ frame_needed = 1, uses_anonymous_args = 0
+  62              		@ link register save eliminated.
+  63 0000 80B4     		push	{r7}
+  64              	.LCFI0:
+  65              		.cfi_def_cfa_offset 4
+  66 0002 83B0     		sub	sp, sp, #12
+  67              	.LCFI1:
+  68              		.cfi_def_cfa_offset 16
+  69 0004 00AF     		add	r7, sp, #0
+  70              		.cfi_offset 7, -4
+  71              	.LCFI2:
+  72              		.cfi_def_cfa_register 7
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 4
+
+
+  73 0006 7860     		str	r0, [r7, #4]
+  91:.\Comms.c     **** 	//led_on(0);
+  92:.\Comms.c     **** 	_idenChars = idenCharsIn;
+  74              		.loc 1 92 0
+  75 0008 40F20003 		movw	r3, #:lower16:_idenChars
+  76 000c C0F20003 		movt	r3, #:upper16:_idenChars
+  77 0010 7A68     		ldr	r2, [r7, #4]
+  78 0012 1A60     		str	r2, [r3, #0]
+  93:.\Comms.c     **** 	
+  94:.\Comms.c     **** 	//Signal that intialisation is complete
+  95:.\Comms.c     **** 	_commsInitCompleteFlag = TRUE;
+  79              		.loc 1 95 0
+  80 0014 40F20003 		movw	r3, #:lower16:_commsInitCompleteFlag
+  81 0018 C0F20003 		movt	r3, #:upper16:_commsInitCompleteFlag
+  82 001c 4FF00102 		mov	r2, #1
+  83 0020 1A70     		strb	r2, [r3, #0]
+  96:.\Comms.c     **** }
+  84              		.loc 1 96 0
+  85 0022 07F10C07 		add	r7, r7, #12
+  86 0026 BD46     		mov	sp, r7
+  87 0028 80BC     		pop	{r7}
+  88 002a 7047     		bx	lr
+  89              		.cfi_endproc
+  90              	.LFE29:
+  91              		.size	Comms_Init, .-Comms_Init
+  92              		.global	__aeabi_ui2d
+  93              		.global	__aeabi_dadd
+  94              		.global	__aeabi_dcmpge
+  95              		.global	__aeabi_dmul
+  96              		.section	.rodata
+  97              		.align	2
+  98              	.LC0:
+  99 0000 434F4D4D 		.ascii	"COMMS: Xbee timeout. Time since send: %fms\015\012\000"
+  99      533A2058 
+  99      62656520 
+  99      74696D65 
+  99      6F75742E 
+ 100              		.section	.text.Comms_Run,"ax",%progbits
+ 101              		.align	2
+ 102              		.global	Comms_Run
+ 103              		.thumb
+ 104              		.thumb_func
+ 105              		.type	Comms_Run, %function
+ 106              	Comms_Run:
+ 107              	.LFB30:
+  97:.\Comms.c     **** 
+  98:.\Comms.c     **** //! @brief		Call once per main loop tick
+  99:.\Comms.c     **** void Comms_Run(void)
+ 100:.\Comms.c     **** {
+ 108              		.loc 1 100 0
+ 109              		.cfi_startproc
+ 110              		@ args = 0, pretend = 0, frame = 104
+ 111              		@ frame_needed = 1, uses_anonymous_args = 0
+ 112 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 113              	.LCFI3:
+ 114              		.cfi_def_cfa_offset 20
+ 115 0002 9DB0     		sub	sp, sp, #116
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 5
+
+
+ 116              	.LCFI4:
+ 117              		.cfi_def_cfa_offset 136
+ 118 0004 02AF     		add	r7, sp, #8
+ 119              		.cfi_offset 14, -4
+ 120              		.cfi_offset 7, -8
+ 121              		.cfi_offset 6, -12
+ 122              		.cfi_offset 5, -16
+ 123              		.cfi_offset 4, -20
+ 124              	.LCFI5:
+ 125              		.cfi_def_cfa 7, 128
+ 101:.\Comms.c     **** 	static uint32_t counter = 0;
+ 102:.\Comms.c     **** 	
+ 103:.\Comms.c     **** 	static xbeeStates_t xbeeState = xbeeInit;
+ 104:.\Comms.c     **** 	static xbeeStates_t prevxbeeState = xbeeInit;
+ 105:.\Comms.c     **** 	static uint32_t	xbeeTurnOnTime = 0;
+ 106:.\Comms.c     **** 	static uint32_t waitingForResponseCount = 0;
+ 107:.\Comms.c     **** 	
+ 108:.\Comms.c     **** 	
+ 109:.\Comms.c     **** 	switch(xbeeState)
+ 126              		.loc 1 109 0
+ 127 0006 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 128 000a C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 129 000e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 130 0010 052B     		cmp	r3, #5
+ 131 0012 00F2B981 		bhi	.L4
+ 132 0016 01A2     		adr	r2, .L11
+ 133 0018 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 134              		.align	2
+ 135              	.L11:
+ 136 001c 35000000 		.word	.L5+1
+ 137 0020 51000000 		.word	.L6+1
+ 138 0024 BF000000 		.word	.L7+1
+ 139 0028 69010000 		.word	.L8+1
+ 140 002c DD010000 		.word	.L9+1
+ 141 0030 33020000 		.word	.L10+1
+ 142              	.L5:
+ 110:.\Comms.c     **** 	{
+ 111:.\Comms.c     **** 		case xbeeInit:
+ 112:.\Comms.c     **** 			// Intialise uart used to communicate with comms
+ 113:.\Comms.c     **** 			UartXbee_Start();
+ 143              		.loc 1 113 0
+ 144 0034 FFF7FEFF 		bl	UartXbee_Start
+ 114:.\Comms.c     **** 			// Sleep Xbee
+ 115:.\Comms.c     **** 			PinXbeeSleep_Write(1);
+ 145              		.loc 1 115 0
+ 146 0038 4FF00100 		mov	r0, #1
+ 147 003c FFF7FEFF 		bl	PinXbeeSleep_Write
+ 116:.\Comms.c     **** 			xbeeState = xbeeOff;
+ 148              		.loc 1 116 0
+ 149 0040 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 150 0044 C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 151 0048 4FF00102 		mov	r2, #1
+ 152 004c 1A70     		strb	r2, [r3, #0]
+ 117:.\Comms.c     **** 			break;
+ 153              		.loc 1 117 0
+ 154 004e 9BE1     		b	.L4
+ 155              	.L6:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 6
+
+
+ 118:.\Comms.c     **** 		case xbeeOff:
+ 119:.\Comms.c     **** 			if(prevxbeeState != xbeeOff)
+ 156              		.loc 1 119 0
+ 157 0050 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 158 0054 C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 159 0058 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 160 005a 012B     		cmp	r3, #1
+ 161 005c 0AD0     		beq	.L12
+ 120:.\Comms.c     **** 			{
+ 121:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1) 
+ 122:.\Comms.c     **** 					UartDebug_PutString("COMMS: Entering xbeeOff state.\r\n");
+ 123:.\Comms.c     **** 				#endif
+ 124:.\Comms.c     **** 				// Put xbee to sleep
+ 125:.\Comms.c     **** 				PinXbeeSleep_Write(1);
+ 162              		.loc 1 125 0
+ 163 005e 4FF00100 		mov	r0, #1
+ 164 0062 FFF7FEFF 		bl	PinXbeeSleep_Write
+ 126:.\Comms.c     **** 				prevxbeeState = xbeeOff;
+ 165              		.loc 1 126 0
+ 166 0066 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 167 006a C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 168 006e 4FF00102 		mov	r2, #1
+ 169 0072 1A70     		strb	r2, [r3, #0]
+ 170              	.L12:
+ 127:.\Comms.c     **** 			}
+ 128:.\Comms.c     **** 			
+ 129:.\Comms.c     **** 			if(_turnOffXbeeFlag == TRUE)
+ 171              		.loc 1 129 0
+ 172 0074 40F20003 		movw	r3, #:lower16:_turnOffXbeeFlag
+ 173 0078 C0F20003 		movt	r3, #:upper16:_turnOffXbeeFlag
+ 174 007c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 175 007e 012B     		cmp	r3, #1
+ 176 0080 06D1     		bne	.L13
+ 130:.\Comms.c     **** 				_turnOffXbeeFlag = FALSE;
+ 177              		.loc 1 130 0
+ 178 0082 40F20003 		movw	r3, #:lower16:_turnOffXbeeFlag
+ 179 0086 C0F20003 		movt	r3, #:upper16:_turnOffXbeeFlag
+ 180 008a 4FF00002 		mov	r2, #0
+ 181 008e 1A70     		strb	r2, [r3, #0]
+ 182              	.L13:
+ 131:.\Comms.c     **** 			
+ 132:.\Comms.c     **** 			// Check if xbee needs to be turned on
+ 133:.\Comms.c     **** 			if(_turnOnXbeeFlag == TRUE)
+ 183              		.loc 1 133 0
+ 184 0090 40F20003 		movw	r3, #:lower16:_turnOnXbeeFlag
+ 185 0094 C0F20003 		movt	r3, #:upper16:_turnOnXbeeFlag
+ 186 0098 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 187 009a 012B     		cmp	r3, #1
+ 188 009c 40F06D81 		bne	.L30
+ 134:.\Comms.c     **** 			{
+ 135:.\Comms.c     **** 				xbeeState = xbeeTurningOn;
+ 189              		.loc 1 135 0
+ 190 00a0 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 191 00a4 C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 192 00a8 4FF00202 		mov	r2, #2
+ 193 00ac 1A70     		strb	r2, [r3, #0]
+ 136:.\Comms.c     **** 				// Reset flag
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 7
+
+
+ 137:.\Comms.c     **** 				_turnOnXbeeFlag = FALSE;
+ 194              		.loc 1 137 0
+ 195 00ae 40F20003 		movw	r3, #:lower16:_turnOnXbeeFlag
+ 196 00b2 C0F20003 		movt	r3, #:upper16:_turnOnXbeeFlag
+ 197 00b6 4FF00002 		mov	r2, #0
+ 198 00ba 1A70     		strb	r2, [r3, #0]
+ 138:.\Comms.c     **** 			}
+ 139:.\Comms.c     **** 
+ 140:.\Comms.c     **** 			break;
+ 199              		.loc 1 140 0
+ 200 00bc 64E1     		b	.L4
+ 201              	.L7:
+ 141:.\Comms.c     **** 		case xbeeTurningOn:
+ 142:.\Comms.c     **** 			if(prevxbeeState != xbeeTurningOn)
+ 202              		.loc 1 142 0
+ 203 00be 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 204 00c2 C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 205 00c6 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 206 00c8 022B     		cmp	r3, #2
+ 207 00ca 14D0     		beq	.L15
+ 143:.\Comms.c     **** 			{
+ 144:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1) 
+ 145:.\Comms.c     **** 					UartDebug_PutString("COMMS: Entering xbeeTurningOn state.\r\n");
+ 146:.\Comms.c     **** 				#endif
+ 147:.\Comms.c     **** 				// Turn on xbee
+ 148:.\Comms.c     **** 				PinXbeeSleep_Write(0);
+ 208              		.loc 1 148 0
+ 209 00cc 4FF00000 		mov	r0, #0
+ 210 00d0 FFF7FEFF 		bl	PinXbeeSleep_Write
+ 149:.\Comms.c     **** 				// Assign turn on time
+ 150:.\Comms.c     **** 				xbeeTurnOnTime = counter;
+ 211              		.loc 1 150 0
+ 212 00d4 40F20003 		movw	r3, #:lower16:counter.3797
+ 213 00d8 C0F20003 		movt	r3, #:upper16:counter.3797
+ 214 00dc 1A68     		ldr	r2, [r3, #0]
+ 215 00de 40F20003 		movw	r3, #:lower16:xbeeTurnOnTime.3800
+ 216 00e2 C0F20003 		movt	r3, #:upper16:xbeeTurnOnTime.3800
+ 217 00e6 1A60     		str	r2, [r3, #0]
+ 151:.\Comms.c     **** 				prevxbeeState = xbeeTurningOn;
+ 218              		.loc 1 151 0
+ 219 00e8 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 220 00ec C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 221 00f0 4FF00202 		mov	r2, #2
+ 222 00f4 1A70     		strb	r2, [r3, #0]
+ 223              	.L15:
+ 152:.\Comms.c     **** 			}
+ 153:.\Comms.c     **** 			// Increment counter to wait for xbee to start up
+ 154:.\Comms.c     **** 			if(counter >= xbeeTurnOnTime + configXBEE_START_UP_TIME_MS/configMAIN_TICK_PERIOD_MS)
+ 224              		.loc 1 154 0
+ 225 00f6 40F20003 		movw	r3, #:lower16:counter.3797
+ 226 00fa C0F20003 		movt	r3, #:upper16:counter.3797
+ 227 00fe 1B68     		ldr	r3, [r3, #0]
+ 228 0100 1846     		mov	r0, r3
+ 229 0102 FFF7FEFF 		bl	__aeabi_ui2d
+ 230 0106 0446     		mov	r4, r0
+ 231 0108 0D46     		mov	r5, r1
+ 232 010a 40F20003 		movw	r3, #:lower16:xbeeTurnOnTime.3800
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 8
+
+
+ 233 010e C0F20003 		movt	r3, #:upper16:xbeeTurnOnTime.3800
+ 234 0112 1B68     		ldr	r3, [r3, #0]
+ 235 0114 1846     		mov	r0, r3
+ 236 0116 FFF7FEFF 		bl	__aeabi_ui2d
+ 237 011a 0246     		mov	r2, r0
+ 238 011c 0B46     		mov	r3, r1
+ 239 011e 1046     		mov	r0, r2
+ 240 0120 1946     		mov	r1, r3
+ 241 0122 4FF00002 		mov	r2, #0
+ 242 0126 4FF07E53 		mov	r3, #1065353216
+ 243 012a 03F5E003 		add	r3, r3, #7340032
+ 244 012e FFF7FEFF 		bl	__aeabi_dadd
+ 245 0132 0246     		mov	r2, r0
+ 246 0134 0B46     		mov	r3, r1
+ 247 0136 4FF00001 		mov	r1, #0
+ 248 013a 0E46     		mov	r6, r1
+ 249 013c 2046     		mov	r0, r4
+ 250 013e 2946     		mov	r1, r5
+ 251 0140 FFF7FEFF 		bl	__aeabi_dcmpge
+ 252 0144 0346     		mov	r3, r0
+ 253 0146 002B     		cmp	r3, #0
+ 254 0148 02D0     		beq	.L16
+ 255              	.L17:
+ 256 014a 4FF00103 		mov	r3, #1
+ 257 014e 1E46     		mov	r6, r3
+ 258              	.L16:
+ 259 0150 F3B2     		uxtb	r3, r6
+ 260 0152 002B     		cmp	r3, #0
+ 261 0154 00F01381 		beq	.L31
+ 155:.\Comms.c     **** 				xbeeState = xbeeOnStable;
+ 262              		.loc 1 155 0
+ 263 0158 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 264 015c C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 265 0160 4FF00302 		mov	r2, #3
+ 266 0164 1A70     		strb	r2, [r3, #0]
+ 156:.\Comms.c     **** 			break;
+ 267              		.loc 1 156 0
+ 268 0166 0FE1     		b	.L4
+ 269              	.L8:
+ 157:.\Comms.c     **** 		case xbeeOnStable:
+ 158:.\Comms.c     **** 			if(prevxbeeState != xbeeOnStable)
+ 270              		.loc 1 158 0
+ 271 0168 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 272 016c C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 273 0170 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 274 0172 032B     		cmp	r3, #3
+ 275 0174 06D0     		beq	.L19
+ 159:.\Comms.c     **** 			{
+ 160:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1) 
+ 161:.\Comms.c     **** 					UartDebug_PutString("COMMS: Entering xbeeOnStable state.\r\n");
+ 162:.\Comms.c     **** 				#endif
+ 163:.\Comms.c     **** 				prevxbeeState = xbeeOnStable;
+ 276              		.loc 1 163 0
+ 277 0176 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 278 017a C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 279 017e 4FF00302 		mov	r2, #3
+ 280 0182 1A70     		strb	r2, [r3, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 9
+
+
+ 281              	.L19:
+ 164:.\Comms.c     **** 			}
+ 165:.\Comms.c     **** 			
+ 166:.\Comms.c     **** 			// Clear flag as we don't need to do anything
+ 167:.\Comms.c     **** 			if(_turnOnXbeeFlag == TRUE)
+ 282              		.loc 1 167 0
+ 283 0184 40F20003 		movw	r3, #:lower16:_turnOnXbeeFlag
+ 284 0188 C0F20003 		movt	r3, #:upper16:_turnOnXbeeFlag
+ 285 018c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 286 018e 012B     		cmp	r3, #1
+ 287 0190 06D1     		bne	.L20
+ 168:.\Comms.c     **** 				_turnOnXbeeFlag = FALSE;
+ 288              		.loc 1 168 0
+ 289 0192 40F20003 		movw	r3, #:lower16:_turnOnXbeeFlag
+ 290 0196 C0F20003 		movt	r3, #:upper16:_turnOnXbeeFlag
+ 291 019a 4FF00002 		mov	r2, #0
+ 292 019e 1A70     		strb	r2, [r3, #0]
+ 293              	.L20:
+ 169:.\Comms.c     **** 			
+ 170:.\Comms.c     **** 			if(_toSendFlag == TRUE)
+ 294              		.loc 1 170 0
+ 295 01a0 40F20003 		movw	r3, #:lower16:_toSendFlag
+ 296 01a4 C0F20003 		movt	r3, #:upper16:_toSendFlag
+ 297 01a8 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 298 01aa 012B     		cmp	r3, #1
+ 299 01ac 06D1     		bne	.L21
+ 171:.\Comms.c     **** 			{
+ 172:.\Comms.c     **** 				xbeeState = xbeeSending;
+ 300              		.loc 1 172 0
+ 301 01ae 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 302 01b2 C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 303 01b6 4FF00402 		mov	r2, #4
+ 304 01ba 1A70     		strb	r2, [r3, #0]
+ 305              	.L21:
+ 173:.\Comms.c     **** 			}
+ 174:.\Comms.c     **** 			
+ 175:.\Comms.c     **** 			// Check if xbee needs to be turned off
+ 176:.\Comms.c     **** 			if(_turnOffXbeeFlag == TRUE)
+ 306              		.loc 1 176 0
+ 307 01bc 40F20003 		movw	r3, #:lower16:_turnOffXbeeFlag
+ 308 01c0 C0F20003 		movt	r3, #:upper16:_turnOffXbeeFlag
+ 309 01c4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 310 01c6 012B     		cmp	r3, #1
+ 311 01c8 40F0DB80 		bne	.L32
+ 177:.\Comms.c     **** 			{
+ 178:.\Comms.c     **** 				#if(configCOMMS_ALLOW_XBEE_SLEEP == 1)
+ 179:.\Comms.c     **** 					xbeeState = xbeeOff;
+ 180:.\Comms.c     **** 				#endif
+ 181:.\Comms.c     **** 				// Reset flag
+ 182:.\Comms.c     **** 				_turnOffXbeeFlag = FALSE;
+ 312              		.loc 1 182 0
+ 313 01cc 40F20003 		movw	r3, #:lower16:_turnOffXbeeFlag
+ 314 01d0 C0F20003 		movt	r3, #:upper16:_turnOffXbeeFlag
+ 315 01d4 4FF00002 		mov	r2, #0
+ 316 01d8 1A70     		strb	r2, [r3, #0]
+ 183:.\Comms.c     **** 			}
+ 184:.\Comms.c     **** 			break;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 10
+
+
+ 317              		.loc 1 184 0
+ 318 01da D5E0     		b	.L4
+ 319              	.L9:
+ 185:.\Comms.c     **** 		case xbeeSending:
+ 186:.\Comms.c     **** 			if(prevxbeeState != xbeeSending)
+ 320              		.loc 1 186 0
+ 321 01dc 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 322 01e0 C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 323 01e4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 324 01e6 042B     		cmp	r3, #4
+ 325 01e8 0ED0     		beq	.L23
+ 187:.\Comms.c     **** 			{
+ 188:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1) 
+ 189:.\Comms.c     **** 					UartDebug_PutString("COMMS: Entering xbeeSending state.\r\n");
+ 190:.\Comms.c     **** 				#endif
+ 191:.\Comms.c     **** 				// Send data to the uart
+ 192:.\Comms.c     **** 				UartXbee_PutArray(_txDataBuffer, configCOMMS_MSG_SIZE);
+ 326              		.loc 1 192 0
+ 327 01ea 40F20000 		movw	r0, #:lower16:_txDataBuffer
+ 328 01ee C0F20000 		movt	r0, #:upper16:_txDataBuffer
+ 329 01f2 4FF00801 		mov	r1, #8
+ 330 01f6 FFF7FEFF 		bl	UartXbee_PutArray
+ 193:.\Comms.c     **** 				prevxbeeState = xbeeSending;
+ 331              		.loc 1 193 0
+ 332 01fa 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 333 01fe C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 334 0202 4FF00402 		mov	r2, #4
+ 335 0206 1A70     		strb	r2, [r3, #0]
+ 336              	.L23:
+ 194:.\Comms.c     **** 			}
+ 195:.\Comms.c     **** 			
+ 196:.\Comms.c     **** 			// Check is message has been sent
+ 197:.\Comms.c     **** 			if(UartDebug_ReadTxStatus() && UartXbee_TX_STS_FIFO_EMPTY)
+ 337              		.loc 1 197 0
+ 338 0208 FFF7FEFF 		bl	UartDebug_ReadTxStatus
+ 339 020c 0346     		mov	r3, r0
+ 340 020e 002B     		cmp	r3, #0
+ 341 0210 00F0B980 		beq	.L33
+ 198:.\Comms.c     **** 			{
+ 199:.\Comms.c     **** 				_toSendFlag = FALSE;
+ 342              		.loc 1 199 0
+ 343 0214 40F20003 		movw	r3, #:lower16:_toSendFlag
+ 344 0218 C0F20003 		movt	r3, #:upper16:_toSendFlag
+ 345 021c 4FF00002 		mov	r2, #0
+ 346 0220 1A70     		strb	r2, [r3, #0]
+ 200:.\Comms.c     **** 				xbeeState = xbeeWaitingForResponse;
+ 347              		.loc 1 200 0
+ 348 0222 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 349 0226 C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 350 022a 4FF00502 		mov	r2, #5
+ 351 022e 1A70     		strb	r2, [r3, #0]
+ 201:.\Comms.c     **** 			}
+ 202:.\Comms.c     **** 
+ 203:.\Comms.c     **** 			break;
+ 352              		.loc 1 203 0
+ 353 0230 AAE0     		b	.L4
+ 354              	.L10:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 11
+
+
+ 204:.\Comms.c     **** 			
+ 205:.\Comms.c     **** 		case xbeeWaitingForResponse:
+ 206:.\Comms.c     **** 			if(prevxbeeState != xbeeWaitingForResponse)
+ 355              		.loc 1 206 0
+ 356 0232 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 357 0236 C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 358 023a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 359 023c 052B     		cmp	r3, #5
+ 360 023e 10D0     		beq	.L25
+ 207:.\Comms.c     **** 			{
+ 208:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1) 
+ 209:.\Comms.c     **** 					UartDebug_PutString("COMMS: Entering xbeeWaitingForResponse state.\r\n");
+ 210:.\Comms.c     **** 				#endif
+ 211:.\Comms.c     **** 				waitingForResponseCount = counter;
+ 361              		.loc 1 211 0
+ 362 0240 40F20003 		movw	r3, #:lower16:counter.3797
+ 363 0244 C0F20003 		movt	r3, #:upper16:counter.3797
+ 364 0248 1A68     		ldr	r2, [r3, #0]
+ 365 024a 40F20003 		movw	r3, #:lower16:waitingForResponseCount.3801
+ 366 024e C0F20003 		movt	r3, #:upper16:waitingForResponseCount.3801
+ 367 0252 1A60     		str	r2, [r3, #0]
+ 212:.\Comms.c     **** 				prevxbeeState = xbeeWaitingForResponse;
+ 368              		.loc 1 212 0
+ 369 0254 40F20003 		movw	r3, #:lower16:prevxbeeState.3799
+ 370 0258 C0F20003 		movt	r3, #:upper16:prevxbeeState.3799
+ 371 025c 4FF00502 		mov	r2, #5
+ 372 0260 1A70     		strb	r2, [r3, #0]
+ 373              	.L25:
+ 213:.\Comms.c     **** 			}
+ 214:.\Comms.c     **** 			
+ 215:.\Comms.c     **** 			Comms_RetrieveData();
+ 374              		.loc 1 215 0
+ 375 0262 FFF7FEFF 		bl	Comms_RetrieveData
+ 216:.\Comms.c     **** 			
+ 217:.\Comms.c     **** 			//Decode if their are new packets present
+ 218:.\Comms.c     **** 			if(_newPacketFlag)
+ 376              		.loc 1 218 0
+ 377 0266 40F20003 		movw	r3, #:lower16:_newPacketFlag
+ 378 026a C0F20003 		movt	r3, #:upper16:_newPacketFlag
+ 379 026e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 380 0270 002B     		cmp	r3, #0
+ 381 0272 14D0     		beq	.L26
+ 219:.\Comms.c     **** 			{
+ 220:.\Comms.c     **** 				#if(config_DEBUG_COMMS == 1)
+ 221:.\Comms.c     **** 					char tempBuff[50];
+ 222:.\Comms.c     **** 					snprintf(tempBuff, sizeof(tempBuff), "COMMS: Board reponsed. Reponse time: %fms\r\n", (double)
+ 223:.\Comms.c     **** 					UartDebug_PutString(tempBuff);
+ 224:.\Comms.c     **** 				#endif
+ 225:.\Comms.c     **** 				_newPacketFlag = FALSE;
+ 382              		.loc 1 225 0
+ 383 0274 40F20003 		movw	r3, #:lower16:_newPacketFlag
+ 384 0278 C0F20003 		movt	r3, #:upper16:_newPacketFlag
+ 385 027c 4FF00002 		mov	r2, #0
+ 386 0280 1A70     		strb	r2, [r3, #0]
+ 226:.\Comms.c     **** 				// Set unread data flag (cleared when comms_get_byte is called)
+ 227:.\Comms.c     **** 				_unreadDataFlag = TRUE;
+ 387              		.loc 1 227 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 12
+
+
+ 388 0282 40F20003 		movw	r3, #:lower16:_unreadDataFlag
+ 389 0286 C0F20003 		movt	r3, #:upper16:_unreadDataFlag
+ 390 028a 4FF00102 		mov	r2, #1
+ 391 028e 1A70     		strb	r2, [r3, #0]
+ 228:.\Comms.c     **** 				xbeeState = xbeeOnStable;
+ 392              		.loc 1 228 0
+ 393 0290 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 394 0294 C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 395 0298 4FF00302 		mov	r2, #3
+ 396 029c 1A70     		strb	r2, [r3, #0]
+ 397              	.L26:
+ 229:.\Comms.c     **** 			}
+ 230:.\Comms.c     **** 			
+ 231:.\Comms.c     **** 			// Check for timeout
+ 232:.\Comms.c     **** 			if(counter >= waitingForResponseCount + configCOMMS_TIMEOUT_PERIOD_MS/configMAIN_TICK_PERIOD_MS)
+ 398              		.loc 1 232 0
+ 399 029e 40F20003 		movw	r3, #:lower16:counter.3797
+ 400 02a2 C0F20003 		movt	r3, #:upper16:counter.3797
+ 401 02a6 1B68     		ldr	r3, [r3, #0]
+ 402 02a8 1846     		mov	r0, r3
+ 403 02aa FFF7FEFF 		bl	__aeabi_ui2d
+ 404 02ae 0446     		mov	r4, r0
+ 405 02b0 0D46     		mov	r5, r1
+ 406 02b2 40F20003 		movw	r3, #:lower16:waitingForResponseCount.3801
+ 407 02b6 C0F20003 		movt	r3, #:upper16:waitingForResponseCount.3801
+ 408 02ba 1B68     		ldr	r3, [r3, #0]
+ 409 02bc 1846     		mov	r0, r3
+ 410 02be FFF7FEFF 		bl	__aeabi_ui2d
+ 411 02c2 0246     		mov	r2, r0
+ 412 02c4 0B46     		mov	r3, r1
+ 413 02c6 1046     		mov	r0, r2
+ 414 02c8 1946     		mov	r1, r3
+ 415 02ca 4FF00002 		mov	r2, #0
+ 416 02ce 4FF08043 		mov	r3, #1073741824
+ 417 02d2 03F51013 		add	r3, r3, #2359296
+ 418 02d6 FFF7FEFF 		bl	__aeabi_dadd
+ 419 02da 0246     		mov	r2, r0
+ 420 02dc 0B46     		mov	r3, r1
+ 421 02de 4FF00001 		mov	r1, #0
+ 422 02e2 0E46     		mov	r6, r1
+ 423 02e4 2046     		mov	r0, r4
+ 424 02e6 2946     		mov	r1, r5
+ 425 02e8 FFF7FEFF 		bl	__aeabi_dcmpge
+ 426 02ec 0346     		mov	r3, r0
+ 427 02ee 002B     		cmp	r3, #0
+ 428 02f0 02D0     		beq	.L27
+ 429              	.L28:
+ 430 02f2 4FF00103 		mov	r3, #1
+ 431 02f6 1E46     		mov	r6, r3
+ 432              	.L27:
+ 433 02f8 F3B2     		uxtb	r3, r6
+ 434 02fa 002B     		cmp	r3, #0
+ 435 02fc 44D0     		beq	.L4
+ 436              	.LBB2:
+ 233:.\Comms.c     **** 			{
+ 234:.\Comms.c     **** 				#if(config_DEBUG_COMMS_ERROR == 1) 
+ 235:.\Comms.c     **** 					char tempBuff[100];
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 13
+
+
+ 236:.\Comms.c     **** 					snprintf(tempBuff, sizeof(tempBuff), "COMMS: Xbee timeout. Time since send: %fms\r\n", (double
+ 437              		.loc 1 236 0
+ 438 02fe 40F20003 		movw	r3, #:lower16:counter.3797
+ 439 0302 C0F20003 		movt	r3, #:upper16:counter.3797
+ 440 0306 1A68     		ldr	r2, [r3, #0]
+ 441 0308 40F20003 		movw	r3, #:lower16:waitingForResponseCount.3801
+ 442 030c C0F20003 		movt	r3, #:upper16:waitingForResponseCount.3801
+ 443 0310 1B68     		ldr	r3, [r3, #0]
+ 444 0312 C3EB0203 		rsb	r3, r3, r2
+ 445 0316 1846     		mov	r0, r3
+ 446 0318 FFF7FEFF 		bl	__aeabi_ui2d
+ 447 031c 0246     		mov	r2, r0
+ 448 031e 0B46     		mov	r3, r1
+ 449 0320 1046     		mov	r0, r2
+ 450 0322 1946     		mov	r1, r3
+ 451 0324 4FF00002 		mov	r2, #0
+ 452 0328 4FF08043 		mov	r3, #1073741824
+ 453 032c 03F51013 		add	r3, r3, #2359296
+ 454 0330 FFF7FEFF 		bl	__aeabi_dmul
+ 455 0334 0246     		mov	r2, r0
+ 456 0336 0B46     		mov	r3, r1
+ 457 0338 07F10401 		add	r1, r7, #4
+ 458 033c CDE90023 		strd	r2, [sp]
+ 459 0340 0846     		mov	r0, r1
+ 460 0342 4FF06401 		mov	r1, #100
+ 461 0346 40F20002 		movw	r2, #:lower16:.LC0
+ 462 034a C0F20002 		movt	r2, #:upper16:.LC0
+ 463 034e FFF7FEFF 		bl	snprintf
+ 237:.\Comms.c     **** 					UartDebug_PutString(tempBuff);
+ 464              		.loc 1 237 0
+ 465 0352 07F10403 		add	r3, r7, #4
+ 466 0356 1846     		mov	r0, r3
+ 467 0358 FFF7FEFF 		bl	UartDebug_PutString
+ 238:.\Comms.c     **** 				#endif
+ 239:.\Comms.c     **** 				_commsTimeoutFlag = TRUE;
+ 468              		.loc 1 239 0
+ 469 035c 40F20003 		movw	r3, #:lower16:_commsTimeoutFlag
+ 470 0360 C0F20003 		movt	r3, #:upper16:_commsTimeoutFlag
+ 471 0364 4FF00102 		mov	r2, #1
+ 472 0368 1A70     		strb	r2, [r3, #0]
+ 240:.\Comms.c     **** 				xbeeState = xbeeOnStable;
+ 473              		.loc 1 240 0
+ 474 036a 40F20003 		movw	r3, #:lower16:xbeeState.3798
+ 475 036e C0F20003 		movt	r3, #:upper16:xbeeState.3798
+ 476 0372 4FF00302 		mov	r2, #3
+ 477 0376 1A70     		strb	r2, [r3, #0]
+ 478 0378 06E0     		b	.L4
+ 479              	.L30:
+ 480              	.LBE2:
+ 481              		.loc 1 140 0
+ 482 037a 00BF     		nop
+ 483 037c 04E0     		b	.L4
+ 484              	.L31:
+ 485              		.loc 1 156 0
+ 486 037e 00BF     		nop
+ 487 0380 02E0     		b	.L4
+ 488              	.L32:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 14
+
+
+ 489              		.loc 1 184 0
+ 490 0382 00BF     		nop
+ 491 0384 00E0     		b	.L4
+ 492              	.L33:
+ 493              		.loc 1 203 0
+ 494 0386 00BF     		nop
+ 495              	.L4:
+ 241:.\Comms.c     **** 			}
+ 242:.\Comms.c     **** 			break;
+ 243:.\Comms.c     **** 	}
+ 244:.\Comms.c     **** 	
+ 245:.\Comms.c     **** 	// Increment state counter
+ 246:.\Comms.c     **** 	counter++;
+ 496              		.loc 1 246 0
+ 497 0388 40F20003 		movw	r3, #:lower16:counter.3797
+ 498 038c C0F20003 		movt	r3, #:upper16:counter.3797
+ 499 0390 1B68     		ldr	r3, [r3, #0]
+ 500 0392 03F10102 		add	r2, r3, #1
+ 501 0396 40F20003 		movw	r3, #:lower16:counter.3797
+ 502 039a C0F20003 		movt	r3, #:upper16:counter.3797
+ 503 039e 1A60     		str	r2, [r3, #0]
+ 247:.\Comms.c     **** }
+ 504              		.loc 1 247 0
+ 505 03a0 07F16C07 		add	r7, r7, #108
+ 506 03a4 BD46     		mov	sp, r7
+ 507 03a6 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 508              		.cfi_endproc
+ 509              	.LFE30:
+ 510              		.size	Comms_Run, .-Comms_Run
+ 511              		.section	.rodata
+ 512 002d 000000   		.align	2
+ 513              	.LC1:
+ 514 0030 434F4D4D 		.ascii	"COMMS: ***Error***. Buffer overrun.\015\012\000"
+ 514      533A202A 
+ 514      2A2A4572 
+ 514      726F722A 
+ 514      2A2A2E20 
+ 515 0056 0000     		.section	.text.Comms_RetrieveData,"ax",%progbits
+ 516              		.align	2
+ 517              		.global	Comms_RetrieveData
+ 518              		.thumb
+ 519              		.thumb_func
+ 520              		.type	Comms_RetrieveData, %function
+ 521              	Comms_RetrieveData:
+ 522              	.LFB31:
+ 248:.\Comms.c     **** 
+ 249:.\Comms.c     **** void Comms_RetrieveData()
+ 250:.\Comms.c     **** {
+ 523              		.loc 1 250 0
+ 524              		.cfi_startproc
+ 525              		@ args = 0, pretend = 0, frame = 0
+ 526              		@ frame_needed = 1, uses_anonymous_args = 0
+ 527 0000 80B5     		push	{r7, lr}
+ 528              	.LCFI6:
+ 529              		.cfi_def_cfa_offset 8
+ 530 0002 00AF     		add	r7, sp, #0
+ 531              		.cfi_offset 14, -4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 15
+
+
+ 532              		.cfi_offset 7, -8
+ 533              	.LCFI7:
+ 534              		.cfi_def_cfa_register 7
+ 251:.\Comms.c     **** 	static commsStates_t commsState = idle;
+ 252:.\Comms.c     **** 	static uint8_t packetBufferPos = 0;
+ 253:.\Comms.c     **** 	static uint8_t numOfDataBytes = 0;
+ 254:.\Comms.c     **** 	static uint8_t rxDataByte;
+ 255:.\Comms.c     **** 
+ 256:.\Comms.c     **** 	while(UartXbee_GetRxBufferSize() != 0)
+ 535              		.loc 1 256 0
+ 536 0004 73E1     		b	.L35
+ 537              	.L52:
+ 257:.\Comms.c     **** 	{
+ 258:.\Comms.c     **** 		rxDataByte = UartXbee_GetChar();
+ 538              		.loc 1 258 0
+ 539 0006 FFF7FEFF 		bl	UartXbee_GetChar
+ 540 000a 0346     		mov	r3, r0
+ 541 000c 1A46     		mov	r2, r3
+ 542 000e 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 543 0012 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 544 0016 1A70     		strb	r2, [r3, #0]
+ 259:.\Comms.c     **** 		
+ 260:.\Comms.c     **** 		switch(commsState){
+ 545              		.loc 1 260 0
+ 546 0018 40F20003 		movw	r3, #:lower16:commsState.3878
+ 547 001c C0F20003 		movt	r3, #:upper16:commsState.3878
+ 548 0020 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 549 0022 062B     		cmp	r3, #6
+ 550 0024 00F23D81 		bhi	.L36
+ 551 0028 01A2     		adr	r2, .L44
+ 552 002a 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 553 002e 00BF     		.align	2
+ 554              	.L44:
+ 555 0030 4D000000 		.word	.L37+1
+ 556 0034 CF000000 		.word	.L38+1
+ 557 0038 47010000 		.word	.L39+1
+ 558 003c BF010000 		.word	.L40+1
+ 559 0040 1D020000 		.word	.L41+1
+ 560 0044 75020000 		.word	.L42+1
+ 561 0048 85020000 		.word	.L43+1
+ 562              	.L37:
+ 261:.\Comms.c     **** 			case idle:
+ 262:.\Comms.c     **** 				
+ 263:.\Comms.c     **** 				packetBufferPos = 0;
+ 563              		.loc 1 263 0
+ 564 004c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 565 0050 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 566 0054 4FF00002 		mov	r2, #0
+ 567 0058 1A70     		strb	r2, [r3, #0]
+ 264:.\Comms.c     **** 				numOfDataBytes = 0;
+ 568              		.loc 1 264 0
+ 569 005a 40F20003 		movw	r3, #:lower16:numOfDataBytes.3880
+ 570 005e C0F20003 		movt	r3, #:upper16:numOfDataBytes.3880
+ 571 0062 4FF00002 		mov	r2, #0
+ 572 0066 1A70     		strb	r2, [r3, #0]
+ 265:.\Comms.c     **** 				if(rxDataByte == _idenChars[0])
+ 573              		.loc 1 265 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 16
+
+
+ 574 0068 40F20003 		movw	r3, #:lower16:_idenChars
+ 575 006c C0F20003 		movt	r3, #:upper16:_idenChars
+ 576 0070 1B68     		ldr	r3, [r3, #0]
+ 577 0072 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 578 0074 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 579 0078 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 580 007c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 581 007e 9A42     		cmp	r2, r3
+ 582 0080 40F01781 		bne	.L54
+ 266:.\Comms.c     **** 				{
+ 267:.\Comms.c     **** 					_rxDataBuffer[packetBufferPos] = rxDataByte;
+ 583              		.loc 1 267 0
+ 584 0084 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 585 0088 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 586 008c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 587 008e 1A46     		mov	r2, r3
+ 588 0090 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 589 0094 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 590 0098 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 591 009a 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 592 009e C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 593 00a2 9954     		strb	r1, [r3, r2]
+ 268:.\Comms.c     **** 					packetBufferPos++;
+ 594              		.loc 1 268 0
+ 595 00a4 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 596 00a8 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 597 00ac 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 598 00ae 03F10103 		add	r3, r3, #1
+ 599 00b2 DAB2     		uxtb	r2, r3
+ 600 00b4 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 601 00b8 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 602 00bc 1A70     		strb	r2, [r3, #0]
+ 269:.\Comms.c     **** 					commsState = secondIdenChar;
+ 603              		.loc 1 269 0
+ 604 00be 40F20003 		movw	r3, #:lower16:commsState.3878
+ 605 00c2 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 606 00c6 4FF00102 		mov	r2, #1
+ 607 00ca 1A70     		strb	r2, [r3, #0]
+ 270:.\Comms.c     **** 				}
+ 271:.\Comms.c     **** 				break;
+ 608              		.loc 1 271 0
+ 609 00cc F4E0     		b	.L46
+ 610              	.L38:
+ 272:.\Comms.c     **** 			case secondIdenChar:
+ 273:.\Comms.c     **** 				if(rxDataByte == _idenChars[1])
+ 611              		.loc 1 273 0
+ 612 00ce 40F20003 		movw	r3, #:lower16:_idenChars
+ 613 00d2 C0F20003 		movt	r3, #:upper16:_idenChars
+ 614 00d6 1B68     		ldr	r3, [r3, #0]
+ 615 00d8 03F10103 		add	r3, r3, #1
+ 616 00dc 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 617 00de 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 618 00e2 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 619 00e6 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 620 00e8 9A42     		cmp	r2, r3
+ 621 00ea 24D1     		bne	.L47
+ 274:.\Comms.c     **** 				{
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 17
+
+
+ 275:.\Comms.c     **** 					_rxDataBuffer[packetBufferPos] = rxDataByte;
+ 622              		.loc 1 275 0
+ 623 00ec 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 624 00f0 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 625 00f4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 626 00f6 1A46     		mov	r2, r3
+ 627 00f8 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 628 00fc C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 629 0100 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 630 0102 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 631 0106 C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 632 010a 9954     		strb	r1, [r3, r2]
+ 276:.\Comms.c     **** 					packetBufferPos++;
+ 633              		.loc 1 276 0
+ 634 010c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 635 0110 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 636 0114 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 637 0116 03F10103 		add	r3, r3, #1
+ 638 011a DAB2     		uxtb	r2, r3
+ 639 011c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 640 0120 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 641 0124 1A70     		strb	r2, [r3, #0]
+ 277:.\Comms.c     **** 					commsState = thirdIdenChar;
+ 642              		.loc 1 277 0
+ 643 0126 40F20003 		movw	r3, #:lower16:commsState.3878
+ 644 012a C0F20003 		movt	r3, #:upper16:commsState.3878
+ 645 012e 4FF00202 		mov	r2, #2
+ 646 0132 1A70     		strb	r2, [r3, #0]
+ 278:.\Comms.c     **** 				}
+ 279:.\Comms.c     **** 				else
+ 280:.\Comms.c     **** 				{
+ 281:.\Comms.c     **** 					// Go back to idle state if header not valid
+ 282:.\Comms.c     **** 					commsState = idle;
+ 283:.\Comms.c     **** 				}
+ 284:.\Comms.c     **** 				break;
+ 647              		.loc 1 284 0
+ 648 0134 C0E0     		b	.L46
+ 649              	.L47:
+ 650              		.loc 1 282 0
+ 651 0136 40F20003 		movw	r3, #:lower16:commsState.3878
+ 652 013a C0F20003 		movt	r3, #:upper16:commsState.3878
+ 653 013e 4FF00002 		mov	r2, #0
+ 654 0142 1A70     		strb	r2, [r3, #0]
+ 655              		.loc 1 284 0
+ 656 0144 B8E0     		b	.L46
+ 657              	.L39:
+ 285:.\Comms.c     **** 			case thirdIdenChar:
+ 286:.\Comms.c     **** 				if(rxDataByte == _idenChars[2])
+ 658              		.loc 1 286 0
+ 659 0146 40F20003 		movw	r3, #:lower16:_idenChars
+ 660 014a C0F20003 		movt	r3, #:upper16:_idenChars
+ 661 014e 1B68     		ldr	r3, [r3, #0]
+ 662 0150 03F10203 		add	r3, r3, #2
+ 663 0154 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 664 0156 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 665 015a C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 666 015e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 18
+
+
+ 667 0160 9A42     		cmp	r2, r3
+ 668 0162 24D1     		bne	.L49
+ 287:.\Comms.c     **** 				{
+ 288:.\Comms.c     **** 					_rxDataBuffer[packetBufferPos] = rxDataByte;
+ 669              		.loc 1 288 0
+ 670 0164 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 671 0168 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 672 016c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 673 016e 1A46     		mov	r2, r3
+ 674 0170 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 675 0174 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 676 0178 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 677 017a 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 678 017e C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 679 0182 9954     		strb	r1, [r3, r2]
+ 289:.\Comms.c     **** 					packetBufferPos++;
+ 680              		.loc 1 289 0
+ 681 0184 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 682 0188 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 683 018c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 684 018e 03F10103 		add	r3, r3, #1
+ 685 0192 DAB2     		uxtb	r2, r3
+ 686 0194 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 687 0198 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 688 019c 1A70     		strb	r2, [r3, #0]
+ 290:.\Comms.c     **** 					commsState = packetDataCount;
+ 689              		.loc 1 290 0
+ 690 019e 40F20003 		movw	r3, #:lower16:commsState.3878
+ 691 01a2 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 692 01a6 4FF00302 		mov	r2, #3
+ 693 01aa 1A70     		strb	r2, [r3, #0]
+ 291:.\Comms.c     **** 				}
+ 292:.\Comms.c     **** 				else
+ 293:.\Comms.c     **** 				{
+ 294:.\Comms.c     **** 					// Go back to idle state if header not valid
+ 295:.\Comms.c     **** 					commsState = idle;
+ 296:.\Comms.c     **** 				}
+ 297:.\Comms.c     **** 				break;
+ 694              		.loc 1 297 0
+ 695 01ac 84E0     		b	.L46
+ 696              	.L49:
+ 697              		.loc 1 295 0
+ 698 01ae 40F20003 		movw	r3, #:lower16:commsState.3878
+ 699 01b2 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 700 01b6 4FF00002 		mov	r2, #0
+ 701 01ba 1A70     		strb	r2, [r3, #0]
+ 702              		.loc 1 297 0
+ 703 01bc 7CE0     		b	.L46
+ 704              	.L40:
+ 298:.\Comms.c     **** 			case packetDataCount:
+ 299:.\Comms.c     **** 				commsState = packetData;
+ 705              		.loc 1 299 0
+ 706 01be 40F20003 		movw	r3, #:lower16:commsState.3878
+ 707 01c2 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 708 01c6 4FF00402 		mov	r2, #4
+ 709 01ca 1A70     		strb	r2, [r3, #0]
+ 300:.\Comms.c     **** 				_rxDataBuffer[packetBufferPos] = rxDataByte;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 19
+
+
+ 710              		.loc 1 300 0
+ 711 01cc 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 712 01d0 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 713 01d4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 714 01d6 1A46     		mov	r2, r3
+ 715 01d8 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 716 01dc C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 717 01e0 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 718 01e2 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 719 01e6 C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 720 01ea 9954     		strb	r1, [r3, r2]
+ 301:.\Comms.c     **** 				numOfDataBytes = rxDataByte;
+ 721              		.loc 1 301 0
+ 722 01ec 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 723 01f0 C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 724 01f4 1A78     		ldrb	r2, [r3, #0]	@ zero_extendqisi2
+ 725 01f6 40F20003 		movw	r3, #:lower16:numOfDataBytes.3880
+ 726 01fa C0F20003 		movt	r3, #:upper16:numOfDataBytes.3880
+ 727 01fe 1A70     		strb	r2, [r3, #0]
+ 302:.\Comms.c     **** 				packetBufferPos++;
+ 728              		.loc 1 302 0
+ 729 0200 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 730 0204 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 731 0208 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 732 020a 03F10103 		add	r3, r3, #1
+ 733 020e DAB2     		uxtb	r2, r3
+ 734 0210 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 735 0214 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 736 0218 1A70     		strb	r2, [r3, #0]
+ 303:.\Comms.c     **** 				break;
+ 737              		.loc 1 303 0
+ 738 021a 4DE0     		b	.L46
+ 739              	.L41:
+ 304:.\Comms.c     **** 
+ 305:.\Comms.c     **** 			case packetData:
+ 306:.\Comms.c     **** 				
+ 307:.\Comms.c     **** 				_rxDataBuffer[packetBufferPos] = rxDataByte;
+ 740              		.loc 1 307 0
+ 741 021c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 742 0220 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 743 0224 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 744 0226 1A46     		mov	r2, r3
+ 745 0228 40F20003 		movw	r3, #:lower16:rxDataByte.3881
+ 746 022c C0F20003 		movt	r3, #:upper16:rxDataByte.3881
+ 747 0230 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 748 0232 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 749 0236 C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 750 023a 9954     		strb	r1, [r3, r2]
+ 308:.\Comms.c     **** 				packetBufferPos++;
+ 751              		.loc 1 308 0
+ 752 023c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 753 0240 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 754 0244 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 755 0246 03F10103 		add	r3, r3, #1
+ 756 024a DAB2     		uxtb	r2, r3
+ 757 024c 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 758 0250 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 20
+
+
+ 759 0254 1A70     		strb	r2, [r3, #0]
+ 309:.\Comms.c     **** 				if(packetBufferPos >= 4+5) //! @todo Fix
+ 760              		.loc 1 309 0
+ 761 0256 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 762 025a C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 763 025e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 764 0260 082B     		cmp	r3, #8
+ 765 0262 28D9     		bls	.L55
+ 310:.\Comms.c     **** 				{
+ 311:.\Comms.c     **** 					commsState = packetComplete;
+ 766              		.loc 1 311 0
+ 767 0264 40F20003 		movw	r3, #:lower16:commsState.3878
+ 768 0268 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 769 026c 4FF00602 		mov	r2, #6
+ 770 0270 1A70     		strb	r2, [r3, #0]
+ 312:.\Comms.c     **** 				}
+ 313:.\Comms.c     **** 				
+ 314:.\Comms.c     **** 				break;
+ 771              		.loc 1 314 0
+ 772 0272 21E0     		b	.L46
+ 773              	.L42:
+ 315:.\Comms.c     **** 			case receivingChecksum:
+ 316:.\Comms.c     **** 				commsState = packetComplete;
+ 774              		.loc 1 316 0
+ 775 0274 40F20003 		movw	r3, #:lower16:commsState.3878
+ 776 0278 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 777 027c 4FF00602 		mov	r2, #6
+ 778 0280 1A70     		strb	r2, [r3, #0]
+ 317:.\Comms.c     **** 				break;
+ 779              		.loc 1 317 0
+ 780 0282 19E0     		b	.L46
+ 781              	.L43:
+ 318:.\Comms.c     **** 			case packetComplete:
+ 319:.\Comms.c     **** 				// Set new packet flag true so comms decode can be called
+ 320:.\Comms.c     **** 				_newPacketFlag = TRUE;
+ 782              		.loc 1 320 0
+ 783 0284 40F20003 		movw	r3, #:lower16:_newPacketFlag
+ 784 0288 C0F20003 		movt	r3, #:upper16:_newPacketFlag
+ 785 028c 4FF00102 		mov	r2, #1
+ 786 0290 1A70     		strb	r2, [r3, #0]
+ 321:.\Comms.c     **** 				commsState = idle;
+ 787              		.loc 1 321 0
+ 788 0292 40F20003 		movw	r3, #:lower16:commsState.3878
+ 789 0296 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 790 029a 4FF00002 		mov	r2, #0
+ 791 029e 1A70     		strb	r2, [r3, #0]
+ 322:.\Comms.c     **** 				break;
+ 792              		.loc 1 322 0
+ 793 02a0 0AE0     		b	.L46
+ 794              	.L36:
+ 323:.\Comms.c     **** 			default:
+ 324:.\Comms.c     **** 				commsState = idle;
+ 795              		.loc 1 324 0
+ 796 02a2 40F20003 		movw	r3, #:lower16:commsState.3878
+ 797 02a6 C0F20003 		movt	r3, #:upper16:commsState.3878
+ 798 02aa 4FF00002 		mov	r2, #0
+ 799 02ae 1A70     		strb	r2, [r3, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 21
+
+
+ 800 02b0 02E0     		b	.L46
+ 801              	.L54:
+ 802              		.loc 1 271 0
+ 803 02b2 00BF     		nop
+ 804 02b4 00E0     		b	.L46
+ 805              	.L55:
+ 806              		.loc 1 314 0
+ 807 02b6 00BF     		nop
+ 808              	.L46:
+ 325:.\Comms.c     **** 				break;
+ 326:.\Comms.c     **** 		}
+ 327:.\Comms.c     **** 		
+ 328:.\Comms.c     **** 		//packetBufferPos++;
+ 329:.\Comms.c     **** 		if(packetBufferPos > configCOMM_RX_BUFFER_SIZE )					//Resets packet buffer index (shouldn't happ
+ 809              		.loc 1 329 0
+ 810 02b8 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 811 02bc C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 812 02c0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 813 02c2 322B     		cmp	r3, #50
+ 814 02c4 13D9     		bls	.L35
+ 330:.\Comms.c     **** 		{
+ 331:.\Comms.c     **** 			#if(config_DEBUG_COMMS_ERROR == 1) 
+ 332:.\Comms.c     **** 					UartDebug_PutString("COMMS: ***Error***. Buffer overrun.\r\n");
+ 815              		.loc 1 332 0
+ 816 02c6 40F20000 		movw	r0, #:lower16:.LC1
+ 817 02ca C0F20000 		movt	r0, #:upper16:.LC1
+ 818 02ce FFF7FEFF 		bl	UartDebug_PutString
+ 333:.\Comms.c     **** 			#endif
+ 334:.\Comms.c     **** 			packetBufferPos = 0;
+ 819              		.loc 1 334 0
+ 820 02d2 40F20003 		movw	r3, #:lower16:packetBufferPos.3879
+ 821 02d6 C0F20003 		movt	r3, #:upper16:packetBufferPos.3879
+ 822 02da 4FF00002 		mov	r2, #0
+ 823 02de 1A70     		strb	r2, [r3, #0]
+ 335:.\Comms.c     **** 			_commsPacketBufferOverrunFlag = TRUE;
+ 824              		.loc 1 335 0
+ 825 02e0 40F20003 		movw	r3, #:lower16:_commsPacketBufferOverrunFlag
+ 826 02e4 C0F20003 		movt	r3, #:upper16:_commsPacketBufferOverrunFlag
+ 827 02e8 4FF00102 		mov	r2, #1
+ 828 02ec 1A70     		strb	r2, [r3, #0]
+ 829              	.L35:
+ 830              		.loc 1 256 0
+ 831 02ee FFF7FEFF 		bl	UartXbee_GetRxBufferSize
+ 832 02f2 0346     		mov	r3, r0
+ 833 02f4 002B     		cmp	r3, #0
+ 834 02f6 7FF486AE 		bne	.L52
+ 336:.\Comms.c     **** 		}
+ 337:.\Comms.c     **** 	}
+ 338:.\Comms.c     **** }
+ 835              		.loc 1 338 0
+ 836 02fa 80BD     		pop	{r7, pc}
+ 837              		.cfi_endproc
+ 838              	.LFE31:
+ 839              		.size	Comms_RetrieveData, .-Comms_RetrieveData
+ 840              		.section	.text.Comms_TurnOn,"ax",%progbits
+ 841              		.align	2
+ 842              		.global	Comms_TurnOn
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 22
+
+
+ 843              		.thumb
+ 844              		.thumb_func
+ 845              		.type	Comms_TurnOn, %function
+ 846              	Comms_TurnOn:
+ 847              	.LFB32:
+ 339:.\Comms.c     **** 
+ 340:.\Comms.c     **** void Comms_TurnOn(void)
+ 341:.\Comms.c     **** {
+ 848              		.loc 1 341 0
+ 849              		.cfi_startproc
+ 850              		@ args = 0, pretend = 0, frame = 0
+ 851              		@ frame_needed = 1, uses_anonymous_args = 0
+ 852              		@ link register save eliminated.
+ 853 0000 80B4     		push	{r7}
+ 854              	.LCFI8:
+ 855              		.cfi_def_cfa_offset 4
+ 856 0002 00AF     		add	r7, sp, #0
+ 857              		.cfi_offset 7, -4
+ 858              	.LCFI9:
+ 859              		.cfi_def_cfa_register 7
+ 342:.\Comms.c     **** 	_turnOnXbeeFlag = TRUE;
+ 860              		.loc 1 342 0
+ 861 0004 40F20003 		movw	r3, #:lower16:_turnOnXbeeFlag
+ 862 0008 C0F20003 		movt	r3, #:upper16:_turnOnXbeeFlag
+ 863 000c 4FF00102 		mov	r2, #1
+ 864 0010 1A70     		strb	r2, [r3, #0]
+ 343:.\Comms.c     **** }
+ 865              		.loc 1 343 0
+ 866 0012 BD46     		mov	sp, r7
+ 867 0014 80BC     		pop	{r7}
+ 868 0016 7047     		bx	lr
+ 869              		.cfi_endproc
+ 870              	.LFE32:
+ 871              		.size	Comms_TurnOn, .-Comms_TurnOn
+ 872              		.section	.text.Comms_TurnOff,"ax",%progbits
+ 873              		.align	2
+ 874              		.global	Comms_TurnOff
+ 875              		.thumb
+ 876              		.thumb_func
+ 877              		.type	Comms_TurnOff, %function
+ 878              	Comms_TurnOff:
+ 879              	.LFB33:
+ 344:.\Comms.c     **** 
+ 345:.\Comms.c     **** void Comms_TurnOff(void)
+ 346:.\Comms.c     **** {
+ 880              		.loc 1 346 0
+ 881              		.cfi_startproc
+ 882              		@ args = 0, pretend = 0, frame = 0
+ 883              		@ frame_needed = 1, uses_anonymous_args = 0
+ 884              		@ link register save eliminated.
+ 885 0000 80B4     		push	{r7}
+ 886              	.LCFI10:
+ 887              		.cfi_def_cfa_offset 4
+ 888 0002 00AF     		add	r7, sp, #0
+ 889              		.cfi_offset 7, -4
+ 890              	.LCFI11:
+ 891              		.cfi_def_cfa_register 7
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 23
+
+
+ 347:.\Comms.c     **** 	_turnOffXbeeFlag = TRUE;
+ 892              		.loc 1 347 0
+ 893 0004 40F20003 		movw	r3, #:lower16:_turnOffXbeeFlag
+ 894 0008 C0F20003 		movt	r3, #:upper16:_turnOffXbeeFlag
+ 895 000c 4FF00102 		mov	r2, #1
+ 896 0010 1A70     		strb	r2, [r3, #0]
+ 348:.\Comms.c     **** }
+ 897              		.loc 1 348 0
+ 898 0012 BD46     		mov	sp, r7
+ 899 0014 80BC     		pop	{r7}
+ 900 0016 7047     		bx	lr
+ 901              		.cfi_endproc
+ 902              	.LFE33:
+ 903              		.size	Comms_TurnOff, .-Comms_TurnOff
+ 904              		.section	.text.Comms_GetByte,"ax",%progbits
+ 905              		.align	2
+ 906              		.global	Comms_GetByte
+ 907              		.thumb
+ 908              		.thumb_func
+ 909              		.type	Comms_GetByte, %function
+ 910              	Comms_GetByte:
+ 911              	.LFB34:
+ 349:.\Comms.c     **** 
+ 350:.\Comms.c     **** uint8_t Comms_GetByte(uint8_t byteNum)
+ 351:.\Comms.c     **** {
+ 912              		.loc 1 351 0
+ 913              		.cfi_startproc
+ 914              		@ args = 0, pretend = 0, frame = 8
+ 915              		@ frame_needed = 1, uses_anonymous_args = 0
+ 916              		@ link register save eliminated.
+ 917 0000 80B4     		push	{r7}
+ 918              	.LCFI12:
+ 919              		.cfi_def_cfa_offset 4
+ 920 0002 83B0     		sub	sp, sp, #12
+ 921              	.LCFI13:
+ 922              		.cfi_def_cfa_offset 16
+ 923 0004 00AF     		add	r7, sp, #0
+ 924              		.cfi_offset 7, -4
+ 925              	.LCFI14:
+ 926              		.cfi_def_cfa_register 7
+ 927 0006 0346     		mov	r3, r0
+ 928 0008 FB71     		strb	r3, [r7, #7]
+ 352:.\Comms.c     **** 	// Clear unread data flag once at east one byte from the new packet has been read
+ 353:.\Comms.c     **** 	return _rxDataBuffer[byteNum];
+ 929              		.loc 1 353 0
+ 930 000a FA79     		ldrb	r2, [r7, #7]	@ zero_extendqisi2
+ 931 000c 40F20003 		movw	r3, #:lower16:_rxDataBuffer
+ 932 0010 C0F20003 		movt	r3, #:upper16:_rxDataBuffer
+ 933 0014 9B5C     		ldrb	r3, [r3, r2]	@ zero_extendqisi2
+ 354:.\Comms.c     **** }
+ 934              		.loc 1 354 0
+ 935 0016 1846     		mov	r0, r3
+ 936 0018 07F10C07 		add	r7, r7, #12
+ 937 001c BD46     		mov	sp, r7
+ 938 001e 80BC     		pop	{r7}
+ 939 0020 7047     		bx	lr
+ 940              		.cfi_endproc
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 24
+
+
+ 941              	.LFE34:
+ 942              		.size	Comms_GetByte, .-Comms_GetByte
+ 943 0022 00BF     		.section	.text.Comms_Send,"ax",%progbits
+ 944              		.align	2
+ 945              		.global	Comms_Send
+ 946              		.thumb
+ 947              		.thumb_func
+ 948              		.type	Comms_Send, %function
+ 949              	Comms_Send:
+ 950              	.LFB35:
+ 355:.\Comms.c     **** 
+ 356:.\Comms.c     **** //! @brief 		Call to send data to the comms
+ 357:.\Comms.c     **** void Comms_Send(uint8_t* dataArray)
+ 358:.\Comms.c     **** {
+ 951              		.loc 1 358 0
+ 952              		.cfi_startproc
+ 953              		@ args = 0, pretend = 0, frame = 8
+ 954              		@ frame_needed = 1, uses_anonymous_args = 0
+ 955 0000 80B5     		push	{r7, lr}
+ 956              	.LCFI15:
+ 957              		.cfi_def_cfa_offset 8
+ 958 0002 82B0     		sub	sp, sp, #8
+ 959              	.LCFI16:
+ 960              		.cfi_def_cfa_offset 16
+ 961 0004 00AF     		add	r7, sp, #0
+ 962              		.cfi_offset 14, -4
+ 963              		.cfi_offset 7, -8
+ 964              	.LCFI17:
+ 965              		.cfi_def_cfa_register 7
+ 966 0006 7860     		str	r0, [r7, #4]
+ 359:.\Comms.c     **** 	memcpy(_txDataBuffer, dataArray, configCOMMS_MSG_SIZE);
+ 967              		.loc 1 359 0
+ 968 0008 40F20000 		movw	r0, #:lower16:_txDataBuffer
+ 969 000c C0F20000 		movt	r0, #:upper16:_txDataBuffer
+ 970 0010 7968     		ldr	r1, [r7, #4]
+ 971 0012 4FF00802 		mov	r2, #8
+ 972 0016 FFF7FEFF 		bl	memcpy
+ 360:.\Comms.c     **** 	_toSendFlag = TRUE;
+ 973              		.loc 1 360 0
+ 974 001a 40F20003 		movw	r3, #:lower16:_toSendFlag
+ 975 001e C0F20003 		movt	r3, #:upper16:_toSendFlag
+ 976 0022 4FF00102 		mov	r2, #1
+ 977 0026 1A70     		strb	r2, [r3, #0]
+ 361:.\Comms.c     **** }
+ 978              		.loc 1 361 0
+ 979 0028 07F10807 		add	r7, r7, #8
+ 980 002c BD46     		mov	sp, r7
+ 981 002e 80BD     		pop	{r7, pc}
+ 982              		.cfi_endproc
+ 983              	.LFE35:
+ 984              		.size	Comms_Send, .-Comms_Send
+ 985              		.section	.text.Comms_IsTimeout,"ax",%progbits
+ 986              		.align	2
+ 987              		.global	Comms_IsTimeout
+ 988              		.thumb
+ 989              		.thumb_func
+ 990              		.type	Comms_IsTimeout, %function
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 25
+
+
+ 991              	Comms_IsTimeout:
+ 992              	.LFB36:
+ 362:.\Comms.c     **** 
+ 363:.\Comms.c     **** //! @brief 		Returns true if comms has timeout because it has received a packet in COMMS_TIMEOUT_PE
+ 364:.\Comms.c     **** bool_t Comms_IsTimeout(void)
+ 365:.\Comms.c     **** {
+ 993              		.loc 1 365 0
+ 994              		.cfi_startproc
+ 995              		@ args = 0, pretend = 0, frame = 8
+ 996              		@ frame_needed = 1, uses_anonymous_args = 0
+ 997              		@ link register save eliminated.
+ 998 0000 80B4     		push	{r7}
+ 999              	.LCFI18:
+ 1000              		.cfi_def_cfa_offset 4
+ 1001 0002 83B0     		sub	sp, sp, #12
+ 1002              	.LCFI19:
+ 1003              		.cfi_def_cfa_offset 16
+ 1004 0004 00AF     		add	r7, sp, #0
+ 1005              		.cfi_offset 7, -4
+ 1006              	.LCFI20:
+ 1007              		.cfi_def_cfa_register 7
+ 366:.\Comms.c     **** 	// Reset flag
+ 367:.\Comms.c     **** 	bool_t tempVar = _commsTimeoutFlag;
+ 1008              		.loc 1 367 0
+ 1009 0006 40F20003 		movw	r3, #:lower16:_commsTimeoutFlag
+ 1010 000a C0F20003 		movt	r3, #:upper16:_commsTimeoutFlag
+ 1011 000e 1B78     		ldrb	r3, [r3, #0]
+ 1012 0010 FB71     		strb	r3, [r7, #7]
+ 368:.\Comms.c     **** 	_commsTimeoutFlag = FALSE;
+ 1013              		.loc 1 368 0
+ 1014 0012 40F20003 		movw	r3, #:lower16:_commsTimeoutFlag
+ 1015 0016 C0F20003 		movt	r3, #:upper16:_commsTimeoutFlag
+ 1016 001a 4FF00002 		mov	r2, #0
+ 1017 001e 1A70     		strb	r2, [r3, #0]
+ 369:.\Comms.c     **** 	return tempVar;
+ 1018              		.loc 1 369 0
+ 1019 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 370:.\Comms.c     **** }
+ 1020              		.loc 1 370 0
+ 1021 0022 1846     		mov	r0, r3
+ 1022 0024 07F10C07 		add	r7, r7, #12
+ 1023 0028 BD46     		mov	sp, r7
+ 1024 002a 80BC     		pop	{r7}
+ 1025 002c 7047     		bx	lr
+ 1026              		.cfi_endproc
+ 1027              	.LFE36:
+ 1028              		.size	Comms_IsTimeout, .-Comms_IsTimeout
+ 1029 002e 00BF     		.section	.text.Comms_IsNewPacket,"ax",%progbits
+ 1030              		.align	2
+ 1031              		.global	Comms_IsNewPacket
+ 1032              		.thumb
+ 1033              		.thumb_func
+ 1034              		.type	Comms_IsNewPacket, %function
+ 1035              	Comms_IsNewPacket:
+ 1036              	.LFB37:
+ 371:.\Comms.c     **** 
+ 372:.\Comms.c     **** // Returns true if their is a new packet that hasn't been read
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 26
+
+
+ 373:.\Comms.c     **** uint8_t Comms_IsNewPacket(void)
+ 374:.\Comms.c     **** {
+ 1037              		.loc 1 374 0
+ 1038              		.cfi_startproc
+ 1039              		@ args = 0, pretend = 0, frame = 8
+ 1040              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1041              		@ link register save eliminated.
+ 1042 0000 80B4     		push	{r7}
+ 1043              	.LCFI21:
+ 1044              		.cfi_def_cfa_offset 4
+ 1045 0002 83B0     		sub	sp, sp, #12
+ 1046              	.LCFI22:
+ 1047              		.cfi_def_cfa_offset 16
+ 1048 0004 00AF     		add	r7, sp, #0
+ 1049              		.cfi_offset 7, -4
+ 1050              	.LCFI23:
+ 1051              		.cfi_def_cfa_register 7
+ 375:.\Comms.c     **** 	bool_t tempVar = _unreadDataFlag;
+ 1052              		.loc 1 375 0
+ 1053 0006 40F20003 		movw	r3, #:lower16:_unreadDataFlag
+ 1054 000a C0F20003 		movt	r3, #:upper16:_unreadDataFlag
+ 1055 000e 1B78     		ldrb	r3, [r3, #0]
+ 1056 0010 FB71     		strb	r3, [r7, #7]
+ 376:.\Comms.c     **** 	_unreadDataFlag = FALSE;
+ 1057              		.loc 1 376 0
+ 1058 0012 40F20003 		movw	r3, #:lower16:_unreadDataFlag
+ 1059 0016 C0F20003 		movt	r3, #:upper16:_unreadDataFlag
+ 1060 001a 4FF00002 		mov	r2, #0
+ 1061 001e 1A70     		strb	r2, [r3, #0]
+ 377:.\Comms.c     **** 	return tempVar;
+ 1062              		.loc 1 377 0
+ 1063 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 378:.\Comms.c     **** }
+ 1064              		.loc 1 378 0
+ 1065 0022 1846     		mov	r0, r3
+ 1066 0024 07F10C07 		add	r7, r7, #12
+ 1067 0028 BD46     		mov	sp, r7
+ 1068 002a 80BC     		pop	{r7}
+ 1069 002c 7047     		bx	lr
+ 1070              		.cfi_endproc
+ 1071              	.LFE37:
+ 1072              		.size	Comms_IsNewPacket, .-Comms_IsNewPacket
+ 1073 002e 00BF     		.bss
+ 1074              	rxDataByte.3881:
+ 1075 0049 00       		.space	1
+ 1076              	commsState.3878:
+ 1077 004a 00       		.space	1
+ 1078              	packetBufferPos.3879:
+ 1079 004b 00       		.space	1
+ 1080              	numOfDataBytes.3880:
+ 1081 004c 00       		.space	1
+ 1082              	xbeeState.3798:
+ 1083 004d 00       		.space	1
+ 1084              	prevxbeeState.3799:
+ 1085 004e 00       		.space	1
+ 1086 004f 00       		.align	2
+ 1087              	counter.3797:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 27
+
+
+ 1088 0050 00000000 		.space	4
+ 1089              		.align	2
+ 1090              	xbeeTurnOnTime.3800:
+ 1091 0054 00000000 		.space	4
+ 1092              		.align	2
+ 1093              	waitingForResponseCount.3801:
+ 1094 0058 00000000 		.space	4
+ 1095              		.text
+ 1096              	.Letext0:
+ 1097              		.section	.debug_loc,"",%progbits
+ 1098              	.Ldebug_loc0:
+ 1099              	.LLST0:
+ 1100 0000 00000000 		.4byte	.LFB29
+ 1101 0004 02000000 		.4byte	.LCFI0
+ 1102 0008 0100     		.2byte	0x1
+ 1103 000a 5D       		.byte	0x5d
+ 1104 000b 02000000 		.4byte	.LCFI0
+ 1105 000f 04000000 		.4byte	.LCFI1
+ 1106 0013 0200     		.2byte	0x2
+ 1107 0015 7D       		.byte	0x7d
+ 1108 0016 04       		.sleb128 4
+ 1109 0017 04000000 		.4byte	.LCFI1
+ 1110 001b 06000000 		.4byte	.LCFI2
+ 1111 001f 0200     		.2byte	0x2
+ 1112 0021 7D       		.byte	0x7d
+ 1113 0022 10       		.sleb128 16
+ 1114 0023 06000000 		.4byte	.LCFI2
+ 1115 0027 2C000000 		.4byte	.LFE29
+ 1116 002b 0200     		.2byte	0x2
+ 1117 002d 77       		.byte	0x77
+ 1118 002e 10       		.sleb128 16
+ 1119 002f 00000000 		.4byte	0x0
+ 1120 0033 00000000 		.4byte	0x0
+ 1121              	.LLST1:
+ 1122 0037 00000000 		.4byte	.LFB30
+ 1123 003b 02000000 		.4byte	.LCFI3
+ 1124 003f 0100     		.2byte	0x1
+ 1125 0041 5D       		.byte	0x5d
+ 1126 0042 02000000 		.4byte	.LCFI3
+ 1127 0046 04000000 		.4byte	.LCFI4
+ 1128 004a 0200     		.2byte	0x2
+ 1129 004c 7D       		.byte	0x7d
+ 1130 004d 14       		.sleb128 20
+ 1131 004e 04000000 		.4byte	.LCFI4
+ 1132 0052 06000000 		.4byte	.LCFI5
+ 1133 0056 0300     		.2byte	0x3
+ 1134 0058 7D       		.byte	0x7d
+ 1135 0059 8801     		.sleb128 136
+ 1136 005b 06000000 		.4byte	.LCFI5
+ 1137 005f A8030000 		.4byte	.LFE30
+ 1138 0063 0300     		.2byte	0x3
+ 1139 0065 77       		.byte	0x77
+ 1140 0066 8001     		.sleb128 128
+ 1141 0068 00000000 		.4byte	0x0
+ 1142 006c 00000000 		.4byte	0x0
+ 1143              	.LLST2:
+ 1144 0070 00000000 		.4byte	.LFB31
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 28
+
+
+ 1145 0074 02000000 		.4byte	.LCFI6
+ 1146 0078 0100     		.2byte	0x1
+ 1147 007a 5D       		.byte	0x5d
+ 1148 007b 02000000 		.4byte	.LCFI6
+ 1149 007f 04000000 		.4byte	.LCFI7
+ 1150 0083 0200     		.2byte	0x2
+ 1151 0085 7D       		.byte	0x7d
+ 1152 0086 08       		.sleb128 8
+ 1153 0087 04000000 		.4byte	.LCFI7
+ 1154 008b FC020000 		.4byte	.LFE31
+ 1155 008f 0200     		.2byte	0x2
+ 1156 0091 77       		.byte	0x77
+ 1157 0092 08       		.sleb128 8
+ 1158 0093 00000000 		.4byte	0x0
+ 1159 0097 00000000 		.4byte	0x0
+ 1160              	.LLST3:
+ 1161 009b 00000000 		.4byte	.LFB32
+ 1162 009f 02000000 		.4byte	.LCFI8
+ 1163 00a3 0100     		.2byte	0x1
+ 1164 00a5 5D       		.byte	0x5d
+ 1165 00a6 02000000 		.4byte	.LCFI8
+ 1166 00aa 04000000 		.4byte	.LCFI9
+ 1167 00ae 0200     		.2byte	0x2
+ 1168 00b0 7D       		.byte	0x7d
+ 1169 00b1 04       		.sleb128 4
+ 1170 00b2 04000000 		.4byte	.LCFI9
+ 1171 00b6 18000000 		.4byte	.LFE32
+ 1172 00ba 0200     		.2byte	0x2
+ 1173 00bc 77       		.byte	0x77
+ 1174 00bd 04       		.sleb128 4
+ 1175 00be 00000000 		.4byte	0x0
+ 1176 00c2 00000000 		.4byte	0x0
+ 1177              	.LLST4:
+ 1178 00c6 00000000 		.4byte	.LFB33
+ 1179 00ca 02000000 		.4byte	.LCFI10
+ 1180 00ce 0100     		.2byte	0x1
+ 1181 00d0 5D       		.byte	0x5d
+ 1182 00d1 02000000 		.4byte	.LCFI10
+ 1183 00d5 04000000 		.4byte	.LCFI11
+ 1184 00d9 0200     		.2byte	0x2
+ 1185 00db 7D       		.byte	0x7d
+ 1186 00dc 04       		.sleb128 4
+ 1187 00dd 04000000 		.4byte	.LCFI11
+ 1188 00e1 18000000 		.4byte	.LFE33
+ 1189 00e5 0200     		.2byte	0x2
+ 1190 00e7 77       		.byte	0x77
+ 1191 00e8 04       		.sleb128 4
+ 1192 00e9 00000000 		.4byte	0x0
+ 1193 00ed 00000000 		.4byte	0x0
+ 1194              	.LLST5:
+ 1195 00f1 00000000 		.4byte	.LFB34
+ 1196 00f5 02000000 		.4byte	.LCFI12
+ 1197 00f9 0100     		.2byte	0x1
+ 1198 00fb 5D       		.byte	0x5d
+ 1199 00fc 02000000 		.4byte	.LCFI12
+ 1200 0100 04000000 		.4byte	.LCFI13
+ 1201 0104 0200     		.2byte	0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 29
+
+
+ 1202 0106 7D       		.byte	0x7d
+ 1203 0107 04       		.sleb128 4
+ 1204 0108 04000000 		.4byte	.LCFI13
+ 1205 010c 06000000 		.4byte	.LCFI14
+ 1206 0110 0200     		.2byte	0x2
+ 1207 0112 7D       		.byte	0x7d
+ 1208 0113 10       		.sleb128 16
+ 1209 0114 06000000 		.4byte	.LCFI14
+ 1210 0118 22000000 		.4byte	.LFE34
+ 1211 011c 0200     		.2byte	0x2
+ 1212 011e 77       		.byte	0x77
+ 1213 011f 10       		.sleb128 16
+ 1214 0120 00000000 		.4byte	0x0
+ 1215 0124 00000000 		.4byte	0x0
+ 1216              	.LLST6:
+ 1217 0128 00000000 		.4byte	.LFB35
+ 1218 012c 02000000 		.4byte	.LCFI15
+ 1219 0130 0100     		.2byte	0x1
+ 1220 0132 5D       		.byte	0x5d
+ 1221 0133 02000000 		.4byte	.LCFI15
+ 1222 0137 04000000 		.4byte	.LCFI16
+ 1223 013b 0200     		.2byte	0x2
+ 1224 013d 7D       		.byte	0x7d
+ 1225 013e 08       		.sleb128 8
+ 1226 013f 04000000 		.4byte	.LCFI16
+ 1227 0143 06000000 		.4byte	.LCFI17
+ 1228 0147 0200     		.2byte	0x2
+ 1229 0149 7D       		.byte	0x7d
+ 1230 014a 10       		.sleb128 16
+ 1231 014b 06000000 		.4byte	.LCFI17
+ 1232 014f 30000000 		.4byte	.LFE35
+ 1233 0153 0200     		.2byte	0x2
+ 1234 0155 77       		.byte	0x77
+ 1235 0156 10       		.sleb128 16
+ 1236 0157 00000000 		.4byte	0x0
+ 1237 015b 00000000 		.4byte	0x0
+ 1238              	.LLST7:
+ 1239 015f 00000000 		.4byte	.LFB36
+ 1240 0163 02000000 		.4byte	.LCFI18
+ 1241 0167 0100     		.2byte	0x1
+ 1242 0169 5D       		.byte	0x5d
+ 1243 016a 02000000 		.4byte	.LCFI18
+ 1244 016e 04000000 		.4byte	.LCFI19
+ 1245 0172 0200     		.2byte	0x2
+ 1246 0174 7D       		.byte	0x7d
+ 1247 0175 04       		.sleb128 4
+ 1248 0176 04000000 		.4byte	.LCFI19
+ 1249 017a 06000000 		.4byte	.LCFI20
+ 1250 017e 0200     		.2byte	0x2
+ 1251 0180 7D       		.byte	0x7d
+ 1252 0181 10       		.sleb128 16
+ 1253 0182 06000000 		.4byte	.LCFI20
+ 1254 0186 2E000000 		.4byte	.LFE36
+ 1255 018a 0200     		.2byte	0x2
+ 1256 018c 77       		.byte	0x77
+ 1257 018d 10       		.sleb128 16
+ 1258 018e 00000000 		.4byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 30
+
+
+ 1259 0192 00000000 		.4byte	0x0
+ 1260              	.LLST8:
+ 1261 0196 00000000 		.4byte	.LFB37
+ 1262 019a 02000000 		.4byte	.LCFI21
+ 1263 019e 0100     		.2byte	0x1
+ 1264 01a0 5D       		.byte	0x5d
+ 1265 01a1 02000000 		.4byte	.LCFI21
+ 1266 01a5 04000000 		.4byte	.LCFI22
+ 1267 01a9 0200     		.2byte	0x2
+ 1268 01ab 7D       		.byte	0x7d
+ 1269 01ac 04       		.sleb128 4
+ 1270 01ad 04000000 		.4byte	.LCFI22
+ 1271 01b1 06000000 		.4byte	.LCFI23
+ 1272 01b5 0200     		.2byte	0x2
+ 1273 01b7 7D       		.byte	0x7d
+ 1274 01b8 10       		.sleb128 16
+ 1275 01b9 06000000 		.4byte	.LCFI23
+ 1276 01bd 2E000000 		.4byte	.LFE37
+ 1277 01c1 0200     		.2byte	0x2
+ 1278 01c3 77       		.byte	0x77
+ 1279 01c4 10       		.sleb128 16
+ 1280 01c5 00000000 		.4byte	0x0
+ 1281 01c9 00000000 		.4byte	0x0
+ 1282              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 1283              		.file 3 ".\\/../common/PublicObjects.h"
+ 1284              		.file 4 "./Generated_Source/PSoC5/core_cm3.h"
+ 1285              		.section	.debug_info
+ 1286 0000 13040000 		.4byte	0x413
+ 1287 0004 0200     		.2byte	0x2
+ 1288 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1289 000a 04       		.byte	0x4
+ 1290 000b 01       		.uleb128 0x1
+ 1291 000c 77030000 		.4byte	.LASF63
+ 1292 0010 01       		.byte	0x1
+ 1293 0011 4B030000 		.4byte	.LASF64
+ 1294 0015 7C000000 		.4byte	.LASF65
+ 1295 0019 00000000 		.4byte	0x0
+ 1296 001d 00000000 		.4byte	0x0
+ 1297 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 1298 0025 00000000 		.4byte	.Ldebug_line0
+ 1299 0029 02       		.uleb128 0x2
+ 1300 002a 01       		.byte	0x1
+ 1301 002b 06       		.byte	0x6
+ 1302 002c F1010000 		.4byte	.LASF0
+ 1303 0030 03       		.uleb128 0x3
+ 1304 0031 16010000 		.4byte	.LASF5
+ 1305 0035 02       		.byte	0x2
+ 1306 0036 2A       		.byte	0x2a
+ 1307 0037 3B000000 		.4byte	0x3b
+ 1308 003b 02       		.uleb128 0x2
+ 1309 003c 01       		.byte	0x1
+ 1310 003d 08       		.byte	0x8
+ 1311 003e DB010000 		.4byte	.LASF1
+ 1312 0042 02       		.uleb128 0x2
+ 1313 0043 02       		.byte	0x2
+ 1314 0044 05       		.byte	0x5
+ 1315 0045 44010000 		.4byte	.LASF2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 31
+
+
+ 1316 0049 02       		.uleb128 0x2
+ 1317 004a 02       		.byte	0x2
+ 1318 004b 07       		.byte	0x7
+ 1319 004c 72020000 		.4byte	.LASF3
+ 1320 0050 02       		.uleb128 0x2
+ 1321 0051 04       		.byte	0x4
+ 1322 0052 05       		.byte	0x5
+ 1323 0053 79010000 		.4byte	.LASF4
+ 1324 0057 03       		.uleb128 0x3
+ 1325 0058 1C020000 		.4byte	.LASF6
+ 1326 005c 02       		.byte	0x2
+ 1327 005d 50       		.byte	0x50
+ 1328 005e 62000000 		.4byte	0x62
+ 1329 0062 02       		.uleb128 0x2
+ 1330 0063 04       		.byte	0x4
+ 1331 0064 07       		.byte	0x7
+ 1332 0065 E6020000 		.4byte	.LASF7
+ 1333 0069 02       		.uleb128 0x2
+ 1334 006a 08       		.byte	0x8
+ 1335 006b 05       		.byte	0x5
+ 1336 006c 4E010000 		.4byte	.LASF8
+ 1337 0070 02       		.uleb128 0x2
+ 1338 0071 08       		.byte	0x8
+ 1339 0072 07       		.byte	0x7
+ 1340 0073 05020000 		.4byte	.LASF9
+ 1341 0077 04       		.uleb128 0x4
+ 1342 0078 04       		.byte	0x4
+ 1343 0079 05       		.byte	0x5
+ 1344 007a 696E7400 		.ascii	"int\000"
+ 1345 007e 02       		.uleb128 0x2
+ 1346 007f 04       		.byte	0x4
+ 1347 0080 07       		.byte	0x7
+ 1348 0081 43020000 		.4byte	.LASF10
+ 1349 0085 02       		.uleb128 0x2
+ 1350 0086 01       		.byte	0x1
+ 1351 0087 08       		.byte	0x8
+ 1352 0088 95020000 		.4byte	.LASF11
+ 1353 008c 05       		.uleb128 0x5
+ 1354 008d 04       		.byte	0x4
+ 1355 008e 07       		.byte	0x7
+ 1356 008f 06       		.uleb128 0x6
+ 1357 0090 01       		.byte	0x1
+ 1358 0091 03       		.byte	0x3
+ 1359 0092 23       		.byte	0x23
+ 1360 0093 A4000000 		.4byte	0xa4
+ 1361 0097 07       		.uleb128 0x7
+ 1362 0098 3D000000 		.4byte	.LASF12
+ 1363 009c 00       		.sleb128 0
+ 1364 009d 07       		.uleb128 0x7
+ 1365 009e 83030000 		.4byte	.LASF13
+ 1366 00a2 01       		.sleb128 1
+ 1367 00a3 00       		.byte	0x0
+ 1368 00a4 03       		.uleb128 0x3
+ 1369 00a5 A9020000 		.4byte	.LASF14
+ 1370 00a9 03       		.byte	0x3
+ 1371 00aa 26       		.byte	0x26
+ 1372 00ab 8F000000 		.4byte	0x8f
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 32
+
+
+ 1373 00af 06       		.uleb128 0x6
+ 1374 00b0 01       		.byte	0x1
+ 1375 00b1 01       		.byte	0x1
+ 1376 00b2 27       		.byte	0x27
+ 1377 00b3 E2000000 		.4byte	0xe2
+ 1378 00b7 07       		.uleb128 0x7
+ 1379 00b8 74010000 		.4byte	.LASF15
+ 1380 00bc 00       		.sleb128 0
+ 1381 00bd 07       		.uleb128 0x7
+ 1382 00be 9A020000 		.4byte	.LASF16
+ 1383 00c2 01       		.sleb128 1
+ 1384 00c3 07       		.uleb128 0x7
+ 1385 00c4 D8020000 		.4byte	.LASF17
+ 1386 00c8 02       		.sleb128 2
+ 1387 00c9 07       		.uleb128 0x7
+ 1388 00ca 06010000 		.4byte	.LASF18
+ 1389 00ce 03       		.sleb128 3
+ 1390 00cf 07       		.uleb128 0x7
+ 1391 00d0 09000000 		.4byte	.LASF19
+ 1392 00d4 04       		.sleb128 4
+ 1393 00d5 07       		.uleb128 0x7
+ 1394 00d6 5E000000 		.4byte	.LASF20
+ 1395 00da 05       		.sleb128 5
+ 1396 00db 07       		.uleb128 0x7
+ 1397 00dc 92010000 		.4byte	.LASF21
+ 1398 00e0 06       		.sleb128 6
+ 1399 00e1 00       		.byte	0x0
+ 1400 00e2 03       		.uleb128 0x3
+ 1401 00e3 A1010000 		.4byte	.LASF22
+ 1402 00e7 01       		.byte	0x1
+ 1403 00e8 2F       		.byte	0x2f
+ 1404 00e9 AF000000 		.4byte	0xaf
+ 1405 00ed 06       		.uleb128 0x6
+ 1406 00ee 01       		.byte	0x1
+ 1407 00ef 01       		.byte	0x1
+ 1408 00f0 31       		.byte	0x31
+ 1409 00f1 1A010000 		.4byte	0x11a
+ 1410 00f5 07       		.uleb128 0x7
+ 1411 00f6 00000000 		.4byte	.LASF23
+ 1412 00fa 00       		.sleb128 0
+ 1413 00fb 07       		.uleb128 0x7
+ 1414 00fc FD010000 		.4byte	.LASF24
+ 1415 0100 01       		.sleb128 1
+ 1416 0101 07       		.uleb128 0x7
+ 1417 0102 50020000 		.4byte	.LASF25
+ 1418 0106 02       		.sleb128 2
+ 1419 0107 07       		.uleb128 0x7
+ 1420 0108 43000000 		.4byte	.LASF26
+ 1421 010c 03       		.sleb128 3
+ 1422 010d 07       		.uleb128 0x7
+ 1423 010e FA000000 		.4byte	.LASF27
+ 1424 0112 04       		.sleb128 4
+ 1425 0113 07       		.uleb128 0x7
+ 1426 0114 12030000 		.4byte	.LASF28
+ 1427 0118 05       		.sleb128 5
+ 1428 0119 00       		.byte	0x0
+ 1429 011a 03       		.uleb128 0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 33
+
+
+ 1430 011b F8020000 		.4byte	.LASF29
+ 1431 011f 01       		.byte	0x1
+ 1432 0120 38       		.byte	0x38
+ 1433 0121 ED000000 		.4byte	0xed
+ 1434 0125 08       		.uleb128 0x8
+ 1435 0126 01       		.byte	0x1
+ 1436 0127 32000000 		.4byte	.LASF30
+ 1437 012b 01       		.byte	0x1
+ 1438 012c 59       		.byte	0x59
+ 1439 012d 01       		.byte	0x1
+ 1440 012e 00000000 		.4byte	.LFB29
+ 1441 0132 2C000000 		.4byte	.LFE29
+ 1442 0136 00000000 		.4byte	.LLST0
+ 1443 013a 4D010000 		.4byte	0x14d
+ 1444 013e 09       		.uleb128 0x9
+ 1445 013f C1010000 		.4byte	.LASF44
+ 1446 0143 01       		.byte	0x1
+ 1447 0144 59       		.byte	0x59
+ 1448 0145 4D010000 		.4byte	0x14d
+ 1449 0149 02       		.byte	0x2
+ 1450 014a 91       		.byte	0x91
+ 1451 014b 74       		.sleb128 -12
+ 1452 014c 00       		.byte	0x0
+ 1453 014d 0A       		.uleb128 0xa
+ 1454 014e 04       		.byte	0x4
+ 1455 014f 30000000 		.4byte	0x30
+ 1456 0153 08       		.uleb128 0x8
+ 1457 0154 01       		.byte	0x1
+ 1458 0155 E6000000 		.4byte	.LASF31
+ 1459 0159 01       		.byte	0x1
+ 1460 015a 63       		.byte	0x63
+ 1461 015b 01       		.byte	0x1
+ 1462 015c 00000000 		.4byte	.LFB30
+ 1463 0160 A8030000 		.4byte	.LFE30
+ 1464 0164 37000000 		.4byte	.LLST1
+ 1465 0168 DB010000 		.4byte	0x1db
+ 1466 016c 0B       		.uleb128 0xb
+ 1467 016d E9010000 		.4byte	.LASF32
+ 1468 0171 01       		.byte	0x1
+ 1469 0172 65       		.byte	0x65
+ 1470 0173 57000000 		.4byte	0x57
+ 1471 0177 05       		.byte	0x5
+ 1472 0178 03       		.byte	0x3
+ 1473 0179 50000000 		.4byte	counter.3797
+ 1474 017d 0B       		.uleb128 0xb
+ 1475 017e F0000000 		.4byte	.LASF33
+ 1476 0182 01       		.byte	0x1
+ 1477 0183 67       		.byte	0x67
+ 1478 0184 1A010000 		.4byte	0x11a
+ 1479 0188 05       		.byte	0x5
+ 1480 0189 03       		.byte	0x3
+ 1481 018a 4D000000 		.4byte	xbeeState.3798
+ 1482 018e 0B       		.uleb128 0xb
+ 1483 018f CD010000 		.4byte	.LASF34
+ 1484 0193 01       		.byte	0x1
+ 1485 0194 68       		.byte	0x68
+ 1486 0195 1A010000 		.4byte	0x11a
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 34
+
+
+ 1487 0199 05       		.byte	0x5
+ 1488 019a 03       		.byte	0x3
+ 1489 019b 4E000000 		.4byte	prevxbeeState.3799
+ 1490 019f 0B       		.uleb128 0xb
+ 1491 01a0 88030000 		.4byte	.LASF35
+ 1492 01a4 01       		.byte	0x1
+ 1493 01a5 69       		.byte	0x69
+ 1494 01a6 57000000 		.4byte	0x57
+ 1495 01aa 05       		.byte	0x5
+ 1496 01ab 03       		.byte	0x3
+ 1497 01ac 54000000 		.4byte	xbeeTurnOnTime.3800
+ 1498 01b0 0B       		.uleb128 0xb
+ 1499 01b1 1E010000 		.4byte	.LASF36
+ 1500 01b5 01       		.byte	0x1
+ 1501 01b6 6A       		.byte	0x6a
+ 1502 01b7 57000000 		.4byte	0x57
+ 1503 01bb 05       		.byte	0x5
+ 1504 01bc 03       		.byte	0x3
+ 1505 01bd 58000000 		.4byte	waitingForResponseCount.3801
+ 1506 01c1 0C       		.uleb128 0xc
+ 1507 01c2 FE020000 		.4byte	.LBB2
+ 1508 01c6 7A030000 		.4byte	.LBE2
+ 1509 01ca 0B       		.uleb128 0xb
+ 1510 01cb 5E020000 		.4byte	.LASF37
+ 1511 01cf 01       		.byte	0x1
+ 1512 01d0 EB       		.byte	0xeb
+ 1513 01d1 DB010000 		.4byte	0x1db
+ 1514 01d5 03       		.byte	0x3
+ 1515 01d6 91       		.byte	0x91
+ 1516 01d7 847F     		.sleb128 -124
+ 1517 01d9 00       		.byte	0x0
+ 1518 01da 00       		.byte	0x0
+ 1519 01db 0D       		.uleb128 0xd
+ 1520 01dc 85000000 		.4byte	0x85
+ 1521 01e0 EB010000 		.4byte	0x1eb
+ 1522 01e4 0E       		.uleb128 0xe
+ 1523 01e5 8C000000 		.4byte	0x8c
+ 1524 01e9 63       		.byte	0x63
+ 1525 01ea 00       		.byte	0x0
+ 1526 01eb 0F       		.uleb128 0xf
+ 1527 01ec 01       		.byte	0x1
+ 1528 01ed 1F000000 		.4byte	.LASF66
+ 1529 01f1 01       		.byte	0x1
+ 1530 01f2 F9       		.byte	0xf9
+ 1531 01f3 00000000 		.4byte	.LFB31
+ 1532 01f7 FC020000 		.4byte	.LFE31
+ 1533 01fb 70000000 		.4byte	.LLST2
+ 1534 01ff 48020000 		.4byte	0x248
+ 1535 0203 0B       		.uleb128 0xb
+ 1536 0204 67020000 		.4byte	.LASF38
+ 1537 0208 01       		.byte	0x1
+ 1538 0209 FB       		.byte	0xfb
+ 1539 020a E2000000 		.4byte	0xe2
+ 1540 020e 05       		.byte	0x5
+ 1541 020f 03       		.byte	0x3
+ 1542 0210 4A000000 		.4byte	commsState.3878
+ 1543 0214 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 35
+
+
+ 1544 0215 85020000 		.4byte	.LASF39
+ 1545 0219 01       		.byte	0x1
+ 1546 021a FC       		.byte	0xfc
+ 1547 021b 30000000 		.4byte	0x30
+ 1548 021f 05       		.byte	0x5
+ 1549 0220 03       		.byte	0x3
+ 1550 0221 4B000000 		.4byte	packetBufferPos.3879
+ 1551 0225 0B       		.uleb128 0xb
+ 1552 0226 68030000 		.4byte	.LASF40
+ 1553 022a 01       		.byte	0x1
+ 1554 022b FD       		.byte	0xfd
+ 1555 022c 30000000 		.4byte	0x30
+ 1556 0230 05       		.byte	0x5
+ 1557 0231 03       		.byte	0x3
+ 1558 0232 4C000000 		.4byte	numOfDataBytes.3880
+ 1559 0236 0B       		.uleb128 0xb
+ 1560 0237 14000000 		.4byte	.LASF41
+ 1561 023b 01       		.byte	0x1
+ 1562 023c FE       		.byte	0xfe
+ 1563 023d 30000000 		.4byte	0x30
+ 1564 0241 05       		.byte	0x5
+ 1565 0242 03       		.byte	0x3
+ 1566 0243 49000000 		.4byte	rxDataByte.3881
+ 1567 0247 00       		.byte	0x0
+ 1568 0248 10       		.uleb128 0x10
+ 1569 0249 01       		.byte	0x1
+ 1570 024a 97030000 		.4byte	.LASF42
+ 1571 024e 01       		.byte	0x1
+ 1572 024f 5401     		.2byte	0x154
+ 1573 0251 01       		.byte	0x1
+ 1574 0252 00000000 		.4byte	.LFB32
+ 1575 0256 18000000 		.4byte	.LFE32
+ 1576 025a 9B000000 		.4byte	.LLST3
+ 1577 025e 10       		.uleb128 0x10
+ 1578 025f 01       		.byte	0x1
+ 1579 0260 50000000 		.4byte	.LASF43
+ 1580 0264 01       		.byte	0x1
+ 1581 0265 5901     		.2byte	0x159
+ 1582 0267 01       		.byte	0x1
+ 1583 0268 00000000 		.4byte	.LFB33
+ 1584 026c 18000000 		.4byte	.LFE33
+ 1585 0270 C6000000 		.4byte	.LLST4
+ 1586 0274 11       		.uleb128 0x11
+ 1587 0275 01       		.byte	0x1
+ 1588 0276 5C010000 		.4byte	.LASF48
+ 1589 027a 01       		.byte	0x1
+ 1590 027b 5E01     		.2byte	0x15e
+ 1591 027d 01       		.byte	0x1
+ 1592 027e 30000000 		.4byte	0x30
+ 1593 0282 00000000 		.4byte	.LFB34
+ 1594 0286 22000000 		.4byte	.LFE34
+ 1595 028a F1000000 		.4byte	.LLST5
+ 1596 028e A2020000 		.4byte	0x2a2
+ 1597 0292 12       		.uleb128 0x12
+ 1598 0293 CC030000 		.4byte	.LASF45
+ 1599 0297 01       		.byte	0x1
+ 1600 0298 5E01     		.2byte	0x15e
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 36
+
+
+ 1601 029a 30000000 		.4byte	0x30
+ 1602 029e 02       		.byte	0x2
+ 1603 029f 91       		.byte	0x91
+ 1604 02a0 77       		.sleb128 -9
+ 1605 02a1 00       		.byte	0x0
+ 1606 02a2 13       		.uleb128 0x13
+ 1607 02a3 01       		.byte	0x1
+ 1608 02a4 55030000 		.4byte	.LASF46
+ 1609 02a8 01       		.byte	0x1
+ 1610 02a9 6501     		.2byte	0x165
+ 1611 02ab 01       		.byte	0x1
+ 1612 02ac 00000000 		.4byte	.LFB35
+ 1613 02b0 30000000 		.4byte	.LFE35
+ 1614 02b4 28010000 		.4byte	.LLST6
+ 1615 02b8 CC020000 		.4byte	0x2cc
+ 1616 02bc 12       		.uleb128 0x12
+ 1617 02bd 6A010000 		.4byte	.LASF47
+ 1618 02c1 01       		.byte	0x1
+ 1619 02c2 6501     		.2byte	0x165
+ 1620 02c4 4D010000 		.4byte	0x14d
+ 1621 02c8 02       		.byte	0x2
+ 1622 02c9 91       		.byte	0x91
+ 1623 02ca 74       		.sleb128 -12
+ 1624 02cb 00       		.byte	0x0
+ 1625 02cc 11       		.uleb128 0x11
+ 1626 02cd 01       		.byte	0x1
+ 1627 02ce 29030000 		.4byte	.LASF49
+ 1628 02d2 01       		.byte	0x1
+ 1629 02d3 6C01     		.2byte	0x16c
+ 1630 02d5 01       		.byte	0x1
+ 1631 02d6 A4000000 		.4byte	0xa4
+ 1632 02da 00000000 		.4byte	.LFB36
+ 1633 02de 2E000000 		.4byte	.LFE36
+ 1634 02e2 5F010000 		.4byte	.LLST7
+ 1635 02e6 FA020000 		.4byte	0x2fa
+ 1636 02ea 14       		.uleb128 0x14
+ 1637 02eb 60030000 		.4byte	.LASF50
+ 1638 02ef 01       		.byte	0x1
+ 1639 02f0 6F01     		.2byte	0x16f
+ 1640 02f2 A4000000 		.4byte	0xa4
+ 1641 02f6 02       		.byte	0x2
+ 1642 02f7 91       		.byte	0x91
+ 1643 02f8 77       		.sleb128 -9
+ 1644 02f9 00       		.byte	0x0
+ 1645 02fa 11       		.uleb128 0x11
+ 1646 02fb 01       		.byte	0x1
+ 1647 02fc 39030000 		.4byte	.LASF51
+ 1648 0300 01       		.byte	0x1
+ 1649 0301 7501     		.2byte	0x175
+ 1650 0303 01       		.byte	0x1
+ 1651 0304 30000000 		.4byte	0x30
+ 1652 0308 00000000 		.4byte	.LFB37
+ 1653 030c 2E000000 		.4byte	.LFE37
+ 1654 0310 96010000 		.4byte	.LLST8
+ 1655 0314 28030000 		.4byte	0x328
+ 1656 0318 14       		.uleb128 0x14
+ 1657 0319 60030000 		.4byte	.LASF50
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 37
+
+
+ 1658 031d 01       		.byte	0x1
+ 1659 031e 7701     		.2byte	0x177
+ 1660 0320 A4000000 		.4byte	0xa4
+ 1661 0324 02       		.byte	0x2
+ 1662 0325 91       		.byte	0x91
+ 1663 0326 77       		.sleb128 -9
+ 1664 0327 00       		.byte	0x0
+ 1665 0328 0B       		.uleb128 0xb
+ 1666 0329 BB020000 		.4byte	.LASF52
+ 1667 032d 01       		.byte	0x1
+ 1668 032e 46       		.byte	0x46
+ 1669 032f A4000000 		.4byte	0xa4
+ 1670 0333 05       		.byte	0x5
+ 1671 0334 03       		.byte	0x3
+ 1672 0335 00000000 		.4byte	_newPacketFlag
+ 1673 0339 0B       		.uleb128 0xb
+ 1674 033a D6000000 		.4byte	.LASF53
+ 1675 033e 01       		.byte	0x1
+ 1676 033f 48       		.byte	0x48
+ 1677 0340 A4000000 		.4byte	0xa4
+ 1678 0344 05       		.byte	0x5
+ 1679 0345 03       		.byte	0x3
+ 1680 0346 01000000 		.4byte	_unreadDataFlag
+ 1681 034a 0B       		.uleb128 0xb
+ 1682 034b 25020000 		.4byte	.LASF54
+ 1683 034f 01       		.byte	0x1
+ 1684 0350 49       		.byte	0x49
+ 1685 0351 A4000000 		.4byte	0xa4
+ 1686 0355 05       		.byte	0x5
+ 1687 0356 03       		.byte	0x3
+ 1688 0357 02000000 		.4byte	_commsPacketBufferOverrunFlag
+ 1689 035b 0B       		.uleb128 0xb
+ 1690 035c A4030000 		.4byte	.LASF55
+ 1691 0360 01       		.byte	0x1
+ 1692 0361 4A       		.byte	0x4a
+ 1693 0362 A4000000 		.4byte	0xa4
+ 1694 0366 05       		.byte	0x5
+ 1695 0367 03       		.byte	0x3
+ 1696 0368 03000000 		.4byte	_commsInitCompleteFlag
+ 1697 036c 0B       		.uleb128 0xb
+ 1698 036d AF010000 		.4byte	.LASF56
+ 1699 0371 01       		.byte	0x1
+ 1700 0372 4B       		.byte	0x4b
+ 1701 0373 A4000000 		.4byte	0xa4
+ 1702 0377 05       		.byte	0x5
+ 1703 0378 03       		.byte	0x3
+ 1704 0379 04000000 		.4byte	_commsTimeoutFlag
+ 1705 037d 0B       		.uleb128 0xb
+ 1706 037e B0020000 		.4byte	.LASF57
+ 1707 0382 01       		.byte	0x1
+ 1708 0383 4E       		.byte	0x4e
+ 1709 0384 4D010000 		.4byte	0x14d
+ 1710 0388 05       		.byte	0x5
+ 1711 0389 03       		.byte	0x3
+ 1712 038a 08000000 		.4byte	_idenChars
+ 1713 038e 0D       		.uleb128 0xd
+ 1714 038f 30000000 		.4byte	0x30
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 38
+
+
+ 1715 0393 9E030000 		.4byte	0x39e
+ 1716 0397 0E       		.uleb128 0xe
+ 1717 0398 8C000000 		.4byte	0x8c
+ 1718 039c 07       		.byte	0x7
+ 1719 039d 00       		.byte	0x0
+ 1720 039e 0B       		.uleb128 0xb
+ 1721 039f 36010000 		.4byte	.LASF58
+ 1722 03a3 01       		.byte	0x1
+ 1723 03a4 50       		.byte	0x50
+ 1724 03a5 8E030000 		.4byte	0x38e
+ 1725 03a9 05       		.byte	0x5
+ 1726 03aa 03       		.byte	0x3
+ 1727 03ab 0C000000 		.4byte	_txDataBuffer
+ 1728 03af 0D       		.uleb128 0xd
+ 1729 03b0 30000000 		.4byte	0x30
+ 1730 03b4 BF030000 		.4byte	0x3bf
+ 1731 03b8 0E       		.uleb128 0xe
+ 1732 03b9 8C000000 		.4byte	0x8c
+ 1733 03bd 31       		.byte	0x31
+ 1734 03be 00       		.byte	0x0
+ 1735 03bf 0B       		.uleb128 0xb
+ 1736 03c0 CA020000 		.4byte	.LASF59
+ 1737 03c4 01       		.byte	0x1
+ 1738 03c5 51       		.byte	0x51
+ 1739 03c6 AF030000 		.4byte	0x3af
+ 1740 03ca 05       		.byte	0x5
+ 1741 03cb 03       		.byte	0x3
+ 1742 03cc 14000000 		.4byte	_rxDataBuffer
+ 1743 03d0 0B       		.uleb128 0xb
+ 1744 03d1 BB030000 		.4byte	.LASF60
+ 1745 03d5 01       		.byte	0x1
+ 1746 03d6 53       		.byte	0x53
+ 1747 03d7 A4000000 		.4byte	0xa4
+ 1748 03db 05       		.byte	0x5
+ 1749 03dc 03       		.byte	0x3
+ 1750 03dd 46000000 		.4byte	_turnOffXbeeFlag
+ 1751 03e1 0B       		.uleb128 0xb
+ 1752 03e2 82010000 		.4byte	.LASF61
+ 1753 03e6 01       		.byte	0x1
+ 1754 03e7 54       		.byte	0x54
+ 1755 03e8 A4000000 		.4byte	0xa4
+ 1756 03ec 05       		.byte	0x5
+ 1757 03ed 03       		.byte	0x3
+ 1758 03ee 47000000 		.4byte	_turnOnXbeeFlag
+ 1759 03f2 0B       		.uleb128 0xb
+ 1760 03f3 70000000 		.4byte	.LASF62
+ 1761 03f7 01       		.byte	0x1
+ 1762 03f8 55       		.byte	0x55
+ 1763 03f9 A4000000 		.4byte	0xa4
+ 1764 03fd 05       		.byte	0x5
+ 1765 03fe 03       		.byte	0x3
+ 1766 03ff 48000000 		.4byte	_toSendFlag
+ 1767 0403 15       		.uleb128 0x15
+ 1768 0404 05030000 		.4byte	.LASF67
+ 1769 0408 04       		.byte	0x4
+ 1770 0409 CE06     		.2byte	0x6ce
+ 1771 040b 11040000 		.4byte	0x411
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 39
+
+
+ 1772 040f 01       		.byte	0x1
+ 1773 0410 01       		.byte	0x1
+ 1774 0411 16       		.uleb128 0x16
+ 1775 0412 77000000 		.4byte	0x77
+ 1776 0416 00       		.byte	0x0
+ 1777              		.section	.debug_abbrev
+ 1778 0000 01       		.uleb128 0x1
+ 1779 0001 11       		.uleb128 0x11
+ 1780 0002 01       		.byte	0x1
+ 1781 0003 25       		.uleb128 0x25
+ 1782 0004 0E       		.uleb128 0xe
+ 1783 0005 13       		.uleb128 0x13
+ 1784 0006 0B       		.uleb128 0xb
+ 1785 0007 03       		.uleb128 0x3
+ 1786 0008 0E       		.uleb128 0xe
+ 1787 0009 1B       		.uleb128 0x1b
+ 1788 000a 0E       		.uleb128 0xe
+ 1789 000b 11       		.uleb128 0x11
+ 1790 000c 01       		.uleb128 0x1
+ 1791 000d 52       		.uleb128 0x52
+ 1792 000e 01       		.uleb128 0x1
+ 1793 000f 55       		.uleb128 0x55
+ 1794 0010 06       		.uleb128 0x6
+ 1795 0011 10       		.uleb128 0x10
+ 1796 0012 06       		.uleb128 0x6
+ 1797 0013 00       		.byte	0x0
+ 1798 0014 00       		.byte	0x0
+ 1799 0015 02       		.uleb128 0x2
+ 1800 0016 24       		.uleb128 0x24
+ 1801 0017 00       		.byte	0x0
+ 1802 0018 0B       		.uleb128 0xb
+ 1803 0019 0B       		.uleb128 0xb
+ 1804 001a 3E       		.uleb128 0x3e
+ 1805 001b 0B       		.uleb128 0xb
+ 1806 001c 03       		.uleb128 0x3
+ 1807 001d 0E       		.uleb128 0xe
+ 1808 001e 00       		.byte	0x0
+ 1809 001f 00       		.byte	0x0
+ 1810 0020 03       		.uleb128 0x3
+ 1811 0021 16       		.uleb128 0x16
+ 1812 0022 00       		.byte	0x0
+ 1813 0023 03       		.uleb128 0x3
+ 1814 0024 0E       		.uleb128 0xe
+ 1815 0025 3A       		.uleb128 0x3a
+ 1816 0026 0B       		.uleb128 0xb
+ 1817 0027 3B       		.uleb128 0x3b
+ 1818 0028 0B       		.uleb128 0xb
+ 1819 0029 49       		.uleb128 0x49
+ 1820 002a 13       		.uleb128 0x13
+ 1821 002b 00       		.byte	0x0
+ 1822 002c 00       		.byte	0x0
+ 1823 002d 04       		.uleb128 0x4
+ 1824 002e 24       		.uleb128 0x24
+ 1825 002f 00       		.byte	0x0
+ 1826 0030 0B       		.uleb128 0xb
+ 1827 0031 0B       		.uleb128 0xb
+ 1828 0032 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 40
+
+
+ 1829 0033 0B       		.uleb128 0xb
+ 1830 0034 03       		.uleb128 0x3
+ 1831 0035 08       		.uleb128 0x8
+ 1832 0036 00       		.byte	0x0
+ 1833 0037 00       		.byte	0x0
+ 1834 0038 05       		.uleb128 0x5
+ 1835 0039 24       		.uleb128 0x24
+ 1836 003a 00       		.byte	0x0
+ 1837 003b 0B       		.uleb128 0xb
+ 1838 003c 0B       		.uleb128 0xb
+ 1839 003d 3E       		.uleb128 0x3e
+ 1840 003e 0B       		.uleb128 0xb
+ 1841 003f 00       		.byte	0x0
+ 1842 0040 00       		.byte	0x0
+ 1843 0041 06       		.uleb128 0x6
+ 1844 0042 04       		.uleb128 0x4
+ 1845 0043 01       		.byte	0x1
+ 1846 0044 0B       		.uleb128 0xb
+ 1847 0045 0B       		.uleb128 0xb
+ 1848 0046 3A       		.uleb128 0x3a
+ 1849 0047 0B       		.uleb128 0xb
+ 1850 0048 3B       		.uleb128 0x3b
+ 1851 0049 0B       		.uleb128 0xb
+ 1852 004a 01       		.uleb128 0x1
+ 1853 004b 13       		.uleb128 0x13
+ 1854 004c 00       		.byte	0x0
+ 1855 004d 00       		.byte	0x0
+ 1856 004e 07       		.uleb128 0x7
+ 1857 004f 28       		.uleb128 0x28
+ 1858 0050 00       		.byte	0x0
+ 1859 0051 03       		.uleb128 0x3
+ 1860 0052 0E       		.uleb128 0xe
+ 1861 0053 1C       		.uleb128 0x1c
+ 1862 0054 0D       		.uleb128 0xd
+ 1863 0055 00       		.byte	0x0
+ 1864 0056 00       		.byte	0x0
+ 1865 0057 08       		.uleb128 0x8
+ 1866 0058 2E       		.uleb128 0x2e
+ 1867 0059 01       		.byte	0x1
+ 1868 005a 3F       		.uleb128 0x3f
+ 1869 005b 0C       		.uleb128 0xc
+ 1870 005c 03       		.uleb128 0x3
+ 1871 005d 0E       		.uleb128 0xe
+ 1872 005e 3A       		.uleb128 0x3a
+ 1873 005f 0B       		.uleb128 0xb
+ 1874 0060 3B       		.uleb128 0x3b
+ 1875 0061 0B       		.uleb128 0xb
+ 1876 0062 27       		.uleb128 0x27
+ 1877 0063 0C       		.uleb128 0xc
+ 1878 0064 11       		.uleb128 0x11
+ 1879 0065 01       		.uleb128 0x1
+ 1880 0066 12       		.uleb128 0x12
+ 1881 0067 01       		.uleb128 0x1
+ 1882 0068 40       		.uleb128 0x40
+ 1883 0069 06       		.uleb128 0x6
+ 1884 006a 01       		.uleb128 0x1
+ 1885 006b 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 41
+
+
+ 1886 006c 00       		.byte	0x0
+ 1887 006d 00       		.byte	0x0
+ 1888 006e 09       		.uleb128 0x9
+ 1889 006f 05       		.uleb128 0x5
+ 1890 0070 00       		.byte	0x0
+ 1891 0071 03       		.uleb128 0x3
+ 1892 0072 0E       		.uleb128 0xe
+ 1893 0073 3A       		.uleb128 0x3a
+ 1894 0074 0B       		.uleb128 0xb
+ 1895 0075 3B       		.uleb128 0x3b
+ 1896 0076 0B       		.uleb128 0xb
+ 1897 0077 49       		.uleb128 0x49
+ 1898 0078 13       		.uleb128 0x13
+ 1899 0079 02       		.uleb128 0x2
+ 1900 007a 0A       		.uleb128 0xa
+ 1901 007b 00       		.byte	0x0
+ 1902 007c 00       		.byte	0x0
+ 1903 007d 0A       		.uleb128 0xa
+ 1904 007e 0F       		.uleb128 0xf
+ 1905 007f 00       		.byte	0x0
+ 1906 0080 0B       		.uleb128 0xb
+ 1907 0081 0B       		.uleb128 0xb
+ 1908 0082 49       		.uleb128 0x49
+ 1909 0083 13       		.uleb128 0x13
+ 1910 0084 00       		.byte	0x0
+ 1911 0085 00       		.byte	0x0
+ 1912 0086 0B       		.uleb128 0xb
+ 1913 0087 34       		.uleb128 0x34
+ 1914 0088 00       		.byte	0x0
+ 1915 0089 03       		.uleb128 0x3
+ 1916 008a 0E       		.uleb128 0xe
+ 1917 008b 3A       		.uleb128 0x3a
+ 1918 008c 0B       		.uleb128 0xb
+ 1919 008d 3B       		.uleb128 0x3b
+ 1920 008e 0B       		.uleb128 0xb
+ 1921 008f 49       		.uleb128 0x49
+ 1922 0090 13       		.uleb128 0x13
+ 1923 0091 02       		.uleb128 0x2
+ 1924 0092 0A       		.uleb128 0xa
+ 1925 0093 00       		.byte	0x0
+ 1926 0094 00       		.byte	0x0
+ 1927 0095 0C       		.uleb128 0xc
+ 1928 0096 0B       		.uleb128 0xb
+ 1929 0097 01       		.byte	0x1
+ 1930 0098 11       		.uleb128 0x11
+ 1931 0099 01       		.uleb128 0x1
+ 1932 009a 12       		.uleb128 0x12
+ 1933 009b 01       		.uleb128 0x1
+ 1934 009c 00       		.byte	0x0
+ 1935 009d 00       		.byte	0x0
+ 1936 009e 0D       		.uleb128 0xd
+ 1937 009f 01       		.uleb128 0x1
+ 1938 00a0 01       		.byte	0x1
+ 1939 00a1 49       		.uleb128 0x49
+ 1940 00a2 13       		.uleb128 0x13
+ 1941 00a3 01       		.uleb128 0x1
+ 1942 00a4 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 42
+
+
+ 1943 00a5 00       		.byte	0x0
+ 1944 00a6 00       		.byte	0x0
+ 1945 00a7 0E       		.uleb128 0xe
+ 1946 00a8 21       		.uleb128 0x21
+ 1947 00a9 00       		.byte	0x0
+ 1948 00aa 49       		.uleb128 0x49
+ 1949 00ab 13       		.uleb128 0x13
+ 1950 00ac 2F       		.uleb128 0x2f
+ 1951 00ad 0B       		.uleb128 0xb
+ 1952 00ae 00       		.byte	0x0
+ 1953 00af 00       		.byte	0x0
+ 1954 00b0 0F       		.uleb128 0xf
+ 1955 00b1 2E       		.uleb128 0x2e
+ 1956 00b2 01       		.byte	0x1
+ 1957 00b3 3F       		.uleb128 0x3f
+ 1958 00b4 0C       		.uleb128 0xc
+ 1959 00b5 03       		.uleb128 0x3
+ 1960 00b6 0E       		.uleb128 0xe
+ 1961 00b7 3A       		.uleb128 0x3a
+ 1962 00b8 0B       		.uleb128 0xb
+ 1963 00b9 3B       		.uleb128 0x3b
+ 1964 00ba 0B       		.uleb128 0xb
+ 1965 00bb 11       		.uleb128 0x11
+ 1966 00bc 01       		.uleb128 0x1
+ 1967 00bd 12       		.uleb128 0x12
+ 1968 00be 01       		.uleb128 0x1
+ 1969 00bf 40       		.uleb128 0x40
+ 1970 00c0 06       		.uleb128 0x6
+ 1971 00c1 01       		.uleb128 0x1
+ 1972 00c2 13       		.uleb128 0x13
+ 1973 00c3 00       		.byte	0x0
+ 1974 00c4 00       		.byte	0x0
+ 1975 00c5 10       		.uleb128 0x10
+ 1976 00c6 2E       		.uleb128 0x2e
+ 1977 00c7 00       		.byte	0x0
+ 1978 00c8 3F       		.uleb128 0x3f
+ 1979 00c9 0C       		.uleb128 0xc
+ 1980 00ca 03       		.uleb128 0x3
+ 1981 00cb 0E       		.uleb128 0xe
+ 1982 00cc 3A       		.uleb128 0x3a
+ 1983 00cd 0B       		.uleb128 0xb
+ 1984 00ce 3B       		.uleb128 0x3b
+ 1985 00cf 05       		.uleb128 0x5
+ 1986 00d0 27       		.uleb128 0x27
+ 1987 00d1 0C       		.uleb128 0xc
+ 1988 00d2 11       		.uleb128 0x11
+ 1989 00d3 01       		.uleb128 0x1
+ 1990 00d4 12       		.uleb128 0x12
+ 1991 00d5 01       		.uleb128 0x1
+ 1992 00d6 40       		.uleb128 0x40
+ 1993 00d7 06       		.uleb128 0x6
+ 1994 00d8 00       		.byte	0x0
+ 1995 00d9 00       		.byte	0x0
+ 1996 00da 11       		.uleb128 0x11
+ 1997 00db 2E       		.uleb128 0x2e
+ 1998 00dc 01       		.byte	0x1
+ 1999 00dd 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 43
+
+
+ 2000 00de 0C       		.uleb128 0xc
+ 2001 00df 03       		.uleb128 0x3
+ 2002 00e0 0E       		.uleb128 0xe
+ 2003 00e1 3A       		.uleb128 0x3a
+ 2004 00e2 0B       		.uleb128 0xb
+ 2005 00e3 3B       		.uleb128 0x3b
+ 2006 00e4 05       		.uleb128 0x5
+ 2007 00e5 27       		.uleb128 0x27
+ 2008 00e6 0C       		.uleb128 0xc
+ 2009 00e7 49       		.uleb128 0x49
+ 2010 00e8 13       		.uleb128 0x13
+ 2011 00e9 11       		.uleb128 0x11
+ 2012 00ea 01       		.uleb128 0x1
+ 2013 00eb 12       		.uleb128 0x12
+ 2014 00ec 01       		.uleb128 0x1
+ 2015 00ed 40       		.uleb128 0x40
+ 2016 00ee 06       		.uleb128 0x6
+ 2017 00ef 01       		.uleb128 0x1
+ 2018 00f0 13       		.uleb128 0x13
+ 2019 00f1 00       		.byte	0x0
+ 2020 00f2 00       		.byte	0x0
+ 2021 00f3 12       		.uleb128 0x12
+ 2022 00f4 05       		.uleb128 0x5
+ 2023 00f5 00       		.byte	0x0
+ 2024 00f6 03       		.uleb128 0x3
+ 2025 00f7 0E       		.uleb128 0xe
+ 2026 00f8 3A       		.uleb128 0x3a
+ 2027 00f9 0B       		.uleb128 0xb
+ 2028 00fa 3B       		.uleb128 0x3b
+ 2029 00fb 05       		.uleb128 0x5
+ 2030 00fc 49       		.uleb128 0x49
+ 2031 00fd 13       		.uleb128 0x13
+ 2032 00fe 02       		.uleb128 0x2
+ 2033 00ff 0A       		.uleb128 0xa
+ 2034 0100 00       		.byte	0x0
+ 2035 0101 00       		.byte	0x0
+ 2036 0102 13       		.uleb128 0x13
+ 2037 0103 2E       		.uleb128 0x2e
+ 2038 0104 01       		.byte	0x1
+ 2039 0105 3F       		.uleb128 0x3f
+ 2040 0106 0C       		.uleb128 0xc
+ 2041 0107 03       		.uleb128 0x3
+ 2042 0108 0E       		.uleb128 0xe
+ 2043 0109 3A       		.uleb128 0x3a
+ 2044 010a 0B       		.uleb128 0xb
+ 2045 010b 3B       		.uleb128 0x3b
+ 2046 010c 05       		.uleb128 0x5
+ 2047 010d 27       		.uleb128 0x27
+ 2048 010e 0C       		.uleb128 0xc
+ 2049 010f 11       		.uleb128 0x11
+ 2050 0110 01       		.uleb128 0x1
+ 2051 0111 12       		.uleb128 0x12
+ 2052 0112 01       		.uleb128 0x1
+ 2053 0113 40       		.uleb128 0x40
+ 2054 0114 06       		.uleb128 0x6
+ 2055 0115 01       		.uleb128 0x1
+ 2056 0116 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 44
+
+
+ 2057 0117 00       		.byte	0x0
+ 2058 0118 00       		.byte	0x0
+ 2059 0119 14       		.uleb128 0x14
+ 2060 011a 34       		.uleb128 0x34
+ 2061 011b 00       		.byte	0x0
+ 2062 011c 03       		.uleb128 0x3
+ 2063 011d 0E       		.uleb128 0xe
+ 2064 011e 3A       		.uleb128 0x3a
+ 2065 011f 0B       		.uleb128 0xb
+ 2066 0120 3B       		.uleb128 0x3b
+ 2067 0121 05       		.uleb128 0x5
+ 2068 0122 49       		.uleb128 0x49
+ 2069 0123 13       		.uleb128 0x13
+ 2070 0124 02       		.uleb128 0x2
+ 2071 0125 0A       		.uleb128 0xa
+ 2072 0126 00       		.byte	0x0
+ 2073 0127 00       		.byte	0x0
+ 2074 0128 15       		.uleb128 0x15
+ 2075 0129 34       		.uleb128 0x34
+ 2076 012a 00       		.byte	0x0
+ 2077 012b 03       		.uleb128 0x3
+ 2078 012c 0E       		.uleb128 0xe
+ 2079 012d 3A       		.uleb128 0x3a
+ 2080 012e 0B       		.uleb128 0xb
+ 2081 012f 3B       		.uleb128 0x3b
+ 2082 0130 05       		.uleb128 0x5
+ 2083 0131 49       		.uleb128 0x49
+ 2084 0132 13       		.uleb128 0x13
+ 2085 0133 3F       		.uleb128 0x3f
+ 2086 0134 0C       		.uleb128 0xc
+ 2087 0135 3C       		.uleb128 0x3c
+ 2088 0136 0C       		.uleb128 0xc
+ 2089 0137 00       		.byte	0x0
+ 2090 0138 00       		.byte	0x0
+ 2091 0139 16       		.uleb128 0x16
+ 2092 013a 35       		.uleb128 0x35
+ 2093 013b 00       		.byte	0x0
+ 2094 013c 49       		.uleb128 0x49
+ 2095 013d 13       		.uleb128 0x13
+ 2096 013e 00       		.byte	0x0
+ 2097 013f 00       		.byte	0x0
+ 2098 0140 00       		.byte	0x0
+ 2099              		.section	.debug_pubnames,"",%progbits
+ 2100 0000 B0000000 		.4byte	0xb0
+ 2101 0004 0200     		.2byte	0x2
+ 2102 0006 00000000 		.4byte	.Ldebug_info0
+ 2103 000a 17040000 		.4byte	0x417
+ 2104 000e 25010000 		.4byte	0x125
+ 2105 0012 436F6D6D 		.ascii	"Comms_Init\000"
+ 2105      735F496E 
+ 2105      697400
+ 2106 001d 53010000 		.4byte	0x153
+ 2107 0021 436F6D6D 		.ascii	"Comms_Run\000"
+ 2107      735F5275 
+ 2107      6E00
+ 2108 002b EB010000 		.4byte	0x1eb
+ 2109 002f 436F6D6D 		.ascii	"Comms_RetrieveData\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 45
+
+
+ 2109      735F5265 
+ 2109      74726965 
+ 2109      76654461 
+ 2109      746100
+ 2110 0042 48020000 		.4byte	0x248
+ 2111 0046 436F6D6D 		.ascii	"Comms_TurnOn\000"
+ 2111      735F5475 
+ 2111      726E4F6E 
+ 2111      00
+ 2112 0053 5E020000 		.4byte	0x25e
+ 2113 0057 436F6D6D 		.ascii	"Comms_TurnOff\000"
+ 2113      735F5475 
+ 2113      726E4F66 
+ 2113      6600
+ 2114 0065 74020000 		.4byte	0x274
+ 2115 0069 436F6D6D 		.ascii	"Comms_GetByte\000"
+ 2115      735F4765 
+ 2115      74427974 
+ 2115      6500
+ 2116 0077 A2020000 		.4byte	0x2a2
+ 2117 007b 436F6D6D 		.ascii	"Comms_Send\000"
+ 2117      735F5365 
+ 2117      6E6400
+ 2118 0086 CC020000 		.4byte	0x2cc
+ 2119 008a 436F6D6D 		.ascii	"Comms_IsTimeout\000"
+ 2119      735F4973 
+ 2119      54696D65 
+ 2119      6F757400 
+ 2120 009a FA020000 		.4byte	0x2fa
+ 2121 009e 436F6D6D 		.ascii	"Comms_IsNewPacket\000"
+ 2121      735F4973 
+ 2121      4E657750 
+ 2121      61636B65 
+ 2121      7400
+ 2122 00b0 00000000 		.4byte	0x0
+ 2123              		.section	.debug_aranges,"",%progbits
+ 2124 0000 5C000000 		.4byte	0x5c
+ 2125 0004 0200     		.2byte	0x2
+ 2126 0006 00000000 		.4byte	.Ldebug_info0
+ 2127 000a 04       		.byte	0x4
+ 2128 000b 00       		.byte	0x0
+ 2129 000c 0000     		.2byte	0x0
+ 2130 000e 0000     		.2byte	0x0
+ 2131 0010 00000000 		.4byte	.LFB29
+ 2132 0014 2C000000 		.4byte	.LFE29-.LFB29
+ 2133 0018 00000000 		.4byte	.LFB30
+ 2134 001c A8030000 		.4byte	.LFE30-.LFB30
+ 2135 0020 00000000 		.4byte	.LFB31
+ 2136 0024 FC020000 		.4byte	.LFE31-.LFB31
+ 2137 0028 00000000 		.4byte	.LFB32
+ 2138 002c 18000000 		.4byte	.LFE32-.LFB32
+ 2139 0030 00000000 		.4byte	.LFB33
+ 2140 0034 18000000 		.4byte	.LFE33-.LFB33
+ 2141 0038 00000000 		.4byte	.LFB34
+ 2142 003c 22000000 		.4byte	.LFE34-.LFB34
+ 2143 0040 00000000 		.4byte	.LFB35
+ 2144 0044 30000000 		.4byte	.LFE35-.LFB35
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 46
+
+
+ 2145 0048 00000000 		.4byte	.LFB36
+ 2146 004c 2E000000 		.4byte	.LFE36-.LFB36
+ 2147 0050 00000000 		.4byte	.LFB37
+ 2148 0054 2E000000 		.4byte	.LFE37-.LFB37
+ 2149 0058 00000000 		.4byte	0x0
+ 2150 005c 00000000 		.4byte	0x0
+ 2151              		.section	.debug_ranges,"",%progbits
+ 2152              	.Ldebug_ranges0:
+ 2153 0000 00000000 		.4byte	.Ltext0
+ 2154 0004 00000000 		.4byte	.Letext0
+ 2155 0008 00000000 		.4byte	.LFB29
+ 2156 000c 2C000000 		.4byte	.LFE29
+ 2157 0010 00000000 		.4byte	.LFB30
+ 2158 0014 A8030000 		.4byte	.LFE30
+ 2159 0018 00000000 		.4byte	.LFB31
+ 2160 001c FC020000 		.4byte	.LFE31
+ 2161 0020 00000000 		.4byte	.LFB32
+ 2162 0024 18000000 		.4byte	.LFE32
+ 2163 0028 00000000 		.4byte	.LFB33
+ 2164 002c 18000000 		.4byte	.LFE33
+ 2165 0030 00000000 		.4byte	.LFB34
+ 2166 0034 22000000 		.4byte	.LFE34
+ 2167 0038 00000000 		.4byte	.LFB35
+ 2168 003c 30000000 		.4byte	.LFE35
+ 2169 0040 00000000 		.4byte	.LFB36
+ 2170 0044 2E000000 		.4byte	.LFE36
+ 2171 0048 00000000 		.4byte	.LFB37
+ 2172 004c 2E000000 		.4byte	.LFE37
+ 2173 0050 00000000 		.4byte	0x0
+ 2174 0054 00000000 		.4byte	0x0
+ 2175              		.section	.debug_str,"MS",%progbits,1
+ 2176              	.LASF23:
+ 2177 0000 78626565 		.ascii	"xbeeInit\000"
+ 2177      496E6974 
+ 2177      00
+ 2178              	.LASF19:
+ 2179 0009 7061636B 		.ascii	"packetData\000"
+ 2179      65744461 
+ 2179      746100
+ 2180              	.LASF41:
+ 2181 0014 72784461 		.ascii	"rxDataByte\000"
+ 2181      74614279 
+ 2181      746500
+ 2182              	.LASF66:
+ 2183 001f 436F6D6D 		.ascii	"Comms_RetrieveData\000"
+ 2183      735F5265 
+ 2183      74726965 
+ 2183      76654461 
+ 2183      746100
+ 2184              	.LASF30:
+ 2185 0032 436F6D6D 		.ascii	"Comms_Init\000"
+ 2185      735F496E 
+ 2185      697400
+ 2186              	.LASF12:
+ 2187 003d 46414C53 		.ascii	"FALSE\000"
+ 2187      4500
+ 2188              	.LASF26:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 47
+
+
+ 2189 0043 78626565 		.ascii	"xbeeOnStable\000"
+ 2189      4F6E5374 
+ 2189      61626C65 
+ 2189      00
+ 2190              	.LASF43:
+ 2191 0050 436F6D6D 		.ascii	"Comms_TurnOff\000"
+ 2191      735F5475 
+ 2191      726E4F66 
+ 2191      6600
+ 2192              	.LASF20:
+ 2193 005e 72656365 		.ascii	"receivingChecksum\000"
+ 2193      6976696E 
+ 2193      67436865 
+ 2193      636B7375 
+ 2193      6D00
+ 2194              	.LASF62:
+ 2195 0070 5F746F53 		.ascii	"_toSendFlag\000"
+ 2195      656E6446 
+ 2195      6C616700 
+ 2196              	.LASF65:
+ 2197 007c 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 2197      73657273 
+ 2197      5C47656F 
+ 2197      5C446F63 
+ 2197      756D656E 
+ 2198 00aa 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 2198      645C4669 
+ 2198      726D7761 
+ 2198      72655C50 
+ 2198      536F435C 
+ 2199              	.LASF53:
+ 2200 00d6 5F756E72 		.ascii	"_unreadDataFlag\000"
+ 2200      65616444 
+ 2200      61746146 
+ 2200      6C616700 
+ 2201              	.LASF31:
+ 2202 00e6 436F6D6D 		.ascii	"Comms_Run\000"
+ 2202      735F5275 
+ 2202      6E00
+ 2203              	.LASF33:
+ 2204 00f0 78626565 		.ascii	"xbeeState\000"
+ 2204      53746174 
+ 2204      6500
+ 2205              	.LASF27:
+ 2206 00fa 78626565 		.ascii	"xbeeSending\000"
+ 2206      53656E64 
+ 2206      696E6700 
+ 2207              	.LASF18:
+ 2208 0106 7061636B 		.ascii	"packetDataCount\000"
+ 2208      65744461 
+ 2208      7461436F 
+ 2208      756E7400 
+ 2209              	.LASF5:
+ 2210 0116 75696E74 		.ascii	"uint8_t\000"
+ 2210      385F7400 
+ 2211              	.LASF36:
+ 2212 011e 77616974 		.ascii	"waitingForResponseCount\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 48
+
+
+ 2212      696E6746 
+ 2212      6F725265 
+ 2212      73706F6E 
+ 2212      7365436F 
+ 2213              	.LASF58:
+ 2214 0136 5F747844 		.ascii	"_txDataBuffer\000"
+ 2214      61746142 
+ 2214      75666665 
+ 2214      7200
+ 2215              	.LASF2:
+ 2216 0144 73686F72 		.ascii	"short int\000"
+ 2216      7420696E 
+ 2216      7400
+ 2217              	.LASF8:
+ 2218 014e 6C6F6E67 		.ascii	"long long int\000"
+ 2218      206C6F6E 
+ 2218      6720696E 
+ 2218      7400
+ 2219              	.LASF48:
+ 2220 015c 436F6D6D 		.ascii	"Comms_GetByte\000"
+ 2220      735F4765 
+ 2220      74427974 
+ 2220      6500
+ 2221              	.LASF47:
+ 2222 016a 64617461 		.ascii	"dataArray\000"
+ 2222      41727261 
+ 2222      7900
+ 2223              	.LASF15:
+ 2224 0174 69646C65 		.ascii	"idle\000"
+ 2224      00
+ 2225              	.LASF4:
+ 2226 0179 6C6F6E67 		.ascii	"long int\000"
+ 2226      20696E74 
+ 2226      00
+ 2227              	.LASF61:
+ 2228 0182 5F747572 		.ascii	"_turnOnXbeeFlag\000"
+ 2228      6E4F6E58 
+ 2228      62656546 
+ 2228      6C616700 
+ 2229              	.LASF21:
+ 2230 0192 7061636B 		.ascii	"packetComplete\000"
+ 2230      6574436F 
+ 2230      6D706C65 
+ 2230      746500
+ 2231              	.LASF22:
+ 2232 01a1 636F6D6D 		.ascii	"commsStates_t\000"
+ 2232      73537461 
+ 2232      7465735F 
+ 2232      7400
+ 2233              	.LASF56:
+ 2234 01af 5F636F6D 		.ascii	"_commsTimeoutFlag\000"
+ 2234      6D735469 
+ 2234      6D656F75 
+ 2234      74466C61 
+ 2234      6700
+ 2235              	.LASF44:
+ 2236 01c1 6964656E 		.ascii	"idenCharsIn\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 49
+
+
+ 2236      43686172 
+ 2236      73496E00 
+ 2237              	.LASF34:
+ 2238 01cd 70726576 		.ascii	"prevxbeeState\000"
+ 2238      78626565 
+ 2238      53746174 
+ 2238      6500
+ 2239              	.LASF1:
+ 2240 01db 756E7369 		.ascii	"unsigned char\000"
+ 2240      676E6564 
+ 2240      20636861 
+ 2240      7200
+ 2241              	.LASF32:
+ 2242 01e9 636F756E 		.ascii	"counter\000"
+ 2242      74657200 
+ 2243              	.LASF0:
+ 2244 01f1 7369676E 		.ascii	"signed char\000"
+ 2244      65642063 
+ 2244      68617200 
+ 2245              	.LASF24:
+ 2246 01fd 78626565 		.ascii	"xbeeOff\000"
+ 2246      4F666600 
+ 2247              	.LASF9:
+ 2248 0205 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2248      206C6F6E 
+ 2248      6720756E 
+ 2248      7369676E 
+ 2248      65642069 
+ 2249              	.LASF6:
+ 2250 021c 75696E74 		.ascii	"uint32_t\000"
+ 2250      33325F74 
+ 2250      00
+ 2251              	.LASF54:
+ 2252 0225 5F636F6D 		.ascii	"_commsPacketBufferOverrunFlag\000"
+ 2252      6D735061 
+ 2252      636B6574 
+ 2252      42756666 
+ 2252      65724F76 
+ 2253              	.LASF10:
+ 2254 0243 756E7369 		.ascii	"unsigned int\000"
+ 2254      676E6564 
+ 2254      20696E74 
+ 2254      00
+ 2255              	.LASF25:
+ 2256 0250 78626565 		.ascii	"xbeeTurningOn\000"
+ 2256      5475726E 
+ 2256      696E674F 
+ 2256      6E00
+ 2257              	.LASF37:
+ 2258 025e 74656D70 		.ascii	"tempBuff\000"
+ 2258      42756666 
+ 2258      00
+ 2259              	.LASF38:
+ 2260 0267 636F6D6D 		.ascii	"commsState\000"
+ 2260      73537461 
+ 2260      746500
+ 2261              	.LASF3:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 50
+
+
+ 2262 0272 73686F72 		.ascii	"short unsigned int\000"
+ 2262      7420756E 
+ 2262      7369676E 
+ 2262      65642069 
+ 2262      6E7400
+ 2263              	.LASF39:
+ 2264 0285 7061636B 		.ascii	"packetBufferPos\000"
+ 2264      65744275 
+ 2264      66666572 
+ 2264      506F7300 
+ 2265              	.LASF11:
+ 2266 0295 63686172 		.ascii	"char\000"
+ 2266      00
+ 2267              	.LASF16:
+ 2268 029a 7365636F 		.ascii	"secondIdenChar\000"
+ 2268      6E644964 
+ 2268      656E4368 
+ 2268      617200
+ 2269              	.LASF14:
+ 2270 02a9 626F6F6C 		.ascii	"bool_t\000"
+ 2270      5F7400
+ 2271              	.LASF57:
+ 2272 02b0 5F696465 		.ascii	"_idenChars\000"
+ 2272      6E436861 
+ 2272      727300
+ 2273              	.LASF52:
+ 2274 02bb 5F6E6577 		.ascii	"_newPacketFlag\000"
+ 2274      5061636B 
+ 2274      6574466C 
+ 2274      616700
+ 2275              	.LASF59:
+ 2276 02ca 5F727844 		.ascii	"_rxDataBuffer\000"
+ 2276      61746142 
+ 2276      75666665 
+ 2276      7200
+ 2277              	.LASF17:
+ 2278 02d8 74686972 		.ascii	"thirdIdenChar\000"
+ 2278      64496465 
+ 2278      6E436861 
+ 2278      7200
+ 2279              	.LASF7:
+ 2280 02e6 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2280      20756E73 
+ 2280      69676E65 
+ 2280      6420696E 
+ 2280      7400
+ 2281              	.LASF29:
+ 2282 02f8 78626565 		.ascii	"xbeeStates_t\000"
+ 2282      53746174 
+ 2282      65735F74 
+ 2282      00
+ 2283              	.LASF67:
+ 2284 0305 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2284      52784275 
+ 2284      66666572 
+ 2284      00
+ 2285              	.LASF28:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 51
+
+
+ 2286 0312 78626565 		.ascii	"xbeeWaitingForResponse\000"
+ 2286      57616974 
+ 2286      696E6746 
+ 2286      6F725265 
+ 2286      73706F6E 
+ 2287              	.LASF49:
+ 2288 0329 436F6D6D 		.ascii	"Comms_IsTimeout\000"
+ 2288      735F4973 
+ 2288      54696D65 
+ 2288      6F757400 
+ 2289              	.LASF51:
+ 2290 0339 436F6D6D 		.ascii	"Comms_IsNewPacket\000"
+ 2290      735F4973 
+ 2290      4E657750 
+ 2290      61636B65 
+ 2290      7400
+ 2291              	.LASF64:
+ 2292 034b 2E5C436F 		.ascii	".\\Comms.c\000"
+ 2292      6D6D732E 
+ 2292      6300
+ 2293              	.LASF46:
+ 2294 0355 436F6D6D 		.ascii	"Comms_Send\000"
+ 2294      735F5365 
+ 2294      6E6400
+ 2295              	.LASF50:
+ 2296 0360 74656D70 		.ascii	"tempVar\000"
+ 2296      56617200 
+ 2297              	.LASF40:
+ 2298 0368 6E756D4F 		.ascii	"numOfDataBytes\000"
+ 2298      66446174 
+ 2298      61427974 
+ 2298      657300
+ 2299              	.LASF63:
+ 2300 0377 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 2300      4320342E 
+ 2300      342E3100 
+ 2301              	.LASF13:
+ 2302 0383 54525545 		.ascii	"TRUE\000"
+ 2302      00
+ 2303              	.LASF35:
+ 2304 0388 78626565 		.ascii	"xbeeTurnOnTime\000"
+ 2304      5475726E 
+ 2304      4F6E5469 
+ 2304      6D6500
+ 2305              	.LASF42:
+ 2306 0397 436F6D6D 		.ascii	"Comms_TurnOn\000"
+ 2306      735F5475 
+ 2306      726E4F6E 
+ 2306      00
+ 2307              	.LASF55:
+ 2308 03a4 5F636F6D 		.ascii	"_commsInitCompleteFlag\000"
+ 2308      6D73496E 
+ 2308      6974436F 
+ 2308      6D706C65 
+ 2308      7465466C 
+ 2309              	.LASF60:
+ 2310 03bb 5F747572 		.ascii	"_turnOffXbeeFlag\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccUsAN4A.s 			page 52
+
+
+ 2310      6E4F6666 
+ 2310      58626565 
+ 2310      466C6167 
+ 2310      00
+ 2311              	.LASF45:
+ 2312 03cc 62797465 		.ascii	"byteNum\000"
+ 2312      4E756D00 
+ 2313              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

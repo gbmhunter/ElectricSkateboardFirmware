@@ -1,0 +1,1996 @@
+
+remote.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000009c8  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000002  00800060  000009c8  00000a5c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          000000e3  00800062  00800062  00000a5e  2**0
+                  ALLOC
+  3 .debug_aranges 000000e0  00000000  00000000  00000a5e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 00000280  00000000  00000000  00000b3e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000b93  00000000  00000000  00000dbe  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000563  00000000  00000000  00001951  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000d89  00000000  00000000  00001eb4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000250  00000000  00000000  00002c40  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000005f9  00000000  00000000  00002e90  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000021f  00000000  00000000  00003489  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	2c c0       	rjmp	.+88     	; 0x5c <__bad_interrupt>
+   4:	2b c0       	rjmp	.+86     	; 0x5c <__bad_interrupt>
+   6:	2a c0       	rjmp	.+84     	; 0x5c <__bad_interrupt>
+   8:	29 c0       	rjmp	.+82     	; 0x5c <__bad_interrupt>
+   a:	28 c0       	rjmp	.+80     	; 0x5c <__bad_interrupt>
+   c:	27 c0       	rjmp	.+78     	; 0x5c <__bad_interrupt>
+   e:	26 c0       	rjmp	.+76     	; 0x5c <__bad_interrupt>
+  10:	25 c0       	rjmp	.+74     	; 0x5c <__bad_interrupt>
+  12:	e1 c0       	rjmp	.+450    	; 0x1d6 <__vector_9>
+  14:	23 c0       	rjmp	.+70     	; 0x5c <__bad_interrupt>
+  16:	7d c2       	rjmp	.+1274   	; 0x512 <__vector_11>
+  18:	b8 c2       	rjmp	.+1392   	; 0x58a <__vector_12>
+  1a:	20 c0       	rjmp	.+64     	; 0x5c <__bad_interrupt>
+  1c:	1f c0       	rjmp	.+62     	; 0x5c <__bad_interrupt>
+  1e:	1e c0       	rjmp	.+60     	; 0x5c <__bad_interrupt>
+  20:	1d c0       	rjmp	.+58     	; 0x5c <__bad_interrupt>
+  22:	1c c0       	rjmp	.+56     	; 0x5c <__bad_interrupt>
+  24:	1b c0       	rjmp	.+54     	; 0x5c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e8 ec       	ldi	r30, 0xC8	; 200
+  3a:	f9 e0       	ldi	r31, 0x09	; 9
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <.do_copy_data_start>
+
+0000003e <.do_copy_data_loop>:
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+
+00000042 <.do_copy_data_start>:
+  42:	a2 36       	cpi	r26, 0x62	; 98
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <.do_copy_data_loop>
+
+00000048 <__do_clear_bss>:
+  48:	11 e0       	ldi	r17, 0x01	; 1
+  4a:	a2 e6       	ldi	r26, 0x62	; 98
+  4c:	b0 e0       	ldi	r27, 0x00	; 0
+  4e:	01 c0       	rjmp	.+2      	; 0x52 <.do_clear_bss_start>
+
+00000050 <.do_clear_bss_loop>:
+  50:	1d 92       	st	X+, r1
+
+00000052 <.do_clear_bss_start>:
+  52:	a5 34       	cpi	r26, 0x45	; 69
+  54:	b1 07       	cpc	r27, r17
+  56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
+  58:	03 d1       	rcall	.+518    	; 0x260 <main>
+  5a:	b4 c4       	rjmp	.+2408   	; 0x9c4 <_exit>
+
+0000005c <__bad_interrupt>:
+  5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
+
+0000005e <adc_init>:
+#include "adc.h"
+
+void adc_init(void)
+{
+	//Sets external Vref, Left-adjusted data register, ADC1 as input channel
+	ADMUX = (0<<7 | 0<<6 | 0<<5 | 0<<4 | 0<<3 | 0<<2 | 0<<1 | 1<<0);
+  5e:	81 e0       	ldi	r24, 0x01	; 1
+  60:	87 b9       	out	0x07, r24	; 7
+	//Enable ADC, start ADC, set in free-running mode, diable interrupt, divide XTAL by 64 (125kHz)
+	ADCSRA = (1<<7 | 1<<6 | 1<<5 | 0<<4 | 0<<3 | 1<<2 | 1<<1 | 0<<0);
+  62:	86 ee       	ldi	r24, 0xE6	; 230
+  64:	86 b9       	out	0x06, r24	; 6
+}
+  66:	08 95       	ret
+
+00000068 <adc_get>:
+
+uint16_t adc_get(void)
+{
+	uint8_t adc_l;
+	uint8_t adc_h;
+	adc_l = ADCL;
+  68:	24 b1       	in	r18, 0x04	; 4
+	adc_h = ADCH;
+  6a:	45 b1       	in	r20, 0x05	; 5
+  6c:	94 2f       	mov	r25, r20
+  6e:	80 e0       	ldi	r24, 0x00	; 0
+  70:	30 e0       	ldi	r19, 0x00	; 0
+  72:	28 2b       	or	r18, r24
+  74:	39 2b       	or	r19, r25
+	return ((adc_h << 8) | adc_l);
+}
+  76:	c9 01       	movw	r24, r18
+  78:	08 95       	ret
+
+0000007a <led_init>:
+		none
+	function: 
+		Gets the address's pointing to the array holding led information
+*/
+void led_init(uint8_t** led_port_in, uint8_t* led_pin_in)
+{
+  7a:	cf 93       	push	r28
+  7c:	df 93       	push	r29
+  7e:	ec 01       	movw	r28, r24
+	led_port = led_port_in;
+  80:	90 93 63 00 	sts	0x0063, r25
+  84:	80 93 62 00 	sts	0x0062, r24
+	led_pin = led_pin_in;
+  88:	70 93 65 00 	sts	0x0065, r23
+  8c:	60 93 64 00 	sts	0x0064, r22
+  90:	30 e0       	ldi	r19, 0x00	; 0
+		{
+			DDRC = DDRC | (1 << led_pin[x]);
+		}
+		else if(led_port[x] == &PORTD)
+		{
+			DDRD = DDRD | (1 << led_pin[x]);
+  92:	41 e0       	ldi	r20, 0x01	; 1
+  94:	50 e0       	ldi	r21, 0x00	; 0
+  96:	2f c0       	rjmp	.+94     	; 0xf6 <led_init+0x7c>
+
+	//Assigns every pin that an LED is connected to as an output
+	uint8_t x = 0;
+	while(led_port[x] != '\0')
+	{
+		if(led_port[x] == &PORTB)
+  98:	e8 33       	cpi	r30, 0x38	; 56
+  9a:	f1 05       	cpc	r31, r1
+  9c:	69 f4       	brne	.+26     	; 0xb8 <led_init+0x3e>
+		{
+			DDRB = DDRB | (1 << led_pin[x]);
+  9e:	27 b3       	in	r18, 0x17	; 23
+  a0:	a6 0f       	add	r26, r22
+  a2:	b7 1f       	adc	r27, r23
+  a4:	ca 01       	movw	r24, r20
+  a6:	0c 90       	ld	r0, X
+  a8:	02 c0       	rjmp	.+4      	; 0xae <led_init+0x34>
+  aa:	88 0f       	add	r24, r24
+  ac:	99 1f       	adc	r25, r25
+  ae:	0a 94       	dec	r0
+  b0:	e2 f7       	brpl	.-8      	; 0xaa <led_init+0x30>
+  b2:	28 2b       	or	r18, r24
+  b4:	27 bb       	out	0x17, r18	; 23
+  b6:	1e c0       	rjmp	.+60     	; 0xf4 <led_init+0x7a>
+		}
+		else if(led_port[x] == &PORTC)
+  b8:	e5 33       	cpi	r30, 0x35	; 53
+  ba:	f1 05       	cpc	r31, r1
+  bc:	69 f4       	brne	.+26     	; 0xd8 <led_init+0x5e>
+		{
+			DDRC = DDRC | (1 << led_pin[x]);
+  be:	24 b3       	in	r18, 0x14	; 20
+  c0:	a6 0f       	add	r26, r22
+  c2:	b7 1f       	adc	r27, r23
+  c4:	ca 01       	movw	r24, r20
+  c6:	0c 90       	ld	r0, X
+  c8:	02 c0       	rjmp	.+4      	; 0xce <led_init+0x54>
+  ca:	88 0f       	add	r24, r24
+  cc:	99 1f       	adc	r25, r25
+  ce:	0a 94       	dec	r0
+  d0:	e2 f7       	brpl	.-8      	; 0xca <led_init+0x50>
+  d2:	28 2b       	or	r18, r24
+  d4:	24 bb       	out	0x14, r18	; 20
+  d6:	0e c0       	rjmp	.+28     	; 0xf4 <led_init+0x7a>
+		}
+		else if(led_port[x] == &PORTD)
+  d8:	f2 97       	sbiw	r30, 0x32	; 50
+  da:	61 f4       	brne	.+24     	; 0xf4 <led_init+0x7a>
+		{
+			DDRD = DDRD | (1 << led_pin[x]);
+  dc:	21 b3       	in	r18, 0x11	; 17
+  de:	a6 0f       	add	r26, r22
+  e0:	b7 1f       	adc	r27, r23
+  e2:	ca 01       	movw	r24, r20
+  e4:	0c 90       	ld	r0, X
+  e6:	02 c0       	rjmp	.+4      	; 0xec <led_init+0x72>
+  e8:	88 0f       	add	r24, r24
+  ea:	99 1f       	adc	r25, r25
+  ec:	0a 94       	dec	r0
+  ee:	e2 f7       	brpl	.-8      	; 0xe8 <led_init+0x6e>
+  f0:	28 2b       	or	r18, r24
+  f2:	21 bb       	out	0x11, r18	; 17
+		}
+		x++;
+  f4:	3f 5f       	subi	r19, 0xFF	; 255
+	led_port = led_port_in;
+	led_pin = led_pin_in;
+
+	//Assigns every pin that an LED is connected to as an output
+	uint8_t x = 0;
+	while(led_port[x] != '\0')
+  f6:	a3 2f       	mov	r26, r19
+  f8:	b0 e0       	ldi	r27, 0x00	; 0
+  fa:	fd 01       	movw	r30, r26
+  fc:	ee 0f       	add	r30, r30
+  fe:	ff 1f       	adc	r31, r31
+ 100:	ec 0f       	add	r30, r28
+ 102:	fd 1f       	adc	r31, r29
+ 104:	01 90       	ld	r0, Z+
+ 106:	f0 81       	ld	r31, Z
+ 108:	e0 2d       	mov	r30, r0
+ 10a:	30 97       	sbiw	r30, 0x00	; 0
+ 10c:	29 f6       	brne	.-118    	; 0x98 <led_init+0x1e>
+		}
+		x++;
+	}
+
+	
+}
+ 10e:	df 91       	pop	r29
+ 110:	cf 91       	pop	r28
+ 112:	08 95       	ret
+
+00000114 <led_on>:
+
+void led_on(uint8_t led_number)
+{
+	*led_port[led_number] = *led_port[led_number] | (1 << led_pin[led_number]);
+ 114:	90 e0       	ldi	r25, 0x00	; 0
+ 116:	9c 01       	movw	r18, r24
+ 118:	22 0f       	add	r18, r18
+ 11a:	33 1f       	adc	r19, r19
+ 11c:	e0 91 62 00 	lds	r30, 0x0062
+ 120:	f0 91 63 00 	lds	r31, 0x0063
+ 124:	e2 0f       	add	r30, r18
+ 126:	f3 1f       	adc	r31, r19
+ 128:	a0 81       	ld	r26, Z
+ 12a:	b1 81       	ldd	r27, Z+1	; 0x01
+ 12c:	e0 91 64 00 	lds	r30, 0x0064
+ 130:	f0 91 65 00 	lds	r31, 0x0065
+ 134:	e8 0f       	add	r30, r24
+ 136:	f9 1f       	adc	r31, r25
+ 138:	81 e0       	ldi	r24, 0x01	; 1
+ 13a:	90 e0       	ldi	r25, 0x00	; 0
+ 13c:	00 80       	ld	r0, Z
+ 13e:	02 c0       	rjmp	.+4      	; 0x144 <led_on+0x30>
+ 140:	88 0f       	add	r24, r24
+ 142:	99 1f       	adc	r25, r25
+ 144:	0a 94       	dec	r0
+ 146:	e2 f7       	brpl	.-8      	; 0x140 <led_on+0x2c>
+ 148:	2c 91       	ld	r18, X
+ 14a:	28 2b       	or	r18, r24
+ 14c:	2c 93       	st	X, r18
+}
+ 14e:	08 95       	ret
+
+00000150 <led_off>:
+
+void led_off(uint8_t led_number)
+{
+	*led_port[led_number] = *led_port[led_number] & (0xFF ^ (1 << led_pin[led_number]));
+ 150:	90 e0       	ldi	r25, 0x00	; 0
+ 152:	9c 01       	movw	r18, r24
+ 154:	22 0f       	add	r18, r18
+ 156:	33 1f       	adc	r19, r19
+ 158:	e0 91 62 00 	lds	r30, 0x0062
+ 15c:	f0 91 63 00 	lds	r31, 0x0063
+ 160:	e2 0f       	add	r30, r18
+ 162:	f3 1f       	adc	r31, r19
+ 164:	a0 81       	ld	r26, Z
+ 166:	b1 81       	ldd	r27, Z+1	; 0x01
+ 168:	e0 91 64 00 	lds	r30, 0x0064
+ 16c:	f0 91 65 00 	lds	r31, 0x0065
+ 170:	e8 0f       	add	r30, r24
+ 172:	f9 1f       	adc	r31, r25
+ 174:	81 e0       	ldi	r24, 0x01	; 1
+ 176:	90 e0       	ldi	r25, 0x00	; 0
+ 178:	00 80       	ld	r0, Z
+ 17a:	02 c0       	rjmp	.+4      	; 0x180 <led_off+0x30>
+ 17c:	88 0f       	add	r24, r24
+ 17e:	99 1f       	adc	r25, r25
+ 180:	0a 94       	dec	r0
+ 182:	e2 f7       	brpl	.-8      	; 0x17c <led_off+0x2c>
+ 184:	80 95       	com	r24
+ 186:	2c 91       	ld	r18, X
+ 188:	28 23       	and	r18, r24
+ 18a:	2c 93       	st	X, r18
+}
+ 18c:	08 95       	ret
+
+0000018e <led_toggle>:
+
+void led_toggle(uint8_t led_number)
+{
+	*led_port[led_number] = *led_port[led_number] ^ (1 << led_pin[led_number]);
+ 18e:	90 e0       	ldi	r25, 0x00	; 0
+ 190:	9c 01       	movw	r18, r24
+ 192:	22 0f       	add	r18, r18
+ 194:	33 1f       	adc	r19, r19
+ 196:	e0 91 62 00 	lds	r30, 0x0062
+ 19a:	f0 91 63 00 	lds	r31, 0x0063
+ 19e:	e2 0f       	add	r30, r18
+ 1a0:	f3 1f       	adc	r31, r19
+ 1a2:	a0 81       	ld	r26, Z
+ 1a4:	b1 81       	ldd	r27, Z+1	; 0x01
+ 1a6:	e0 91 64 00 	lds	r30, 0x0064
+ 1aa:	f0 91 65 00 	lds	r31, 0x0065
+ 1ae:	e8 0f       	add	r30, r24
+ 1b0:	f9 1f       	adc	r31, r25
+ 1b2:	81 e0       	ldi	r24, 0x01	; 1
+ 1b4:	90 e0       	ldi	r25, 0x00	; 0
+ 1b6:	00 80       	ld	r0, Z
+ 1b8:	02 c0       	rjmp	.+4      	; 0x1be <led_toggle+0x30>
+ 1ba:	88 0f       	add	r24, r24
+ 1bc:	99 1f       	adc	r25, r25
+ 1be:	0a 94       	dec	r0
+ 1c0:	e2 f7       	brpl	.-8      	; 0x1ba <led_toggle+0x2c>
+ 1c2:	2c 91       	ld	r18, X
+ 1c4:	28 27       	eor	r18, r24
+ 1c6:	2c 93       	st	X, r18
+}
+ 1c8:	08 95       	ret
+
+000001ca <tcnt0_init>:
+/***Constants***/
+
+void tcnt0_init(void)
+{
+	// Set up timer/counter with 1024 clk divisor
+	TCCR0 = (1<<CS02) | (0<<CS01) | (1<<CS00);
+ 1ca:	85 e0       	ldi	r24, 0x05	; 5
+ 1cc:	83 bf       	out	0x33, r24	; 51
+	
+	//Enable overflow interrupt on TCNT0
+	TIMSK = TIMSK  | (1<<TOIE0);
+ 1ce:	89 b7       	in	r24, 0x39	; 57
+ 1d0:	81 60       	ori	r24, 0x01	; 1
+ 1d2:	89 bf       	out	0x39, r24	; 57
+
+}
+ 1d4:	08 95       	ret
+
+000001d6 <__vector_9>:
+
+/***Function Definitions***/
+
+//Toggles O.K. LED once per second
+ISR(TIMER0_OVF_vect)
+{
+ 1d6:	1f 92       	push	r1
+ 1d8:	0f 92       	push	r0
+ 1da:	0f b6       	in	r0, 0x3f	; 63
+ 1dc:	0f 92       	push	r0
+ 1de:	11 24       	eor	r1, r1
+ 1e0:	8f 93       	push	r24
+	
+	tick0++;
+ 1e2:	80 91 77 00 	lds	r24, 0x0077
+ 1e6:	8f 5f       	subi	r24, 0xFF	; 255
+ 1e8:	80 93 77 00 	sts	0x0077, r24
+	if(tick0 >= 30)
+ 1ec:	8e 31       	cpi	r24, 0x1E	; 30
+ 1ee:	10 f0       	brcs	.+4      	; 0x1f4 <__vector_9+0x1e>
+	{
+		tick0 = 0;
+ 1f0:	10 92 77 00 	sts	0x0077, r1
+	}
+}
+ 1f4:	8f 91       	pop	r24
+ 1f6:	0f 90       	pop	r0
+ 1f8:	0f be       	out	0x3f, r0	; 63
+ 1fa:	0f 90       	pop	r0
+ 1fc:	1f 90       	pop	r1
+ 1fe:	18 95       	reti
+
+00000200 <setup_leds>:
+void setup_leds(void)
+{
+	static uint8_t *led_port[NUMBER_OF_LEDS + 1];
+	static uint8_t led_pin[NUMBER_OF_LEDS + 1];
+	// Define which port and pin each led is connected to, and then call led_init
+	led_port[0] = &PORTD;
+ 200:	82 e3       	ldi	r24, 0x32	; 50
+ 202:	90 e0       	ldi	r25, 0x00	; 0
+ 204:	90 93 6b 00 	sts	0x006B, r25
+ 208:	80 93 6a 00 	sts	0x006A, r24
+	led_pin[0] = 5;
+ 20c:	25 e0       	ldi	r18, 0x05	; 5
+ 20e:	20 93 66 00 	sts	0x0066, r18
+	led_port[1] = &PORTD;
+ 212:	90 93 6d 00 	sts	0x006D, r25
+ 216:	80 93 6c 00 	sts	0x006C, r24
+	led_pin[1] = 6;
+ 21a:	26 e0       	ldi	r18, 0x06	; 6
+ 21c:	20 93 67 00 	sts	0x0067, r18
+	led_port[2] = &PORTD;
+ 220:	90 93 6f 00 	sts	0x006F, r25
+ 224:	80 93 6e 00 	sts	0x006E, r24
+	led_pin[2] = 7;
+ 228:	87 e0       	ldi	r24, 0x07	; 7
+ 22a:	80 93 68 00 	sts	0x0068, r24
+	led_port[3] = '\0';
+ 22e:	10 92 71 00 	sts	0x0071, r1
+ 232:	10 92 70 00 	sts	0x0070, r1
+	led_pin[3] = '\0';
+ 236:	10 92 69 00 	sts	0x0069, r1
+	led_init(led_port, led_pin);
+ 23a:	8a e6       	ldi	r24, 0x6A	; 106
+ 23c:	90 e0       	ldi	r25, 0x00	; 0
+ 23e:	66 e6       	ldi	r22, 0x66	; 102
+ 240:	70 e0       	ldi	r23, 0x00	; 0
+ 242:	1b df       	rcall	.-458    	; 0x7a <led_init>
+}
+ 244:	08 95       	ret
+
+00000246 <setup_comms>:
+
+// Sets up XBee comms. Iden chars are used to identify first 3 bytes of INCOMING packets
+void setup_comms(void)
+{
+	static uint8_t iden_chars[3];
+	iden_chars[0] = 'r';
+ 246:	82 e7       	ldi	r24, 0x72	; 114
+ 248:	80 93 72 00 	sts	0x0072, r24
+	iden_chars[1] = 'm';
+ 24c:	8d e6       	ldi	r24, 0x6D	; 109
+ 24e:	80 93 73 00 	sts	0x0073, r24
+	iden_chars[2] = 't';
+ 252:	84 e7       	ldi	r24, 0x74	; 116
+ 254:	80 93 74 00 	sts	0x0074, r24
+	
+	comms_init(iden_chars);
+ 258:	82 e7       	ldi	r24, 0x72	; 114
+ 25a:	90 e0       	ldi	r25, 0x00	; 0
+ 25c:	f4 d2       	rcall	.+1512   	; 0x846 <comms_init>
+}
+ 25e:	08 95       	ret
+
+00000260 <main>:
+	{
+		tick0 = 0;
+	}
+}
+
+int main(void){
+ 260:	af 92       	push	r10
+ 262:	bf 92       	push	r11
+ 264:	cf 92       	push	r12
+ 266:	df 92       	push	r13
+ 268:	ef 92       	push	r14
+ 26a:	ff 92       	push	r15
+ 26c:	0f 93       	push	r16
+ 26e:	1f 93       	push	r17
+ 270:	df 93       	push	r29
+ 272:	cf 93       	push	r28
+ 274:	cd b7       	in	r28, 0x3d	; 61
+ 276:	de b7       	in	r29, 0x3e	; 62
+ 278:	29 97       	sbiw	r28, 0x09	; 9
+ 27a:	0f b6       	in	r0, 0x3f	; 63
+ 27c:	f8 94       	cli
+ 27e:	de bf       	out	0x3e, r29	; 62
+ 280:	0f be       	out	0x3f, r0	; 63
+ 282:	cd bf       	out	0x3d, r28	; 61
+
+	OSCCAL = 0x9F;
+ 284:	8f e9       	ldi	r24, 0x9F	; 159
+ 286:	81 bf       	out	0x31, r24	; 49
+
+	/***Button Intialisation***/
+	uint8_t *button_pin[number_of_buttons + 1];
+	uint8_t button_pin_num[number_of_buttons + 1];
+	button_pin[0] = &PIND;
+ 288:	20 e3       	ldi	r18, 0x30	; 48
+ 28a:	30 e0       	ldi	r19, 0x00	; 0
+ 28c:	3d 83       	std	Y+5, r19	; 0x05
+ 28e:	2c 83       	std	Y+4, r18	; 0x04
+	button_pin_num[0] = 3;
+ 290:	83 e0       	ldi	r24, 0x03	; 3
+ 292:	89 83       	std	Y+1, r24	; 0x01
+	button_pin[1] = &PIND;
+ 294:	3f 83       	std	Y+7, r19	; 0x07
+ 296:	2e 83       	std	Y+6, r18	; 0x06
+	button_pin_num[1] = 4;
+ 298:	84 e0       	ldi	r24, 0x04	; 4
+ 29a:	8a 83       	std	Y+2, r24	; 0x02
+	button_pin[2] = '\0';
+ 29c:	19 86       	std	Y+9, r1	; 0x09
+ 29e:	18 86       	std	Y+8, r1	; 0x08
+	button_pin_num[2] = '\0';
+ 2a0:	1b 82       	std	Y+3, r1	; 0x03
+	
+	/***Intialisation Routines***/
+	setup_leds();
+ 2a2:	ae df       	rcall	.-164    	; 0x200 <setup_leds>
+	button_init(button_pin, button_pin_num);
+ 2a4:	ce 01       	movw	r24, r28
+ 2a6:	04 96       	adiw	r24, 0x04	; 4
+ 2a8:	be 01       	movw	r22, r28
+ 2aa:	6f 5f       	subi	r22, 0xFF	; 255
+ 2ac:	7f 4f       	sbci	r23, 0xFF	; 255
+ 2ae:	db d2       	rcall	.+1462   	; 0x866 <button_init>
+	adc_init();
+ 2b0:	d6 de       	rcall	.-596    	; 0x5e <adc_init>
+	tcnt0_init();
+ 2b2:	8b df       	rcall	.-234    	; 0x1ca <tcnt0_init>
+	//usart_init();
+	setup_comms();
+ 2b4:	c8 df       	rcall	.-112    	; 0x246 <setup_comms>
+
+	/***Default led states***/
+	led_off(1);
+ 2b6:	81 e0       	ldi	r24, 0x01	; 1
+ 2b8:	4b df       	rcall	.-362    	; 0x150 <led_off>
+	led_off(0);
+ 2ba:	80 e0       	ldi	r24, 0x00	; 0
+ 2bc:	49 df       	rcall	.-366    	; 0x150 <led_off>
+	led_off(2);
+ 2be:	82 e0       	ldi	r24, 0x02	; 2
+ 2c0:	47 df       	rcall	.-370    	; 0x150 <led_off>
+
+	uint16_t adc_value = 0;
+	msg[0] = 's';
+ 2c2:	83 e7       	ldi	r24, 0x73	; 115
+ 2c4:	80 93 78 00 	sts	0x0078, r24
+	msg[1] = 'k';
+ 2c8:	8b e6       	ldi	r24, 0x6B	; 107
+ 2ca:	80 93 79 00 	sts	0x0079, r24
+	msg[2] = 't';
+ 2ce:	84 e7       	ldi	r24, 0x74	; 116
+ 2d0:	80 93 7a 00 	sts	0x007A, r24
+	msg[3] = status_byte;
+ 2d4:	80 91 75 00 	lds	r24, 0x0075
+ 2d8:	80 93 7b 00 	sts	0x007B, r24
+	msg[4] = 0x02;
+ 2dc:	82 e0       	ldi	r24, 0x02	; 2
+ 2de:	80 93 7c 00 	sts	0x007C, r24
+	msg[5] = 0x2C;
+ 2e2:	8c e2       	ldi	r24, 0x2C	; 44
+ 2e4:	80 93 7d 00 	sts	0x007D, r24
+	msg[6] = 0x00;
+ 2e8:	10 92 7e 00 	sts	0x007E, r1
+
+	//Enable interrupts
+	sei();
+ 2ec:	78 94       	sei
+				{
+					// True is skateboard has received msg from remote and replyied with ok
+					if(comms_get_byte(STATUS_BYTE_POS) & (1<<IN_RANGE_BIT_POS))
+					{
+						
+						main_state = in_range;
+ 2ee:	ff 24       	eor	r15, r15
+ 2f0:	f3 94       	inc	r15
+					first_time = false;
+				}
+				if(count_comms >= COMMS_SEND_CYCLES)
+				{
+					// 3 header chars inditifing message
+					msg[0] = 's';
+ 2f2:	43 e7       	ldi	r20, 0x73	; 115
+ 2f4:	b4 2e       	mov	r11, r20
+					msg[1] = 'k';
+ 2f6:	3b e6       	ldi	r19, 0x6B	; 107
+ 2f8:	c3 2e       	mov	r12, r19
+					msg[2] = 't';
+ 2fa:	24 e7       	ldi	r18, 0x74	; 116
+ 2fc:	d2 2e       	mov	r13, r18
+					// Number of data bytes following...
+					msg[3] = 0x03;
+ 2fe:	93 e0       	ldi	r25, 0x03	; 3
+ 300:	e9 2e       	mov	r14, r25
+				{
+					// True is skateboard has received msg from remote and replyied with on
+					if(comms_get_byte(STATUS_BYTE_POS) & (1<<ON_BIT_POS))
+					{
+						
+						main_state = on;
+ 302:	82 e0       	ldi	r24, 0x02	; 2
+ 304:	a8 2e       	mov	r10, r24
+
+	///***Main Loop***
+	while(1){
+		
+		// Check for usart data
+		comms_update();
+ 306:	7e d2       	rcall	.+1276   	; 0x804 <comms_update>
+		
+		// Main state machine
+		switch(main_state)
+ 308:	80 91 76 00 	lds	r24, 0x0076
+ 30c:	81 30       	cpi	r24, 0x01	; 1
+ 30e:	09 f4       	brne	.+2      	; 0x312 <main+0xb2>
+ 310:	4f c0       	rjmp	.+158    	; 0x3b0 <main+0x150>
+ 312:	81 30       	cpi	r24, 0x01	; 1
+ 314:	18 f0       	brcs	.+6      	; 0x31c <main+0xbc>
+ 316:	82 30       	cpi	r24, 0x02	; 2
+ 318:	b1 f7       	brne	.-20     	; 0x306 <main+0xa6>
+ 31a:	a9 c0       	rjmp	.+338    	; 0x46e <__stack+0xf>
+		{
+			case off:
+				if(first_time == true)
+ 31c:	80 91 60 00 	lds	r24, 0x0060
+ 320:	81 30       	cpi	r24, 0x01	; 1
+ 322:	89 f4       	brne	.+34     	; 0x346 <main+0xe6>
+				{
+					count_led = 0;
+ 324:	10 92 81 00 	sts	0x0081, r1
+ 328:	10 92 80 00 	sts	0x0080, r1
+					count_comms = 0;
+ 32c:	10 92 83 00 	sts	0x0083, r1
+ 330:	10 92 82 00 	sts	0x0082, r1
+					// Clears on bit in status byte
+					status_byte &= ((1<<ON_BIT_POS)^0xFF);
+ 334:	80 91 75 00 	lds	r24, 0x0075
+ 338:	8e 7f       	andi	r24, 0xFE	; 254
+ 33a:	80 93 75 00 	sts	0x0075, r24
+					led_off(0);
+ 33e:	80 e0       	ldi	r24, 0x00	; 0
+ 340:	07 df       	rcall	.-498    	; 0x150 <led_off>
+					first_time = false;
+ 342:	10 92 60 00 	sts	0x0060, r1
+				}
+				if(count_comms >= COMMS_SEND_CYCLES)
+ 346:	80 91 82 00 	lds	r24, 0x0082
+ 34a:	90 91 83 00 	lds	r25, 0x0083
+ 34e:	88 5e       	subi	r24, 0xE8	; 232
+ 350:	93 40       	sbci	r25, 0x03	; 3
+ 352:	d0 f0       	brcs	.+52     	; 0x388 <main+0x128>
+				{
+					// 3 header chars inditifing message
+					msg[0] = 's';
+ 354:	b0 92 78 00 	sts	0x0078, r11
+					msg[1] = 'k';
+ 358:	c0 92 79 00 	sts	0x0079, r12
+					msg[2] = 't';
+ 35c:	d0 92 7a 00 	sts	0x007A, r13
+					// Number of data bytes following...
+					msg[3] = 0x03;
+ 360:	e0 92 7b 00 	sts	0x007B, r14
+					// Status byte
+					msg[STATUS_BYTE_POS] = status_byte;
+ 364:	80 91 75 00 	lds	r24, 0x0075
+ 368:	80 93 7c 00 	sts	0x007C, r24
+					// Motor speed value (16-bit) (make 0 when off)
+					msg[5] = 0;
+ 36c:	10 92 7d 00 	sts	0x007D, r1
+					msg[6] = 0;
+ 370:	10 92 7e 00 	sts	0x007E, r1
+					msg[7] = '\0';
+ 374:	10 92 7f 00 	sts	0x007F, r1
+					// Send message to skateboard
+					comms_send(msg, 8);
+ 378:	88 e7       	ldi	r24, 0x78	; 120
+ 37a:	90 e0       	ldi	r25, 0x00	; 0
+ 37c:	68 e0       	ldi	r22, 0x08	; 8
+ 37e:	a7 d1       	rcall	.+846    	; 0x6ce <comms_send>
+					count_comms = 0;
+ 380:	10 92 83 00 	sts	0x0083, r1
+ 384:	10 92 82 00 	sts	0x0082, r1
+				}
+				count_comms++;
+ 388:	80 91 82 00 	lds	r24, 0x0082
+ 38c:	90 91 83 00 	lds	r25, 0x0083
+ 390:	01 96       	adiw	r24, 0x01	; 1
+ 392:	90 93 83 00 	sts	0x0083, r25
+ 396:	80 93 82 00 	sts	0x0082, r24
+				// Check for new packet
+				if(comms_is_new_packet())
+ 39a:	96 d1       	rcall	.+812    	; 0x6c8 <comms_is_new_packet>
+ 39c:	88 23       	and	r24, r24
+ 39e:	09 f4       	brne	.+2      	; 0x3a2 <main+0x142>
+ 3a0:	b2 cf       	rjmp	.-156    	; 0x306 <main+0xa6>
+				{
+					// True is skateboard has received msg from remote and replyied with ok
+					if(comms_get_byte(STATUS_BYTE_POS) & (1<<IN_RANGE_BIT_POS))
+ 3a2:	84 e0       	ldi	r24, 0x04	; 4
+ 3a4:	86 d1       	rcall	.+780    	; 0x6b2 <comms_get_byte>
+ 3a6:	82 ff       	sbrs	r24, 2
+ 3a8:	ae cf       	rjmp	.-164    	; 0x306 <main+0xa6>
+					{
+						
+						main_state = in_range;
+ 3aa:	f0 92 76 00 	sts	0x0076, r15
+ 3ae:	ae c0       	rjmp	.+348    	; 0x50c <__stack+0xad>
+					}
+				}
+				
+				break;
+			case in_range:
+				if(first_time == true)
+ 3b0:	80 91 60 00 	lds	r24, 0x0060
+ 3b4:	81 30       	cpi	r24, 0x01	; 1
+ 3b6:	51 f4       	brne	.+20     	; 0x3cc <main+0x16c>
+				{
+					// Reset counters
+					count_led = 0;
+ 3b8:	10 92 81 00 	sts	0x0081, r1
+ 3bc:	10 92 80 00 	sts	0x0080, r1
+					count_comms = 0;
+ 3c0:	10 92 83 00 	sts	0x0083, r1
+ 3c4:	10 92 82 00 	sts	0x0082, r1
+					first_time = false;
+ 3c8:	10 92 60 00 	sts	0x0060, r1
+				}
+				button_update();
+ 3cc:	74 d2       	rcall	.+1256   	; 0x8b6 <button_update>
+
+				count_led++;
+ 3ce:	80 91 80 00 	lds	r24, 0x0080
+ 3d2:	90 91 81 00 	lds	r25, 0x0081
+ 3d6:	01 96       	adiw	r24, 0x01	; 1
+ 3d8:	90 93 81 00 	sts	0x0081, r25
+ 3dc:	80 93 80 00 	sts	0x0080, r24
+				if(count_led >= LED_FLASH_RATE)
+ 3e0:	80 51       	subi	r24, 0x10	; 16
+ 3e2:	97 42       	sbci	r25, 0x27	; 39
+ 3e4:	30 f0       	brcs	.+12     	; 0x3f2 <main+0x192>
+				{
+					led_toggle(0);
+ 3e6:	80 e0       	ldi	r24, 0x00	; 0
+ 3e8:	d2 de       	rcall	.-604    	; 0x18e <led_toggle>
+					count_led = 0;
+ 3ea:	10 92 81 00 	sts	0x0081, r1
+ 3ee:	10 92 80 00 	sts	0x0080, r1
+				}
+
+				// Check if user has pressed on button, set on bit if true
+				if(button_been_pressed(0))
+ 3f2:	80 e0       	ldi	r24, 0x00	; 0
+ 3f4:	db d2       	rcall	.+1462   	; 0x9ac <button_been_pressed>
+ 3f6:	88 23       	and	r24, r24
+ 3f8:	29 f0       	breq	.+10     	; 0x404 <main+0x1a4>
+				{
+					// Set on bit in status byte
+					status_byte |= (1 << ON_BIT_POS);
+ 3fa:	80 91 75 00 	lds	r24, 0x0075
+ 3fe:	81 60       	ori	r24, 0x01	; 1
+ 400:	80 93 75 00 	sts	0x0075, r24
+					
+				}
+				
+				// Send packet to skateboard
+				if(count_comms >= COMMS_SEND_CYCLES)
+ 404:	80 91 82 00 	lds	r24, 0x0082
+ 408:	90 91 83 00 	lds	r25, 0x0083
+ 40c:	88 5e       	subi	r24, 0xE8	; 232
+ 40e:	93 40       	sbci	r25, 0x03	; 3
+ 410:	d0 f0       	brcs	.+52     	; 0x446 <main+0x1e6>
+				{
+						// 3 header chars inditifing message
+						msg[0] = 's';
+ 412:	b0 92 78 00 	sts	0x0078, r11
+						msg[1] = 'k';
+ 416:	c0 92 79 00 	sts	0x0079, r12
+						msg[2] = 't';
+ 41a:	d0 92 7a 00 	sts	0x007A, r13
+						// Number of data bytes following...
+						msg[3] = 0x03;
+ 41e:	e0 92 7b 00 	sts	0x007B, r14
+						// Status byte
+						msg[STATUS_BYTE_POS] = status_byte;
+ 422:	80 91 75 00 	lds	r24, 0x0075
+ 426:	80 93 7c 00 	sts	0x007C, r24
+						// Motor speed value (16-bit)
+						msg[MOTOR_HIGH_BYTE_POS] = 0;
+ 42a:	10 92 7d 00 	sts	0x007D, r1
+						msg[MOTOR_LOW_BYTE_POS] = 0;
+ 42e:	10 92 7e 00 	sts	0x007E, r1
+						msg[7] = 0x00;
+ 432:	10 92 7f 00 	sts	0x007F, r1
+						// Send message to skateboard
+						comms_send(msg, 8);
+ 436:	88 e7       	ldi	r24, 0x78	; 120
+ 438:	90 e0       	ldi	r25, 0x00	; 0
+ 43a:	68 e0       	ldi	r22, 0x08	; 8
+ 43c:	48 d1       	rcall	.+656    	; 0x6ce <comms_send>
+						// Reset counter
+						count_comms = 0;
+ 43e:	10 92 83 00 	sts	0x0083, r1
+ 442:	10 92 82 00 	sts	0x0082, r1
+				}
+				count_comms++;
+ 446:	80 91 82 00 	lds	r24, 0x0082
+ 44a:	90 91 83 00 	lds	r25, 0x0083
+ 44e:	01 96       	adiw	r24, 0x01	; 1
+ 450:	90 93 83 00 	sts	0x0083, r25
+ 454:	80 93 82 00 	sts	0x0082, r24
+
+				if(comms_is_new_packet())
+ 458:	37 d1       	rcall	.+622    	; 0x6c8 <comms_is_new_packet>
+ 45a:	88 23       	and	r24, r24
+ 45c:	09 f4       	brne	.+2      	; 0x460 <__stack+0x1>
+ 45e:	53 cf       	rjmp	.-346    	; 0x306 <main+0xa6>
+				{
+					// True is skateboard has received msg from remote and replyied with on
+					if(comms_get_byte(STATUS_BYTE_POS) & (1<<ON_BIT_POS))
+ 460:	84 e0       	ldi	r24, 0x04	; 4
+ 462:	27 d1       	rcall	.+590    	; 0x6b2 <comms_get_byte>
+ 464:	80 ff       	sbrs	r24, 0
+ 466:	4f cf       	rjmp	.-354    	; 0x306 <main+0xa6>
+					{
+						
+						main_state = on;
+ 468:	a0 92 76 00 	sts	0x0076, r10
+ 46c:	4f c0       	rjmp	.+158    	; 0x50c <__stack+0xad>
+				}
+
+				break;
+			case on:
+				
+				if(first_time == true)
+ 46e:	80 91 60 00 	lds	r24, 0x0060
+ 472:	81 30       	cpi	r24, 0x01	; 1
+ 474:	49 f4       	brne	.+18     	; 0x488 <__stack+0x29>
+				{
+					status_byte |= (1 << ON_BIT_POS);
+ 476:	80 91 75 00 	lds	r24, 0x0075
+ 47a:	81 60       	ori	r24, 0x01	; 1
+ 47c:	80 93 75 00 	sts	0x0075, r24
+					led_on(0);
+ 480:	80 e0       	ldi	r24, 0x00	; 0
+ 482:	48 de       	rcall	.-880    	; 0x114 <led_on>
+					first_time = false;
+ 484:	10 92 60 00 	sts	0x0060, r1
+				}
+				// Read throttle value
+				adc_value = adc_get();
+ 488:	ef dd       	rcall	.-1058   	; 0x68 <adc_get>
+ 48a:	8c 01       	movw	r16, r24
+				// Check for any button presses
+				button_update();
+ 48c:	14 d2       	rcall	.+1064   	; 0x8b6 <button_update>
+				
+					// Check if user has pressed on button, clear on bit if true (to turn off)
+				if(button_been_pressed(0))
+ 48e:	80 e0       	ldi	r24, 0x00	; 0
+ 490:	8d d2       	rcall	.+1306   	; 0x9ac <button_been_pressed>
+ 492:	88 23       	and	r24, r24
+ 494:	29 f0       	breq	.+10     	; 0x4a0 <__stack+0x41>
+				{
+					
+					// Clear on bit in status byte
+					status_byte &= ( (1<<ON_BIT_POS)^0xFF );
+ 496:	80 91 75 00 	lds	r24, 0x0075
+ 49a:	8e 7f       	andi	r24, 0xFE	; 254
+ 49c:	80 93 75 00 	sts	0x0075, r24
+					
+				}
+				
+				// Send a new packet to skateboard periodically
+				if(count_comms >= COMMS_SEND_CYCLES)
+ 4a0:	80 91 82 00 	lds	r24, 0x0082
+ 4a4:	90 91 83 00 	lds	r25, 0x0083
+ 4a8:	88 5e       	subi	r24, 0xE8	; 232
+ 4aa:	93 40       	sbci	r25, 0x03	; 3
+ 4ac:	d0 f0       	brcs	.+52     	; 0x4e2 <__stack+0x83>
+				{
+						// 3 header chars inditifing message
+						msg[0] = 's';
+ 4ae:	b0 92 78 00 	sts	0x0078, r11
+						msg[1] = 'k';
+ 4b2:	c0 92 79 00 	sts	0x0079, r12
+						msg[2] = 't';
+ 4b6:	d0 92 7a 00 	sts	0x007A, r13
+						// Number of data bytes following...
+						msg[3] = 0x03;
+ 4ba:	e0 92 7b 00 	sts	0x007B, r14
+						// Status byte
+						msg[STATUS_BYTE_POS] = status_byte;
+ 4be:	80 91 75 00 	lds	r24, 0x0075
+ 4c2:	80 93 7c 00 	sts	0x007C, r24
+						// Motor speed value (16-bit)
+						msg[MOTOR_HIGH_BYTE_POS] = (adc_value>>8) & 0xFF;
+ 4c6:	10 93 7d 00 	sts	0x007D, r17
+						msg[MOTOR_LOW_BYTE_POS] = adc_value & 0xFF;
+ 4ca:	00 93 7e 00 	sts	0x007E, r16
+						msg[7] = 0x00;
+ 4ce:	10 92 7f 00 	sts	0x007F, r1
+						// Send message to skateboard
+						comms_send(msg, 8);
+ 4d2:	88 e7       	ldi	r24, 0x78	; 120
+ 4d4:	90 e0       	ldi	r25, 0x00	; 0
+ 4d6:	68 e0       	ldi	r22, 0x08	; 8
+ 4d8:	fa d0       	rcall	.+500    	; 0x6ce <comms_send>
+				
+						// Reset counter
+						count_comms = 0;
+ 4da:	10 92 83 00 	sts	0x0083, r1
+ 4de:	10 92 82 00 	sts	0x0082, r1
+				}
+				count_comms++;
+ 4e2:	80 91 82 00 	lds	r24, 0x0082
+ 4e6:	90 91 83 00 	lds	r25, 0x0083
+ 4ea:	01 96       	adiw	r24, 0x01	; 1
+ 4ec:	90 93 83 00 	sts	0x0083, r25
+ 4f0:	80 93 82 00 	sts	0x0082, r24
+
+				// Check for new packet received from skateboard
+				if(comms_is_new_packet())
+ 4f4:	e9 d0       	rcall	.+466    	; 0x6c8 <comms_is_new_packet>
+ 4f6:	88 23       	and	r24, r24
+ 4f8:	09 f4       	brne	.+2      	; 0x4fc <__stack+0x9d>
+ 4fa:	05 cf       	rjmp	.-502    	; 0x306 <main+0xa6>
+				{
+					
+					// True is skateboard has received msg from remote and replyied with off
+					if((comms_get_byte(STATUS_BYTE_POS) & (1<<ON_BIT_POS)) == false)
+ 4fc:	84 e0       	ldi	r24, 0x04	; 4
+ 4fe:	d9 d0       	rcall	.+434    	; 0x6b2 <comms_get_byte>
+ 500:	80 fd       	sbrc	r24, 0
+ 502:	01 cf       	rjmp	.-510    	; 0x306 <main+0xa6>
+					{
+						led_on(1);
+ 504:	81 e0       	ldi	r24, 0x01	; 1
+ 506:	06 de       	rcall	.-1012   	; 0x114 <led_on>
+						main_state = off;
+ 508:	10 92 76 00 	sts	0x0076, r1
+						first_time = true;
+ 50c:	f0 92 60 00 	sts	0x0060, r15
+ 510:	fa ce       	rjmp	.-524    	; 0x306 <main+0xa6>
+
+00000512 <__vector_11>:
+
+/***ISR's***/
+
+//Store received byte into buffer when interrupt is triggered
+ISR(USART_RXC_vect)
+{
+ 512:	1f 92       	push	r1
+ 514:	0f 92       	push	r0
+ 516:	0f b6       	in	r0, 0x3f	; 63
+ 518:	0f 92       	push	r0
+ 51a:	11 24       	eor	r1, r1
+ 51c:	2f 93       	push	r18
+ 51e:	3f 93       	push	r19
+ 520:	4f 93       	push	r20
+ 522:	5f 93       	push	r21
+ 524:	8f 93       	push	r24
+ 526:	9f 93       	push	r25
+ 528:	ef 93       	push	r30
+ 52a:	ff 93       	push	r31
+	if( ((rx_write_buffer_pos + 1) == rx_read_buffer_pos) || 
+ 52c:	40 91 86 00 	lds	r20, 0x0086
+ 530:	50 91 85 00 	lds	r21, 0x0085
+ 534:	84 2f       	mov	r24, r20
+ 536:	90 e0       	ldi	r25, 0x00	; 0
+ 538:	01 96       	adiw	r24, 0x01	; 1
+ 53a:	25 2f       	mov	r18, r21
+ 53c:	30 e0       	ldi	r19, 0x00	; 0
+ 53e:	82 17       	cp	r24, r18
+ 540:	93 07       	cpc	r25, r19
+ 542:	21 f0       	breq	.+8      	; 0x54c <__vector_11+0x3a>
+ 544:	41 33       	cpi	r20, 0x31	; 49
+ 546:	51 f4       	brne	.+20     	; 0x55c <__vector_11+0x4a>
+ 548:	55 23       	and	r21, r21
+ 54a:	29 f4       	brne	.+10     	; 0x556 <__vector_11+0x44>
+		( (rx_write_buffer_pos == (BUFFER_SIZE - 1)) && (rx_read_buffer_pos == 0)) )
+	{	
+		// Read from register to clear interrupt
+		rx_buffer_ovf_flg = UDR;
+ 54c:	8c b1       	in	r24, 0x0c	; 12
+		//	Overflow has occured
+		rx_buffer_ovf_flg = true;
+ 54e:	81 e0       	ldi	r24, 0x01	; 1
+ 550:	80 93 84 00 	sts	0x0084, r24
+ 554:	06 c0       	rjmp	.+12     	; 0x562 <__vector_11+0x50>
+	else
+	{
+		// Check if buffer has reached end of buffer
+		if(rx_write_buffer_pos == (BUFFER_SIZE - 1))
+		{
+			rx_write_buffer_pos = 0;
+ 556:	10 92 86 00 	sts	0x0086, r1
+ 55a:	03 c0       	rjmp	.+6      	; 0x562 <__vector_11+0x50>
+		}
+		else
+		{
+			rx_write_buffer_pos++;
+ 55c:	4f 5f       	subi	r20, 0xFF	; 255
+ 55e:	40 93 86 00 	sts	0x0086, r20
+		}
+	}
+	// Write received data to buffer
+	rx_buffer[rx_write_buffer_pos] = UDR;
+ 562:	8c b1       	in	r24, 0x0c	; 12
+ 564:	e0 91 86 00 	lds	r30, 0x0086
+ 568:	f0 e0       	ldi	r31, 0x00	; 0
+ 56a:	e7 57       	subi	r30, 0x77	; 119
+ 56c:	ff 4f       	sbci	r31, 0xFF	; 255
+ 56e:	80 83       	st	Z, r24
+	
+}
+ 570:	ff 91       	pop	r31
+ 572:	ef 91       	pop	r30
+ 574:	9f 91       	pop	r25
+ 576:	8f 91       	pop	r24
+ 578:	5f 91       	pop	r21
+ 57a:	4f 91       	pop	r20
+ 57c:	3f 91       	pop	r19
+ 57e:	2f 91       	pop	r18
+ 580:	0f 90       	pop	r0
+ 582:	0f be       	out	0x3f, r0	; 63
+ 584:	0f 90       	pop	r0
+ 586:	1f 90       	pop	r1
+ 588:	18 95       	reti
+
+0000058a <__vector_12>:
+
+//On clear register, insert byte if write_buffer is not the same as the write buffer
+ISR(USART_UDRE_vect)
+{
+ 58a:	1f 92       	push	r1
+ 58c:	0f 92       	push	r0
+ 58e:	0f b6       	in	r0, 0x3f	; 63
+ 590:	0f 92       	push	r0
+ 592:	11 24       	eor	r1, r1
+ 594:	8f 93       	push	r24
+ 596:	9f 93       	push	r25
+ 598:	ef 93       	push	r30
+ 59a:	ff 93       	push	r31
+	
+	// Check if there is more data to send in buffer
+	if(tx_read_buffer_pos == tx_write_buffer_pos)
+ 59c:	90 91 88 00 	lds	r25, 0x0088
+ 5a0:	80 91 87 00 	lds	r24, 0x0087
+ 5a4:	98 17       	cp	r25, r24
+ 5a6:	11 f4       	brne	.+4      	; 0x5ac <__vector_12+0x22>
+    {
+		//Disable interrupts
+        UCSRB &= ~(1<<UDRIE);
+ 5a8:	55 98       	cbi	0x0a, 5	; 10
+ 5aa:	0f c0       	rjmp	.+30     	; 0x5ca <__vector_12+0x40>
+    }
+	else
+	{
+		if(tx_read_buffer_pos == (BUFFER_SIZE-1))
+ 5ac:	91 33       	cpi	r25, 0x31	; 49
+ 5ae:	19 f4       	brne	.+6      	; 0x5b6 <__vector_12+0x2c>
+		{
+			tx_read_buffer_pos = 0;
+ 5b0:	10 92 88 00 	sts	0x0088, r1
+ 5b4:	03 c0       	rjmp	.+6      	; 0x5bc <__vector_12+0x32>
+			
+		}
+		else
+		{
+			tx_read_buffer_pos++;
+ 5b6:	9f 5f       	subi	r25, 0xFF	; 255
+ 5b8:	90 93 88 00 	sts	0x0088, r25
+			
+		}
+        UDR = tx_buffer[tx_read_buffer_pos];
+ 5bc:	e0 91 88 00 	lds	r30, 0x0088
+ 5c0:	f0 e0       	ldi	r31, 0x00	; 0
+ 5c2:	e5 54       	subi	r30, 0x45	; 69
+ 5c4:	ff 4f       	sbci	r31, 0xFF	; 255
+ 5c6:	80 81       	ld	r24, Z
+ 5c8:	8c b9       	out	0x0c, r24	; 12
+    }
+
+}
+ 5ca:	ff 91       	pop	r31
+ 5cc:	ef 91       	pop	r30
+ 5ce:	9f 91       	pop	r25
+ 5d0:	8f 91       	pop	r24
+ 5d2:	0f 90       	pop	r0
+ 5d4:	0f be       	out	0x3f, r0	; 63
+ 5d6:	0f 90       	pop	r0
+ 5d8:	1f 90       	pop	r1
+ 5da:	18 95       	reti
+
+000005dc <usart_init>:
+
+
+void usart_init(void)
+{
+	// Set baud rate (9600)
+	UBRRH = 0;
+ 5dc:	10 bc       	out	0x20, r1	; 32
+	UBRRL = 48; //51 //48 works for remote //49 works for skateboard
+ 5de:	80 e3       	ldi	r24, 0x30	; 48
+ 5e0:	89 b9       	out	0x09, r24	; 9
+	// Enabe TX and RX, enable rx interrups (tx interrupts enabled when data loaded into tx buffer)
+	UCSRB = (1<<RXCIE) | (0<<TXCIE) | (0<<UDRIE) | (1<<RXEN)| (1<<TXEN) | (0<<UCSZ2);
+ 5e2:	88 e9       	ldi	r24, 0x98	; 152
+ 5e4:	8a b9       	out	0x0a, r24	; 10
+	// Select UCSRC, 1-stop bit, 8-bits of data
+	UCSRC = (1<<URSEL) | (0<<UMSEL) | (UPM1<<0) | (UPM0<<0) | (USBS<<0) | (1<<UCSZ1) | (1<<UCSZ0);
+ 5e6:	87 e8       	ldi	r24, 0x87	; 135
+ 5e8:	80 bd       	out	0x20, r24	; 32
+
+	// Clear the tx buffer ready flag as usart is interrupt driven (do this set after intialising usart)
+	UCSRA = (0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<PE) | (0<<U2X);
+ 5ea:	1b b8       	out	0x0b, r1	; 11
+}
+ 5ec:	08 95       	ret
+
+000005ee <usart_write_to_tx_buffer>:
+// Loads data into transmit buffer. Stops when finds null string (make sure to add one to input!).
+// Terminates if message is longer than BUFFER_SIZE
+void usart_write_to_tx_buffer(uint8_t data)
+{
+	//Stall untill there is free space to insert character into buffer
+	while( ((tx_write_buffer_pos + 1) == tx_read_buffer_pos) || ( (tx_write_buffer_pos == BUFFER_SIZE) && (tx_read_buffer_pos == 0) ))
+ 5ee:	90 91 87 00 	lds	r25, 0x0087
+ 5f2:	29 2f       	mov	r18, r25
+ 5f4:	30 e0       	ldi	r19, 0x00	; 0
+ 5f6:	2f 5f       	subi	r18, 0xFF	; 255
+ 5f8:	3f 4f       	sbci	r19, 0xFF	; 255
+ 5fa:	60 91 88 00 	lds	r22, 0x0088
+ 5fe:	46 2f       	mov	r20, r22
+ 600:	50 e0       	ldi	r21, 0x00	; 0
+ 602:	24 17       	cp	r18, r20
+ 604:	35 07       	cpc	r19, r21
+ 606:	a9 f0       	breq	.+42     	; 0x632 <usart_write_to_tx_buffer+0x44>
+ 608:	92 33       	cpi	r25, 0x32	; 50
+ 60a:	19 f4       	brne	.+6      	; 0x612 <usart_write_to_tx_buffer+0x24>
+ 60c:	66 23       	and	r22, r22
+ 60e:	c9 f3       	breq	.-14     	; 0x602 <usart_write_to_tx_buffer+0x14>
+ 610:	05 c0       	rjmp	.+10     	; 0x61c <usart_write_to_tx_buffer+0x2e>
+	{
+		
+	}
+	
+	//Increment write buffer
+	if(tx_write_buffer_pos == (BUFFER_SIZE-1))
+ 612:	91 33       	cpi	r25, 0x31	; 49
+ 614:	19 f4       	brne	.+6      	; 0x61c <usart_write_to_tx_buffer+0x2e>
+	{
+		tx_write_buffer_pos = 0;
+ 616:	10 92 87 00 	sts	0x0087, r1
+ 61a:	03 c0       	rjmp	.+6      	; 0x622 <usart_write_to_tx_buffer+0x34>
+	}
+	else
+	{
+		tx_write_buffer_pos++;
+ 61c:	9f 5f       	subi	r25, 0xFF	; 255
+ 61e:	90 93 87 00 	sts	0x0087, r25
+	}
+	
+	//Write data to tx buffer
+	tx_buffer[tx_write_buffer_pos] = data;
+ 622:	e0 91 87 00 	lds	r30, 0x0087
+ 626:	f0 e0       	ldi	r31, 0x00	; 0
+ 628:	e5 54       	subi	r30, 0x45	; 69
+ 62a:	ff 4f       	sbci	r31, 0xFF	; 255
+ 62c:	80 83       	st	Z, r24
+
+	//Enables data register empty interrupt
+	 UCSRB |= (1<<UDRIE);
+ 62e:	55 9a       	sbi	0x0a, 5	; 10
+}
+ 630:	08 95       	ret
+ 632:	ff cf       	rjmp	.-2      	; 0x632 <usart_write_to_tx_buffer+0x44>
+
+00000634 <usart_space_in_tx_buffer>:
+
+uint8_t usart_space_in_tx_buffer(void)
+{
+ 634:	40 e0       	ldi	r20, 0x00	; 0
+ 636:	20 91 87 00 	lds	r18, 0x0087
+ 63a:	30 e0       	ldi	r19, 0x00	; 0
+ 63c:	2f 5f       	subi	r18, 0xFF	; 255
+ 63e:	3f 4f       	sbci	r19, 0xFF	; 255
+ 640:	80 91 88 00 	lds	r24, 0x0088
+ 644:	90 e0       	ldi	r25, 0x00	; 0
+ 646:	28 17       	cp	r18, r24
+ 648:	39 07       	cpc	r19, r25
+ 64a:	09 f0       	breq	.+2      	; 0x64e <usart_space_in_tx_buffer+0x1a>
+ 64c:	41 e0       	ldi	r20, 0x01	; 1
+	} 
+	else
+	{
+		return false;
+	}
+}
+ 64e:	84 2f       	mov	r24, r20
+ 650:	08 95       	ret
+
+00000652 <usart_send>:
+
+void usart_send(uint8_t *data, uint8_t num_of_bytes)
+{
+ 652:	0f 93       	push	r16
+ 654:	1f 93       	push	r17
+ 656:	cf 93       	push	r28
+ 658:	df 93       	push	r29
+ 65a:	06 2f       	mov	r16, r22
+ 65c:	ec 01       	movw	r28, r24
+ 65e:	10 e0       	ldi	r17, 0x00	; 0
+ 660:	03 c0       	rjmp	.+6      	; 0x668 <usart_send+0x16>
+	uint8_t x = 0;
+	// Place bytes in tx buffer
+	while(x != num_of_bytes)
+	{
+		usart_write_to_tx_buffer(data[x]);
+ 662:	89 91       	ld	r24, Y+
+ 664:	c4 df       	rcall	.-120    	; 0x5ee <usart_write_to_tx_buffer>
+		x++;
+ 666:	1f 5f       	subi	r17, 0xFF	; 255
+
+void usart_send(uint8_t *data, uint8_t num_of_bytes)
+{
+	uint8_t x = 0;
+	// Place bytes in tx buffer
+	while(x != num_of_bytes)
+ 668:	10 17       	cp	r17, r16
+ 66a:	d9 f7       	brne	.-10     	; 0x662 <usart_send+0x10>
+	{
+		usart_write_to_tx_buffer(data[x]);
+		x++;
+	}
+}
+ 66c:	df 91       	pop	r29
+ 66e:	cf 91       	pop	r28
+ 670:	1f 91       	pop	r17
+ 672:	0f 91       	pop	r16
+ 674:	08 95       	ret
+
+00000676 <usart_get_byte>:
+
+//Returns true if there is a new byte present in rx buffer, and stores it in data. Else returns false.
+uint8_t usart_get_byte(uint8_t* data)
+{
+ 676:	dc 01       	movw	r26, r24
+	if(rx_read_buffer_pos != rx_write_buffer_pos)
+ 678:	90 91 85 00 	lds	r25, 0x0085
+ 67c:	80 91 86 00 	lds	r24, 0x0086
+ 680:	98 17       	cp	r25, r24
+ 682:	11 f4       	brne	.+4      	; 0x688 <usart_get_byte+0x12>
+ 684:	80 e0       	ldi	r24, 0x00	; 0
+ 686:	08 95       	ret
+	{
+		if(rx_read_buffer_pos == (BUFFER_SIZE - 1))
+ 688:	91 33       	cpi	r25, 0x31	; 49
+ 68a:	19 f4       	brne	.+6      	; 0x692 <usart_get_byte+0x1c>
+		{
+			rx_read_buffer_pos = 0;
+ 68c:	10 92 85 00 	sts	0x0085, r1
+ 690:	03 c0       	rjmp	.+6      	; 0x698 <usart_get_byte+0x22>
+		}
+		else
+		{
+			rx_read_buffer_pos++;
+ 692:	9f 5f       	subi	r25, 0xFF	; 255
+ 694:	90 93 85 00 	sts	0x0085, r25
+		}
+		data[0] = rx_buffer[rx_read_buffer_pos];
+ 698:	e0 91 85 00 	lds	r30, 0x0085
+ 69c:	f0 e0       	ldi	r31, 0x00	; 0
+ 69e:	e7 57       	subi	r30, 0x77	; 119
+ 6a0:	ff 4f       	sbci	r31, 0xFF	; 255
+ 6a2:	80 81       	ld	r24, Z
+ 6a4:	8c 93       	st	X, r24
+ 6a6:	81 e0       	ldi	r24, 0x01	; 1
+	}
+	else
+	{
+		return false;
+	}
+}
+ 6a8:	08 95       	ret
+
+000006aa <usart_rx_overflow>:
+
+uint8_t usart_rx_overflow(void)
+{
+	return rx_buffer_ovf_flg;
+}
+ 6aa:	80 91 84 00 	lds	r24, 0x0084
+ 6ae:	08 95       	ret
+
+000006b0 <comms_config>:
+
+void comms_config(uint8_t *command, uint8_t *parameter, uint8_t parameter_bits)
+{
+	
+	
+}
+ 6b0:	08 95       	ret
+
+000006b2 <comms_get_byte>:
+}
+
+uint8_t comms_get_byte(uint8_t byte_num)
+{
+	// Clear unread data flag once at east one byte from the new packet has been read
+	unread_data_flg = false;
+ 6b2:	10 92 ed 00 	sts	0x00ED, r1
+ 6b6:	e7 ef       	ldi	r30, 0xF7	; 247
+ 6b8:	f0 e0       	ldi	r31, 0x00	; 0
+ 6ba:	e8 0f       	add	r30, r24
+ 6bc:	f1 1d       	adc	r31, r1
+	return packet_buffer[byte_num];
+}
+ 6be:	80 81       	ld	r24, Z
+ 6c0:	08 95       	ret
+
+000006c2 <comms_timeout>:
+
+// Returns true if comms has timeout because it has received a packet in COMMS_TIMEOUT_PERIOD
+uint8_t comms_timeout(void)
+{
+	return comms_timeout_flg;
+}
+ 6c2:	80 91 61 00 	lds	r24, 0x0061
+ 6c6:	08 95       	ret
+
+000006c8 <comms_is_new_packet>:
+
+// Returns true if their is a new packet that hasn't been read
+uint8_t comms_is_new_packet(void)
+{
+	return unread_data_flg;
+}
+ 6c8:	80 91 ed 00 	lds	r24, 0x00ED
+ 6cc:	08 95       	ret
+
+000006ce <comms_send>:
+}
+
+// Function just passes variables onto usart
+void comms_send(uint8_t *data, uint8_t num_of_bytes)
+{
+	usart_send(data, num_of_bytes);
+ 6ce:	c1 df       	rcall	.-126    	; 0x652 <usart_send>
+}
+ 6d0:	08 95       	ret
+
+000006d2 <comms_retrieve_data>:
+		} 
+	}
+}
+
+void comms_retrieve_data()
+{
+ 6d2:	ef 92       	push	r14
+ 6d4:	ff 92       	push	r15
+ 6d6:	0f 93       	push	r16
+ 6d8:	1f 93       	push	r17
+					// Go back to idle state if header not valid
+					comms_state = idle;
+				}
+				break;
+			case packet_data_count:
+				comms_state = packet_data;
+ 6da:	94 e0       	ldi	r25, 0x04	; 4
+ 6dc:	e9 2e       	mov	r14, r25
+					comms_state = packet_complete;
+				}
+				
+				break;
+			case receiving_checksum:
+				comms_state = packet_complete;
+ 6de:	06 e0       	ldi	r16, 0x06	; 6
+				break;
+			case packet_complete:
+				// Set new packet flag true so comms decode can be called
+				new_packet_flg = true;
+ 6e0:	11 e0       	ldi	r17, 0x01	; 1
+			case third_iden_char:
+				if(rx_data_byte == iden_chars[2])
+				{
+					packet_buffer[packet_buffer_pos] = rx_data_byte;
+					packet_buffer_pos++;
+					comms_state = packet_data_count;
+ 6e2:	83 e0       	ldi	r24, 0x03	; 3
+ 6e4:	f8 2e       	mov	r15, r24
+ 6e6:	83 c0       	rjmp	.+262    	; 0x7ee <comms_retrieve_data+0x11c>
+	static uint8_t rx_data_byte;
+
+	while(usart_get_byte(&rx_data_byte))
+	{
+		
+		switch(comms_state){
+ 6e8:	80 91 f3 00 	lds	r24, 0x00F3
+ 6ec:	83 30       	cpi	r24, 0x03	; 3
+ 6ee:	09 f4       	brne	.+2      	; 0x6f2 <comms_retrieve_data+0x20>
+ 6f0:	4e c0       	rjmp	.+156    	; 0x78e <comms_retrieve_data+0xbc>
+ 6f2:	84 30       	cpi	r24, 0x04	; 4
+ 6f4:	58 f4       	brcc	.+22     	; 0x70c <comms_retrieve_data+0x3a>
+ 6f6:	81 30       	cpi	r24, 0x01	; 1
+ 6f8:	11 f1       	breq	.+68     	; 0x73e <comms_retrieve_data+0x6c>
+ 6fa:	90 91 f0 00 	lds	r25, 0x00F0
+ 6fe:	e0 91 29 01 	lds	r30, 0x0129
+ 702:	f0 91 2a 01 	lds	r31, 0x012A
+ 706:	82 30       	cpi	r24, 0x02	; 2
+ 708:	90 f5       	brcc	.+100    	; 0x76e <comms_retrieve_data+0x9c>
+ 70a:	0a c0       	rjmp	.+20     	; 0x720 <comms_retrieve_data+0x4e>
+ 70c:	85 30       	cpi	r24, 0x05	; 5
+ 70e:	09 f4       	brne	.+2      	; 0x712 <comms_retrieve_data+0x40>
+ 710:	5d c0       	rjmp	.+186    	; 0x7cc <comms_retrieve_data+0xfa>
+ 712:	85 30       	cpi	r24, 0x05	; 5
+ 714:	08 f4       	brcc	.+2      	; 0x718 <comms_retrieve_data+0x46>
+ 716:	4c c0       	rjmp	.+152    	; 0x7b0 <comms_retrieve_data+0xde>
+ 718:	86 30       	cpi	r24, 0x06	; 6
+ 71a:	09 f0       	breq	.+2      	; 0x71e <comms_retrieve_data+0x4c>
+ 71c:	5e c0       	rjmp	.+188    	; 0x7da <comms_retrieve_data+0x108>
+ 71e:	59 c0       	rjmp	.+178    	; 0x7d2 <comms_retrieve_data+0x100>
+			case idle:
+				
+				packet_buffer_pos = 0;
+ 720:	10 92 f2 00 	sts	0x00F2, r1
+				num_of_data_bytes = 0;
+ 724:	10 92 f1 00 	sts	0x00F1, r1
+				if(rx_data_byte == iden_chars[0])
+ 728:	80 81       	ld	r24, Z
+ 72a:	98 17       	cp	r25, r24
+ 72c:	09 f0       	breq	.+2      	; 0x730 <comms_retrieve_data+0x5e>
+ 72e:	57 c0       	rjmp	.+174    	; 0x7de <comms_retrieve_data+0x10c>
+				{
+					packet_buffer[packet_buffer_pos] = rx_data_byte;
+ 730:	90 93 f7 00 	sts	0x00F7, r25
+					packet_buffer_pos++;
+ 734:	10 93 f2 00 	sts	0x00F2, r17
+					comms_state = second_iden_char;
+ 738:	10 93 f3 00 	sts	0x00F3, r17
+ 73c:	50 c0       	rjmp	.+160    	; 0x7de <comms_retrieve_data+0x10c>
+				}
+				break;
+			case second_iden_char:
+				if(rx_data_byte == iden_chars[1])
+ 73e:	90 91 f0 00 	lds	r25, 0x00F0
+ 742:	e0 91 29 01 	lds	r30, 0x0129
+ 746:	f0 91 2a 01 	lds	r31, 0x012A
+ 74a:	81 81       	ldd	r24, Z+1	; 0x01
+ 74c:	98 17       	cp	r25, r24
+ 74e:	09 f0       	breq	.+2      	; 0x752 <comms_retrieve_data+0x80>
+ 750:	44 c0       	rjmp	.+136    	; 0x7da <comms_retrieve_data+0x108>
+				{
+					packet_buffer[packet_buffer_pos] = rx_data_byte;
+ 752:	80 91 f2 00 	lds	r24, 0x00F2
+ 756:	e8 2f       	mov	r30, r24
+ 758:	f0 e0       	ldi	r31, 0x00	; 0
+ 75a:	e9 50       	subi	r30, 0x09	; 9
+ 75c:	ff 4f       	sbci	r31, 0xFF	; 255
+ 75e:	90 83       	st	Z, r25
+					packet_buffer_pos++;
+ 760:	8f 5f       	subi	r24, 0xFF	; 255
+ 762:	80 93 f2 00 	sts	0x00F2, r24
+					comms_state = third_iden_char;
+ 766:	82 e0       	ldi	r24, 0x02	; 2
+ 768:	80 93 f3 00 	sts	0x00F3, r24
+ 76c:	38 c0       	rjmp	.+112    	; 0x7de <comms_retrieve_data+0x10c>
+					// Go back to idle state if header not valid
+					comms_state = idle;
+				}
+				break;
+			case third_iden_char:
+				if(rx_data_byte == iden_chars[2])
+ 76e:	82 81       	ldd	r24, Z+2	; 0x02
+ 770:	98 17       	cp	r25, r24
+ 772:	99 f5       	brne	.+102    	; 0x7da <comms_retrieve_data+0x108>
+				{
+					packet_buffer[packet_buffer_pos] = rx_data_byte;
+ 774:	80 91 f2 00 	lds	r24, 0x00F2
+ 778:	e8 2f       	mov	r30, r24
+ 77a:	f0 e0       	ldi	r31, 0x00	; 0
+ 77c:	e9 50       	subi	r30, 0x09	; 9
+ 77e:	ff 4f       	sbci	r31, 0xFF	; 255
+ 780:	90 83       	st	Z, r25
+					packet_buffer_pos++;
+ 782:	8f 5f       	subi	r24, 0xFF	; 255
+ 784:	80 93 f2 00 	sts	0x00F2, r24
+					comms_state = packet_data_count;
+ 788:	f0 92 f3 00 	sts	0x00F3, r15
+ 78c:	28 c0       	rjmp	.+80     	; 0x7de <comms_retrieve_data+0x10c>
+					// Go back to idle state if header not valid
+					comms_state = idle;
+				}
+				break;
+			case packet_data_count:
+				comms_state = packet_data;
+ 78e:	e0 92 f3 00 	sts	0x00F3, r14
+				packet_buffer[packet_buffer_pos] = rx_data_byte;
+ 792:	80 91 f2 00 	lds	r24, 0x00F2
+ 796:	90 91 f0 00 	lds	r25, 0x00F0
+ 79a:	e8 2f       	mov	r30, r24
+ 79c:	f0 e0       	ldi	r31, 0x00	; 0
+ 79e:	e9 50       	subi	r30, 0x09	; 9
+ 7a0:	ff 4f       	sbci	r31, 0xFF	; 255
+ 7a2:	90 83       	st	Z, r25
+				num_of_data_bytes = rx_data_byte;
+ 7a4:	90 93 f1 00 	sts	0x00F1, r25
+				packet_buffer_pos++;
+ 7a8:	8f 5f       	subi	r24, 0xFF	; 255
+ 7aa:	80 93 f2 00 	sts	0x00F2, r24
+ 7ae:	17 c0       	rjmp	.+46     	; 0x7de <comms_retrieve_data+0x10c>
+				break;
+
+			case packet_data:
+				
+				packet_buffer[packet_buffer_pos] = rx_data_byte;
+ 7b0:	80 91 f2 00 	lds	r24, 0x00F2
+ 7b4:	e8 2f       	mov	r30, r24
+ 7b6:	f0 e0       	ldi	r31, 0x00	; 0
+ 7b8:	e9 50       	subi	r30, 0x09	; 9
+ 7ba:	ff 4f       	sbci	r31, 0xFF	; 255
+ 7bc:	90 91 f0 00 	lds	r25, 0x00F0
+ 7c0:	90 83       	st	Z, r25
+				packet_buffer_pos++;
+ 7c2:	8f 5f       	subi	r24, 0xFF	; 255
+ 7c4:	80 93 f2 00 	sts	0x00F2, r24
+				if(packet_buffer_pos >= 4+3) //FIX
+ 7c8:	87 30       	cpi	r24, 0x07	; 7
+ 7ca:	48 f0       	brcs	.+18     	; 0x7de <comms_retrieve_data+0x10c>
+					comms_state = packet_complete;
+				}
+				
+				break;
+			case receiving_checksum:
+				comms_state = packet_complete;
+ 7cc:	00 93 f3 00 	sts	0x00F3, r16
+ 7d0:	06 c0       	rjmp	.+12     	; 0x7de <comms_retrieve_data+0x10c>
+				break;
+			case packet_complete:
+				// Set new packet flag true so comms decode can be called
+				new_packet_flg = true;
+ 7d2:	10 93 ee 00 	sts	0x00EE, r17
+				led_toggle(2);
+ 7d6:	82 e0       	ldi	r24, 0x02	; 2
+ 7d8:	da dc       	rcall	.-1612   	; 0x18e <led_toggle>
+				comms_state = idle;
+				break;
+			default:
+				comms_state = idle;
+ 7da:	10 92 f3 00 	sts	0x00F3, r1
+				break;
+		}
+		
+		//packet_buffer_pos++;
+		if(packet_buffer_pos > BUFFER_SIZE)					//Resets packet buffer index (shouldn't happen)
+ 7de:	80 91 f2 00 	lds	r24, 0x00F2
+ 7e2:	83 33       	cpi	r24, 0x33	; 51
+ 7e4:	20 f0       	brcs	.+8      	; 0x7ee <comms_retrieve_data+0x11c>
+		{
+			packet_buffer_pos = 0;
+ 7e6:	10 92 f2 00 	sts	0x00F2, r1
+			comms_packet_buffer_overrun_flg = true;
+ 7ea:	10 93 ef 00 	sts	0x00EF, r17
+	static enum comms_states_enum comms_state = idle;
+	static uint8_t packet_buffer_pos = 0;
+	static uint8_t num_of_data_bytes = 0;
+	static uint8_t rx_data_byte;
+
+	while(usart_get_byte(&rx_data_byte))
+ 7ee:	80 ef       	ldi	r24, 0xF0	; 240
+ 7f0:	90 e0       	ldi	r25, 0x00	; 0
+ 7f2:	41 df       	rcall	.-382    	; 0x676 <usart_get_byte>
+ 7f4:	88 23       	and	r24, r24
+ 7f6:	09 f0       	breq	.+2      	; 0x7fa <comms_retrieve_data+0x128>
+ 7f8:	77 cf       	rjmp	.-274    	; 0x6e8 <comms_retrieve_data+0x16>
+		{
+			packet_buffer_pos = 0;
+			comms_packet_buffer_overrun_flg = true;
+		}
+	}
+}
+ 7fa:	1f 91       	pop	r17
+ 7fc:	0f 91       	pop	r16
+ 7fe:	ff 90       	pop	r15
+ 800:	ef 90       	pop	r14
+ 802:	08 95       	ret
+
+00000804 <comms_update>:
+	
+}
+
+void comms_update(void)
+{
+	comms_retrieve_data();
+ 804:	66 df       	rcall	.-308    	; 0x6d2 <comms_retrieve_data>
+
+	//Decode if their are new packets present
+	if(new_packet_flg)
+ 806:	80 91 ee 00 	lds	r24, 0x00EE
+ 80a:	88 23       	and	r24, r24
+ 80c:	61 f0       	breq	.+24     	; 0x826 <comms_update+0x22>
+	{
+		// Reset timeout counter
+		timeout_counter = 0;
+ 80e:	10 92 f5 00 	sts	0x00F5, r1
+ 812:	10 92 f4 00 	sts	0x00F4, r1
+		// Set timeout flag to false when new packet arrives
+		comms_timeout_flg = false;
+ 816:	10 92 61 00 	sts	0x0061, r1
+		new_packet_flg = false;
+ 81a:	10 92 ee 00 	sts	0x00EE, r1
+		// Set unread data flag (cleared when comms_get_byte is called)
+		unread_data_flg = true;
+ 81e:	81 e0       	ldi	r24, 0x01	; 1
+ 820:	80 93 ed 00 	sts	0x00ED, r24
+ 824:	08 95       	ret
+	}
+	else
+	{
+		// Increment timeout counter if no packet arrived
+		timeout_counter++;
+ 826:	80 91 f4 00 	lds	r24, 0x00F4
+ 82a:	90 91 f5 00 	lds	r25, 0x00F5
+ 82e:	01 96       	adiw	r24, 0x01	; 1
+ 830:	90 93 f5 00 	sts	0x00F5, r25
+ 834:	80 93 f4 00 	sts	0x00F4, r24
+		// Set flag if timeout counter has reached the limit without being reset by a new packet arriving
+		if(timeout_counter == COMMS_TIMEOUT_PERIOD)
+ 838:	80 55       	subi	r24, 0x50	; 80
+ 83a:	93 4c       	sbci	r25, 0xC3	; 195
+ 83c:	19 f4       	brne	.+6      	; 0x844 <comms_update+0x40>
+		{
+			comms_timeout_flg = true;
+ 83e:	81 e0       	ldi	r24, 0x01	; 1
+ 840:	80 93 61 00 	sts	0x0061, r24
+ 844:	08 95       	ret
+
+00000846 <comms_init>:
+static uint16_t timeout_counter = 0;
+
+/***Function Definitions***/
+
+void comms_init(uint8_t* iden_chars_in)
+{
+ 846:	0f 93       	push	r16
+ 848:	1f 93       	push	r17
+ 84a:	8c 01       	movw	r16, r24
+	led_on(0);
+ 84c:	80 e0       	ldi	r24, 0x00	; 0
+ 84e:	62 dc       	rcall	.-1852   	; 0x114 <led_on>
+	iden_chars = iden_chars_in;
+ 850:	10 93 2a 01 	sts	0x012A, r17
+ 854:	00 93 29 01 	sts	0x0129, r16
+	
+	// Intialise usart used to communicate with comms
+	usart_init();
+ 858:	c1 de       	rcall	.-638    	; 0x5dc <usart_init>
+
+	//Signal that intialisation is complete
+	comms_init_complete_flg = true;
+ 85a:	81 e0       	ldi	r24, 0x01	; 1
+ 85c:	80 93 f6 00 	sts	0x00F6, r24
+}
+ 860:	1f 91       	pop	r17
+ 862:	0f 91       	pop	r16
+ 864:	08 95       	ret
+
+00000866 <button_init>:
+		none
+	function: 
+		Gets the address's pointing to the array holding button information
+*/
+void button_init(uint8_t** button_pin_in, uint8_t* button_pin_num_in)
+{
+ 866:	ac 01       	movw	r20, r24
+	button_pin = button_pin_in;
+ 868:	90 93 2e 01 	sts	0x012E, r25
+ 86c:	80 93 2d 01 	sts	0x012D, r24
+	button_pin_num = button_pin_num_in;
+ 870:	70 93 30 01 	sts	0x0130, r23
+ 874:	60 93 2f 01 	sts	0x012F, r22
+ 878:	20 e0       	ldi	r18, 0x00	; 0
+ 87a:	11 c0       	rjmp	.+34     	; 0x89e <button_init+0x38>
+
+	//Assigns every pin that an button is connected to as an input and sets the correct pin buffer
+	uint8_t x = 0;
+	while(button_pin[x] != '\0')
+	{
+		if(button_pin[x] == &PINB)
+ 87c:	e6 33       	cpi	r30, 0x36	; 54
+ 87e:	f1 05       	cpc	r31, r1
+ 880:	19 f4       	brne	.+6      	; 0x888 <button_init+0x22>
+		{
+			DDRB = DDRB | (0 << button_pin_num[x]);
+ 882:	87 b3       	in	r24, 0x17	; 23
+ 884:	87 bb       	out	0x17, r24	; 23
+ 886:	0a c0       	rjmp	.+20     	; 0x89c <button_init+0x36>
+		}
+		else if(button_pin[x] == &PINC)
+ 888:	e3 33       	cpi	r30, 0x33	; 51
+ 88a:	f1 05       	cpc	r31, r1
+ 88c:	19 f4       	brne	.+6      	; 0x894 <button_init+0x2e>
+		{
+			DDRC = DDRC | (0 << button_pin_num[x]);
+ 88e:	84 b3       	in	r24, 0x14	; 20
+ 890:	84 bb       	out	0x14, r24	; 20
+ 892:	04 c0       	rjmp	.+8      	; 0x89c <button_init+0x36>
+		}
+		else if(button_pin[x] == &PIND)
+ 894:	f0 97       	sbiw	r30, 0x30	; 48
+ 896:	11 f4       	brne	.+4      	; 0x89c <button_init+0x36>
+		{
+			DDRD = DDRD | (0 << button_pin_num[x]);
+ 898:	81 b3       	in	r24, 0x11	; 17
+ 89a:	81 bb       	out	0x11, r24	; 17
+		}
+		x++;
+ 89c:	2f 5f       	subi	r18, 0xFF	; 255
+	button_pin = button_pin_in;
+	button_pin_num = button_pin_num_in;
+
+	//Assigns every pin that an button is connected to as an input and sets the correct pin buffer
+	uint8_t x = 0;
+	while(button_pin[x] != '\0')
+ 89e:	e2 2f       	mov	r30, r18
+ 8a0:	f0 e0       	ldi	r31, 0x00	; 0
+ 8a2:	ee 0f       	add	r30, r30
+ 8a4:	ff 1f       	adc	r31, r31
+ 8a6:	e4 0f       	add	r30, r20
+ 8a8:	f5 1f       	adc	r31, r21
+ 8aa:	01 90       	ld	r0, Z+
+ 8ac:	f0 81       	ld	r31, Z
+ 8ae:	e0 2d       	mov	r30, r0
+ 8b0:	30 97       	sbiw	r30, 0x00	; 0
+ 8b2:	21 f7       	brne	.-56     	; 0x87c <button_init+0x16>
+		}
+		x++;
+	}
+
+	
+}
+ 8b4:	08 95       	ret
+
+000008b6 <button_update>:
+
+void button_update(void)
+{
+ 8b6:	ef 92       	push	r14
+ 8b8:	ff 92       	push	r15
+ 8ba:	0f 93       	push	r16
+ 8bc:	1f 93       	push	r17
+ 8be:	cf 93       	push	r28
+ 8c0:	df 93       	push	r29
+	uint8_t x = 0;
+	static uint16_t count;
+	while(button_pin[x] != '\0')
+ 8c2:	00 91 2d 01 	lds	r16, 0x012D
+ 8c6:	10 91 2e 01 	lds	r17, 0x012E
+	{
+		// Button Debounce State Machine
+		switch(button_state[x])
+		{
+			case low:
+				if((*button_pin[x] & (1 << button_pin_num[x])) == false)
+ 8ca:	40 91 2f 01 	lds	r20, 0x012F
+ 8ce:	50 91 30 01 	lds	r21, 0x0130
+ 8d2:	20 91 2b 01 	lds	r18, 0x012B
+ 8d6:	30 91 2c 01 	lds	r19, 0x012C
+ 8da:	60 e0       	ldi	r22, 0x00	; 0
+					if(count == DEBOUNCE_TIME)
+					{
+						if((*button_pin[x] & (0 << button_pin_num[x])) == false)
+						{
+							
+							button_state[x] = high;
+ 8dc:	72 e0       	ldi	r23, 0x02	; 2
+			case low:
+				if((*button_pin[x] & (1 << button_pin_num[x])) == false)
+				{
+					count = 0;
+					// Go into high debounce state if button state was orginally low and now the button is high
+					button_state[x] = high_debounce;
+ 8de:	ee 24       	eor	r14, r14
+ 8e0:	e3 94       	inc	r14
+			case high:
+				// If button state is high and button is now low
+				if((*button_pin[x] & (1 << button_pin_num[x])) != false)
+				{
+					count = 0;
+					button_state[x] = low_debounce;
+ 8e2:	e3 e0       	ldi	r30, 0x03	; 3
+ 8e4:	fe 2e       	mov	r15, r30
+ 8e6:	4a c0       	rjmp	.+148    	; 0x97c <button_update+0xc6>
+	uint8_t x = 0;
+	static uint16_t count;
+	while(button_pin[x] != '\0')
+	{
+		// Button Debounce State Machine
+		switch(button_state[x])
+ 8e8:	ed 01       	movw	r28, r26
+ 8ea:	cf 5c       	subi	r28, 0xCF	; 207
+ 8ec:	de 4f       	sbci	r29, 0xFE	; 254
+ 8ee:	88 81       	ld	r24, Y
+ 8f0:	81 30       	cpi	r24, 0x01	; 1
+ 8f2:	a9 f0       	breq	.+42     	; 0x91e <button_update+0x68>
+ 8f4:	81 30       	cpi	r24, 0x01	; 1
+ 8f6:	28 f0       	brcs	.+10     	; 0x902 <button_update+0x4c>
+ 8f8:	82 30       	cpi	r24, 0x02	; 2
+ 8fa:	d9 f0       	breq	.+54     	; 0x932 <button_update+0x7c>
+ 8fc:	83 30       	cpi	r24, 0x03	; 3
+ 8fe:	e9 f5       	brne	.+122    	; 0x97a <button_update+0xc4>
+ 900:	26 c0       	rjmp	.+76     	; 0x94e <button_update+0x98>
+		{
+			case low:
+				if((*button_pin[x] & (1 << button_pin_num[x])) == false)
+ 902:	80 81       	ld	r24, Z
+ 904:	90 e0       	ldi	r25, 0x00	; 0
+ 906:	a4 0f       	add	r26, r20
+ 908:	b5 1f       	adc	r27, r21
+ 90a:	0c 90       	ld	r0, X
+ 90c:	02 c0       	rjmp	.+4      	; 0x912 <button_update+0x5c>
+ 90e:	95 95       	asr	r25
+ 910:	87 95       	ror	r24
+ 912:	0a 94       	dec	r0
+ 914:	e2 f7       	brpl	.-8      	; 0x90e <button_update+0x58>
+ 916:	80 fd       	sbrc	r24, 0
+ 918:	30 c0       	rjmp	.+96     	; 0x97a <button_update+0xc4>
+				{
+					count = 0;
+					// Go into high debounce state if button state was orginally low and now the button is high
+					button_state[x] = high_debounce;
+ 91a:	e8 82       	st	Y, r14
+ 91c:	2c c0       	rjmp	.+88     	; 0x976 <button_update+0xc0>
+				break;
+			case high_debounce:
+				if(button_state[x] == high_debounce)
+				{
+					// Increment debounce counter
+					count++;
+ 91e:	2f 5f       	subi	r18, 0xFF	; 255
+ 920:	3f 4f       	sbci	r19, 0xFF	; 255
+					if(count == DEBOUNCE_TIME)
+ 922:	2a 30       	cpi	r18, 0x0A	; 10
+ 924:	31 05       	cpc	r19, r1
+ 926:	49 f5       	brne	.+82     	; 0x97a <button_update+0xc4>
+					{
+						if((*button_pin[x] & (0 << button_pin_num[x])) == false)
+						{
+							
+							button_state[x] = high;
+ 928:	78 83       	st	Y, r23
+							// Set the button pressed flag for external functions to check
+							button_pressed_flg[x] = true;
+ 92a:	a5 5c       	subi	r26, 0xC5	; 197
+ 92c:	be 4f       	sbci	r27, 0xFE	; 254
+ 92e:	8c 93       	st	X, r24
+ 930:	22 c0       	rjmp	.+68     	; 0x976 <button_update+0xc0>
+					}
+				}
+				break;
+			case high:
+				// If button state is high and button is now low
+				if((*button_pin[x] & (1 << button_pin_num[x])) != false)
+ 932:	80 81       	ld	r24, Z
+ 934:	90 e0       	ldi	r25, 0x00	; 0
+ 936:	a4 0f       	add	r26, r20
+ 938:	b5 1f       	adc	r27, r21
+ 93a:	0c 90       	ld	r0, X
+ 93c:	02 c0       	rjmp	.+4      	; 0x942 <button_update+0x8c>
+ 93e:	95 95       	asr	r25
+ 940:	87 95       	ror	r24
+ 942:	0a 94       	dec	r0
+ 944:	e2 f7       	brpl	.-8      	; 0x93e <button_update+0x88>
+ 946:	80 ff       	sbrs	r24, 0
+ 948:	18 c0       	rjmp	.+48     	; 0x97a <button_update+0xc4>
+				{
+					count = 0;
+					button_state[x] = low_debounce;
+ 94a:	f8 82       	st	Y, r15
+ 94c:	14 c0       	rjmp	.+40     	; 0x976 <button_update+0xc0>
+				}
+				break;
+			case low_debounce:
+				// Increment debounce counter
+				count++;
+ 94e:	2f 5f       	subi	r18, 0xFF	; 255
+ 950:	3f 4f       	sbci	r19, 0xFF	; 255
+				if(count == DEBOUNCE_TIME)
+ 952:	2a 30       	cpi	r18, 0x0A	; 10
+ 954:	31 05       	cpc	r19, r1
+ 956:	89 f4       	brne	.+34     	; 0x97a <button_update+0xc4>
+				{
+					if((*button_pin[x] & (1 << button_pin_num[x])) != false)
+ 958:	80 81       	ld	r24, Z
+ 95a:	90 e0       	ldi	r25, 0x00	; 0
+ 95c:	a4 0f       	add	r26, r20
+ 95e:	b5 1f       	adc	r27, r21
+ 960:	0c 90       	ld	r0, X
+ 962:	02 c0       	rjmp	.+4      	; 0x968 <button_update+0xb2>
+ 964:	95 95       	asr	r25
+ 966:	87 95       	ror	r24
+ 968:	0a 94       	dec	r0
+ 96a:	e2 f7       	brpl	.-8      	; 0x964 <button_update+0xae>
+ 96c:	80 ff       	sbrs	r24, 0
+ 96e:	02 c0       	rjmp	.+4      	; 0x974 <button_update+0xbe>
+					{
+						button_state[x] = low;
+ 970:	18 82       	st	Y, r1
+ 972:	01 c0       	rjmp	.+2      	; 0x976 <button_update+0xc0>
+				
+					}
+					else
+					{
+						// Set state back to high if button is not low after DEBOUNCE_TIME
+						button_state[x] = high;
+ 974:	78 83       	st	Y, r23
+ 976:	20 e0       	ldi	r18, 0x00	; 0
+ 978:	30 e0       	ldi	r19, 0x00	; 0
+					count = 0;
+				}
+				break;
+		}
+		//Increment button to check
+		x++;
+ 97a:	6f 5f       	subi	r22, 0xFF	; 255
+
+void button_update(void)
+{
+	uint8_t x = 0;
+	static uint16_t count;
+	while(button_pin[x] != '\0')
+ 97c:	a6 2f       	mov	r26, r22
+ 97e:	b0 e0       	ldi	r27, 0x00	; 0
+ 980:	fd 01       	movw	r30, r26
+ 982:	ee 0f       	add	r30, r30
+ 984:	ff 1f       	adc	r31, r31
+ 986:	e0 0f       	add	r30, r16
+ 988:	f1 1f       	adc	r31, r17
+ 98a:	01 90       	ld	r0, Z+
+ 98c:	f0 81       	ld	r31, Z
+ 98e:	e0 2d       	mov	r30, r0
+ 990:	30 97       	sbiw	r30, 0x00	; 0
+ 992:	09 f0       	breq	.+2      	; 0x996 <button_update+0xe0>
+ 994:	a9 cf       	rjmp	.-174    	; 0x8e8 <button_update+0x32>
+ 996:	30 93 2c 01 	sts	0x012C, r19
+ 99a:	20 93 2b 01 	sts	0x012B, r18
+				break;
+		}
+		//Increment button to check
+		x++;
+	}
+}
+ 99e:	df 91       	pop	r29
+ 9a0:	cf 91       	pop	r28
+ 9a2:	1f 91       	pop	r17
+ 9a4:	0f 91       	pop	r16
+ 9a6:	ff 90       	pop	r15
+ 9a8:	ef 90       	pop	r14
+ 9aa:	08 95       	ret
+
+000009ac <button_been_pressed>:
+
+uint8_t button_been_pressed(uint8_t button_num)
+{
+	if(button_pressed_flg[button_num] == true)
+ 9ac:	e8 2f       	mov	r30, r24
+ 9ae:	f0 e0       	ldi	r31, 0x00	; 0
+ 9b0:	e5 5c       	subi	r30, 0xC5	; 197
+ 9b2:	fe 4f       	sbci	r31, 0xFE	; 254
+ 9b4:	80 81       	ld	r24, Z
+ 9b6:	81 30       	cpi	r24, 0x01	; 1
+ 9b8:	11 f0       	breq	.+4      	; 0x9be <button_been_pressed+0x12>
+ 9ba:	80 e0       	ldi	r24, 0x00	; 0
+ 9bc:	08 95       	ret
+	{
+		// Set pressed flag back to false once it has been checked
+		button_pressed_flg[button_num] = false;
+ 9be:	10 82       	st	Z, r1
+ 9c0:	81 e0       	ldi	r24, 0x01	; 1
+	}
+	else
+	{
+		return false;
+	}
+}
+ 9c2:	08 95       	ret
+
+000009c4 <_exit>:
+ 9c4:	f8 94       	cli
+
+000009c6 <__stop_program>:
+ 9c6:	ff cf       	rjmp	.-2      	; 0x9c6 <__stop_program>

@@ -1,0 +1,170 @@
+# Skateboard Motherboard
+# 2012-06-12 07:22:21Z
+
+dont_use_location Comparator -1 -1 2
+dont_use_location Comparator -1 -1 3
+dont_use_location SC -1 -1 0
+dont_use_location SC -1 -1 1
+dont_use_location SC -1 -1 2
+dont_use_location SC -1 -1 3
+dont_use_location VIDAC -1 -1 1
+dont_use_location VIDAC -1 -1 2
+dont_use_location VIDAC -1 -1 3
+dont_use_location SAR -1 -1 1
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+dont_use_location Abuf -1 -1 0
+dont_use_location Abuf -1 -1 0
+dont_use_location Abuf -1 -1 0
+dont_use_location Abuf -1 -1 2
+dont_use_location Abuf -1 -1 2
+dont_use_location Abuf -1 -1 2
+dont_use_location Abuf -1 -1 1
+dont_use_location Abuf -1 -1 1
+dont_use_location Abuf -1 -1 1
+dont_use_location Abuf -1 -1 3
+dont_use_location Abuf -1 -1 3
+dont_use_location Abuf -1 -1 3
+dont_use_location VIDAC -1 -1 2
+dont_use_location VIDAC -1 -1 1
+dont_use_location VIDAC -1 -1 3
+dont_use_location VIDAC -1 -1 2
+dont_use_location VIDAC -1 -1 1
+dont_use_location VIDAC -1 -1 3
+dont_use_location SAR -1 -1 1
+dont_use_location SAR -1 -1 1
+dont_use_location SAR -1 -1 1
+dont_use_location SAR -1 -1 1
+dont_use_location SAR -1 -1 1
+dont_use_location Comparator -1 -1 2
+dont_use_location Comparator -1 -1 3
+dont_use_location Comparator -1 -1 2
+dont_use_location Comparator -1 -1 3
+dont_use_location SC -1 -1 0
+dont_use_location SC -1 -1 2
+dont_use_location SC -1 -1 1
+dont_use_location SC -1 -1 3
+dont_use_location SC -1 -1 0
+dont_use_location SC -1 -1 2
+dont_use_location SC -1 -1 1
+dont_use_location SC -1 -1 3
+dont_use_location SC -1 -1 0
+dont_use_location SC -1 -1 2
+dont_use_location SC -1 -1 1
+dont_use_location SC -1 -1 3
+set_location "ClockBlock" clockblockcell -1 -1 0
+set_location "ClockBlock_1k__SYNC" 0 2 5 1
+set_location "IsrMainTick" interrupt -1 -1 21
+set_location "IsrMotionSensor" interrupt -1 -1 10
+set_location "MODIN2_0" 0 1 1 1
+set_location "MODIN2_1" 0 1 1 0
+set_location "Net_123" 3 1 0 0
+set_location "Net_155" 3 2 1 3
+set_location "Net_43" 3 0 1 0
+set_location "Net_64" 0 5 1 0
+set_location "Net_70" 2 1 1 3
+set_io "PinBattVolt(0)" iocell 0 2
+set_io "PinLedGreen(0)" iocell 2 7
+set_io "PinLedOrange(0)" iocell 2 6
+set_io "PinLedRed(0)" iocell 2 5
+set_io "PinLightFront(0)" iocell 0 4
+set_io "PinLightRear(0)" iocell 0 5
+set_io "PinLightSkirting(0)" iocell 0 6
+set_location "PinMotionSensor" logicalport -1 -1 6
+set_io "PinMotionSensor(0)" iocell 6 1
+set_io "PinPwmMotor(0)" iocell 12 6
+set_io "PinPwmPiezo(0)" iocell 4 4
+set_io "PinUartDebugRx(0)" iocell 6 5
+set_io "PinUartDebugTx(0)" iocell 6 4
+set_io "PinUartXbeeRx(0)" iocell 2 2
+set_io "PinUartXbeeTx(0)" iocell 2 1
+set_io "PinXbeeSleep(0)" iocell 2 0
+set_location "\AdcSar:ADC_SAR\" sarcell -1 -1 0
+set_location "\AdcSar:IRQ\" interrupt -1 -1 12
+set_location "\PwmMotor:PWMUDB:final_kill_reg\" 2 0 0 0
+set_location "\PwmMotor:PWMUDB:prevCompare1\" 3 0 1 1
+set_location "\PwmMotor:PWMUDB:runmode_enable\" 3 0 1 2
+set_location "\PwmMotor:PWMUDB:sCTRLReg:AsyncCtl:ctrlreg\" 3 0 6
+set_location "\PwmMotor:PWMUDB:sP16:pwmdp:u0\" 2 0 2
+set_location "\PwmMotor:PWMUDB:sP16:pwmdp:u1\" 3 0 2
+set_location "\PwmMotor:PWMUDB:sSTSReg:nrstSts:stsreg\" 2 0 4
+set_location "\PwmMotor:PWMUDB:status_0\" 3 0 1 3
+set_location "\PwmMotor:PWMUDB:status_5\" 2 2 1 1
+set_location "\PwmPiezo:PWMUDB:final_kill_reg\" 2 3 0 0
+set_location "\PwmPiezo:PWMUDB:prevCompare1\" 0 5 1 1
+set_location "\PwmPiezo:PWMUDB:runmode_enable\" 0 5 1 3
+set_location "\PwmPiezo:PWMUDB:sCTRLReg:AsyncCtl:ctrlreg\" 0 5 6
+set_location "\PwmPiezo:PWMUDB:sP16:pwmdp:u0\" 0 4 2
+set_location "\PwmPiezo:PWMUDB:sP16:pwmdp:u1\" 0 5 2
+set_location "\PwmPiezo:PWMUDB:sSTSReg:nrstSts:stsreg\" 0 5 4
+set_location "\PwmPiezo:PWMUDB:status_0\" 0 5 1 2
+set_location "\PwmPiezo:PWMUDB:status_5\" 2 2 1 2
+set_location "\TimerMainTick:TimerUDB:nrstSts:stsreg\" 1 2 4
+set_location "\TimerMainTick:TimerUDB:sCTRLReg:AsyncCtl:ctrlreg\" 3 1 6
+set_location "\TimerMainTick:TimerUDB:sT8:timerdp:u0\" 1 2 2
+set_location "\TimerMainTick:TimerUDB:status_tc\" 2 2 1 3
+set_location "\UartDebug:BUART:counter_load_not\" 3 2 1 2
+set_location "\UartDebug:BUART:pollcount_0\" 3 4 1 1
+set_location "\UartDebug:BUART:pollcount_1\" 3 4 1 0
+set_location "\UartDebug:BUART:rx_address_detected\" 3 2 0 2
+set_location "\UartDebug:BUART:rx_bitclk_enable\" 2 4 0 2
+set_location "\UartDebug:BUART:rx_counter_load\" 2 2 0 1
+set_location "\UartDebug:BUART:rx_last\" 2 4 0 3
+set_location "\UartDebug:BUART:rx_load_fifo\" 2 4 1 1
+set_location "\UartDebug:BUART:rx_state_0\" 2 4 1 2
+set_location "\UartDebug:BUART:rx_state_2\" 2 4 1 0
+set_location "\UartDebug:BUART:rx_state_3\" 2 4 1 3
+set_location "\UartDebug:BUART:rx_state_stop1_reg\" 2 4 0 1
+set_location "\UartDebug:BUART:rx_status_3\" 2 4 0 0
+set_location "\UartDebug:BUART:rx_status_4\" 2 2 0 2
+set_location "\UartDebug:BUART:rx_status_5\" 1 1 1 3
+set_location "\UartDebug:BUART:sRX:RxBitCounter\" 2 4 7
+set_location "\UartDebug:BUART:sRX:RxShifter:u0\" 2 4 2
+set_location "\UartDebug:BUART:sRX:RxSts\" 2 2 4
+set_location "\UartDebug:BUART:sTX:TxShifter:u0\" 3 2 2
+set_location "\UartDebug:BUART:sTX:TxSts\" 3 2 4
+set_location "\UartDebug:BUART:sTX:sCLOCK:TxBitClkGen\" 2 2 2
+set_location "\UartDebug:BUART:tx_bitclk\" 2 3 1 0
+set_location "\UartDebug:BUART:tx_bitclk_enable_pre\" 2 2 0 3
+set_location "\UartDebug:BUART:tx_state_0\" 3 2 1 0
+set_location "\UartDebug:BUART:tx_state_1\" 3 2 0 1
+set_location "\UartDebug:BUART:tx_state_2\" 2 2 1 0
+set_location "\UartDebug:BUART:tx_status_0\" 3 2 1 1
+set_location "\UartDebug:BUART:tx_status_2\" 1 1 0 1
+set_location "\UartDebug:BUART:txn\" 3 2 0 0
+set_location "\UartDebug:RXInternalInterrupt\" interrupt -1 -1 18
+set_location "\UartDebug:TXInternalInterrupt\" interrupt -1 -1 19
+set_location "\UartXbee:BUART:counter_load_not\" 2 1 1 2
+set_location "\UartXbee:BUART:rx_address_detected\" 2 1 0 2
+set_location "\UartXbee:BUART:rx_bitclk_enable\" 1 1 0 0
+set_location "\UartXbee:BUART:rx_counter_load\" 1 1 1 1
+set_location "\UartXbee:BUART:rx_last\" 1 1 0 2
+set_location "\UartXbee:BUART:rx_load_fifo\" 0 1 0 1
+set_location "\UartXbee:BUART:rx_state_0\" 0 1 0 2
+set_location "\UartXbee:BUART:rx_state_2\" 0 1 0 0
+set_location "\UartXbee:BUART:rx_state_3\" 0 1 0 3
+set_location "\UartXbee:BUART:rx_state_stop1_reg\" 1 1 1 2
+set_location "\UartXbee:BUART:rx_status_3\" 1 1 1 0
+set_location "\UartXbee:BUART:rx_status_4\" 1 1 0 3
+set_location "\UartXbee:BUART:rx_status_5\" 3 1 0 1
+set_location "\UartXbee:BUART:sRX:RxBitCounter\" 0 1 7
+set_location "\UartXbee:BUART:sRX:RxShifter:u0\" 1 1 2
+set_location "\UartXbee:BUART:sRX:RxSts\" 2 1 4
+set_location "\UartXbee:BUART:sTX:TxShifter:u0\" 2 1 2
+set_location "\UartXbee:BUART:sTX:TxSts\" 3 1 4
+set_location "\UartXbee:BUART:sTX:sCLOCK:TxBitClkGen\" 3 1 2
+set_location "\UartXbee:BUART:tx_bitclk\" 3 1 1 0
+set_location "\UartXbee:BUART:tx_bitclk_enable_pre\" 3 1 0 2
+set_location "\UartXbee:BUART:tx_state_0\" 2 1 1 0
+set_location "\UartXbee:BUART:tx_state_1\" 2 1 0 1
+set_location "\UartXbee:BUART:tx_state_2\" 2 2 0 0
+set_location "\UartXbee:BUART:tx_status_0\" 2 1 1 1
+set_location "\UartXbee:BUART:tx_status_2\" 3 1 0 3
+set_location "\UartXbee:BUART:txn\" 2 1 0 0
+set_location "\UartXbee:RXInternalInterrupt\" interrupt -1 -1 24
+set_location "\UartXbee:TXInternalInterrupt\" interrupt -1 -1 25
+set_location "__ONE__" 3 2 0 3

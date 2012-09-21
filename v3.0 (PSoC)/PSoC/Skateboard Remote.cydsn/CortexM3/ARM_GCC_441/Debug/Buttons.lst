@@ -1,0 +1,2403 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Buttons.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 2F020000 		.text
+  20      02001C01 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.global	motorState
+  24              		.bss
+  25              		.type	motorState, %object
+  26              		.size	motorState, 1
+  27              	motorState:
+  28 0000 00       		.space	1
+  29              		.global	lightsOnOffState
+  30              		.type	lightsOnOffState, %object
+  31              		.size	lightsOnOffState, 1
+  32              	lightsOnOffState:
+  33 0001 00       		.space	1
+  34              		.global	alarmState
+  35              		.type	alarmState, %object
+  36              		.size	alarmState, 1
+  37              	alarmState:
+  38 0002 00       		.space	1
+  39              		.global	lightModeState
+  40              		.type	lightModeState, %object
+  41              		.size	lightModeState, 1
+  42              	lightModeState:
+  43 0003 00       		.space	1
+  44              		.section	.text.Buttons_Init,"ax",%progbits
+  45              		.align	2
+  46              		.global	Buttons_Init
+  47              		.thumb
+  48              		.thumb_func
+  49              		.type	Buttons_Init, %function
+  50              	Buttons_Init:
+  51              	.LFB29:
+  52              		.file 1 ".\\Buttons.c"
+   1:.\Buttons.c   **** //!
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 2
+
+
+   2:.\Buttons.c   **** //! @file 		Buttons.c
+   3:.\Buttons.c   **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Buttons.c   **** //! @date 		14/05/2011
+   5:.\Buttons.c   **** //! @brief 		Handles the cap sense buttons.
+   6:.\Buttons.c   **** //! @details
+   7:.\Buttons.c   **** //!		<b>Last Modified:			</b> 14/05/2011								\n
+   8:.\Buttons.c   **** //!		<b>Version:					</b> v1.0									\n
+   9:.\Buttons.c   **** //!		<b>Company:					</b> CladLabs								\n
+  10:.\Buttons.c   **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\Buttons.c   **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\Buttons.c   **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\Buttons.c   **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\Buttons.c   **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\Buttons.c   **** //!		
+  16:.\Buttons.c   **** //!		Controls the buttons on the board.
+  17:.\Buttons.c   **** //!
+  18:.\Buttons.c   **** 
+  19:.\Buttons.c   **** //=================================================================================================
+  20:.\Buttons.c   **** //============================================ INFO ===============================================
+  21:.\Buttons.c   **** //=================================================================================================
+  22:.\Buttons.c   **** 
+  23:.\Buttons.c   **** //=================================================================================================
+  24:.\Buttons.c   **** //======================================= FILE INCLUSIONS =========================================
+  25:.\Buttons.c   **** //=================================================================================================
+  26:.\Buttons.c   **** 
+  27:.\Buttons.c   **** #include <device.h>
+  28:.\Buttons.c   **** 
+  29:.\Buttons.c   **** #include "../common/PublicObjects.h"
+  30:.\Buttons.c   **** 
+  31:.\Buttons.c   **** #include "Buttons.h"
+  32:.\Buttons.c   **** #include "Lights.h"
+  33:.\Buttons.c   **** 
+  34:.\Buttons.c   **** //===============================================================================================//
+  35:.\Buttons.c   **** //=================================== PRECOMPILER CHECKS ========================================//
+  36:.\Buttons.c   **** //===============================================================================================//
+  37:.\Buttons.c   **** 
+  38:.\Buttons.c   **** //=================================================================================================
+  39:.\Buttons.c   **** //========================================== DEFINES ==============================================
+  40:.\Buttons.c   **** //=================================================================================================
+  41:.\Buttons.c   **** 
+  42:.\Buttons.c   **** //=================================================================================================
+  43:.\Buttons.c   **** //========================================== TYPEDEF's ============================================
+  44:.\Buttons.c   **** //=================================================================================================
+  45:.\Buttons.c   **** 
+  46:.\Buttons.c   **** //=================================================================================================
+  47:.\Buttons.c   **** //==================================== PRIVATE VARIABLES ==========================================
+  48:.\Buttons.c   **** //=================================================================================================
+  49:.\Buttons.c   **** 
+  50:.\Buttons.c   **** typedef enum
+  51:.\Buttons.c   **** {
+  52:.\Buttons.c   **** 	ST_OFF,
+  53:.\Buttons.c   **** 	ST_HALF_ON,
+  54:.\Buttons.c   **** 	ST_ON,
+  55:.\Buttons.c   **** 	ST_HALF_OFF
+  56:.\Buttons.c   **** } buttonsState_t;
+  57:.\Buttons.c   **** 
+  58:.\Buttons.c   **** // Button state variables
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 3
+
+
+  59:.\Buttons.c   **** buttonsState_t motorState = ST_OFF;
+  60:.\Buttons.c   **** buttonsState_t lightsOnOffState = ST_OFF;
+  61:.\Buttons.c   **** buttonsState_t alarmState = ST_OFF;
+  62:.\Buttons.c   **** buttonsState_t lightModeState = ST_OFF;
+  63:.\Buttons.c   **** //=================================================================================================
+  64:.\Buttons.c   **** //=============================== PRIVATE FUNCTION PROTOTYPES =====================================
+  65:.\Buttons.c   **** //=================================================================================================
+  66:.\Buttons.c   **** 
+  67:.\Buttons.c   **** void Buttons_MotorStateMachine(uint8 motorButtonActive);
+  68:.\Buttons.c   **** void Buttons_LightsOnOffStateMachine(uint8 lightsOnOffButtonActive);
+  69:.\Buttons.c   **** void Buttons_AlarmStateMachine(uint8_t alarmButtonActive);
+  70:.\Buttons.c   **** void Buttons_LightModeStateMachine(uint8_t lightModeButtonActive);
+  71:.\Buttons.c   **** 
+  72:.\Buttons.c   **** //=================================================================================================
+  73:.\Buttons.c   **** //===================================== PUBLIC FUNCTIONS ==========================================
+  74:.\Buttons.c   **** //=================================================================================================
+  75:.\Buttons.c   **** 
+  76:.\Buttons.c   **** //! @brief		Initialises cap sense required for buttons
+  77:.\Buttons.c   **** //! @note		Call before calling any other Buttons.c function
+  78:.\Buttons.c   **** void Buttons_Init(void)
+  79:.\Buttons.c   **** {
+  53              		.loc 1 79 0
+  54              		.cfi_startproc
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 1, uses_anonymous_args = 0
+  57 0000 80B5     		push	{r7, lr}
+  58              	.LCFI0:
+  59              		.cfi_def_cfa_offset 8
+  60 0002 00AF     		add	r7, sp, #0
+  61              		.cfi_offset 14, -4
+  62              		.cfi_offset 7, -8
+  63              	.LCFI1:
+  64              		.cfi_def_cfa_register 7
+  80:.\Buttons.c   **** 	CapSense_Start();
+  65              		.loc 1 80 0
+  66 0004 FFF7FEFF 		bl	CapSense_Start
+  81:.\Buttons.c   **** 	CapSense_InitializeAllBaselines();
+  67              		.loc 1 81 0
+  68 0008 FFF7FEFF 		bl	CapSense_InitializeAllBaselines
+  82:.\Buttons.c   **** 	
+  83:.\Buttons.c   **** }
+  69              		.loc 1 83 0
+  70 000c 80BD     		pop	{r7, pc}
+  71              		.cfi_endproc
+  72              	.LFE29:
+  73              		.size	Buttons_Init, .-Buttons_Init
+  74 000e 00BF     		.section	.text.Buttons_Run,"ax",%progbits
+  75              		.align	2
+  76              		.global	Buttons_Run
+  77              		.thumb
+  78              		.thumb_func
+  79              		.type	Buttons_Run, %function
+  80              	Buttons_Run:
+  81              	.LFB30:
+  84:.\Buttons.c   **** 
+  85:.\Buttons.c   **** //! @brief		Buttons state machine
+  86:.\Buttons.c   **** //! @note		Call once every tick
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 4
+
+
+  87:.\Buttons.c   **** void Buttons_Run(void)
+  88:.\Buttons.c   **** {
+  82              		.loc 1 88 0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 8
+  85              		@ frame_needed = 1, uses_anonymous_args = 0
+  86 0000 80B5     		push	{r7, lr}
+  87              	.LCFI2:
+  88              		.cfi_def_cfa_offset 8
+  89 0002 82B0     		sub	sp, sp, #8
+  90              	.LCFI3:
+  91              		.cfi_def_cfa_offset 16
+  92 0004 00AF     		add	r7, sp, #0
+  93              		.cfi_offset 14, -4
+  94              		.cfi_offset 7, -8
+  95              	.LCFI4:
+  96              		.cfi_def_cfa_register 7
+  89:.\Buttons.c   **** 	CapSense_ScanEnabledWidgets();
+  97              		.loc 1 89 0
+  98 0006 FFF7FEFF 		bl	CapSense_ScanEnabledWidgets
+  99              	.L4:
+  90:.\Buttons.c   **** 	while(CapSense_IsBusy());
+ 100              		.loc 1 90 0
+ 101 000a FFF7FEFF 		bl	CapSense_IsBusy
+ 102 000e 0346     		mov	r3, r0
+ 103 0010 002B     		cmp	r3, #0
+ 104 0012 FAD1     		bne	.L4
+  91:.\Buttons.c   **** 	
+  92:.\Buttons.c   **** 	uint8 motorButtonActive = 0;
+ 105              		.loc 1 92 0
+ 106 0014 4FF00003 		mov	r3, #0
+ 107 0018 3B71     		strb	r3, [r7, #4]
+  93:.\Buttons.c   **** 	uint8 lightsButtonActive = 0;
+ 108              		.loc 1 93 0
+ 109 001a 4FF00003 		mov	r3, #0
+ 110 001e 7B71     		strb	r3, [r7, #5]
+  94:.\Buttons.c   **** 	uint8 alarmButtonActive = 0;
+ 111              		.loc 1 94 0
+ 112 0020 4FF00003 		mov	r3, #0
+ 113 0024 BB71     		strb	r3, [r7, #6]
+  95:.\Buttons.c   **** 	uint8_t lightModeButtonActive = 0;
+ 114              		.loc 1 95 0
+ 115 0026 4FF00003 		mov	r3, #0
+ 116 002a FB71     		strb	r3, [r7, #7]
+  96:.\Buttons.c   **** 	
+  97:.\Buttons.c   **** 	// Check buttons states
+  98:.\Buttons.c   **** 	
+  99:.\Buttons.c   **** 	//============================= MOTOR ON/OFF =======================//
+ 100:.\Buttons.c   **** 	
+ 101:.\Buttons.c   **** 	motorButtonActive = CapSense_CheckIsWidgetActive(CapSense_BUTTONMOTORONOFF__BTN);
+ 117              		.loc 1 101 0
+ 118 002c 4FF00000 		mov	r0, #0
+ 119 0030 FFF7FEFF 		bl	CapSense_CheckIsWidgetActive
+ 120 0034 0346     		mov	r3, r0
+ 121 0036 3B71     		strb	r3, [r7, #4]
+ 102:.\Buttons.c   **** 	
+ 103:.\Buttons.c   **** 	if(motorButtonActive)
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 5
+
+
+ 122              		.loc 1 103 0
+ 123 0038 3B79     		ldrb	r3, [r7, #4]	@ zero_extendqisi2
+ 124 003a 002B     		cmp	r3, #0
+ 125 003c 04D0     		beq	.L5
+ 104:.\Buttons.c   **** 		Buttons_MotorStateMachine(1);
+ 126              		.loc 1 104 0
+ 127 003e 4FF00100 		mov	r0, #1
+ 128 0042 FFF7FEFF 		bl	Buttons_MotorStateMachine
+ 129 0046 03E0     		b	.L6
+ 130              	.L5:
+ 105:.\Buttons.c   **** 	else
+ 106:.\Buttons.c   **** 		Buttons_MotorStateMachine(0);
+ 131              		.loc 1 106 0
+ 132 0048 4FF00000 		mov	r0, #0
+ 133 004c FFF7FEFF 		bl	Buttons_MotorStateMachine
+ 134              	.L6:
+ 107:.\Buttons.c   **** 		
+ 108:.\Buttons.c   **** 	//============================= LIGHTS ON/OFF =======================//
+ 109:.\Buttons.c   **** 	
+ 110:.\Buttons.c   **** 	lightsButtonActive = CapSense_CheckIsWidgetActive(CapSense_BUTTONLIGHTSONOFF__BTN);
+ 135              		.loc 1 110 0
+ 136 0050 4FF00100 		mov	r0, #1
+ 137 0054 FFF7FEFF 		bl	CapSense_CheckIsWidgetActive
+ 138 0058 0346     		mov	r3, r0
+ 139 005a 7B71     		strb	r3, [r7, #5]
+ 111:.\Buttons.c   **** 	
+ 112:.\Buttons.c   **** 	if(lightsButtonActive)
+ 140              		.loc 1 112 0
+ 141 005c 7B79     		ldrb	r3, [r7, #5]	@ zero_extendqisi2
+ 142 005e 002B     		cmp	r3, #0
+ 143 0060 04D0     		beq	.L7
+ 113:.\Buttons.c   **** 		Buttons_LightsOnOffStateMachine(1);
+ 144              		.loc 1 113 0
+ 145 0062 4FF00100 		mov	r0, #1
+ 146 0066 FFF7FEFF 		bl	Buttons_LightsOnOffStateMachine
+ 147 006a 03E0     		b	.L8
+ 148              	.L7:
+ 114:.\Buttons.c   **** 	else
+ 115:.\Buttons.c   **** 		Buttons_LightsOnOffStateMachine(0);
+ 149              		.loc 1 115 0
+ 150 006c 4FF00000 		mov	r0, #0
+ 151 0070 FFF7FEFF 		bl	Buttons_LightsOnOffStateMachine
+ 152              	.L8:
+ 116:.\Buttons.c   **** 		
+ 117:.\Buttons.c   **** 	//============================= ALARM ON/OFF =======================//
+ 118:.\Buttons.c   **** 	
+ 119:.\Buttons.c   **** 	alarmButtonActive = CapSense_CheckIsWidgetActive(CapSense_BUTTONALARMONOFF__BTN);
+ 153              		.loc 1 119 0
+ 154 0074 4FF00200 		mov	r0, #2
+ 155 0078 FFF7FEFF 		bl	CapSense_CheckIsWidgetActive
+ 156 007c 0346     		mov	r3, r0
+ 157 007e BB71     		strb	r3, [r7, #6]
+ 120:.\Buttons.c   **** 	
+ 121:.\Buttons.c   **** 	if(alarmButtonActive)
+ 158              		.loc 1 121 0
+ 159 0080 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 160 0082 002B     		cmp	r3, #0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 6
+
+
+ 161 0084 04D0     		beq	.L9
+ 122:.\Buttons.c   **** 	{
+ 123:.\Buttons.c   **** 		Buttons_AlarmStateMachine(1);
+ 162              		.loc 1 123 0
+ 163 0086 4FF00100 		mov	r0, #1
+ 164 008a FFF7FEFF 		bl	Buttons_AlarmStateMachine
+ 165 008e 03E0     		b	.L10
+ 166              	.L9:
+ 124:.\Buttons.c   **** 	}
+ 125:.\Buttons.c   **** 	else
+ 126:.\Buttons.c   **** 		Buttons_AlarmStateMachine(0);
+ 167              		.loc 1 126 0
+ 168 0090 4FF00000 		mov	r0, #0
+ 169 0094 FFF7FEFF 		bl	Buttons_AlarmStateMachine
+ 170              	.L10:
+ 127:.\Buttons.c   **** 		
+ 128:.\Buttons.c   **** 	//============================= LIGHT MODE ON/OFF =======================//
+ 129:.\Buttons.c   **** 	
+ 130:.\Buttons.c   **** 	lightModeButtonActive = CapSense_CheckIsWidgetActive(CapSense_BUTTONLIGHTMODE__BTN);
+ 171              		.loc 1 130 0
+ 172 0098 4FF00300 		mov	r0, #3
+ 173 009c FFF7FEFF 		bl	CapSense_CheckIsWidgetActive
+ 174 00a0 0346     		mov	r3, r0
+ 175 00a2 FB71     		strb	r3, [r7, #7]
+ 131:.\Buttons.c   **** 	
+ 132:.\Buttons.c   **** 	if(lightModeButtonActive)
+ 176              		.loc 1 132 0
+ 177 00a4 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 178 00a6 002B     		cmp	r3, #0
+ 179 00a8 04D0     		beq	.L11
+ 133:.\Buttons.c   **** 	{
+ 134:.\Buttons.c   **** 		Buttons_LightModeStateMachine(1);
+ 180              		.loc 1 134 0
+ 181 00aa 4FF00100 		mov	r0, #1
+ 182 00ae FFF7FEFF 		bl	Buttons_LightModeStateMachine
+ 183 00b2 03E0     		b	.L12
+ 184              	.L11:
+ 135:.\Buttons.c   **** 	}
+ 136:.\Buttons.c   **** 	else
+ 137:.\Buttons.c   **** 		Buttons_LightModeStateMachine(0);
+ 185              		.loc 1 137 0
+ 186 00b4 4FF00000 		mov	r0, #0
+ 187 00b8 FFF7FEFF 		bl	Buttons_LightModeStateMachine
+ 188              	.L12:
+ 138:.\Buttons.c   **** 	
+ 139:.\Buttons.c   **** 	// Update the baselines
+ 140:.\Buttons.c   **** 	CapSense_UpdateEnabledBaselines();
+ 189              		.loc 1 140 0
+ 190 00bc FFF7FEFF 		bl	CapSense_UpdateEnabledBaselines
+ 141:.\Buttons.c   **** 	
+ 142:.\Buttons.c   **** 	
+ 143:.\Buttons.c   **** 	
+ 144:.\Buttons.c   **** }
+ 191              		.loc 1 144 0
+ 192 00c0 07F10807 		add	r7, r7, #8
+ 193 00c4 BD46     		mov	sp, r7
+ 194 00c6 80BD     		pop	{r7, pc}
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 7
+
+
+ 195              		.cfi_endproc
+ 196              	.LFE30:
+ 197              		.size	Buttons_Run, .-Buttons_Run
+ 198              		.section	.text.Buttons_IsMotorButtonPressed,"ax",%progbits
+ 199              		.align	2
+ 200              		.global	Buttons_IsMotorButtonPressed
+ 201              		.thumb
+ 202              		.thumb_func
+ 203              		.type	Buttons_IsMotorButtonPressed, %function
+ 204              	Buttons_IsMotorButtonPressed:
+ 205              	.LFB31:
+ 145:.\Buttons.c   **** 
+ 146:.\Buttons.c   **** 
+ 147:.\Buttons.c   **** bool_t Buttons_IsMotorButtonPressed(void)
+ 148:.\Buttons.c   **** {
+ 206              		.loc 1 148 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 0
+ 209              		@ frame_needed = 1, uses_anonymous_args = 0
+ 210              		@ link register save eliminated.
+ 211 0000 80B4     		push	{r7}
+ 212              	.LCFI5:
+ 213              		.cfi_def_cfa_offset 4
+ 214 0002 00AF     		add	r7, sp, #0
+ 215              		.cfi_offset 7, -4
+ 216              	.LCFI6:
+ 217              		.cfi_def_cfa_register 7
+ 149:.\Buttons.c   **** 	if(motorState == ST_ON || motorState == ST_HALF_OFF)
+ 218              		.loc 1 149 0
+ 219 0004 40F20003 		movw	r3, #:lower16:motorState
+ 220 0008 C0F20003 		movt	r3, #:upper16:motorState
+ 221 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 222 000e 022B     		cmp	r3, #2
+ 223 0010 06D0     		beq	.L15
+ 224 0012 40F20003 		movw	r3, #:lower16:motorState
+ 225 0016 C0F20003 		movt	r3, #:upper16:motorState
+ 226 001a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 227 001c 032B     		cmp	r3, #3
+ 228 001e 02D1     		bne	.L16
+ 229              	.L15:
+ 150:.\Buttons.c   **** 		return TRUE;
+ 230              		.loc 1 150 0
+ 231 0020 4FF00103 		mov	r3, #1
+ 232 0024 01E0     		b	.L17
+ 233              	.L16:
+ 151:.\Buttons.c   **** 	else
+ 152:.\Buttons.c   **** 		return FALSE;
+ 234              		.loc 1 152 0
+ 235 0026 4FF00003 		mov	r3, #0
+ 236              	.L17:
+ 153:.\Buttons.c   **** 	
+ 154:.\Buttons.c   **** }
+ 237              		.loc 1 154 0
+ 238 002a 1846     		mov	r0, r3
+ 239 002c BD46     		mov	sp, r7
+ 240 002e 80BC     		pop	{r7}
+ 241 0030 7047     		bx	lr
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 8
+
+
+ 242              		.cfi_endproc
+ 243              	.LFE31:
+ 244              		.size	Buttons_IsMotorButtonPressed, .-Buttons_IsMotorButtonPressed
+ 245 0032 00BF     		.section	.text.Buttons_IsLightsOnOffButtonPressed,"ax",%progbits
+ 246              		.align	2
+ 247              		.global	Buttons_IsLightsOnOffButtonPressed
+ 248              		.thumb
+ 249              		.thumb_func
+ 250              		.type	Buttons_IsLightsOnOffButtonPressed, %function
+ 251              	Buttons_IsLightsOnOffButtonPressed:
+ 252              	.LFB32:
+ 155:.\Buttons.c   **** 
+ 156:.\Buttons.c   **** bool_t Buttons_IsLightsOnOffButtonPressed(void)
+ 157:.\Buttons.c   **** {
+ 253              		.loc 1 157 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 1, uses_anonymous_args = 0
+ 257              		@ link register save eliminated.
+ 258 0000 80B4     		push	{r7}
+ 259              	.LCFI7:
+ 260              		.cfi_def_cfa_offset 4
+ 261 0002 00AF     		add	r7, sp, #0
+ 262              		.cfi_offset 7, -4
+ 263              	.LCFI8:
+ 264              		.cfi_def_cfa_register 7
+ 158:.\Buttons.c   **** 	if(lightsOnOffState == ST_ON || lightsOnOffState == ST_HALF_OFF)
+ 265              		.loc 1 158 0
+ 266 0004 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 267 0008 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 268 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 269 000e 022B     		cmp	r3, #2
+ 270 0010 06D0     		beq	.L20
+ 271 0012 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 272 0016 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 273 001a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 274 001c 032B     		cmp	r3, #3
+ 275 001e 02D1     		bne	.L21
+ 276              	.L20:
+ 159:.\Buttons.c   **** 		return TRUE;
+ 277              		.loc 1 159 0
+ 278 0020 4FF00103 		mov	r3, #1
+ 279 0024 01E0     		b	.L22
+ 280              	.L21:
+ 160:.\Buttons.c   **** 	else
+ 161:.\Buttons.c   **** 		return FALSE;
+ 281              		.loc 1 161 0
+ 282 0026 4FF00003 		mov	r3, #0
+ 283              	.L22:
+ 162:.\Buttons.c   **** 	
+ 163:.\Buttons.c   **** }
+ 284              		.loc 1 163 0
+ 285 002a 1846     		mov	r0, r3
+ 286 002c BD46     		mov	sp, r7
+ 287 002e 80BC     		pop	{r7}
+ 288 0030 7047     		bx	lr
+ 289              		.cfi_endproc
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 9
+
+
+ 290              	.LFE32:
+ 291              		.size	Buttons_IsLightsOnOffButtonPressed, .-Buttons_IsLightsOnOffButtonPressed
+ 292 0032 00BF     		.section	.text.Buttons_IsAlarmButtonPressed,"ax",%progbits
+ 293              		.align	2
+ 294              		.global	Buttons_IsAlarmButtonPressed
+ 295              		.thumb
+ 296              		.thumb_func
+ 297              		.type	Buttons_IsAlarmButtonPressed, %function
+ 298              	Buttons_IsAlarmButtonPressed:
+ 299              	.LFB33:
+ 164:.\Buttons.c   **** 
+ 165:.\Buttons.c   **** bool_t Buttons_IsAlarmButtonPressed(void)
+ 166:.\Buttons.c   **** {
+ 300              		.loc 1 166 0
+ 301              		.cfi_startproc
+ 302              		@ args = 0, pretend = 0, frame = 0
+ 303              		@ frame_needed = 1, uses_anonymous_args = 0
+ 304              		@ link register save eliminated.
+ 305 0000 80B4     		push	{r7}
+ 306              	.LCFI9:
+ 307              		.cfi_def_cfa_offset 4
+ 308 0002 00AF     		add	r7, sp, #0
+ 309              		.cfi_offset 7, -4
+ 310              	.LCFI10:
+ 311              		.cfi_def_cfa_register 7
+ 167:.\Buttons.c   **** 	if(alarmState == ST_ON || alarmState == ST_HALF_OFF)
+ 312              		.loc 1 167 0
+ 313 0004 40F20003 		movw	r3, #:lower16:alarmState
+ 314 0008 C0F20003 		movt	r3, #:upper16:alarmState
+ 315 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 316 000e 022B     		cmp	r3, #2
+ 317 0010 06D0     		beq	.L25
+ 318 0012 40F20003 		movw	r3, #:lower16:alarmState
+ 319 0016 C0F20003 		movt	r3, #:upper16:alarmState
+ 320 001a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 321 001c 032B     		cmp	r3, #3
+ 322 001e 02D1     		bne	.L26
+ 323              	.L25:
+ 168:.\Buttons.c   **** 		return TRUE;
+ 324              		.loc 1 168 0
+ 325 0020 4FF00103 		mov	r3, #1
+ 326 0024 01E0     		b	.L27
+ 327              	.L26:
+ 169:.\Buttons.c   **** 	else
+ 170:.\Buttons.c   **** 		return FALSE;
+ 328              		.loc 1 170 0
+ 329 0026 4FF00003 		mov	r3, #0
+ 330              	.L27:
+ 171:.\Buttons.c   **** }
+ 331              		.loc 1 171 0
+ 332 002a 1846     		mov	r0, r3
+ 333 002c BD46     		mov	sp, r7
+ 334 002e 80BC     		pop	{r7}
+ 335 0030 7047     		bx	lr
+ 336              		.cfi_endproc
+ 337              	.LFE33:
+ 338              		.size	Buttons_IsAlarmButtonPressed, .-Buttons_IsAlarmButtonPressed
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 10
+
+
+ 339 0032 00BF     		.section	.text.Buttons_IsLightModeButtonPressed,"ax",%progbits
+ 340              		.align	2
+ 341              		.global	Buttons_IsLightModeButtonPressed
+ 342              		.thumb
+ 343              		.thumb_func
+ 344              		.type	Buttons_IsLightModeButtonPressed, %function
+ 345              	Buttons_IsLightModeButtonPressed:
+ 346              	.LFB34:
+ 172:.\Buttons.c   **** 
+ 173:.\Buttons.c   **** bool_t Buttons_IsLightModeButtonPressed(void)
+ 174:.\Buttons.c   **** {
+ 347              		.loc 1 174 0
+ 348              		.cfi_startproc
+ 349              		@ args = 0, pretend = 0, frame = 0
+ 350              		@ frame_needed = 1, uses_anonymous_args = 0
+ 351              		@ link register save eliminated.
+ 352 0000 80B4     		push	{r7}
+ 353              	.LCFI11:
+ 354              		.cfi_def_cfa_offset 4
+ 355 0002 00AF     		add	r7, sp, #0
+ 356              		.cfi_offset 7, -4
+ 357              	.LCFI12:
+ 358              		.cfi_def_cfa_register 7
+ 175:.\Buttons.c   **** 	if(lightModeState == ST_ON || lightModeState == ST_HALF_OFF)
+ 359              		.loc 1 175 0
+ 360 0004 40F20003 		movw	r3, #:lower16:lightModeState
+ 361 0008 C0F20003 		movt	r3, #:upper16:lightModeState
+ 362 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 363 000e 022B     		cmp	r3, #2
+ 364 0010 06D0     		beq	.L30
+ 365 0012 40F20003 		movw	r3, #:lower16:lightModeState
+ 366 0016 C0F20003 		movt	r3, #:upper16:lightModeState
+ 367 001a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 368 001c 032B     		cmp	r3, #3
+ 369 001e 02D1     		bne	.L31
+ 370              	.L30:
+ 176:.\Buttons.c   **** 		return TRUE;
+ 371              		.loc 1 176 0
+ 372 0020 4FF00103 		mov	r3, #1
+ 373 0024 01E0     		b	.L32
+ 374              	.L31:
+ 177:.\Buttons.c   **** 	else
+ 178:.\Buttons.c   **** 		return FALSE;
+ 375              		.loc 1 178 0
+ 376 0026 4FF00003 		mov	r3, #0
+ 377              	.L32:
+ 179:.\Buttons.c   **** }
+ 378              		.loc 1 179 0
+ 379 002a 1846     		mov	r0, r3
+ 380 002c BD46     		mov	sp, r7
+ 381 002e 80BC     		pop	{r7}
+ 382 0030 7047     		bx	lr
+ 383              		.cfi_endproc
+ 384              	.LFE34:
+ 385              		.size	Buttons_IsLightModeButtonPressed, .-Buttons_IsLightModeButtonPressed
+ 386 0032 00BF     		.section	.text.Buttons_ResetLightModeButtonState,"ax",%progbits
+ 387              		.align	2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 11
+
+
+ 388              		.global	Buttons_ResetLightModeButtonState
+ 389              		.thumb
+ 390              		.thumb_func
+ 391              		.type	Buttons_ResetLightModeButtonState, %function
+ 392              	Buttons_ResetLightModeButtonState:
+ 393              	.LFB35:
+ 180:.\Buttons.c   **** 
+ 181:.\Buttons.c   **** //! @brief		Reset the state of the light mode button
+ 182:.\Buttons.c   **** void Buttons_ResetLightModeButtonState(void)
+ 183:.\Buttons.c   **** {
+ 394              		.loc 1 183 0
+ 395              		.cfi_startproc
+ 396              		@ args = 0, pretend = 0, frame = 0
+ 397              		@ frame_needed = 1, uses_anonymous_args = 0
+ 398              		@ link register save eliminated.
+ 399 0000 80B4     		push	{r7}
+ 400              	.LCFI13:
+ 401              		.cfi_def_cfa_offset 4
+ 402 0002 00AF     		add	r7, sp, #0
+ 403              		.cfi_offset 7, -4
+ 404              	.LCFI14:
+ 405              		.cfi_def_cfa_register 7
+ 184:.\Buttons.c   **** 	lightModeState = ST_OFF;
+ 406              		.loc 1 184 0
+ 407 0004 40F20003 		movw	r3, #:lower16:lightModeState
+ 408 0008 C0F20003 		movt	r3, #:upper16:lightModeState
+ 409 000c 4FF00002 		mov	r2, #0
+ 410 0010 1A70     		strb	r2, [r3, #0]
+ 185:.\Buttons.c   **** }
+ 411              		.loc 1 185 0
+ 412 0012 BD46     		mov	sp, r7
+ 413 0014 80BC     		pop	{r7}
+ 414 0016 7047     		bx	lr
+ 415              		.cfi_endproc
+ 416              	.LFE35:
+ 417              		.size	Buttons_ResetLightModeButtonState, .-Buttons_ResetLightModeButtonState
+ 418              		.section	.text.Buttons_MotorStateMachine,"ax",%progbits
+ 419              		.align	2
+ 420              		.global	Buttons_MotorStateMachine
+ 421              		.thumb
+ 422              		.thumb_func
+ 423              		.type	Buttons_MotorStateMachine, %function
+ 424              	Buttons_MotorStateMachine:
+ 425              	.LFB36:
+ 186:.\Buttons.c   **** 
+ 187:.\Buttons.c   **** //=================================================================================================
+ 188:.\Buttons.c   **** //==================================== PRIVATE FUNCTIONS ==========================================
+ 189:.\Buttons.c   **** //=================================================================================================
+ 190:.\Buttons.c   **** 
+ 191:.\Buttons.c   **** 
+ 192:.\Buttons.c   **** 
+ 193:.\Buttons.c   **** void Buttons_MotorStateMachine(uint8 motorButtonActive)
+ 194:.\Buttons.c   **** {
+ 426              		.loc 1 194 0
+ 427              		.cfi_startproc
+ 428              		@ args = 0, pretend = 0, frame = 8
+ 429              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 12
+
+
+ 430              		@ link register save eliminated.
+ 431 0000 80B4     		push	{r7}
+ 432              	.LCFI15:
+ 433              		.cfi_def_cfa_offset 4
+ 434 0002 83B0     		sub	sp, sp, #12
+ 435              	.LCFI16:
+ 436              		.cfi_def_cfa_offset 16
+ 437 0004 00AF     		add	r7, sp, #0
+ 438              		.cfi_offset 7, -4
+ 439              	.LCFI17:
+ 440              		.cfi_def_cfa_register 7
+ 441 0006 0346     		mov	r3, r0
+ 442 0008 FB71     		strb	r3, [r7, #7]
+ 195:.\Buttons.c   **** 
+ 196:.\Buttons.c   **** 	if(motorButtonActive && (motorState == ST_OFF))
+ 443              		.loc 1 196 0
+ 444 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 445 000c 002B     		cmp	r3, #0
+ 446 000e 0ED0     		beq	.L37
+ 447 0010 40F20003 		movw	r3, #:lower16:motorState
+ 448 0014 C0F20003 		movt	r3, #:upper16:motorState
+ 449 0018 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 450 001a 002B     		cmp	r3, #0
+ 451 001c 07D1     		bne	.L37
+ 197:.\Buttons.c   **** 	{
+ 198:.\Buttons.c   **** 		motorState = ST_HALF_ON;
+ 452              		.loc 1 198 0
+ 453 001e 40F20003 		movw	r3, #:lower16:motorState
+ 454 0022 C0F20003 		movt	r3, #:upper16:motorState
+ 455 0026 4FF00102 		mov	r2, #1
+ 456 002a 1A70     		strb	r2, [r3, #0]
+ 457              		.loc 1 196 0
+ 458 002c 34E0     		b	.L41
+ 459              	.L37:
+ 199:.\Buttons.c   **** 	}
+ 200:.\Buttons.c   **** 	else if(!motorButtonActive && (motorState == ST_HALF_ON))
+ 460              		.loc 1 200 0
+ 461 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 462 0030 002B     		cmp	r3, #0
+ 463 0032 0ED1     		bne	.L39
+ 464 0034 40F20003 		movw	r3, #:lower16:motorState
+ 465 0038 C0F20003 		movt	r3, #:upper16:motorState
+ 466 003c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 467 003e 012B     		cmp	r3, #1
+ 468 0040 07D1     		bne	.L39
+ 201:.\Buttons.c   **** 	{
+ 202:.\Buttons.c   **** 		motorState = ST_ON;
+ 469              		.loc 1 202 0
+ 470 0042 40F20003 		movw	r3, #:lower16:motorState
+ 471 0046 C0F20003 		movt	r3, #:upper16:motorState
+ 472 004a 4FF00202 		mov	r2, #2
+ 473 004e 1A70     		strb	r2, [r3, #0]
+ 474              		.loc 1 200 0
+ 475 0050 22E0     		b	.L41
+ 476              	.L39:
+ 203:.\Buttons.c   **** 	}
+ 204:.\Buttons.c   **** 	else if(motorButtonActive && (motorState == ST_ON))
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 13
+
+
+ 477              		.loc 1 204 0
+ 478 0052 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 479 0054 002B     		cmp	r3, #0
+ 480 0056 0ED0     		beq	.L40
+ 481 0058 40F20003 		movw	r3, #:lower16:motorState
+ 482 005c C0F20003 		movt	r3, #:upper16:motorState
+ 483 0060 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 484 0062 022B     		cmp	r3, #2
+ 485 0064 07D1     		bne	.L40
+ 205:.\Buttons.c   **** 	{
+ 206:.\Buttons.c   **** 		motorState = ST_HALF_OFF;
+ 486              		.loc 1 206 0
+ 487 0066 40F20003 		movw	r3, #:lower16:motorState
+ 488 006a C0F20003 		movt	r3, #:upper16:motorState
+ 489 006e 4FF00302 		mov	r2, #3
+ 490 0072 1A70     		strb	r2, [r3, #0]
+ 491              		.loc 1 204 0
+ 492 0074 10E0     		b	.L41
+ 493              	.L40:
+ 207:.\Buttons.c   **** 	}
+ 208:.\Buttons.c   **** 	else if(!motorButtonActive && (motorState == ST_HALF_OFF))
+ 494              		.loc 1 208 0
+ 495 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 496 0078 002B     		cmp	r3, #0
+ 497 007a 0DD1     		bne	.L41
+ 498 007c 40F20003 		movw	r3, #:lower16:motorState
+ 499 0080 C0F20003 		movt	r3, #:upper16:motorState
+ 500 0084 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 501 0086 032B     		cmp	r3, #3
+ 502 0088 06D1     		bne	.L41
+ 209:.\Buttons.c   **** 	{
+ 210:.\Buttons.c   **** 		motorState = ST_OFF;
+ 503              		.loc 1 210 0
+ 504 008a 40F20003 		movw	r3, #:lower16:motorState
+ 505 008e C0F20003 		movt	r3, #:upper16:motorState
+ 506 0092 4FF00002 		mov	r2, #0
+ 507 0096 1A70     		strb	r2, [r3, #0]
+ 508              	.L41:
+ 211:.\Buttons.c   **** 	}
+ 212:.\Buttons.c   **** }
+ 509              		.loc 1 212 0
+ 510 0098 07F10C07 		add	r7, r7, #12
+ 511 009c BD46     		mov	sp, r7
+ 512 009e 80BC     		pop	{r7}
+ 513 00a0 7047     		bx	lr
+ 514              		.cfi_endproc
+ 515              	.LFE36:
+ 516              		.size	Buttons_MotorStateMachine, .-Buttons_MotorStateMachine
+ 517 00a2 00BF     		.section	.text.Buttons_LightsOnOffStateMachine,"ax",%progbits
+ 518              		.align	2
+ 519              		.global	Buttons_LightsOnOffStateMachine
+ 520              		.thumb
+ 521              		.thumb_func
+ 522              		.type	Buttons_LightsOnOffStateMachine, %function
+ 523              	Buttons_LightsOnOffStateMachine:
+ 524              	.LFB37:
+ 213:.\Buttons.c   **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 14
+
+
+ 214:.\Buttons.c   **** void Buttons_LightsOnOffStateMachine(uint8 lightsOnOffButtonActive)
+ 215:.\Buttons.c   **** {
+ 525              		.loc 1 215 0
+ 526              		.cfi_startproc
+ 527              		@ args = 0, pretend = 0, frame = 8
+ 528              		@ frame_needed = 1, uses_anonymous_args = 0
+ 529              		@ link register save eliminated.
+ 530 0000 80B4     		push	{r7}
+ 531              	.LCFI18:
+ 532              		.cfi_def_cfa_offset 4
+ 533 0002 83B0     		sub	sp, sp, #12
+ 534              	.LCFI19:
+ 535              		.cfi_def_cfa_offset 16
+ 536 0004 00AF     		add	r7, sp, #0
+ 537              		.cfi_offset 7, -4
+ 538              	.LCFI20:
+ 539              		.cfi_def_cfa_register 7
+ 540 0006 0346     		mov	r3, r0
+ 541 0008 FB71     		strb	r3, [r7, #7]
+ 216:.\Buttons.c   **** 
+ 217:.\Buttons.c   **** 	if(lightsOnOffButtonActive && (lightsOnOffState == ST_OFF))
+ 542              		.loc 1 217 0
+ 543 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 544 000c 002B     		cmp	r3, #0
+ 545 000e 0ED0     		beq	.L43
+ 546 0010 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 547 0014 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 548 0018 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 549 001a 002B     		cmp	r3, #0
+ 550 001c 07D1     		bne	.L43
+ 218:.\Buttons.c   **** 	{
+ 219:.\Buttons.c   **** 		lightsOnOffState = ST_HALF_ON;
+ 551              		.loc 1 219 0
+ 552 001e 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 553 0022 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 554 0026 4FF00102 		mov	r2, #1
+ 555 002a 1A70     		strb	r2, [r3, #0]
+ 556              		.loc 1 217 0
+ 557 002c 34E0     		b	.L47
+ 558              	.L43:
+ 220:.\Buttons.c   **** 	}
+ 221:.\Buttons.c   **** 	else if(!lightsOnOffButtonActive && (lightsOnOffState == ST_HALF_ON))
+ 559              		.loc 1 221 0
+ 560 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 561 0030 002B     		cmp	r3, #0
+ 562 0032 0ED1     		bne	.L45
+ 563 0034 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 564 0038 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 565 003c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 566 003e 012B     		cmp	r3, #1
+ 567 0040 07D1     		bne	.L45
+ 222:.\Buttons.c   **** 	{
+ 223:.\Buttons.c   **** 		lightsOnOffState = ST_ON;
+ 568              		.loc 1 223 0
+ 569 0042 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 570 0046 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 571 004a 4FF00202 		mov	r2, #2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 15
+
+
+ 572 004e 1A70     		strb	r2, [r3, #0]
+ 573              		.loc 1 221 0
+ 574 0050 22E0     		b	.L47
+ 575              	.L45:
+ 224:.\Buttons.c   **** 	}
+ 225:.\Buttons.c   **** 	else if(lightsOnOffButtonActive && (lightsOnOffState == ST_ON))
+ 576              		.loc 1 225 0
+ 577 0052 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 578 0054 002B     		cmp	r3, #0
+ 579 0056 0ED0     		beq	.L46
+ 580 0058 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 581 005c C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 582 0060 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 583 0062 022B     		cmp	r3, #2
+ 584 0064 07D1     		bne	.L46
+ 226:.\Buttons.c   **** 	{
+ 227:.\Buttons.c   **** 		lightsOnOffState = ST_HALF_OFF;
+ 585              		.loc 1 227 0
+ 586 0066 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 587 006a C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 588 006e 4FF00302 		mov	r2, #3
+ 589 0072 1A70     		strb	r2, [r3, #0]
+ 590              		.loc 1 225 0
+ 591 0074 10E0     		b	.L47
+ 592              	.L46:
+ 228:.\Buttons.c   **** 	}
+ 229:.\Buttons.c   **** 	else if(!lightsOnOffButtonActive && (lightsOnOffState == ST_HALF_OFF))
+ 593              		.loc 1 229 0
+ 594 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 595 0078 002B     		cmp	r3, #0
+ 596 007a 0DD1     		bne	.L47
+ 597 007c 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 598 0080 C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 599 0084 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 600 0086 032B     		cmp	r3, #3
+ 601 0088 06D1     		bne	.L47
+ 230:.\Buttons.c   **** 	{
+ 231:.\Buttons.c   **** 		lightsOnOffState = ST_OFF;
+ 602              		.loc 1 231 0
+ 603 008a 40F20003 		movw	r3, #:lower16:lightsOnOffState
+ 604 008e C0F20003 		movt	r3, #:upper16:lightsOnOffState
+ 605 0092 4FF00002 		mov	r2, #0
+ 606 0096 1A70     		strb	r2, [r3, #0]
+ 607              	.L47:
+ 232:.\Buttons.c   **** 	}
+ 233:.\Buttons.c   **** }
+ 608              		.loc 1 233 0
+ 609 0098 07F10C07 		add	r7, r7, #12
+ 610 009c BD46     		mov	sp, r7
+ 611 009e 80BC     		pop	{r7}
+ 612 00a0 7047     		bx	lr
+ 613              		.cfi_endproc
+ 614              	.LFE37:
+ 615              		.size	Buttons_LightsOnOffStateMachine, .-Buttons_LightsOnOffStateMachine
+ 616 00a2 00BF     		.section	.text.Buttons_AlarmStateMachine,"ax",%progbits
+ 617              		.align	2
+ 618              		.global	Buttons_AlarmStateMachine
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 16
+
+
+ 619              		.thumb
+ 620              		.thumb_func
+ 621              		.type	Buttons_AlarmStateMachine, %function
+ 622              	Buttons_AlarmStateMachine:
+ 623              	.LFB38:
+ 234:.\Buttons.c   **** 
+ 235:.\Buttons.c   **** void Buttons_AlarmStateMachine(uint8 alarmButtonActive)
+ 236:.\Buttons.c   **** {
+ 624              		.loc 1 236 0
+ 625              		.cfi_startproc
+ 626              		@ args = 0, pretend = 0, frame = 8
+ 627              		@ frame_needed = 1, uses_anonymous_args = 0
+ 628              		@ link register save eliminated.
+ 629 0000 80B4     		push	{r7}
+ 630              	.LCFI21:
+ 631              		.cfi_def_cfa_offset 4
+ 632 0002 83B0     		sub	sp, sp, #12
+ 633              	.LCFI22:
+ 634              		.cfi_def_cfa_offset 16
+ 635 0004 00AF     		add	r7, sp, #0
+ 636              		.cfi_offset 7, -4
+ 637              	.LCFI23:
+ 638              		.cfi_def_cfa_register 7
+ 639 0006 0346     		mov	r3, r0
+ 640 0008 FB71     		strb	r3, [r7, #7]
+ 237:.\Buttons.c   **** 
+ 238:.\Buttons.c   **** 	if(alarmButtonActive && (alarmState == ST_OFF))
+ 641              		.loc 1 238 0
+ 642 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 643 000c 002B     		cmp	r3, #0
+ 644 000e 0ED0     		beq	.L49
+ 645 0010 40F20003 		movw	r3, #:lower16:alarmState
+ 646 0014 C0F20003 		movt	r3, #:upper16:alarmState
+ 647 0018 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 648 001a 002B     		cmp	r3, #0
+ 649 001c 07D1     		bne	.L49
+ 239:.\Buttons.c   **** 	{
+ 240:.\Buttons.c   **** 		alarmState = ST_HALF_ON;
+ 650              		.loc 1 240 0
+ 651 001e 40F20003 		movw	r3, #:lower16:alarmState
+ 652 0022 C0F20003 		movt	r3, #:upper16:alarmState
+ 653 0026 4FF00102 		mov	r2, #1
+ 654 002a 1A70     		strb	r2, [r3, #0]
+ 655              		.loc 1 238 0
+ 656 002c 34E0     		b	.L53
+ 657              	.L49:
+ 241:.\Buttons.c   **** 	}
+ 242:.\Buttons.c   **** 	else if(!alarmButtonActive && (alarmState == ST_HALF_ON))
+ 658              		.loc 1 242 0
+ 659 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 660 0030 002B     		cmp	r3, #0
+ 661 0032 0ED1     		bne	.L51
+ 662 0034 40F20003 		movw	r3, #:lower16:alarmState
+ 663 0038 C0F20003 		movt	r3, #:upper16:alarmState
+ 664 003c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 665 003e 012B     		cmp	r3, #1
+ 666 0040 07D1     		bne	.L51
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 17
+
+
+ 243:.\Buttons.c   **** 	{
+ 244:.\Buttons.c   **** 		alarmState = ST_ON;
+ 667              		.loc 1 244 0
+ 668 0042 40F20003 		movw	r3, #:lower16:alarmState
+ 669 0046 C0F20003 		movt	r3, #:upper16:alarmState
+ 670 004a 4FF00202 		mov	r2, #2
+ 671 004e 1A70     		strb	r2, [r3, #0]
+ 672              		.loc 1 242 0
+ 673 0050 22E0     		b	.L53
+ 674              	.L51:
+ 245:.\Buttons.c   **** 	}
+ 246:.\Buttons.c   **** 	else if(alarmButtonActive && (alarmState == ST_ON))
+ 675              		.loc 1 246 0
+ 676 0052 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 677 0054 002B     		cmp	r3, #0
+ 678 0056 0ED0     		beq	.L52
+ 679 0058 40F20003 		movw	r3, #:lower16:alarmState
+ 680 005c C0F20003 		movt	r3, #:upper16:alarmState
+ 681 0060 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 682 0062 022B     		cmp	r3, #2
+ 683 0064 07D1     		bne	.L52
+ 247:.\Buttons.c   **** 	{
+ 248:.\Buttons.c   **** 		alarmState = ST_HALF_OFF;
+ 684              		.loc 1 248 0
+ 685 0066 40F20003 		movw	r3, #:lower16:alarmState
+ 686 006a C0F20003 		movt	r3, #:upper16:alarmState
+ 687 006e 4FF00302 		mov	r2, #3
+ 688 0072 1A70     		strb	r2, [r3, #0]
+ 689              		.loc 1 246 0
+ 690 0074 10E0     		b	.L53
+ 691              	.L52:
+ 249:.\Buttons.c   **** 	}
+ 250:.\Buttons.c   **** 	else if(!alarmButtonActive && (alarmState == ST_HALF_OFF))
+ 692              		.loc 1 250 0
+ 693 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 694 0078 002B     		cmp	r3, #0
+ 695 007a 0DD1     		bne	.L53
+ 696 007c 40F20003 		movw	r3, #:lower16:alarmState
+ 697 0080 C0F20003 		movt	r3, #:upper16:alarmState
+ 698 0084 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 699 0086 032B     		cmp	r3, #3
+ 700 0088 06D1     		bne	.L53
+ 251:.\Buttons.c   **** 	{
+ 252:.\Buttons.c   **** 		alarmState = ST_OFF;
+ 701              		.loc 1 252 0
+ 702 008a 40F20003 		movw	r3, #:lower16:alarmState
+ 703 008e C0F20003 		movt	r3, #:upper16:alarmState
+ 704 0092 4FF00002 		mov	r2, #0
+ 705 0096 1A70     		strb	r2, [r3, #0]
+ 706              	.L53:
+ 253:.\Buttons.c   **** 	}
+ 254:.\Buttons.c   **** }
+ 707              		.loc 1 254 0
+ 708 0098 07F10C07 		add	r7, r7, #12
+ 709 009c BD46     		mov	sp, r7
+ 710 009e 80BC     		pop	{r7}
+ 711 00a0 7047     		bx	lr
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 18
+
+
+ 712              		.cfi_endproc
+ 713              	.LFE38:
+ 714              		.size	Buttons_AlarmStateMachine, .-Buttons_AlarmStateMachine
+ 715 00a2 00BF     		.section	.text.Buttons_LightModeStateMachine,"ax",%progbits
+ 716              		.align	2
+ 717              		.global	Buttons_LightModeStateMachine
+ 718              		.thumb
+ 719              		.thumb_func
+ 720              		.type	Buttons_LightModeStateMachine, %function
+ 721              	Buttons_LightModeStateMachine:
+ 722              	.LFB39:
+ 255:.\Buttons.c   **** 
+ 256:.\Buttons.c   **** //! @brief		State machine for the light mode button
+ 257:.\Buttons.c   **** void Buttons_LightModeStateMachine(uint8_t lightModeButtonActive)
+ 258:.\Buttons.c   **** {
+ 723              		.loc 1 258 0
+ 724              		.cfi_startproc
+ 725              		@ args = 0, pretend = 0, frame = 8
+ 726              		@ frame_needed = 1, uses_anonymous_args = 0
+ 727              		@ link register save eliminated.
+ 728 0000 80B4     		push	{r7}
+ 729              	.LCFI24:
+ 730              		.cfi_def_cfa_offset 4
+ 731 0002 83B0     		sub	sp, sp, #12
+ 732              	.LCFI25:
+ 733              		.cfi_def_cfa_offset 16
+ 734 0004 00AF     		add	r7, sp, #0
+ 735              		.cfi_offset 7, -4
+ 736              	.LCFI26:
+ 737              		.cfi_def_cfa_register 7
+ 738 0006 0346     		mov	r3, r0
+ 739 0008 FB71     		strb	r3, [r7, #7]
+ 259:.\Buttons.c   **** 
+ 260:.\Buttons.c   **** 	if(lightModeButtonActive && (lightModeState == ST_OFF))
+ 740              		.loc 1 260 0
+ 741 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 742 000c 002B     		cmp	r3, #0
+ 743 000e 0ED0     		beq	.L55
+ 744 0010 40F20003 		movw	r3, #:lower16:lightModeState
+ 745 0014 C0F20003 		movt	r3, #:upper16:lightModeState
+ 746 0018 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 747 001a 002B     		cmp	r3, #0
+ 748 001c 07D1     		bne	.L55
+ 261:.\Buttons.c   **** 	{
+ 262:.\Buttons.c   **** 		lightModeState = ST_HALF_ON;
+ 749              		.loc 1 262 0
+ 750 001e 40F20003 		movw	r3, #:lower16:lightModeState
+ 751 0022 C0F20003 		movt	r3, #:upper16:lightModeState
+ 752 0026 4FF00102 		mov	r2, #1
+ 753 002a 1A70     		strb	r2, [r3, #0]
+ 754              		.loc 1 260 0
+ 755 002c 34E0     		b	.L59
+ 756              	.L55:
+ 263:.\Buttons.c   **** 	}
+ 264:.\Buttons.c   **** 	else if(!lightModeButtonActive && (lightModeState == ST_HALF_ON))
+ 757              		.loc 1 264 0
+ 758 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 19
+
+
+ 759 0030 002B     		cmp	r3, #0
+ 760 0032 0ED1     		bne	.L57
+ 761 0034 40F20003 		movw	r3, #:lower16:lightModeState
+ 762 0038 C0F20003 		movt	r3, #:upper16:lightModeState
+ 763 003c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 764 003e 012B     		cmp	r3, #1
+ 765 0040 07D1     		bne	.L57
+ 265:.\Buttons.c   **** 	{
+ 266:.\Buttons.c   **** 		lightModeState = ST_ON;
+ 766              		.loc 1 266 0
+ 767 0042 40F20003 		movw	r3, #:lower16:lightModeState
+ 768 0046 C0F20003 		movt	r3, #:upper16:lightModeState
+ 769 004a 4FF00202 		mov	r2, #2
+ 770 004e 1A70     		strb	r2, [r3, #0]
+ 771              		.loc 1 264 0
+ 772 0050 22E0     		b	.L59
+ 773              	.L57:
+ 267:.\Buttons.c   **** 	}
+ 268:.\Buttons.c   **** 	else if(lightModeButtonActive && (lightModeState == ST_ON))
+ 774              		.loc 1 268 0
+ 775 0052 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 776 0054 002B     		cmp	r3, #0
+ 777 0056 0ED0     		beq	.L58
+ 778 0058 40F20003 		movw	r3, #:lower16:lightModeState
+ 779 005c C0F20003 		movt	r3, #:upper16:lightModeState
+ 780 0060 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 781 0062 022B     		cmp	r3, #2
+ 782 0064 07D1     		bne	.L58
+ 269:.\Buttons.c   **** 	{
+ 270:.\Buttons.c   **** 		lightModeState = ST_HALF_OFF;
+ 783              		.loc 1 270 0
+ 784 0066 40F20003 		movw	r3, #:lower16:lightModeState
+ 785 006a C0F20003 		movt	r3, #:upper16:lightModeState
+ 786 006e 4FF00302 		mov	r2, #3
+ 787 0072 1A70     		strb	r2, [r3, #0]
+ 788              		.loc 1 268 0
+ 789 0074 10E0     		b	.L59
+ 790              	.L58:
+ 271:.\Buttons.c   **** 	}
+ 272:.\Buttons.c   **** 	else if(!lightModeButtonActive && (lightModeState == ST_HALF_OFF))
+ 791              		.loc 1 272 0
+ 792 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 793 0078 002B     		cmp	r3, #0
+ 794 007a 0DD1     		bne	.L59
+ 795 007c 40F20003 		movw	r3, #:lower16:lightModeState
+ 796 0080 C0F20003 		movt	r3, #:upper16:lightModeState
+ 797 0084 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 798 0086 032B     		cmp	r3, #3
+ 799 0088 06D1     		bne	.L59
+ 273:.\Buttons.c   **** 	{
+ 274:.\Buttons.c   **** 		lightModeState = ST_OFF;
+ 800              		.loc 1 274 0
+ 801 008a 40F20003 		movw	r3, #:lower16:lightModeState
+ 802 008e C0F20003 		movt	r3, #:upper16:lightModeState
+ 803 0092 4FF00002 		mov	r2, #0
+ 804 0096 1A70     		strb	r2, [r3, #0]
+ 805              	.L59:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 20
+
+
+ 275:.\Buttons.c   **** 	}
+ 276:.\Buttons.c   **** }
+ 806              		.loc 1 276 0
+ 807 0098 07F10C07 		add	r7, r7, #12
+ 808 009c BD46     		mov	sp, r7
+ 809 009e 80BC     		pop	{r7}
+ 810 00a0 7047     		bx	lr
+ 811              		.cfi_endproc
+ 812              	.LFE39:
+ 813              		.size	Buttons_LightModeStateMachine, .-Buttons_LightModeStateMachine
+ 814 00a2 00BF     		.text
+ 815              	.Letext0:
+ 816              		.section	.debug_loc,"",%progbits
+ 817              	.Ldebug_loc0:
+ 818              	.LLST0:
+ 819 0000 00000000 		.4byte	.LFB29
+ 820 0004 02000000 		.4byte	.LCFI0
+ 821 0008 0100     		.2byte	0x1
+ 822 000a 5D       		.byte	0x5d
+ 823 000b 02000000 		.4byte	.LCFI0
+ 824 000f 04000000 		.4byte	.LCFI1
+ 825 0013 0200     		.2byte	0x2
+ 826 0015 7D       		.byte	0x7d
+ 827 0016 08       		.sleb128 8
+ 828 0017 04000000 		.4byte	.LCFI1
+ 829 001b 0E000000 		.4byte	.LFE29
+ 830 001f 0200     		.2byte	0x2
+ 831 0021 77       		.byte	0x77
+ 832 0022 08       		.sleb128 8
+ 833 0023 00000000 		.4byte	0x0
+ 834 0027 00000000 		.4byte	0x0
+ 835              	.LLST1:
+ 836 002b 00000000 		.4byte	.LFB30
+ 837 002f 02000000 		.4byte	.LCFI2
+ 838 0033 0100     		.2byte	0x1
+ 839 0035 5D       		.byte	0x5d
+ 840 0036 02000000 		.4byte	.LCFI2
+ 841 003a 04000000 		.4byte	.LCFI3
+ 842 003e 0200     		.2byte	0x2
+ 843 0040 7D       		.byte	0x7d
+ 844 0041 08       		.sleb128 8
+ 845 0042 04000000 		.4byte	.LCFI3
+ 846 0046 06000000 		.4byte	.LCFI4
+ 847 004a 0200     		.2byte	0x2
+ 848 004c 7D       		.byte	0x7d
+ 849 004d 10       		.sleb128 16
+ 850 004e 06000000 		.4byte	.LCFI4
+ 851 0052 C8000000 		.4byte	.LFE30
+ 852 0056 0200     		.2byte	0x2
+ 853 0058 77       		.byte	0x77
+ 854 0059 10       		.sleb128 16
+ 855 005a 00000000 		.4byte	0x0
+ 856 005e 00000000 		.4byte	0x0
+ 857              	.LLST2:
+ 858 0062 00000000 		.4byte	.LFB31
+ 859 0066 02000000 		.4byte	.LCFI5
+ 860 006a 0100     		.2byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 21
+
+
+ 861 006c 5D       		.byte	0x5d
+ 862 006d 02000000 		.4byte	.LCFI5
+ 863 0071 04000000 		.4byte	.LCFI6
+ 864 0075 0200     		.2byte	0x2
+ 865 0077 7D       		.byte	0x7d
+ 866 0078 04       		.sleb128 4
+ 867 0079 04000000 		.4byte	.LCFI6
+ 868 007d 32000000 		.4byte	.LFE31
+ 869 0081 0200     		.2byte	0x2
+ 870 0083 77       		.byte	0x77
+ 871 0084 04       		.sleb128 4
+ 872 0085 00000000 		.4byte	0x0
+ 873 0089 00000000 		.4byte	0x0
+ 874              	.LLST3:
+ 875 008d 00000000 		.4byte	.LFB32
+ 876 0091 02000000 		.4byte	.LCFI7
+ 877 0095 0100     		.2byte	0x1
+ 878 0097 5D       		.byte	0x5d
+ 879 0098 02000000 		.4byte	.LCFI7
+ 880 009c 04000000 		.4byte	.LCFI8
+ 881 00a0 0200     		.2byte	0x2
+ 882 00a2 7D       		.byte	0x7d
+ 883 00a3 04       		.sleb128 4
+ 884 00a4 04000000 		.4byte	.LCFI8
+ 885 00a8 32000000 		.4byte	.LFE32
+ 886 00ac 0200     		.2byte	0x2
+ 887 00ae 77       		.byte	0x77
+ 888 00af 04       		.sleb128 4
+ 889 00b0 00000000 		.4byte	0x0
+ 890 00b4 00000000 		.4byte	0x0
+ 891              	.LLST4:
+ 892 00b8 00000000 		.4byte	.LFB33
+ 893 00bc 02000000 		.4byte	.LCFI9
+ 894 00c0 0100     		.2byte	0x1
+ 895 00c2 5D       		.byte	0x5d
+ 896 00c3 02000000 		.4byte	.LCFI9
+ 897 00c7 04000000 		.4byte	.LCFI10
+ 898 00cb 0200     		.2byte	0x2
+ 899 00cd 7D       		.byte	0x7d
+ 900 00ce 04       		.sleb128 4
+ 901 00cf 04000000 		.4byte	.LCFI10
+ 902 00d3 32000000 		.4byte	.LFE33
+ 903 00d7 0200     		.2byte	0x2
+ 904 00d9 77       		.byte	0x77
+ 905 00da 04       		.sleb128 4
+ 906 00db 00000000 		.4byte	0x0
+ 907 00df 00000000 		.4byte	0x0
+ 908              	.LLST5:
+ 909 00e3 00000000 		.4byte	.LFB34
+ 910 00e7 02000000 		.4byte	.LCFI11
+ 911 00eb 0100     		.2byte	0x1
+ 912 00ed 5D       		.byte	0x5d
+ 913 00ee 02000000 		.4byte	.LCFI11
+ 914 00f2 04000000 		.4byte	.LCFI12
+ 915 00f6 0200     		.2byte	0x2
+ 916 00f8 7D       		.byte	0x7d
+ 917 00f9 04       		.sleb128 4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 22
+
+
+ 918 00fa 04000000 		.4byte	.LCFI12
+ 919 00fe 32000000 		.4byte	.LFE34
+ 920 0102 0200     		.2byte	0x2
+ 921 0104 77       		.byte	0x77
+ 922 0105 04       		.sleb128 4
+ 923 0106 00000000 		.4byte	0x0
+ 924 010a 00000000 		.4byte	0x0
+ 925              	.LLST6:
+ 926 010e 00000000 		.4byte	.LFB35
+ 927 0112 02000000 		.4byte	.LCFI13
+ 928 0116 0100     		.2byte	0x1
+ 929 0118 5D       		.byte	0x5d
+ 930 0119 02000000 		.4byte	.LCFI13
+ 931 011d 04000000 		.4byte	.LCFI14
+ 932 0121 0200     		.2byte	0x2
+ 933 0123 7D       		.byte	0x7d
+ 934 0124 04       		.sleb128 4
+ 935 0125 04000000 		.4byte	.LCFI14
+ 936 0129 18000000 		.4byte	.LFE35
+ 937 012d 0200     		.2byte	0x2
+ 938 012f 77       		.byte	0x77
+ 939 0130 04       		.sleb128 4
+ 940 0131 00000000 		.4byte	0x0
+ 941 0135 00000000 		.4byte	0x0
+ 942              	.LLST7:
+ 943 0139 00000000 		.4byte	.LFB36
+ 944 013d 02000000 		.4byte	.LCFI15
+ 945 0141 0100     		.2byte	0x1
+ 946 0143 5D       		.byte	0x5d
+ 947 0144 02000000 		.4byte	.LCFI15
+ 948 0148 04000000 		.4byte	.LCFI16
+ 949 014c 0200     		.2byte	0x2
+ 950 014e 7D       		.byte	0x7d
+ 951 014f 04       		.sleb128 4
+ 952 0150 04000000 		.4byte	.LCFI16
+ 953 0154 06000000 		.4byte	.LCFI17
+ 954 0158 0200     		.2byte	0x2
+ 955 015a 7D       		.byte	0x7d
+ 956 015b 10       		.sleb128 16
+ 957 015c 06000000 		.4byte	.LCFI17
+ 958 0160 A2000000 		.4byte	.LFE36
+ 959 0164 0200     		.2byte	0x2
+ 960 0166 77       		.byte	0x77
+ 961 0167 10       		.sleb128 16
+ 962 0168 00000000 		.4byte	0x0
+ 963 016c 00000000 		.4byte	0x0
+ 964              	.LLST8:
+ 965 0170 00000000 		.4byte	.LFB37
+ 966 0174 02000000 		.4byte	.LCFI18
+ 967 0178 0100     		.2byte	0x1
+ 968 017a 5D       		.byte	0x5d
+ 969 017b 02000000 		.4byte	.LCFI18
+ 970 017f 04000000 		.4byte	.LCFI19
+ 971 0183 0200     		.2byte	0x2
+ 972 0185 7D       		.byte	0x7d
+ 973 0186 04       		.sleb128 4
+ 974 0187 04000000 		.4byte	.LCFI19
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 23
+
+
+ 975 018b 06000000 		.4byte	.LCFI20
+ 976 018f 0200     		.2byte	0x2
+ 977 0191 7D       		.byte	0x7d
+ 978 0192 10       		.sleb128 16
+ 979 0193 06000000 		.4byte	.LCFI20
+ 980 0197 A2000000 		.4byte	.LFE37
+ 981 019b 0200     		.2byte	0x2
+ 982 019d 77       		.byte	0x77
+ 983 019e 10       		.sleb128 16
+ 984 019f 00000000 		.4byte	0x0
+ 985 01a3 00000000 		.4byte	0x0
+ 986              	.LLST9:
+ 987 01a7 00000000 		.4byte	.LFB38
+ 988 01ab 02000000 		.4byte	.LCFI21
+ 989 01af 0100     		.2byte	0x1
+ 990 01b1 5D       		.byte	0x5d
+ 991 01b2 02000000 		.4byte	.LCFI21
+ 992 01b6 04000000 		.4byte	.LCFI22
+ 993 01ba 0200     		.2byte	0x2
+ 994 01bc 7D       		.byte	0x7d
+ 995 01bd 04       		.sleb128 4
+ 996 01be 04000000 		.4byte	.LCFI22
+ 997 01c2 06000000 		.4byte	.LCFI23
+ 998 01c6 0200     		.2byte	0x2
+ 999 01c8 7D       		.byte	0x7d
+ 1000 01c9 10       		.sleb128 16
+ 1001 01ca 06000000 		.4byte	.LCFI23
+ 1002 01ce A2000000 		.4byte	.LFE38
+ 1003 01d2 0200     		.2byte	0x2
+ 1004 01d4 77       		.byte	0x77
+ 1005 01d5 10       		.sleb128 16
+ 1006 01d6 00000000 		.4byte	0x0
+ 1007 01da 00000000 		.4byte	0x0
+ 1008              	.LLST10:
+ 1009 01de 00000000 		.4byte	.LFB39
+ 1010 01e2 02000000 		.4byte	.LCFI24
+ 1011 01e6 0100     		.2byte	0x1
+ 1012 01e8 5D       		.byte	0x5d
+ 1013 01e9 02000000 		.4byte	.LCFI24
+ 1014 01ed 04000000 		.4byte	.LCFI25
+ 1015 01f1 0200     		.2byte	0x2
+ 1016 01f3 7D       		.byte	0x7d
+ 1017 01f4 04       		.sleb128 4
+ 1018 01f5 04000000 		.4byte	.LCFI25
+ 1019 01f9 06000000 		.4byte	.LCFI26
+ 1020 01fd 0200     		.2byte	0x2
+ 1021 01ff 7D       		.byte	0x7d
+ 1022 0200 10       		.sleb128 16
+ 1023 0201 06000000 		.4byte	.LCFI26
+ 1024 0205 A2000000 		.4byte	.LFE39
+ 1025 0209 0200     		.2byte	0x2
+ 1026 020b 77       		.byte	0x77
+ 1027 020c 10       		.sleb128 16
+ 1028 020d 00000000 		.4byte	0x0
+ 1029 0211 00000000 		.4byte	0x0
+ 1030              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 1031              		.file 3 "./Generated_Source/PSoC5/cytypes.h"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 24
+
+
+ 1032              		.file 4 ".\\/../common/PublicObjects.h"
+ 1033              		.file 5 "./Generated_Source/PSoC5/core_cm3.h"
+ 1034              		.section	.debug_info
+ 1035 0000 B5020000 		.4byte	0x2b5
+ 1036 0004 0200     		.2byte	0x2
+ 1037 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1038 000a 04       		.byte	0x4
+ 1039 000b 01       		.uleb128 0x1
+ 1040 000c 6C020000 		.4byte	.LASF41
+ 1041 0010 01       		.byte	0x1
+ 1042 0011 15030000 		.4byte	.LASF42
+ 1043 0015 94010000 		.4byte	.LASF43
+ 1044 0019 00000000 		.4byte	0x0
+ 1045 001d 00000000 		.4byte	0x0
+ 1046 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 1047 0025 00000000 		.4byte	.Ldebug_line0
+ 1048 0029 02       		.uleb128 0x2
+ 1049 002a 01       		.byte	0x1
+ 1050 002b 06       		.byte	0x6
+ 1051 002c D3020000 		.4byte	.LASF0
+ 1052 0030 03       		.uleb128 0x3
+ 1053 0031 47020000 		.4byte	.LASF10
+ 1054 0035 02       		.byte	0x2
+ 1055 0036 2A       		.byte	0x2a
+ 1056 0037 3B000000 		.4byte	0x3b
+ 1057 003b 02       		.uleb128 0x2
+ 1058 003c 01       		.byte	0x1
+ 1059 003d 08       		.byte	0x8
+ 1060 003e 5E020000 		.4byte	.LASF1
+ 1061 0042 02       		.uleb128 0x2
+ 1062 0043 02       		.byte	0x2
+ 1063 0044 05       		.byte	0x5
+ 1064 0045 9A020000 		.4byte	.LASF2
+ 1065 0049 02       		.uleb128 0x2
+ 1066 004a 02       		.byte	0x2
+ 1067 004b 07       		.byte	0x7
+ 1068 004c 2F010000 		.4byte	.LASF3
+ 1069 0050 02       		.uleb128 0x2
+ 1070 0051 04       		.byte	0x4
+ 1071 0052 05       		.byte	0x5
+ 1072 0053 CA020000 		.4byte	.LASF4
+ 1073 0057 02       		.uleb128 0x2
+ 1074 0058 04       		.byte	0x4
+ 1075 0059 07       		.byte	0x7
+ 1076 005a 11020000 		.4byte	.LASF5
+ 1077 005e 02       		.uleb128 0x2
+ 1078 005f 08       		.byte	0x8
+ 1079 0060 05       		.byte	0x5
+ 1080 0061 00000000 		.4byte	.LASF6
+ 1081 0065 02       		.uleb128 0x2
+ 1082 0066 08       		.byte	0x8
+ 1083 0067 07       		.byte	0x7
+ 1084 0068 30020000 		.4byte	.LASF7
+ 1085 006c 04       		.uleb128 0x4
+ 1086 006d 04       		.byte	0x4
+ 1087 006e 05       		.byte	0x5
+ 1088 006f 696E7400 		.ascii	"int\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 25
+
+
+ 1089 0073 02       		.uleb128 0x2
+ 1090 0074 04       		.byte	0x4
+ 1091 0075 07       		.byte	0x7
+ 1092 0076 23020000 		.4byte	.LASF8
+ 1093 007a 02       		.uleb128 0x2
+ 1094 007b 01       		.byte	0x1
+ 1095 007c 08       		.byte	0x8
+ 1096 007d 83020000 		.4byte	.LASF9
+ 1097 0081 03       		.uleb128 0x3
+ 1098 0082 A4020000 		.4byte	.LASF11
+ 1099 0086 03       		.byte	0x3
+ 1100 0087 51       		.byte	0x51
+ 1101 0088 3B000000 		.4byte	0x3b
+ 1102 008c 05       		.uleb128 0x5
+ 1103 008d 04       		.byte	0x4
+ 1104 008e 07       		.byte	0x7
+ 1105 008f 06       		.uleb128 0x6
+ 1106 0090 01       		.byte	0x1
+ 1107 0091 04       		.byte	0x4
+ 1108 0092 23       		.byte	0x23
+ 1109 0093 A4000000 		.4byte	0xa4
+ 1110 0097 07       		.uleb128 0x7
+ 1111 0098 0E000000 		.4byte	.LASF12
+ 1112 009c 00       		.sleb128 0
+ 1113 009d 07       		.uleb128 0x7
+ 1114 009e 50000000 		.4byte	.LASF13
+ 1115 00a2 01       		.sleb128 1
+ 1116 00a3 00       		.byte	0x0
+ 1117 00a4 03       		.uleb128 0x3
+ 1118 00a5 8A000000 		.4byte	.LASF14
+ 1119 00a9 04       		.byte	0x4
+ 1120 00aa 26       		.byte	0x26
+ 1121 00ab 8F000000 		.4byte	0x8f
+ 1122 00af 06       		.uleb128 0x6
+ 1123 00b0 01       		.byte	0x1
+ 1124 00b1 01       		.byte	0x1
+ 1125 00b2 33       		.byte	0x33
+ 1126 00b3 D0000000 		.4byte	0xd0
+ 1127 00b7 07       		.uleb128 0x7
+ 1128 00b8 DF020000 		.4byte	.LASF15
+ 1129 00bc 00       		.sleb128 0
+ 1130 00bd 07       		.uleb128 0x7
+ 1131 00be 79000000 		.4byte	.LASF16
+ 1132 00c2 01       		.sleb128 1
+ 1133 00c3 07       		.uleb128 0x7
+ 1134 00c4 84000000 		.4byte	.LASF17
+ 1135 00c8 02       		.sleb128 2
+ 1136 00c9 07       		.uleb128 0x7
+ 1137 00ca 55000000 		.4byte	.LASF18
+ 1138 00ce 03       		.sleb128 3
+ 1139 00cf 00       		.byte	0x0
+ 1140 00d0 03       		.uleb128 0x3
+ 1141 00d1 B6000000 		.4byte	.LASF19
+ 1142 00d5 01       		.byte	0x1
+ 1143 00d6 38       		.byte	0x38
+ 1144 00d7 AF000000 		.4byte	0xaf
+ 1145 00db 08       		.uleb128 0x8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 26
+
+
+ 1146 00dc 01       		.byte	0x1
+ 1147 00dd 4E010000 		.4byte	.LASF28
+ 1148 00e1 01       		.byte	0x1
+ 1149 00e2 4E       		.byte	0x4e
+ 1150 00e3 01       		.byte	0x1
+ 1151 00e4 00000000 		.4byte	.LFB29
+ 1152 00e8 0E000000 		.4byte	.LFE29
+ 1153 00ec 00000000 		.4byte	.LLST0
+ 1154 00f0 09       		.uleb128 0x9
+ 1155 00f1 01       		.byte	0x1
+ 1156 00f2 42010000 		.4byte	.LASF30
+ 1157 00f6 01       		.byte	0x1
+ 1158 00f7 57       		.byte	0x57
+ 1159 00f8 01       		.byte	0x1
+ 1160 00f9 00000000 		.4byte	.LFB30
+ 1161 00fd C8000000 		.4byte	.LFE30
+ 1162 0101 2B000000 		.4byte	.LLST1
+ 1163 0105 42010000 		.4byte	0x142
+ 1164 0109 0A       		.uleb128 0xa
+ 1165 010a A4000000 		.4byte	.LASF20
+ 1166 010e 01       		.byte	0x1
+ 1167 010f 5C       		.byte	0x5c
+ 1168 0110 81000000 		.4byte	0x81
+ 1169 0114 02       		.byte	0x2
+ 1170 0115 91       		.byte	0x91
+ 1171 0116 74       		.sleb128 -12
+ 1172 0117 0A       		.uleb128 0xa
+ 1173 0118 91000000 		.4byte	.LASF21
+ 1174 011c 01       		.byte	0x1
+ 1175 011d 5D       		.byte	0x5d
+ 1176 011e 81000000 		.4byte	0x81
+ 1177 0122 02       		.byte	0x2
+ 1178 0123 91       		.byte	0x91
+ 1179 0124 75       		.sleb128 -11
+ 1180 0125 0A       		.uleb128 0xa
+ 1181 0126 88020000 		.4byte	.LASF22
+ 1182 012a 01       		.byte	0x1
+ 1183 012b 5E       		.byte	0x5e
+ 1184 012c 81000000 		.4byte	0x81
+ 1185 0130 02       		.byte	0x2
+ 1186 0131 91       		.byte	0x91
+ 1187 0132 76       		.sleb128 -10
+ 1188 0133 0A       		.uleb128 0xa
+ 1189 0134 E2000000 		.4byte	.LASF23
+ 1190 0138 01       		.byte	0x1
+ 1191 0139 5F       		.byte	0x5f
+ 1192 013a 30000000 		.4byte	0x30
+ 1193 013e 02       		.byte	0x2
+ 1194 013f 91       		.byte	0x91
+ 1195 0140 77       		.sleb128 -9
+ 1196 0141 00       		.byte	0x0
+ 1197 0142 0B       		.uleb128 0xb
+ 1198 0143 01       		.byte	0x1
+ 1199 0144 C5000000 		.4byte	.LASF24
+ 1200 0148 01       		.byte	0x1
+ 1201 0149 93       		.byte	0x93
+ 1202 014a 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 27
+
+
+ 1203 014b A4000000 		.4byte	0xa4
+ 1204 014f 00000000 		.4byte	.LFB31
+ 1205 0153 32000000 		.4byte	.LFE31
+ 1206 0157 62000000 		.4byte	.LLST2
+ 1207 015b 0B       		.uleb128 0xb
+ 1208 015c 01       		.byte	0x1
+ 1209 015d EE010000 		.4byte	.LASF25
+ 1210 0161 01       		.byte	0x1
+ 1211 0162 9C       		.byte	0x9c
+ 1212 0163 01       		.byte	0x1
+ 1213 0164 A4000000 		.4byte	0xa4
+ 1214 0168 00000000 		.4byte	.LFB32
+ 1215 016c 32000000 		.4byte	.LFE32
+ 1216 0170 8D000000 		.4byte	.LLST3
+ 1217 0174 0B       		.uleb128 0xb
+ 1218 0175 01       		.byte	0x1
+ 1219 0176 12010000 		.4byte	.LASF26
+ 1220 017a 01       		.byte	0x1
+ 1221 017b A5       		.byte	0xa5
+ 1222 017c 01       		.byte	0x1
+ 1223 017d A4000000 		.4byte	0xa4
+ 1224 0181 00000000 		.4byte	.LFB33
+ 1225 0185 32000000 		.4byte	.LFE33
+ 1226 0189 B8000000 		.4byte	.LLST4
+ 1227 018d 0B       		.uleb128 0xb
+ 1228 018e 01       		.byte	0x1
+ 1229 018f 73010000 		.4byte	.LASF27
+ 1230 0193 01       		.byte	0x1
+ 1231 0194 AD       		.byte	0xad
+ 1232 0195 01       		.byte	0x1
+ 1233 0196 A4000000 		.4byte	0xa4
+ 1234 019a 00000000 		.4byte	.LFB34
+ 1235 019e 32000000 		.4byte	.LFE34
+ 1236 01a2 E3000000 		.4byte	.LLST5
+ 1237 01a6 08       		.uleb128 0x8
+ 1238 01a7 01       		.byte	0x1
+ 1239 01a8 14000000 		.4byte	.LASF29
+ 1240 01ac 01       		.byte	0x1
+ 1241 01ad B6       		.byte	0xb6
+ 1242 01ae 01       		.byte	0x1
+ 1243 01af 00000000 		.4byte	.LFB35
+ 1244 01b3 18000000 		.4byte	.LFE35
+ 1245 01b7 0E010000 		.4byte	.LLST6
+ 1246 01bb 09       		.uleb128 0x9
+ 1247 01bc 01       		.byte	0x1
+ 1248 01bd F8000000 		.4byte	.LASF31
+ 1249 01c1 01       		.byte	0x1
+ 1250 01c2 C1       		.byte	0xc1
+ 1251 01c3 01       		.byte	0x1
+ 1252 01c4 00000000 		.4byte	.LFB36
+ 1253 01c8 A2000000 		.4byte	.LFE36
+ 1254 01cc 39010000 		.4byte	.LLST7
+ 1255 01d0 E3010000 		.4byte	0x1e3
+ 1256 01d4 0C       		.uleb128 0xc
+ 1257 01d5 A4000000 		.4byte	.LASF20
+ 1258 01d9 01       		.byte	0x1
+ 1259 01da C1       		.byte	0xc1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 28
+
+
+ 1260 01db 81000000 		.4byte	0x81
+ 1261 01df 02       		.byte	0x2
+ 1262 01e0 91       		.byte	0x91
+ 1263 01e1 77       		.sleb128 -9
+ 1264 01e2 00       		.byte	0x0
+ 1265 01e3 09       		.uleb128 0x9
+ 1266 01e4 01       		.byte	0x1
+ 1267 01e5 AA020000 		.4byte	.LASF32
+ 1268 01e9 01       		.byte	0x1
+ 1269 01ea D6       		.byte	0xd6
+ 1270 01eb 01       		.byte	0x1
+ 1271 01ec 00000000 		.4byte	.LFB37
+ 1272 01f0 A2000000 		.4byte	.LFE37
+ 1273 01f4 70010000 		.4byte	.LLST8
+ 1274 01f8 0B020000 		.4byte	0x20b
+ 1275 01fc 0C       		.uleb128 0xc
+ 1276 01fd 61000000 		.4byte	.LASF33
+ 1277 0201 01       		.byte	0x1
+ 1278 0202 D6       		.byte	0xd6
+ 1279 0203 81000000 		.4byte	0x81
+ 1280 0207 02       		.byte	0x2
+ 1281 0208 91       		.byte	0x91
+ 1282 0209 77       		.sleb128 -9
+ 1283 020a 00       		.byte	0x0
+ 1284 020b 09       		.uleb128 0x9
+ 1285 020c 01       		.byte	0x1
+ 1286 020d 36000000 		.4byte	.LASF34
+ 1287 0211 01       		.byte	0x1
+ 1288 0212 EB       		.byte	0xeb
+ 1289 0213 01       		.byte	0x1
+ 1290 0214 00000000 		.4byte	.LFB38
+ 1291 0218 A2000000 		.4byte	.LFE38
+ 1292 021c A7010000 		.4byte	.LLST9
+ 1293 0220 33020000 		.4byte	0x233
+ 1294 0224 0C       		.uleb128 0xc
+ 1295 0225 88020000 		.4byte	.LASF22
+ 1296 0229 01       		.byte	0x1
+ 1297 022a EB       		.byte	0xeb
+ 1298 022b 81000000 		.4byte	0x81
+ 1299 022f 02       		.byte	0x2
+ 1300 0230 91       		.byte	0x91
+ 1301 0231 77       		.sleb128 -9
+ 1302 0232 00       		.byte	0x0
+ 1303 0233 0D       		.uleb128 0xd
+ 1304 0234 01       		.byte	0x1
+ 1305 0235 E6020000 		.4byte	.LASF35
+ 1306 0239 01       		.byte	0x1
+ 1307 023a 0101     		.2byte	0x101
+ 1308 023c 01       		.byte	0x1
+ 1309 023d 00000000 		.4byte	.LFB39
+ 1310 0241 A2000000 		.4byte	.LFE39
+ 1311 0245 DE010000 		.4byte	.LLST10
+ 1312 0249 5D020000 		.4byte	0x25d
+ 1313 024d 0E       		.uleb128 0xe
+ 1314 024e E2000000 		.4byte	.LASF23
+ 1315 0252 01       		.byte	0x1
+ 1316 0253 0101     		.2byte	0x101
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 29
+
+
+ 1317 0255 30000000 		.4byte	0x30
+ 1318 0259 02       		.byte	0x2
+ 1319 025a 91       		.byte	0x91
+ 1320 025b 77       		.sleb128 -9
+ 1321 025c 00       		.byte	0x0
+ 1322 025d 0F       		.uleb128 0xf
+ 1323 025e 5B010000 		.4byte	.LASF36
+ 1324 0262 05       		.byte	0x5
+ 1325 0263 CE06     		.2byte	0x6ce
+ 1326 0265 6B020000 		.4byte	0x26b
+ 1327 0269 01       		.byte	0x1
+ 1328 026a 01       		.byte	0x1
+ 1329 026b 10       		.uleb128 0x10
+ 1330 026c 6C000000 		.4byte	0x6c
+ 1331 0270 11       		.uleb128 0x11
+ 1332 0271 78020000 		.4byte	.LASF37
+ 1333 0275 01       		.byte	0x1
+ 1334 0276 3B       		.byte	0x3b
+ 1335 0277 D0000000 		.4byte	0xd0
+ 1336 027b 01       		.byte	0x1
+ 1337 027c 05       		.byte	0x5
+ 1338 027d 03       		.byte	0x3
+ 1339 027e 00000000 		.4byte	motorState
+ 1340 0282 11       		.uleb128 0x11
+ 1341 0283 04030000 		.4byte	.LASF38
+ 1342 0287 01       		.byte	0x1
+ 1343 0288 3C       		.byte	0x3c
+ 1344 0289 D0000000 		.4byte	0xd0
+ 1345 028d 01       		.byte	0x1
+ 1346 028e 05       		.byte	0x5
+ 1347 028f 03       		.byte	0x3
+ 1348 0290 00000000 		.4byte	lightsOnOffState
+ 1349 0294 11       		.uleb128 0x11
+ 1350 0295 68010000 		.4byte	.LASF39
+ 1351 0299 01       		.byte	0x1
+ 1352 029a 3D       		.byte	0x3d
+ 1353 029b D0000000 		.4byte	0xd0
+ 1354 029f 01       		.byte	0x1
+ 1355 02a0 05       		.byte	0x5
+ 1356 02a1 03       		.byte	0x3
+ 1357 02a2 00000000 		.4byte	alarmState
+ 1358 02a6 11       		.uleb128 0x11
+ 1359 02a7 4F020000 		.4byte	.LASF40
+ 1360 02ab 01       		.byte	0x1
+ 1361 02ac 3E       		.byte	0x3e
+ 1362 02ad D0000000 		.4byte	0xd0
+ 1363 02b1 01       		.byte	0x1
+ 1364 02b2 05       		.byte	0x5
+ 1365 02b3 03       		.byte	0x3
+ 1366 02b4 00000000 		.4byte	lightModeState
+ 1367 02b8 00       		.byte	0x0
+ 1368              		.section	.debug_abbrev
+ 1369 0000 01       		.uleb128 0x1
+ 1370 0001 11       		.uleb128 0x11
+ 1371 0002 01       		.byte	0x1
+ 1372 0003 25       		.uleb128 0x25
+ 1373 0004 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 30
+
+
+ 1374 0005 13       		.uleb128 0x13
+ 1375 0006 0B       		.uleb128 0xb
+ 1376 0007 03       		.uleb128 0x3
+ 1377 0008 0E       		.uleb128 0xe
+ 1378 0009 1B       		.uleb128 0x1b
+ 1379 000a 0E       		.uleb128 0xe
+ 1380 000b 11       		.uleb128 0x11
+ 1381 000c 01       		.uleb128 0x1
+ 1382 000d 52       		.uleb128 0x52
+ 1383 000e 01       		.uleb128 0x1
+ 1384 000f 55       		.uleb128 0x55
+ 1385 0010 06       		.uleb128 0x6
+ 1386 0011 10       		.uleb128 0x10
+ 1387 0012 06       		.uleb128 0x6
+ 1388 0013 00       		.byte	0x0
+ 1389 0014 00       		.byte	0x0
+ 1390 0015 02       		.uleb128 0x2
+ 1391 0016 24       		.uleb128 0x24
+ 1392 0017 00       		.byte	0x0
+ 1393 0018 0B       		.uleb128 0xb
+ 1394 0019 0B       		.uleb128 0xb
+ 1395 001a 3E       		.uleb128 0x3e
+ 1396 001b 0B       		.uleb128 0xb
+ 1397 001c 03       		.uleb128 0x3
+ 1398 001d 0E       		.uleb128 0xe
+ 1399 001e 00       		.byte	0x0
+ 1400 001f 00       		.byte	0x0
+ 1401 0020 03       		.uleb128 0x3
+ 1402 0021 16       		.uleb128 0x16
+ 1403 0022 00       		.byte	0x0
+ 1404 0023 03       		.uleb128 0x3
+ 1405 0024 0E       		.uleb128 0xe
+ 1406 0025 3A       		.uleb128 0x3a
+ 1407 0026 0B       		.uleb128 0xb
+ 1408 0027 3B       		.uleb128 0x3b
+ 1409 0028 0B       		.uleb128 0xb
+ 1410 0029 49       		.uleb128 0x49
+ 1411 002a 13       		.uleb128 0x13
+ 1412 002b 00       		.byte	0x0
+ 1413 002c 00       		.byte	0x0
+ 1414 002d 04       		.uleb128 0x4
+ 1415 002e 24       		.uleb128 0x24
+ 1416 002f 00       		.byte	0x0
+ 1417 0030 0B       		.uleb128 0xb
+ 1418 0031 0B       		.uleb128 0xb
+ 1419 0032 3E       		.uleb128 0x3e
+ 1420 0033 0B       		.uleb128 0xb
+ 1421 0034 03       		.uleb128 0x3
+ 1422 0035 08       		.uleb128 0x8
+ 1423 0036 00       		.byte	0x0
+ 1424 0037 00       		.byte	0x0
+ 1425 0038 05       		.uleb128 0x5
+ 1426 0039 24       		.uleb128 0x24
+ 1427 003a 00       		.byte	0x0
+ 1428 003b 0B       		.uleb128 0xb
+ 1429 003c 0B       		.uleb128 0xb
+ 1430 003d 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 31
+
+
+ 1431 003e 0B       		.uleb128 0xb
+ 1432 003f 00       		.byte	0x0
+ 1433 0040 00       		.byte	0x0
+ 1434 0041 06       		.uleb128 0x6
+ 1435 0042 04       		.uleb128 0x4
+ 1436 0043 01       		.byte	0x1
+ 1437 0044 0B       		.uleb128 0xb
+ 1438 0045 0B       		.uleb128 0xb
+ 1439 0046 3A       		.uleb128 0x3a
+ 1440 0047 0B       		.uleb128 0xb
+ 1441 0048 3B       		.uleb128 0x3b
+ 1442 0049 0B       		.uleb128 0xb
+ 1443 004a 01       		.uleb128 0x1
+ 1444 004b 13       		.uleb128 0x13
+ 1445 004c 00       		.byte	0x0
+ 1446 004d 00       		.byte	0x0
+ 1447 004e 07       		.uleb128 0x7
+ 1448 004f 28       		.uleb128 0x28
+ 1449 0050 00       		.byte	0x0
+ 1450 0051 03       		.uleb128 0x3
+ 1451 0052 0E       		.uleb128 0xe
+ 1452 0053 1C       		.uleb128 0x1c
+ 1453 0054 0D       		.uleb128 0xd
+ 1454 0055 00       		.byte	0x0
+ 1455 0056 00       		.byte	0x0
+ 1456 0057 08       		.uleb128 0x8
+ 1457 0058 2E       		.uleb128 0x2e
+ 1458 0059 00       		.byte	0x0
+ 1459 005a 3F       		.uleb128 0x3f
+ 1460 005b 0C       		.uleb128 0xc
+ 1461 005c 03       		.uleb128 0x3
+ 1462 005d 0E       		.uleb128 0xe
+ 1463 005e 3A       		.uleb128 0x3a
+ 1464 005f 0B       		.uleb128 0xb
+ 1465 0060 3B       		.uleb128 0x3b
+ 1466 0061 0B       		.uleb128 0xb
+ 1467 0062 27       		.uleb128 0x27
+ 1468 0063 0C       		.uleb128 0xc
+ 1469 0064 11       		.uleb128 0x11
+ 1470 0065 01       		.uleb128 0x1
+ 1471 0066 12       		.uleb128 0x12
+ 1472 0067 01       		.uleb128 0x1
+ 1473 0068 40       		.uleb128 0x40
+ 1474 0069 06       		.uleb128 0x6
+ 1475 006a 00       		.byte	0x0
+ 1476 006b 00       		.byte	0x0
+ 1477 006c 09       		.uleb128 0x9
+ 1478 006d 2E       		.uleb128 0x2e
+ 1479 006e 01       		.byte	0x1
+ 1480 006f 3F       		.uleb128 0x3f
+ 1481 0070 0C       		.uleb128 0xc
+ 1482 0071 03       		.uleb128 0x3
+ 1483 0072 0E       		.uleb128 0xe
+ 1484 0073 3A       		.uleb128 0x3a
+ 1485 0074 0B       		.uleb128 0xb
+ 1486 0075 3B       		.uleb128 0x3b
+ 1487 0076 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 32
+
+
+ 1488 0077 27       		.uleb128 0x27
+ 1489 0078 0C       		.uleb128 0xc
+ 1490 0079 11       		.uleb128 0x11
+ 1491 007a 01       		.uleb128 0x1
+ 1492 007b 12       		.uleb128 0x12
+ 1493 007c 01       		.uleb128 0x1
+ 1494 007d 40       		.uleb128 0x40
+ 1495 007e 06       		.uleb128 0x6
+ 1496 007f 01       		.uleb128 0x1
+ 1497 0080 13       		.uleb128 0x13
+ 1498 0081 00       		.byte	0x0
+ 1499 0082 00       		.byte	0x0
+ 1500 0083 0A       		.uleb128 0xa
+ 1501 0084 34       		.uleb128 0x34
+ 1502 0085 00       		.byte	0x0
+ 1503 0086 03       		.uleb128 0x3
+ 1504 0087 0E       		.uleb128 0xe
+ 1505 0088 3A       		.uleb128 0x3a
+ 1506 0089 0B       		.uleb128 0xb
+ 1507 008a 3B       		.uleb128 0x3b
+ 1508 008b 0B       		.uleb128 0xb
+ 1509 008c 49       		.uleb128 0x49
+ 1510 008d 13       		.uleb128 0x13
+ 1511 008e 02       		.uleb128 0x2
+ 1512 008f 0A       		.uleb128 0xa
+ 1513 0090 00       		.byte	0x0
+ 1514 0091 00       		.byte	0x0
+ 1515 0092 0B       		.uleb128 0xb
+ 1516 0093 2E       		.uleb128 0x2e
+ 1517 0094 00       		.byte	0x0
+ 1518 0095 3F       		.uleb128 0x3f
+ 1519 0096 0C       		.uleb128 0xc
+ 1520 0097 03       		.uleb128 0x3
+ 1521 0098 0E       		.uleb128 0xe
+ 1522 0099 3A       		.uleb128 0x3a
+ 1523 009a 0B       		.uleb128 0xb
+ 1524 009b 3B       		.uleb128 0x3b
+ 1525 009c 0B       		.uleb128 0xb
+ 1526 009d 27       		.uleb128 0x27
+ 1527 009e 0C       		.uleb128 0xc
+ 1528 009f 49       		.uleb128 0x49
+ 1529 00a0 13       		.uleb128 0x13
+ 1530 00a1 11       		.uleb128 0x11
+ 1531 00a2 01       		.uleb128 0x1
+ 1532 00a3 12       		.uleb128 0x12
+ 1533 00a4 01       		.uleb128 0x1
+ 1534 00a5 40       		.uleb128 0x40
+ 1535 00a6 06       		.uleb128 0x6
+ 1536 00a7 00       		.byte	0x0
+ 1537 00a8 00       		.byte	0x0
+ 1538 00a9 0C       		.uleb128 0xc
+ 1539 00aa 05       		.uleb128 0x5
+ 1540 00ab 00       		.byte	0x0
+ 1541 00ac 03       		.uleb128 0x3
+ 1542 00ad 0E       		.uleb128 0xe
+ 1543 00ae 3A       		.uleb128 0x3a
+ 1544 00af 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 33
+
+
+ 1545 00b0 3B       		.uleb128 0x3b
+ 1546 00b1 0B       		.uleb128 0xb
+ 1547 00b2 49       		.uleb128 0x49
+ 1548 00b3 13       		.uleb128 0x13
+ 1549 00b4 02       		.uleb128 0x2
+ 1550 00b5 0A       		.uleb128 0xa
+ 1551 00b6 00       		.byte	0x0
+ 1552 00b7 00       		.byte	0x0
+ 1553 00b8 0D       		.uleb128 0xd
+ 1554 00b9 2E       		.uleb128 0x2e
+ 1555 00ba 01       		.byte	0x1
+ 1556 00bb 3F       		.uleb128 0x3f
+ 1557 00bc 0C       		.uleb128 0xc
+ 1558 00bd 03       		.uleb128 0x3
+ 1559 00be 0E       		.uleb128 0xe
+ 1560 00bf 3A       		.uleb128 0x3a
+ 1561 00c0 0B       		.uleb128 0xb
+ 1562 00c1 3B       		.uleb128 0x3b
+ 1563 00c2 05       		.uleb128 0x5
+ 1564 00c3 27       		.uleb128 0x27
+ 1565 00c4 0C       		.uleb128 0xc
+ 1566 00c5 11       		.uleb128 0x11
+ 1567 00c6 01       		.uleb128 0x1
+ 1568 00c7 12       		.uleb128 0x12
+ 1569 00c8 01       		.uleb128 0x1
+ 1570 00c9 40       		.uleb128 0x40
+ 1571 00ca 06       		.uleb128 0x6
+ 1572 00cb 01       		.uleb128 0x1
+ 1573 00cc 13       		.uleb128 0x13
+ 1574 00cd 00       		.byte	0x0
+ 1575 00ce 00       		.byte	0x0
+ 1576 00cf 0E       		.uleb128 0xe
+ 1577 00d0 05       		.uleb128 0x5
+ 1578 00d1 00       		.byte	0x0
+ 1579 00d2 03       		.uleb128 0x3
+ 1580 00d3 0E       		.uleb128 0xe
+ 1581 00d4 3A       		.uleb128 0x3a
+ 1582 00d5 0B       		.uleb128 0xb
+ 1583 00d6 3B       		.uleb128 0x3b
+ 1584 00d7 05       		.uleb128 0x5
+ 1585 00d8 49       		.uleb128 0x49
+ 1586 00d9 13       		.uleb128 0x13
+ 1587 00da 02       		.uleb128 0x2
+ 1588 00db 0A       		.uleb128 0xa
+ 1589 00dc 00       		.byte	0x0
+ 1590 00dd 00       		.byte	0x0
+ 1591 00de 0F       		.uleb128 0xf
+ 1592 00df 34       		.uleb128 0x34
+ 1593 00e0 00       		.byte	0x0
+ 1594 00e1 03       		.uleb128 0x3
+ 1595 00e2 0E       		.uleb128 0xe
+ 1596 00e3 3A       		.uleb128 0x3a
+ 1597 00e4 0B       		.uleb128 0xb
+ 1598 00e5 3B       		.uleb128 0x3b
+ 1599 00e6 05       		.uleb128 0x5
+ 1600 00e7 49       		.uleb128 0x49
+ 1601 00e8 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 34
+
+
+ 1602 00e9 3F       		.uleb128 0x3f
+ 1603 00ea 0C       		.uleb128 0xc
+ 1604 00eb 3C       		.uleb128 0x3c
+ 1605 00ec 0C       		.uleb128 0xc
+ 1606 00ed 00       		.byte	0x0
+ 1607 00ee 00       		.byte	0x0
+ 1608 00ef 10       		.uleb128 0x10
+ 1609 00f0 35       		.uleb128 0x35
+ 1610 00f1 00       		.byte	0x0
+ 1611 00f2 49       		.uleb128 0x49
+ 1612 00f3 13       		.uleb128 0x13
+ 1613 00f4 00       		.byte	0x0
+ 1614 00f5 00       		.byte	0x0
+ 1615 00f6 11       		.uleb128 0x11
+ 1616 00f7 34       		.uleb128 0x34
+ 1617 00f8 00       		.byte	0x0
+ 1618 00f9 03       		.uleb128 0x3
+ 1619 00fa 0E       		.uleb128 0xe
+ 1620 00fb 3A       		.uleb128 0x3a
+ 1621 00fc 0B       		.uleb128 0xb
+ 1622 00fd 3B       		.uleb128 0x3b
+ 1623 00fe 0B       		.uleb128 0xb
+ 1624 00ff 49       		.uleb128 0x49
+ 1625 0100 13       		.uleb128 0x13
+ 1626 0101 3F       		.uleb128 0x3f
+ 1627 0102 0C       		.uleb128 0xc
+ 1628 0103 02       		.uleb128 0x2
+ 1629 0104 0A       		.uleb128 0xa
+ 1630 0105 00       		.byte	0x0
+ 1631 0106 00       		.byte	0x0
+ 1632 0107 00       		.byte	0x0
+ 1633              		.section	.debug_pubnames,"",%progbits
+ 1634 0000 AB010000 		.4byte	0x1ab
+ 1635 0004 0200     		.2byte	0x2
+ 1636 0006 00000000 		.4byte	.Ldebug_info0
+ 1637 000a B9020000 		.4byte	0x2b9
+ 1638 000e DB000000 		.4byte	0xdb
+ 1639 0012 42757474 		.ascii	"Buttons_Init\000"
+ 1639      6F6E735F 
+ 1639      496E6974 
+ 1639      00
+ 1640 001f F0000000 		.4byte	0xf0
+ 1641 0023 42757474 		.ascii	"Buttons_Run\000"
+ 1641      6F6E735F 
+ 1641      52756E00 
+ 1642 002f 42010000 		.4byte	0x142
+ 1643 0033 42757474 		.ascii	"Buttons_IsMotorButtonPressed\000"
+ 1643      6F6E735F 
+ 1643      49734D6F 
+ 1643      746F7242 
+ 1643      7574746F 
+ 1644 0050 5B010000 		.4byte	0x15b
+ 1645 0054 42757474 		.ascii	"Buttons_IsLightsOnOffButtonPressed\000"
+ 1645      6F6E735F 
+ 1645      49734C69 
+ 1645      67687473 
+ 1645      4F6E4F66 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 35
+
+
+ 1646 0077 74010000 		.4byte	0x174
+ 1647 007b 42757474 		.ascii	"Buttons_IsAlarmButtonPressed\000"
+ 1647      6F6E735F 
+ 1647      4973416C 
+ 1647      61726D42 
+ 1647      7574746F 
+ 1648 0098 8D010000 		.4byte	0x18d
+ 1649 009c 42757474 		.ascii	"Buttons_IsLightModeButtonPressed\000"
+ 1649      6F6E735F 
+ 1649      49734C69 
+ 1649      6768744D 
+ 1649      6F646542 
+ 1650 00bd A6010000 		.4byte	0x1a6
+ 1651 00c1 42757474 		.ascii	"Buttons_ResetLightModeButtonState\000"
+ 1651      6F6E735F 
+ 1651      52657365 
+ 1651      744C6967 
+ 1651      68744D6F 
+ 1652 00e3 BB010000 		.4byte	0x1bb
+ 1653 00e7 42757474 		.ascii	"Buttons_MotorStateMachine\000"
+ 1653      6F6E735F 
+ 1653      4D6F746F 
+ 1653      72537461 
+ 1653      74654D61 
+ 1654 0101 E3010000 		.4byte	0x1e3
+ 1655 0105 42757474 		.ascii	"Buttons_LightsOnOffStateMachine\000"
+ 1655      6F6E735F 
+ 1655      4C696768 
+ 1655      74734F6E 
+ 1655      4F666653 
+ 1656 0125 0B020000 		.4byte	0x20b
+ 1657 0129 42757474 		.ascii	"Buttons_AlarmStateMachine\000"
+ 1657      6F6E735F 
+ 1657      416C6172 
+ 1657      6D537461 
+ 1657      74654D61 
+ 1658 0143 33020000 		.4byte	0x233
+ 1659 0147 42757474 		.ascii	"Buttons_LightModeStateMachine\000"
+ 1659      6F6E735F 
+ 1659      4C696768 
+ 1659      744D6F64 
+ 1659      65537461 
+ 1660 0165 70020000 		.4byte	0x270
+ 1661 0169 6D6F746F 		.ascii	"motorState\000"
+ 1661      72537461 
+ 1661      746500
+ 1662 0174 82020000 		.4byte	0x282
+ 1663 0178 6C696768 		.ascii	"lightsOnOffState\000"
+ 1663      74734F6E 
+ 1663      4F666653 
+ 1663      74617465 
+ 1663      00
+ 1664 0189 94020000 		.4byte	0x294
+ 1665 018d 616C6172 		.ascii	"alarmState\000"
+ 1665      6D537461 
+ 1665      746500
+ 1666 0198 A6020000 		.4byte	0x2a6
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 36
+
+
+ 1667 019c 6C696768 		.ascii	"lightModeState\000"
+ 1667      744D6F64 
+ 1667      65537461 
+ 1667      746500
+ 1668 01ab 00000000 		.4byte	0x0
+ 1669              		.section	.debug_aranges,"",%progbits
+ 1670 0000 6C000000 		.4byte	0x6c
+ 1671 0004 0200     		.2byte	0x2
+ 1672 0006 00000000 		.4byte	.Ldebug_info0
+ 1673 000a 04       		.byte	0x4
+ 1674 000b 00       		.byte	0x0
+ 1675 000c 0000     		.2byte	0x0
+ 1676 000e 0000     		.2byte	0x0
+ 1677 0010 00000000 		.4byte	.LFB29
+ 1678 0014 0E000000 		.4byte	.LFE29-.LFB29
+ 1679 0018 00000000 		.4byte	.LFB30
+ 1680 001c C8000000 		.4byte	.LFE30-.LFB30
+ 1681 0020 00000000 		.4byte	.LFB31
+ 1682 0024 32000000 		.4byte	.LFE31-.LFB31
+ 1683 0028 00000000 		.4byte	.LFB32
+ 1684 002c 32000000 		.4byte	.LFE32-.LFB32
+ 1685 0030 00000000 		.4byte	.LFB33
+ 1686 0034 32000000 		.4byte	.LFE33-.LFB33
+ 1687 0038 00000000 		.4byte	.LFB34
+ 1688 003c 32000000 		.4byte	.LFE34-.LFB34
+ 1689 0040 00000000 		.4byte	.LFB35
+ 1690 0044 18000000 		.4byte	.LFE35-.LFB35
+ 1691 0048 00000000 		.4byte	.LFB36
+ 1692 004c A2000000 		.4byte	.LFE36-.LFB36
+ 1693 0050 00000000 		.4byte	.LFB37
+ 1694 0054 A2000000 		.4byte	.LFE37-.LFB37
+ 1695 0058 00000000 		.4byte	.LFB38
+ 1696 005c A2000000 		.4byte	.LFE38-.LFB38
+ 1697 0060 00000000 		.4byte	.LFB39
+ 1698 0064 A2000000 		.4byte	.LFE39-.LFB39
+ 1699 0068 00000000 		.4byte	0x0
+ 1700 006c 00000000 		.4byte	0x0
+ 1701              		.section	.debug_ranges,"",%progbits
+ 1702              	.Ldebug_ranges0:
+ 1703 0000 00000000 		.4byte	.Ltext0
+ 1704 0004 00000000 		.4byte	.Letext0
+ 1705 0008 00000000 		.4byte	.LFB29
+ 1706 000c 0E000000 		.4byte	.LFE29
+ 1707 0010 00000000 		.4byte	.LFB30
+ 1708 0014 C8000000 		.4byte	.LFE30
+ 1709 0018 00000000 		.4byte	.LFB31
+ 1710 001c 32000000 		.4byte	.LFE31
+ 1711 0020 00000000 		.4byte	.LFB32
+ 1712 0024 32000000 		.4byte	.LFE32
+ 1713 0028 00000000 		.4byte	.LFB33
+ 1714 002c 32000000 		.4byte	.LFE33
+ 1715 0030 00000000 		.4byte	.LFB34
+ 1716 0034 32000000 		.4byte	.LFE34
+ 1717 0038 00000000 		.4byte	.LFB35
+ 1718 003c 18000000 		.4byte	.LFE35
+ 1719 0040 00000000 		.4byte	.LFB36
+ 1720 0044 A2000000 		.4byte	.LFE36
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 37
+
+
+ 1721 0048 00000000 		.4byte	.LFB37
+ 1722 004c A2000000 		.4byte	.LFE37
+ 1723 0050 00000000 		.4byte	.LFB38
+ 1724 0054 A2000000 		.4byte	.LFE38
+ 1725 0058 00000000 		.4byte	.LFB39
+ 1726 005c A2000000 		.4byte	.LFE39
+ 1727 0060 00000000 		.4byte	0x0
+ 1728 0064 00000000 		.4byte	0x0
+ 1729              		.section	.debug_str,"MS",%progbits,1
+ 1730              	.LASF6:
+ 1731 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1731      206C6F6E 
+ 1731      6720696E 
+ 1731      7400
+ 1732              	.LASF12:
+ 1733 000e 46414C53 		.ascii	"FALSE\000"
+ 1733      4500
+ 1734              	.LASF29:
+ 1735 0014 42757474 		.ascii	"Buttons_ResetLightModeButtonState\000"
+ 1735      6F6E735F 
+ 1735      52657365 
+ 1735      744C6967 
+ 1735      68744D6F 
+ 1736              	.LASF34:
+ 1737 0036 42757474 		.ascii	"Buttons_AlarmStateMachine\000"
+ 1737      6F6E735F 
+ 1737      416C6172 
+ 1737      6D537461 
+ 1737      74654D61 
+ 1738              	.LASF13:
+ 1739 0050 54525545 		.ascii	"TRUE\000"
+ 1739      00
+ 1740              	.LASF18:
+ 1741 0055 53545F48 		.ascii	"ST_HALF_OFF\000"
+ 1741      414C465F 
+ 1741      4F464600 
+ 1742              	.LASF33:
+ 1743 0061 6C696768 		.ascii	"lightsOnOffButtonActive\000"
+ 1743      74734F6E 
+ 1743      4F666642 
+ 1743      7574746F 
+ 1743      6E416374 
+ 1744              	.LASF16:
+ 1745 0079 53545F48 		.ascii	"ST_HALF_ON\000"
+ 1745      414C465F 
+ 1745      4F4E00
+ 1746              	.LASF17:
+ 1747 0084 53545F4F 		.ascii	"ST_ON\000"
+ 1747      4E00
+ 1748              	.LASF14:
+ 1749 008a 626F6F6C 		.ascii	"bool_t\000"
+ 1749      5F7400
+ 1750              	.LASF21:
+ 1751 0091 6C696768 		.ascii	"lightsButtonActive\000"
+ 1751      74734275 
+ 1751      74746F6E 
+ 1751      41637469 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 38
+
+
+ 1751      766500
+ 1752              	.LASF20:
+ 1753 00a4 6D6F746F 		.ascii	"motorButtonActive\000"
+ 1753      72427574 
+ 1753      746F6E41 
+ 1753      63746976 
+ 1753      6500
+ 1754              	.LASF19:
+ 1755 00b6 62757474 		.ascii	"buttonsState_t\000"
+ 1755      6F6E7353 
+ 1755      74617465 
+ 1755      5F7400
+ 1756              	.LASF24:
+ 1757 00c5 42757474 		.ascii	"Buttons_IsMotorButtonPressed\000"
+ 1757      6F6E735F 
+ 1757      49734D6F 
+ 1757      746F7242 
+ 1757      7574746F 
+ 1758              	.LASF23:
+ 1759 00e2 6C696768 		.ascii	"lightModeButtonActive\000"
+ 1759      744D6F64 
+ 1759      65427574 
+ 1759      746F6E41 
+ 1759      63746976 
+ 1760              	.LASF31:
+ 1761 00f8 42757474 		.ascii	"Buttons_MotorStateMachine\000"
+ 1761      6F6E735F 
+ 1761      4D6F746F 
+ 1761      72537461 
+ 1761      74654D61 
+ 1762              	.LASF26:
+ 1763 0112 42757474 		.ascii	"Buttons_IsAlarmButtonPressed\000"
+ 1763      6F6E735F 
+ 1763      4973416C 
+ 1763      61726D42 
+ 1763      7574746F 
+ 1764              	.LASF3:
+ 1765 012f 73686F72 		.ascii	"short unsigned int\000"
+ 1765      7420756E 
+ 1765      7369676E 
+ 1765      65642069 
+ 1765      6E7400
+ 1766              	.LASF30:
+ 1767 0142 42757474 		.ascii	"Buttons_Run\000"
+ 1767      6F6E735F 
+ 1767      52756E00 
+ 1768              	.LASF28:
+ 1769 014e 42757474 		.ascii	"Buttons_Init\000"
+ 1769      6F6E735F 
+ 1769      496E6974 
+ 1769      00
+ 1770              	.LASF36:
+ 1771 015b 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1771      52784275 
+ 1771      66666572 
+ 1771      00
+ 1772              	.LASF39:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 39
+
+
+ 1773 0168 616C6172 		.ascii	"alarmState\000"
+ 1773      6D537461 
+ 1773      746500
+ 1774              	.LASF27:
+ 1775 0173 42757474 		.ascii	"Buttons_IsLightModeButtonPressed\000"
+ 1775      6F6E735F 
+ 1775      49734C69 
+ 1775      6768744D 
+ 1775      6F646542 
+ 1776              	.LASF43:
+ 1777 0194 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1777      73657273 
+ 1777      5C47656F 
+ 1777      5C446F63 
+ 1777      756D656E 
+ 1778 01c2 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 1778      645C4669 
+ 1778      726D7761 
+ 1778      72655C50 
+ 1778      536F435C 
+ 1779              	.LASF25:
+ 1780 01ee 42757474 		.ascii	"Buttons_IsLightsOnOffButtonPressed\000"
+ 1780      6F6E735F 
+ 1780      49734C69 
+ 1780      67687473 
+ 1780      4F6E4F66 
+ 1781              	.LASF5:
+ 1782 0211 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1782      20756E73 
+ 1782      69676E65 
+ 1782      6420696E 
+ 1782      7400
+ 1783              	.LASF8:
+ 1784 0223 756E7369 		.ascii	"unsigned int\000"
+ 1784      676E6564 
+ 1784      20696E74 
+ 1784      00
+ 1785              	.LASF7:
+ 1786 0230 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1786      206C6F6E 
+ 1786      6720756E 
+ 1786      7369676E 
+ 1786      65642069 
+ 1787              	.LASF10:
+ 1788 0247 75696E74 		.ascii	"uint8_t\000"
+ 1788      385F7400 
+ 1789              	.LASF40:
+ 1790 024f 6C696768 		.ascii	"lightModeState\000"
+ 1790      744D6F64 
+ 1790      65537461 
+ 1790      746500
+ 1791              	.LASF1:
+ 1792 025e 756E7369 		.ascii	"unsigned char\000"
+ 1792      676E6564 
+ 1792      20636861 
+ 1792      7200
+ 1793              	.LASF41:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 40
+
+
+ 1794 026c 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1794      4320342E 
+ 1794      342E3100 
+ 1795              	.LASF37:
+ 1796 0278 6D6F746F 		.ascii	"motorState\000"
+ 1796      72537461 
+ 1796      746500
+ 1797              	.LASF9:
+ 1798 0283 63686172 		.ascii	"char\000"
+ 1798      00
+ 1799              	.LASF22:
+ 1800 0288 616C6172 		.ascii	"alarmButtonActive\000"
+ 1800      6D427574 
+ 1800      746F6E41 
+ 1800      63746976 
+ 1800      6500
+ 1801              	.LASF2:
+ 1802 029a 73686F72 		.ascii	"short int\000"
+ 1802      7420696E 
+ 1802      7400
+ 1803              	.LASF11:
+ 1804 02a4 75696E74 		.ascii	"uint8\000"
+ 1804      3800
+ 1805              	.LASF32:
+ 1806 02aa 42757474 		.ascii	"Buttons_LightsOnOffStateMachine\000"
+ 1806      6F6E735F 
+ 1806      4C696768 
+ 1806      74734F6E 
+ 1806      4F666653 
+ 1807              	.LASF4:
+ 1808 02ca 6C6F6E67 		.ascii	"long int\000"
+ 1808      20696E74 
+ 1808      00
+ 1809              	.LASF0:
+ 1810 02d3 7369676E 		.ascii	"signed char\000"
+ 1810      65642063 
+ 1810      68617200 
+ 1811              	.LASF15:
+ 1812 02df 53545F4F 		.ascii	"ST_OFF\000"
+ 1812      464600
+ 1813              	.LASF35:
+ 1814 02e6 42757474 		.ascii	"Buttons_LightModeStateMachine\000"
+ 1814      6F6E735F 
+ 1814      4C696768 
+ 1814      744D6F64 
+ 1814      65537461 
+ 1815              	.LASF38:
+ 1816 0304 6C696768 		.ascii	"lightsOnOffState\000"
+ 1816      74734F6E 
+ 1816      4F666653 
+ 1816      74617465 
+ 1816      00
+ 1817              	.LASF42:
+ 1818 0315 2E5C4275 		.ascii	".\\Buttons.c\000"
+ 1818      74746F6E 
+ 1818      732E6300 
+ 1819              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccxrnYLn.s 			page 41
+
+

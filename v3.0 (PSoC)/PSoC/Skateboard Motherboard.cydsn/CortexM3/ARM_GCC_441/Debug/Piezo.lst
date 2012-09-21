@@ -1,0 +1,2527 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Piezo.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 11020000 		.text
+  20      02002A01 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	debugBuff,200,4
+  24              		.bss
+  25              	_motorOnSoundDirection:
+  26 0000 00       		.space	1
+  27              		.global	_emitMotorSoundFlag
+  28              		.type	_emitMotorSoundFlag, %object
+  29              		.size	_emitMotorSoundFlag, 1
+  30              	_emitMotorSoundFlag:
+  31 0001 00       		.space	1
+  32              		.global	_alarmEnableFlag
+  33              		.type	_alarmEnableFlag, %object
+  34              		.size	_alarmEnableFlag, 1
+  35              	_alarmEnableFlag:
+  36 0002 00       		.space	1
+  37              		.global	_alarmActivatedSoundFlag
+  38              		.type	_alarmActivatedSoundFlag, %object
+  39              		.size	_alarmActivatedSoundFlag, 1
+  40              	_alarmActivatedSoundFlag:
+  41 0003 00       		.space	1
+  42              		.global	_piezoBeepCount
+  43              		.type	_piezoBeepCount, %object
+  44              		.size	_piezoBeepCount, 1
+  45              	_piezoBeepCount:
+  46 0004 00       		.space	1
+  47              		.global	__aeabi_i2d
+  48              		.global	__aeabi_dsub
+  49              		.global	__aeabi_d2uiz
+  50              		.global	__aeabi_dadd
+  51              		.section	.text.Piezo_Run,"ax",%progbits
+  52              		.align	2
+  53              		.global	Piezo_Run
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 2
+
+
+  54              		.thumb
+  55              		.thumb_func
+  56              		.type	Piezo_Run, %function
+  57              	Piezo_Run:
+  58              	.LFB29:
+  59              		.file 1 ".\\Piezo.c"
+   1:.\Piezo.c     **** //!
+   2:.\Piezo.c     **** //! @file 		Piezo.c
+   3:.\Piezo.c     **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Piezo.c     **** //! @date 		14/05/2011
+   5:.\Piezo.c     **** //! @brief 		Controls the piezo functions on the skateboard.
+   6:.\Piezo.c     **** //! @details
+   7:.\Piezo.c     **** //!		<b>Last Modified:			</b> 14/05/2011			\n
+   8:.\Piezo.c     **** //!		<b>Version:					</b> v1.0				\n
+   9:.\Piezo.c     **** //!		<b>Company:					</b> CladLabs			\n
+  10:.\Piezo.c     **** //!		<b>Project:					</b> Electric Skateboard\n
+  11:.\Piezo.c     **** //!		<b>Computer Architecture:	</b> ARM				\n
+  12:.\Piezo.c     **** //!		<b>Compiler:				</b> GCC				\n
+  13:.\Piezo.c     **** //! 	<b>uC Model:				</b> PSoC5				\n
+  14:.\Piezo.c     **** //!		<b>Documentation Format:	</b> Doxygen			\n
+  15:.\Piezo.c     **** //!		
+  16:.\Piezo.c     **** //!		Controls the led's on the board
+  17:.\Piezo.c     **** //!
+  18:.\Piezo.c     **** 
+  19:.\Piezo.c     **** //=================================================================================================
+  20:.\Piezo.c     **** //============================================ INFO ===============================================
+  21:.\Piezo.c     **** //=================================================================================================
+  22:.\Piezo.c     **** 
+  23:.\Piezo.c     **** //=================================================================================================
+  24:.\Piezo.c     **** //======================================= FILE INCLUSIONS =========================================
+  25:.\Piezo.c     **** //=================================================================================================
+  26:.\Piezo.c     **** 
+  27:.\Piezo.c     **** #include <device.h>
+  28:.\Piezo.c     **** #include "../common/PublicObjects.h"
+  29:.\Piezo.c     **** #include "Piezo.h"
+  30:.\Piezo.c     **** #include "Config.h"
+  31:.\Piezo.c     **** 
+  32:.\Piezo.c     **** //===============================================================================================//
+  33:.\Piezo.c     **** //=================================== PRECOMPILER CHECKS ========================================//
+  34:.\Piezo.c     **** //===============================================================================================//
+  35:.\Piezo.c     **** 
+  36:.\Piezo.c     **** //=================================================================================================
+  37:.\Piezo.c     **** //========================================== DEFINES ==============================================
+  38:.\Piezo.c     **** //=================================================================================================
+  39:.\Piezo.c     **** 
+  40:.\Piezo.c     **** //=================================================================================================
+  41:.\Piezo.c     **** //========================================== TYPEDEF's ============================================
+  42:.\Piezo.c     **** //=================================================================================================
+  43:.\Piezo.c     **** 
+  44:.\Piezo.c     **** typedef enum
+  45:.\Piezo.c     **** {
+  46:.\Piezo.c     **** 	piezoInit,
+  47:.\Piezo.c     **** 	piezoOff,
+  48:.\Piezo.c     **** 	piezoAlarmSound1,
+  49:.\Piezo.c     **** 	piezoAlarmSound2,
+  50:.\Piezo.c     **** 	piezoBeeping,
+  51:.\Piezo.c     **** 	piezoMotorOnSound,
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 3
+
+
+  52:.\Piezo.c     **** 	alarmActivatedSound1,
+  53:.\Piezo.c     **** 	alarmActivatedSound2,
+  54:.\Piezo.c     **** 	alarmActivatedSound3
+  55:.\Piezo.c     **** } piezoStates_t;
+  56:.\Piezo.c     **** 
+  57:.\Piezo.c     **** //=================================================================================================
+  58:.\Piezo.c     **** //==================================== PRIVATE VARIABLES ==========================================
+  59:.\Piezo.c     **** //=================================================================================================
+  60:.\Piezo.c     **** 
+  61:.\Piezo.c     **** 
+  62:.\Piezo.c     **** static motorOnSoundDirection_t _motorOnSoundDirection = up;
+  63:.\Piezo.c     **** 
+  64:.\Piezo.c     **** bool_t _emitMotorSoundFlag = FALSE;
+  65:.\Piezo.c     **** bool_t _alarmEnableFlag = FALSE;
+  66:.\Piezo.c     **** bool_t _alarmActivatedSoundFlag = FALSE;
+  67:.\Piezo.c     **** uint8_t _piezoBeepCount = 0;
+  68:.\Piezo.c     **** 
+  69:.\Piezo.c     **** //=================================================================================================
+  70:.\Piezo.c     **** //=============================== PRIVATE FUNCTION PROTOTYPES =====================================
+  71:.\Piezo.c     **** //=================================================================================================
+  72:.\Piezo.c     **** 
+  73:.\Piezo.c     **** //=================================================================================================
+  74:.\Piezo.c     **** //===================================== PUBLIC FUNCTIONS ==========================================
+  75:.\Piezo.c     **** //=================================================================================================
+  76:.\Piezo.c     **** 
+  77:.\Piezo.c     **** void Piezo_Run(void)
+  78:.\Piezo.c     **** {
+  60              		.loc 1 78 0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 1, uses_anonymous_args = 0
+  64 0000 80B5     		push	{r7, lr}
+  65              	.LCFI0:
+  66              		.cfi_def_cfa_offset 8
+  67 0002 00AF     		add	r7, sp, #0
+  68              		.cfi_offset 14, -4
+  69              		.cfi_offset 7, -8
+  70              	.LCFI1:
+  71              		.cfi_def_cfa_register 7
+  79:.\Piezo.c     **** 	static uint32_t counter = 0;
+  80:.\Piezo.c     **** 	
+  81:.\Piezo.c     **** 	static uint32_t piezoLastChangeCount = 0;
+  82:.\Piezo.c     **** 
+  83:.\Piezo.c     **** 	// Calculate run times in counts
+  84:.\Piezo.c     **** 	static uint32_t piezoAlarmSound1RunTimeCounts = (uint32_t)(configALARM_TONE_1_PERIOD_MS/configMAIN
+  85:.\Piezo.c     **** 	static uint32_t piezoAlarmSound2RunTimeCounts = (uint32_t)(configALARM_TONE_2_PERIOD_MS/configMAIN
+  86:.\Piezo.c     **** 	static uint32_t	beepRunTimeCounts = (uint32_t)(configBEEP_PERIOD_MS/configMAIN_TICK_PERIOD_MS);
+  87:.\Piezo.c     **** 	static uint32_t	motorOnToneTimeCounts = (uint32_t)(configMOTOR_ON_TONE_PERIOD_MS/configMAIN_TICK_P
+  88:.\Piezo.c     **** 	static uint32_t piezoActivatedSound1RunTimeCounts = (uint32_t)(configALARM_ACTIVATED_SOUND_1_PERIO
+  89:.\Piezo.c     **** 	static uint32_t piezoActivatedSound2RunTimeCounts = (uint32_t)(configALARM_ACTIVATED_SOUND_2_PERIO
+  90:.\Piezo.c     **** 	static uint32_t piezoActivatedSound3RunTimeCounts = (uint32_t)(configALARM_ACTIVATED_SOUND_3_PERIO
+  91:.\Piezo.c     **** 	
+  92:.\Piezo.c     **** 	static uint16_t currentToneCounts = 0;
+  93:.\Piezo.c     **** 	static uint16_t toneCount = 0;
+  94:.\Piezo.c     **** 
+  95:.\Piezo.c     **** 	static piezoStates_t prevPiezoState = piezoInit;
+  96:.\Piezo.c     **** 	static piezoStates_t piezoState = piezoInit;
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 4
+
+
+  97:.\Piezo.c     **** 	
+  98:.\Piezo.c     **** 	switch(piezoState)
+  72              		.loc 1 98 0
+  73 0004 40F20003 		movw	r3, #:lower16:piezoState.3004
+  74 0008 C0F20003 		movt	r3, #:upper16:piezoState.3004
+  75 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  76 000e 082B     		cmp	r3, #8
+  77 0010 00F2E982 		bhi	.L2
+  78 0014 01A2     		adr	r2, .L12
+  79 0016 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+  80 001a 00BF     		.align	2
+  81              	.L12:
+  82 001c 41000000 		.word	.L3+1
+  83 0020 51000000 		.word	.L4+1
+  84 0024 21010000 		.word	.L5+1
+  85 0028 B9010000 		.word	.L6+1
+  86 002c 4D020000 		.word	.L7+1
+  87 0030 C7020000 		.word	.L8+1
+  88 0034 6B040000 		.word	.L9+1
+  89 0038 E5040000 		.word	.L10+1
+  90 003c 59050000 		.word	.L11+1
+  91              	.L3:
+  99:.\Piezo.c     **** 	{
+ 100:.\Piezo.c     **** 		case piezoInit:
+ 101:.\Piezo.c     **** 			piezoState = piezoOff;
+  92              		.loc 1 101 0
+  93 0040 40F20003 		movw	r3, #:lower16:piezoState.3004
+  94 0044 C0F20003 		movt	r3, #:upper16:piezoState.3004
+  95 0048 4FF00102 		mov	r2, #1
+  96 004c 1A70     		strb	r2, [r3, #0]
+ 102:.\Piezo.c     **** 			break;
+  97              		.loc 1 102 0
+  98 004e CAE2     		b	.L2
+  99              	.L4:
+ 103:.\Piezo.c     **** 		case piezoOff:
+ 104:.\Piezo.c     **** 			if(prevPiezoState != piezoOff)
+ 100              		.loc 1 104 0
+ 101 0050 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 102 0054 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 103 0058 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 104 005a 012B     		cmp	r3, #1
+ 105 005c 08D0     		beq	.L13
+ 105:.\Piezo.c     **** 			{
+ 106:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 107:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering piezoOff state.\r\n");
+ 108:.\Piezo.c     **** 				#endif
+ 109:.\Piezo.c     **** 				PwmPiezo_Stop();
+ 106              		.loc 1 109 0
+ 107 005e FFF7FEFF 		bl	PwmPiezo_Stop
+ 110:.\Piezo.c     **** 				prevPiezoState = piezoOff;
+ 108              		.loc 1 110 0
+ 109 0062 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 110 0066 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 111 006a 4FF00102 		mov	r2, #1
+ 112 006e 1A70     		strb	r2, [r3, #0]
+ 113              	.L13:
+ 111:.\Piezo.c     **** 			}
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 5
+
+
+ 112:.\Piezo.c     **** 			
+ 113:.\Piezo.c     **** 			if(_emitMotorSoundFlag)
+ 114              		.loc 1 113 0
+ 115 0070 40F20003 		movw	r3, #:lower16:_emitMotorSoundFlag
+ 116 0074 C0F20003 		movt	r3, #:upper16:_emitMotorSoundFlag
+ 117 0078 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 118 007a 002B     		cmp	r3, #0
+ 119 007c 0ED0     		beq	.L14
+ 114:.\Piezo.c     **** 			{
+ 115:.\Piezo.c     **** 				piezoState = piezoMotorOnSound;
+ 120              		.loc 1 115 0
+ 121 007e 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 122 0082 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 123 0086 4FF00502 		mov	r2, #5
+ 124 008a 1A70     		strb	r2, [r3, #0]
+ 116:.\Piezo.c     **** 				_emitMotorSoundFlag = FALSE;
+ 125              		.loc 1 116 0
+ 126 008c 40F20003 		movw	r3, #:lower16:_emitMotorSoundFlag
+ 127 0090 C0F20003 		movt	r3, #:upper16:_emitMotorSoundFlag
+ 128 0094 4FF00002 		mov	r2, #0
+ 129 0098 1A70     		strb	r2, [r3, #0]
+ 117:.\Piezo.c     **** 				break;
+ 130              		.loc 1 117 0
+ 131 009a A4E2     		b	.L2
+ 132              	.L14:
+ 118:.\Piezo.c     **** 			}
+ 119:.\Piezo.c     **** 			
+ 120:.\Piezo.c     **** 			if(_alarmEnableFlag)
+ 133              		.loc 1 120 0
+ 134 009c 40F20003 		movw	r3, #:lower16:_alarmEnableFlag
+ 135 00a0 C0F20003 		movt	r3, #:upper16:_alarmEnableFlag
+ 136 00a4 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 137 00a6 002B     		cmp	r3, #0
+ 138 00a8 07D0     		beq	.L15
+ 121:.\Piezo.c     **** 			{
+ 122:.\Piezo.c     **** 				piezoState = piezoAlarmSound1;
+ 139              		.loc 1 122 0
+ 140 00aa 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 141 00ae C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 142 00b2 4FF00202 		mov	r2, #2
+ 143 00b6 1A70     		strb	r2, [r3, #0]
+ 123:.\Piezo.c     **** 				break;
+ 144              		.loc 1 123 0
+ 145 00b8 95E2     		b	.L2
+ 146              	.L15:
+ 124:.\Piezo.c     **** 			}
+ 125:.\Piezo.c     **** 			
+ 126:.\Piezo.c     **** 			if(_piezoBeepCount != 0)
+ 147              		.loc 1 126 0
+ 148 00ba 40F20003 		movw	r3, #:lower16:_piezoBeepCount
+ 149 00be C0F20003 		movt	r3, #:upper16:_piezoBeepCount
+ 150 00c2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 151 00c4 002B     		cmp	r3, #0
+ 152 00c6 14D0     		beq	.L16
+ 127:.\Piezo.c     **** 			{
+ 128:.\Piezo.c     **** 				piezoState = piezoBeeping;
+ 153              		.loc 1 128 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 6
+
+
+ 154 00c8 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 155 00cc C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 156 00d0 4FF00402 		mov	r2, #4
+ 157 00d4 1A70     		strb	r2, [r3, #0]
+ 129:.\Piezo.c     **** 				_piezoBeepCount--;
+ 158              		.loc 1 129 0
+ 159 00d6 40F20003 		movw	r3, #:lower16:_piezoBeepCount
+ 160 00da C0F20003 		movt	r3, #:upper16:_piezoBeepCount
+ 161 00de 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 162 00e0 03F1FF33 		add	r3, r3, #-1
+ 163 00e4 DAB2     		uxtb	r2, r3
+ 164 00e6 40F20003 		movw	r3, #:lower16:_piezoBeepCount
+ 165 00ea C0F20003 		movt	r3, #:upper16:_piezoBeepCount
+ 166 00ee 1A70     		strb	r2, [r3, #0]
+ 130:.\Piezo.c     **** 				break;
+ 167              		.loc 1 130 0
+ 168 00f0 79E2     		b	.L2
+ 169              	.L16:
+ 131:.\Piezo.c     **** 			}
+ 132:.\Piezo.c     **** 			
+ 133:.\Piezo.c     **** 			if(_alarmActivatedSoundFlag)
+ 170              		.loc 1 133 0
+ 171 00f2 40F20003 		movw	r3, #:lower16:_alarmActivatedSoundFlag
+ 172 00f6 C0F20003 		movt	r3, #:upper16:_alarmActivatedSoundFlag
+ 173 00fa 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 174 00fc 002B     		cmp	r3, #0
+ 175 00fe 00F06582 		beq	.L37
+ 134:.\Piezo.c     **** 			{
+ 135:.\Piezo.c     **** 				piezoState = alarmActivatedSound1;
+ 176              		.loc 1 135 0
+ 177 0102 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 178 0106 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 179 010a 4FF00602 		mov	r2, #6
+ 180 010e 1A70     		strb	r2, [r3, #0]
+ 136:.\Piezo.c     **** 				_alarmActivatedSoundFlag = FALSE;
+ 181              		.loc 1 136 0
+ 182 0110 40F20003 		movw	r3, #:lower16:_alarmActivatedSoundFlag
+ 183 0114 C0F20003 		movt	r3, #:upper16:_alarmActivatedSoundFlag
+ 184 0118 4FF00002 		mov	r2, #0
+ 185 011c 1A70     		strb	r2, [r3, #0]
+ 137:.\Piezo.c     **** 				break;
+ 186              		.loc 1 137 0
+ 187 011e 62E2     		b	.L2
+ 188              	.L5:
+ 138:.\Piezo.c     **** 			}
+ 139:.\Piezo.c     **** 		
+ 140:.\Piezo.c     **** 			break;
+ 141:.\Piezo.c     **** 			
+ 142:.\Piezo.c     **** 		case piezoAlarmSound1:
+ 143:.\Piezo.c     **** 			if(prevPiezoState != piezoAlarmSound1)
+ 189              		.loc 1 143 0
+ 190 0120 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 191 0124 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 192 0128 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 193 012a 022B     		cmp	r3, #2
+ 194 012c 1AD0     		beq	.L18
+ 144:.\Piezo.c     **** 			{
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 7
+
+
+ 145:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 146:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering piezoAlarmSound1 state.\r\n");
+ 147:.\Piezo.c     **** 				#endif
+ 148:.\Piezo.c     **** 				PwmPiezo_Start();
+ 195              		.loc 1 148 0
+ 196 012e FFF7FEFF 		bl	PwmPiezo_Start
+ 149:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6000);
+ 197              		.loc 1 149 0
+ 198 0132 41F27070 		movw	r0, #6000
+ 199 0136 FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 150:.\Piezo.c     **** 				PwmPiezo_WriteCompare(3000);
+ 200              		.loc 1 150 0
+ 201 013a 40F6B830 		movw	r0, #3000
+ 202 013e FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 151:.\Piezo.c     **** 				
+ 152:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 203              		.loc 1 152 0
+ 204 0142 40F20003 		movw	r3, #:lower16:counter.2992
+ 205 0146 C0F20003 		movt	r3, #:upper16:counter.2992
+ 206 014a 1A68     		ldr	r2, [r3, #0]
+ 207 014c 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 208 0150 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 209 0154 1A60     		str	r2, [r3, #0]
+ 153:.\Piezo.c     **** 				
+ 154:.\Piezo.c     **** 				prevPiezoState = piezoAlarmSound1;
+ 210              		.loc 1 154 0
+ 211 0156 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 212 015a C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 213 015e 4FF00202 		mov	r2, #2
+ 214 0162 1A70     		strb	r2, [r3, #0]
+ 215              	.L18:
+ 155:.\Piezo.c     **** 			}
+ 156:.\Piezo.c     **** 			
+ 157:.\Piezo.c     **** 			if(_alarmEnableFlag == FALSE)
+ 216              		.loc 1 157 0
+ 217 0164 40F20003 		movw	r3, #:lower16:_alarmEnableFlag
+ 218 0168 C0F20003 		movt	r3, #:upper16:_alarmEnableFlag
+ 219 016c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 220 016e 002B     		cmp	r3, #0
+ 221 0170 07D1     		bne	.L19
+ 158:.\Piezo.c     **** 			{
+ 159:.\Piezo.c     **** 				piezoState = piezoOff;
+ 222              		.loc 1 159 0
+ 223 0172 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 224 0176 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 225 017a 4FF00102 		mov	r2, #1
+ 226 017e 1A70     		strb	r2, [r3, #0]
+ 160:.\Piezo.c     **** 				break;
+ 227              		.loc 1 160 0
+ 228 0180 31E2     		b	.L2
+ 229              	.L19:
+ 161:.\Piezo.c     **** 			}
+ 162:.\Piezo.c     **** 			
+ 163:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + piezoAlarmSound1RunTimeCounts)
+ 230              		.loc 1 163 0
+ 231 0182 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 232 0186 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 8
+
+
+ 233 018a 1A68     		ldr	r2, [r3, #0]
+ 234 018c 40F20003 		movw	r3, #:lower16:piezoAlarmSound1RunTimeCounts.2994
+ 235 0190 C0F20003 		movt	r3, #:upper16:piezoAlarmSound1RunTimeCounts.2994
+ 236 0194 1B68     		ldr	r3, [r3, #0]
+ 237 0196 1A44     		add	r2, r2, r3
+ 238 0198 40F20003 		movw	r3, #:lower16:counter.2992
+ 239 019c C0F20003 		movt	r3, #:upper16:counter.2992
+ 240 01a0 1B68     		ldr	r3, [r3, #0]
+ 241 01a2 9A42     		cmp	r2, r3
+ 242 01a4 00F21482 		bhi	.L38
+ 164:.\Piezo.c     **** 			{
+ 165:.\Piezo.c     **** 				piezoState = piezoAlarmSound2;
+ 243              		.loc 1 165 0
+ 244 01a8 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 245 01ac C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 246 01b0 4FF00302 		mov	r2, #3
+ 247 01b4 1A70     		strb	r2, [r3, #0]
+ 166:.\Piezo.c     **** 				break;
+ 248              		.loc 1 166 0
+ 249 01b6 16E2     		b	.L2
+ 250              	.L6:
+ 167:.\Piezo.c     **** 			}
+ 168:.\Piezo.c     **** 			break;
+ 169:.\Piezo.c     **** 			
+ 170:.\Piezo.c     **** 		case piezoAlarmSound2:
+ 171:.\Piezo.c     **** 			if(prevPiezoState != piezoAlarmSound2)
+ 251              		.loc 1 171 0
+ 252 01b8 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 253 01bc C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 254 01c0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 255 01c2 032B     		cmp	r3, #3
+ 256 01c4 18D0     		beq	.L21
+ 172:.\Piezo.c     **** 			{
+ 173:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 174:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering piezoAlarmSound2 state.\r\n");
+ 175:.\Piezo.c     **** 				#endif
+ 176:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6500);
+ 257              		.loc 1 176 0
+ 258 01c6 41F66410 		movw	r0, #6500
+ 259 01ca FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 177:.\Piezo.c     **** 				PwmPiezo_WriteCompare(3250);
+ 260              		.loc 1 177 0
+ 261 01ce 40F6B240 		movw	r0, #3250
+ 262 01d2 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 178:.\Piezo.c     **** 				
+ 179:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 263              		.loc 1 179 0
+ 264 01d6 40F20003 		movw	r3, #:lower16:counter.2992
+ 265 01da C0F20003 		movt	r3, #:upper16:counter.2992
+ 266 01de 1A68     		ldr	r2, [r3, #0]
+ 267 01e0 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 268 01e4 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 269 01e8 1A60     		str	r2, [r3, #0]
+ 180:.\Piezo.c     **** 				
+ 181:.\Piezo.c     **** 				prevPiezoState = piezoAlarmSound2;
+ 270              		.loc 1 181 0
+ 271 01ea 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 9
+
+
+ 272 01ee C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 273 01f2 4FF00302 		mov	r2, #3
+ 274 01f6 1A70     		strb	r2, [r3, #0]
+ 275              	.L21:
+ 182:.\Piezo.c     **** 			}
+ 183:.\Piezo.c     **** 			
+ 184:.\Piezo.c     **** 			if(_alarmEnableFlag == FALSE)
+ 276              		.loc 1 184 0
+ 277 01f8 40F20003 		movw	r3, #:lower16:_alarmEnableFlag
+ 278 01fc C0F20003 		movt	r3, #:upper16:_alarmEnableFlag
+ 279 0200 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 280 0202 002B     		cmp	r3, #0
+ 281 0204 07D1     		bne	.L22
+ 185:.\Piezo.c     **** 			{
+ 186:.\Piezo.c     **** 				piezoState = piezoOff;
+ 282              		.loc 1 186 0
+ 283 0206 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 284 020a C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 285 020e 4FF00102 		mov	r2, #1
+ 286 0212 1A70     		strb	r2, [r3, #0]
+ 187:.\Piezo.c     **** 				break;
+ 287              		.loc 1 187 0
+ 288 0214 E7E1     		b	.L2
+ 289              	.L22:
+ 188:.\Piezo.c     **** 			}
+ 189:.\Piezo.c     **** 			
+ 190:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + piezoAlarmSound2RunTimeCounts)
+ 290              		.loc 1 190 0
+ 291 0216 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 292 021a C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 293 021e 1A68     		ldr	r2, [r3, #0]
+ 294 0220 40F20003 		movw	r3, #:lower16:piezoAlarmSound2RunTimeCounts.2995
+ 295 0224 C0F20003 		movt	r3, #:upper16:piezoAlarmSound2RunTimeCounts.2995
+ 296 0228 1B68     		ldr	r3, [r3, #0]
+ 297 022a 1A44     		add	r2, r2, r3
+ 298 022c 40F20003 		movw	r3, #:lower16:counter.2992
+ 299 0230 C0F20003 		movt	r3, #:upper16:counter.2992
+ 300 0234 1B68     		ldr	r3, [r3, #0]
+ 301 0236 9A42     		cmp	r2, r3
+ 302 0238 00F2CC81 		bhi	.L39
+ 191:.\Piezo.c     **** 			{
+ 192:.\Piezo.c     **** 				piezoState = piezoAlarmSound1;
+ 303              		.loc 1 192 0
+ 304 023c 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 305 0240 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 306 0244 4FF00202 		mov	r2, #2
+ 307 0248 1A70     		strb	r2, [r3, #0]
+ 193:.\Piezo.c     **** 				break;
+ 308              		.loc 1 193 0
+ 309 024a CCE1     		b	.L2
+ 310              	.L7:
+ 194:.\Piezo.c     **** 			}
+ 195:.\Piezo.c     **** 			
+ 196:.\Piezo.c     **** 			break;
+ 197:.\Piezo.c     **** 		case piezoBeeping:
+ 198:.\Piezo.c     **** 		
+ 199:.\Piezo.c     **** 			if(prevPiezoState != piezoBeeping)
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 10
+
+
+ 311              		.loc 1 199 0
+ 312 024c 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 313 0250 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 314 0254 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 315 0256 042B     		cmp	r3, #4
+ 316 0258 1AD0     		beq	.L24
+ 200:.\Piezo.c     **** 			{
+ 201:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 202:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering piezoBeeping state.\r\n");
+ 203:.\Piezo.c     **** 				#endif
+ 204:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6000);
+ 317              		.loc 1 204 0
+ 318 025a 41F27070 		movw	r0, #6000
+ 319 025e FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 205:.\Piezo.c     **** 				PwmPiezo_WriteCompare(3000);
+ 320              		.loc 1 205 0
+ 321 0262 40F6B830 		movw	r0, #3000
+ 322 0266 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 206:.\Piezo.c     **** 				PwmPiezo_Start();
+ 323              		.loc 1 206 0
+ 324 026a FFF7FEFF 		bl	PwmPiezo_Start
+ 207:.\Piezo.c     **** 				
+ 208:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 325              		.loc 1 208 0
+ 326 026e 40F20003 		movw	r3, #:lower16:counter.2992
+ 327 0272 C0F20003 		movt	r3, #:upper16:counter.2992
+ 328 0276 1A68     		ldr	r2, [r3, #0]
+ 329 0278 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 330 027c C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 331 0280 1A60     		str	r2, [r3, #0]
+ 209:.\Piezo.c     **** 				
+ 210:.\Piezo.c     **** 				prevPiezoState = piezoBeeping;
+ 332              		.loc 1 210 0
+ 333 0282 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 334 0286 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 335 028a 4FF00402 		mov	r2, #4
+ 336 028e 1A70     		strb	r2, [r3, #0]
+ 337              	.L24:
+ 211:.\Piezo.c     **** 			}
+ 212:.\Piezo.c     **** 			
+ 213:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + beepRunTimeCounts)
+ 338              		.loc 1 213 0
+ 339 0290 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 340 0294 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 341 0298 1A68     		ldr	r2, [r3, #0]
+ 342 029a 40F20003 		movw	r3, #:lower16:beepRunTimeCounts.2996
+ 343 029e C0F20003 		movt	r3, #:upper16:beepRunTimeCounts.2996
+ 344 02a2 1B68     		ldr	r3, [r3, #0]
+ 345 02a4 1A44     		add	r2, r2, r3
+ 346 02a6 40F20003 		movw	r3, #:lower16:counter.2992
+ 347 02aa C0F20003 		movt	r3, #:upper16:counter.2992
+ 348 02ae 1B68     		ldr	r3, [r3, #0]
+ 349 02b0 9A42     		cmp	r2, r3
+ 350 02b2 00F29181 		bhi	.L40
+ 214:.\Piezo.c     **** 			{
+ 215:.\Piezo.c     **** 				piezoState = piezoOff;
+ 351              		.loc 1 215 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 11
+
+
+ 352 02b6 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 353 02ba C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 354 02be 4FF00102 		mov	r2, #1
+ 355 02c2 1A70     		strb	r2, [r3, #0]
+ 216:.\Piezo.c     **** 				break;
+ 356              		.loc 1 216 0
+ 357 02c4 8FE1     		b	.L2
+ 358              	.L8:
+ 217:.\Piezo.c     **** 			}
+ 218:.\Piezo.c     **** 			
+ 219:.\Piezo.c     **** 			break;
+ 220:.\Piezo.c     **** 			
+ 221:.\Piezo.c     **** 		case piezoMotorOnSound:
+ 222:.\Piezo.c     **** 		
+ 223:.\Piezo.c     **** 			if(prevPiezoState != piezoMotorOnSound)
+ 359              		.loc 1 223 0
+ 360 02c6 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 361 02ca C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 362 02ce 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 363 02d0 052B     		cmp	r3, #5
+ 364 02d2 33D0     		beq	.L26
+ 224:.\Piezo.c     **** 			{
+ 225:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 226:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering piezoMotorOnSound state.\r\n");
+ 227:.\Piezo.c     **** 				#endif
+ 228:.\Piezo.c     **** 				currentToneCounts = (configPWM_PIEZO_CLOCK_FREQ_MHZ*1000000.0)/configPIEZO_MOTOR_ON_START_FREQ_
+ 365              		.loc 1 228 0
+ 366 02d4 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 367 02d8 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 368 02dc 4FF4FA52 		mov	r2, #8000
+ 369 02e0 1A80     		strh	r2, [r3, #0]	@ movhi
+ 229:.\Piezo.c     **** 				PwmPiezo_WritePeriod(currentToneCounts);
+ 370              		.loc 1 229 0
+ 371 02e2 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 372 02e6 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 373 02ea 1B88     		ldrh	r3, [r3, #0]
+ 374 02ec 1846     		mov	r0, r3
+ 375 02ee FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 230:.\Piezo.c     **** 				PwmPiezo_WriteCompare(currentToneCounts/2);
+ 376              		.loc 1 230 0
+ 377 02f2 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 378 02f6 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 379 02fa 1B88     		ldrh	r3, [r3, #0]
+ 380 02fc 4FEA5303 		lsr	r3, r3, #1
+ 381 0300 9BB2     		uxth	r3, r3
+ 382 0302 1846     		mov	r0, r3
+ 383 0304 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 231:.\Piezo.c     **** 				PwmPiezo_Start();
+ 384              		.loc 1 231 0
+ 385 0308 FFF7FEFF 		bl	PwmPiezo_Start
+ 232:.\Piezo.c     **** 				toneCount = 0;
+ 386              		.loc 1 232 0
+ 387 030c 40F20003 		movw	r3, #:lower16:toneCount.3002
+ 388 0310 C0F20003 		movt	r3, #:upper16:toneCount.3002
+ 389 0314 4FF00002 		mov	r2, #0
+ 390 0318 1A80     		strh	r2, [r3, #0]	@ movhi
+ 233:.\Piezo.c     **** 				
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 12
+
+
+ 234:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 391              		.loc 1 234 0
+ 392 031a 40F20003 		movw	r3, #:lower16:counter.2992
+ 393 031e C0F20003 		movt	r3, #:upper16:counter.2992
+ 394 0322 1A68     		ldr	r2, [r3, #0]
+ 395 0324 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 396 0328 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 397 032c 1A60     		str	r2, [r3, #0]
+ 235:.\Piezo.c     **** 				
+ 236:.\Piezo.c     **** 				prevPiezoState = piezoMotorOnSound;
+ 398              		.loc 1 236 0
+ 399 032e 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 400 0332 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 401 0336 4FF00502 		mov	r2, #5
+ 402 033a 1A70     		strb	r2, [r3, #0]
+ 403              	.L26:
+ 237:.\Piezo.c     **** 			}
+ 238:.\Piezo.c     **** 			
+ 239:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + motorOnToneTimeCounts)
+ 404              		.loc 1 239 0
+ 405 033c 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 406 0340 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 407 0344 1A68     		ldr	r2, [r3, #0]
+ 408 0346 40F20003 		movw	r3, #:lower16:motorOnToneTimeCounts.2997
+ 409 034a C0F20003 		movt	r3, #:upper16:motorOnToneTimeCounts.2997
+ 410 034e 1B68     		ldr	r3, [r3, #0]
+ 411 0350 1A44     		add	r2, r2, r3
+ 412 0352 40F20003 		movw	r3, #:lower16:counter.2992
+ 413 0356 C0F20003 		movt	r3, #:upper16:counter.2992
+ 414 035a 1B68     		ldr	r3, [r3, #0]
+ 415 035c 9A42     		cmp	r2, r3
+ 416 035e 00F23D81 		bhi	.L41
+ 240:.\Piezo.c     **** 			{
+ 241:.\Piezo.c     **** 				toneCount++;
+ 417              		.loc 1 241 0
+ 418 0362 40F20003 		movw	r3, #:lower16:toneCount.3002
+ 419 0366 C0F20003 		movt	r3, #:upper16:toneCount.3002
+ 420 036a 1B88     		ldrh	r3, [r3, #0]
+ 421 036c 03F10103 		add	r3, r3, #1
+ 422 0370 9AB2     		uxth	r2, r3
+ 423 0372 40F20003 		movw	r3, #:lower16:toneCount.3002
+ 424 0376 C0F20003 		movt	r3, #:upper16:toneCount.3002
+ 425 037a 1A80     		strh	r2, [r3, #0]	@ movhi
+ 242:.\Piezo.c     **** 				if(toneCount >= configMOTOR_ON_NUM_TONES)
+ 426              		.loc 1 242 0
+ 427 037c 40F20003 		movw	r3, #:lower16:toneCount.3002
+ 428 0380 C0F20003 		movt	r3, #:upper16:toneCount.3002
+ 429 0384 1B88     		ldrh	r3, [r3, #0]
+ 430 0386 092B     		cmp	r3, #9
+ 431 0388 07D9     		bls	.L28
+ 243:.\Piezo.c     **** 				{
+ 244:.\Piezo.c     **** 					piezoState = piezoOff;
+ 432              		.loc 1 244 0
+ 433 038a 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 434 038e C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 435 0392 4FF00102 		mov	r2, #1
+ 436 0396 1A70     		strb	r2, [r3, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 13
+
+
+ 245:.\Piezo.c     **** 					break;
+ 437              		.loc 1 245 0
+ 438 0398 25E1     		b	.L2
+ 439              	.L28:
+ 246:.\Piezo.c     **** 				}
+ 247:.\Piezo.c     **** 				if(_motorOnSoundDirection == up)
+ 440              		.loc 1 247 0
+ 441 039a 40F20003 		movw	r3, #:lower16:_motorOnSoundDirection
+ 442 039e C0F20003 		movt	r3, #:upper16:_motorOnSoundDirection
+ 443 03a2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 444 03a4 002B     		cmp	r3, #0
+ 445 03a6 21D1     		bne	.L29
+ 248:.\Piezo.c     **** 					currentToneCounts = currentToneCounts - configPIEZO_MOTOR_ON_JUMP_COUNTS;
+ 446              		.loc 1 248 0
+ 447 03a8 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 448 03ac C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 449 03b0 1B88     		ldrh	r3, [r3, #0]
+ 450 03b2 1846     		mov	r0, r3
+ 451 03b4 FFF7FEFF 		bl	__aeabi_i2d
+ 452 03b8 0246     		mov	r2, r0
+ 453 03ba 0B46     		mov	r3, r1
+ 454 03bc 1046     		mov	r0, r2
+ 455 03be 1946     		mov	r1, r3
+ 456 03c0 4FF00002 		mov	r2, #0
+ 457 03c4 4FF08043 		mov	r3, #1073741824
+ 458 03c8 03F5D203 		add	r3, r3, #6881280
+ 459 03cc FFF7FEFF 		bl	__aeabi_dsub
+ 460 03d0 0246     		mov	r2, r0
+ 461 03d2 0B46     		mov	r3, r1
+ 462 03d4 1046     		mov	r0, r2
+ 463 03d6 1946     		mov	r1, r3
+ 464 03d8 FFF7FEFF 		bl	__aeabi_d2uiz
+ 465 03dc 0346     		mov	r3, r0
+ 466 03de 9AB2     		uxth	r2, r3
+ 467 03e0 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 468 03e4 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 469 03e8 1A80     		strh	r2, [r3, #0]	@ movhi
+ 470 03ea 20E0     		b	.L30
+ 471              	.L29:
+ 249:.\Piezo.c     **** 				else
+ 250:.\Piezo.c     **** 					// Must be down
+ 251:.\Piezo.c     **** 					currentToneCounts = currentToneCounts + configPIEZO_MOTOR_ON_JUMP_COUNTS;
+ 472              		.loc 1 251 0
+ 473 03ec 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 474 03f0 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 475 03f4 1B88     		ldrh	r3, [r3, #0]
+ 476 03f6 1846     		mov	r0, r3
+ 477 03f8 FFF7FEFF 		bl	__aeabi_i2d
+ 478 03fc 0246     		mov	r2, r0
+ 479 03fe 0B46     		mov	r3, r1
+ 480 0400 1046     		mov	r0, r2
+ 481 0402 1946     		mov	r1, r3
+ 482 0404 4FF00002 		mov	r2, #0
+ 483 0408 4FF08043 		mov	r3, #1073741824
+ 484 040c 03F5D203 		add	r3, r3, #6881280
+ 485 0410 FFF7FEFF 		bl	__aeabi_dadd
+ 486 0414 0246     		mov	r2, r0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 14
+
+
+ 487 0416 0B46     		mov	r3, r1
+ 488 0418 1046     		mov	r0, r2
+ 489 041a 1946     		mov	r1, r3
+ 490 041c FFF7FEFF 		bl	__aeabi_d2uiz
+ 491 0420 0346     		mov	r3, r0
+ 492 0422 9AB2     		uxth	r2, r3
+ 493 0424 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 494 0428 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 495 042c 1A80     		strh	r2, [r3, #0]	@ movhi
+ 496              	.L30:
+ 252:.\Piezo.c     **** 					
+ 253:.\Piezo.c     **** 				PwmPiezo_WritePeriod(currentToneCounts);
+ 497              		.loc 1 253 0
+ 498 042e 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 499 0432 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 500 0436 1B88     		ldrh	r3, [r3, #0]
+ 501 0438 1846     		mov	r0, r3
+ 502 043a FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 254:.\Piezo.c     **** 				PwmPiezo_WriteCompare(currentToneCounts/2);
+ 503              		.loc 1 254 0
+ 504 043e 40F20003 		movw	r3, #:lower16:currentToneCounts.3001
+ 505 0442 C0F20003 		movt	r3, #:upper16:currentToneCounts.3001
+ 506 0446 1B88     		ldrh	r3, [r3, #0]
+ 507 0448 4FEA5303 		lsr	r3, r3, #1
+ 508 044c 9BB2     		uxth	r3, r3
+ 509 044e 1846     		mov	r0, r3
+ 510 0450 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 255:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 511              		.loc 1 255 0
+ 512 0454 40F20003 		movw	r3, #:lower16:counter.2992
+ 513 0458 C0F20003 		movt	r3, #:upper16:counter.2992
+ 514 045c 1A68     		ldr	r2, [r3, #0]
+ 515 045e 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 516 0462 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 517 0466 1A60     		str	r2, [r3, #0]
+ 256:.\Piezo.c     **** 			}
+ 257:.\Piezo.c     **** 			
+ 258:.\Piezo.c     **** 			break;
+ 518              		.loc 1 258 0
+ 519 0468 BDE0     		b	.L2
+ 520              	.L9:
+ 259:.\Piezo.c     **** 		case alarmActivatedSound1:
+ 260:.\Piezo.c     **** 			if(prevPiezoState != alarmActivatedSound1)
+ 521              		.loc 1 260 0
+ 522 046a 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 523 046e C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 524 0472 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 525 0474 062B     		cmp	r3, #6
+ 526 0476 1AD0     		beq	.L31
+ 261:.\Piezo.c     **** 			{
+ 262:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 263:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering alarmActivatedSound1 state.\r\n");
+ 264:.\Piezo.c     **** 				#endif
+ 265:.\Piezo.c     **** 				PwmPiezo_Start();
+ 527              		.loc 1 265 0
+ 528 0478 FFF7FEFF 		bl	PwmPiezo_Start
+ 266:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6000);
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 15
+
+
+ 529              		.loc 1 266 0
+ 530 047c 41F27070 		movw	r0, #6000
+ 531 0480 FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 267:.\Piezo.c     **** 				PwmPiezo_WriteCompare(3000);
+ 532              		.loc 1 267 0
+ 533 0484 40F6B830 		movw	r0, #3000
+ 534 0488 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 268:.\Piezo.c     **** 				
+ 269:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 535              		.loc 1 269 0
+ 536 048c 40F20003 		movw	r3, #:lower16:counter.2992
+ 537 0490 C0F20003 		movt	r3, #:upper16:counter.2992
+ 538 0494 1A68     		ldr	r2, [r3, #0]
+ 539 0496 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 540 049a C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 541 049e 1A60     		str	r2, [r3, #0]
+ 270:.\Piezo.c     **** 				
+ 271:.\Piezo.c     **** 				prevPiezoState = alarmActivatedSound1;
+ 542              		.loc 1 271 0
+ 543 04a0 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 544 04a4 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 545 04a8 4FF00602 		mov	r2, #6
+ 546 04ac 1A70     		strb	r2, [r3, #0]
+ 547              	.L31:
+ 272:.\Piezo.c     **** 			}
+ 273:.\Piezo.c     **** 			
+ 274:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + piezoActivatedSound1RunTimeCounts)
+ 548              		.loc 1 274 0
+ 549 04ae 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 550 04b2 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 551 04b6 1A68     		ldr	r2, [r3, #0]
+ 552 04b8 40F20003 		movw	r3, #:lower16:piezoActivatedSound1RunTimeCounts.2998
+ 553 04bc C0F20003 		movt	r3, #:upper16:piezoActivatedSound1RunTimeCounts.2998
+ 554 04c0 1B68     		ldr	r3, [r3, #0]
+ 555 04c2 1A44     		add	r2, r2, r3
+ 556 04c4 40F20003 		movw	r3, #:lower16:counter.2992
+ 557 04c8 C0F20003 		movt	r3, #:upper16:counter.2992
+ 558 04cc 1B68     		ldr	r3, [r3, #0]
+ 559 04ce 9A42     		cmp	r2, r3
+ 560 04d0 00F28680 		bhi	.L42
+ 275:.\Piezo.c     **** 			{
+ 276:.\Piezo.c     **** 				piezoState = alarmActivatedSound2;
+ 561              		.loc 1 276 0
+ 562 04d4 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 563 04d8 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 564 04dc 4FF00702 		mov	r2, #7
+ 565 04e0 1A70     		strb	r2, [r3, #0]
+ 277:.\Piezo.c     **** 				break;
+ 566              		.loc 1 277 0
+ 567 04e2 80E0     		b	.L2
+ 568              	.L10:
+ 278:.\Piezo.c     **** 			}
+ 279:.\Piezo.c     **** 			break;
+ 280:.\Piezo.c     **** 			
+ 281:.\Piezo.c     **** 		case alarmActivatedSound2:
+ 282:.\Piezo.c     **** 			if(prevPiezoState != alarmActivatedSound2)
+ 569              		.loc 1 282 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 16
+
+
+ 570 04e4 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 571 04e8 C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 572 04ec 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 573 04ee 072B     		cmp	r3, #7
+ 574 04f0 18D0     		beq	.L33
+ 283:.\Piezo.c     **** 			{
+ 284:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 285:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering alarmActivatedSound2 state.\r\n");
+ 286:.\Piezo.c     **** 				#endif
+ 287:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6500);
+ 575              		.loc 1 287 0
+ 576 04f2 41F66410 		movw	r0, #6500
+ 577 04f6 FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 288:.\Piezo.c     **** 				PwmPiezo_WriteCompare(0);
+ 578              		.loc 1 288 0
+ 579 04fa 4FF00000 		mov	r0, #0
+ 580 04fe FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 289:.\Piezo.c     **** 				
+ 290:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 581              		.loc 1 290 0
+ 582 0502 40F20003 		movw	r3, #:lower16:counter.2992
+ 583 0506 C0F20003 		movt	r3, #:upper16:counter.2992
+ 584 050a 1A68     		ldr	r2, [r3, #0]
+ 585 050c 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 586 0510 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 587 0514 1A60     		str	r2, [r3, #0]
+ 291:.\Piezo.c     **** 				
+ 292:.\Piezo.c     **** 				prevPiezoState = alarmActivatedSound2;
+ 588              		.loc 1 292 0
+ 589 0516 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 590 051a C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 591 051e 4FF00702 		mov	r2, #7
+ 592 0522 1A70     		strb	r2, [r3, #0]
+ 593              	.L33:
+ 293:.\Piezo.c     **** 			}
+ 294:.\Piezo.c     **** 			
+ 295:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + piezoActivatedSound2RunTimeCounts)
+ 594              		.loc 1 295 0
+ 595 0524 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 596 0528 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 597 052c 1A68     		ldr	r2, [r3, #0]
+ 598 052e 40F20003 		movw	r3, #:lower16:piezoActivatedSound2RunTimeCounts.2999
+ 599 0532 C0F20003 		movt	r3, #:upper16:piezoActivatedSound2RunTimeCounts.2999
+ 600 0536 1B68     		ldr	r3, [r3, #0]
+ 601 0538 1A44     		add	r2, r2, r3
+ 602 053a 40F20003 		movw	r3, #:lower16:counter.2992
+ 603 053e C0F20003 		movt	r3, #:upper16:counter.2992
+ 604 0542 1B68     		ldr	r3, [r3, #0]
+ 605 0544 9A42     		cmp	r2, r3
+ 606 0546 4DD8     		bhi	.L43
+ 296:.\Piezo.c     **** 			{
+ 297:.\Piezo.c     **** 				piezoState = alarmActivatedSound3;
+ 607              		.loc 1 297 0
+ 608 0548 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 609 054c C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 610 0550 4FF00802 		mov	r2, #8
+ 611 0554 1A70     		strb	r2, [r3, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 17
+
+
+ 298:.\Piezo.c     **** 				break;
+ 612              		.loc 1 298 0
+ 613 0556 46E0     		b	.L2
+ 614              	.L11:
+ 299:.\Piezo.c     **** 			}
+ 300:.\Piezo.c     **** 			
+ 301:.\Piezo.c     **** 			break;
+ 302:.\Piezo.c     **** 		case alarmActivatedSound3:
+ 303:.\Piezo.c     **** 			if(prevPiezoState != alarmActivatedSound3)
+ 615              		.loc 1 303 0
+ 616 0558 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 617 055c C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 618 0560 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 619 0562 082B     		cmp	r3, #8
+ 620 0564 18D0     		beq	.L35
+ 304:.\Piezo.c     **** 			{
+ 305:.\Piezo.c     **** 				#if(configDEBUG_PIEZO == 1)
+ 306:.\Piezo.c     **** 					UartDebug_PutString("PIEZO: Entering alarmActivatedSound3 state.\r\n");
+ 307:.\Piezo.c     **** 				#endif
+ 308:.\Piezo.c     **** 				PwmPiezo_WritePeriod(6000);
+ 621              		.loc 1 308 0
+ 622 0566 41F27070 		movw	r0, #6000
+ 623 056a FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 309:.\Piezo.c     **** 				PwmPiezo_WriteCompare(3000);
+ 624              		.loc 1 309 0
+ 625 056e 40F6B830 		movw	r0, #3000
+ 626 0572 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 310:.\Piezo.c     **** 				
+ 311:.\Piezo.c     **** 				piezoLastChangeCount = counter;
+ 627              		.loc 1 311 0
+ 628 0576 40F20003 		movw	r3, #:lower16:counter.2992
+ 629 057a C0F20003 		movt	r3, #:upper16:counter.2992
+ 630 057e 1A68     		ldr	r2, [r3, #0]
+ 631 0580 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 632 0584 C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 633 0588 1A60     		str	r2, [r3, #0]
+ 312:.\Piezo.c     **** 				
+ 313:.\Piezo.c     **** 				prevPiezoState = alarmActivatedSound3;
+ 634              		.loc 1 313 0
+ 635 058a 40F20003 		movw	r3, #:lower16:prevPiezoState.3003
+ 636 058e C0F20003 		movt	r3, #:upper16:prevPiezoState.3003
+ 637 0592 4FF00802 		mov	r2, #8
+ 638 0596 1A70     		strb	r2, [r3, #0]
+ 639              	.L35:
+ 314:.\Piezo.c     **** 			}
+ 315:.\Piezo.c     **** 			
+ 316:.\Piezo.c     **** 			if(counter >= piezoLastChangeCount + piezoActivatedSound3RunTimeCounts)
+ 640              		.loc 1 316 0
+ 641 0598 40F20003 		movw	r3, #:lower16:piezoLastChangeCount.2993
+ 642 059c C0F20003 		movt	r3, #:upper16:piezoLastChangeCount.2993
+ 643 05a0 1A68     		ldr	r2, [r3, #0]
+ 644 05a2 40F20003 		movw	r3, #:lower16:piezoActivatedSound3RunTimeCounts.3000
+ 645 05a6 C0F20003 		movt	r3, #:upper16:piezoActivatedSound3RunTimeCounts.3000
+ 646 05aa 1B68     		ldr	r3, [r3, #0]
+ 647 05ac 1A44     		add	r2, r2, r3
+ 648 05ae 40F20003 		movw	r3, #:lower16:counter.2992
+ 649 05b2 C0F20003 		movt	r3, #:upper16:counter.2992
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 18
+
+
+ 650 05b6 1B68     		ldr	r3, [r3, #0]
+ 651 05b8 9A42     		cmp	r2, r3
+ 652 05ba 14D8     		bhi	.L2
+ 317:.\Piezo.c     **** 			{
+ 318:.\Piezo.c     **** 				piezoState = piezoOff;
+ 653              		.loc 1 318 0
+ 654 05bc 40F20003 		movw	r3, #:lower16:piezoState.3004
+ 655 05c0 C0F20003 		movt	r3, #:upper16:piezoState.3004
+ 656 05c4 4FF00102 		mov	r2, #1
+ 657 05c8 1A70     		strb	r2, [r3, #0]
+ 658 05ca 0CE0     		b	.L2
+ 659              	.L37:
+ 660              		.loc 1 140 0
+ 661 05cc 00BF     		nop
+ 662 05ce 0AE0     		b	.L2
+ 663              	.L38:
+ 664              		.loc 1 168 0
+ 665 05d0 00BF     		nop
+ 666 05d2 08E0     		b	.L2
+ 667              	.L39:
+ 668              		.loc 1 196 0
+ 669 05d4 00BF     		nop
+ 670 05d6 06E0     		b	.L2
+ 671              	.L40:
+ 672              		.loc 1 219 0
+ 673 05d8 00BF     		nop
+ 674 05da 04E0     		b	.L2
+ 675              	.L41:
+ 676              		.loc 1 258 0
+ 677 05dc 00BF     		nop
+ 678 05de 02E0     		b	.L2
+ 679              	.L42:
+ 680              		.loc 1 279 0
+ 681 05e0 00BF     		nop
+ 682 05e2 00E0     		b	.L2
+ 683              	.L43:
+ 684              		.loc 1 301 0
+ 685 05e4 00BF     		nop
+ 686              	.L2:
+ 319:.\Piezo.c     **** 				break;
+ 320:.\Piezo.c     **** 			}
+ 321:.\Piezo.c     **** 			
+ 322:.\Piezo.c     **** 			break;
+ 323:.\Piezo.c     **** 	}
+ 324:.\Piezo.c     **** 	
+ 325:.\Piezo.c     **** 	// Increment state machine loop counter
+ 326:.\Piezo.c     **** 	counter++;
+ 687              		.loc 1 326 0
+ 688 05e6 40F20003 		movw	r3, #:lower16:counter.2992
+ 689 05ea C0F20003 		movt	r3, #:upper16:counter.2992
+ 690 05ee 1B68     		ldr	r3, [r3, #0]
+ 691 05f0 03F10102 		add	r2, r3, #1
+ 692 05f4 40F20003 		movw	r3, #:lower16:counter.2992
+ 693 05f8 C0F20003 		movt	r3, #:upper16:counter.2992
+ 694 05fc 1A60     		str	r2, [r3, #0]
+ 327:.\Piezo.c     **** }
+ 695              		.loc 1 327 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 19
+
+
+ 696 05fe 80BD     		pop	{r7, pc}
+ 697              		.cfi_endproc
+ 698              	.LFE29:
+ 699              		.size	Piezo_Run, .-Piezo_Run
+ 700              		.section	.text.Piezo_AlarmEnable,"ax",%progbits
+ 701              		.align	2
+ 702              		.global	Piezo_AlarmEnable
+ 703              		.thumb
+ 704              		.thumb_func
+ 705              		.type	Piezo_AlarmEnable, %function
+ 706              	Piezo_AlarmEnable:
+ 707              	.LFB30:
+ 328:.\Piezo.c     **** 
+ 329:.\Piezo.c     **** 
+ 330:.\Piezo.c     **** void Piezo_AlarmEnable(bool_t enable)
+ 331:.\Piezo.c     **** {
+ 708              		.loc 1 331 0
+ 709              		.cfi_startproc
+ 710              		@ args = 0, pretend = 0, frame = 8
+ 711              		@ frame_needed = 1, uses_anonymous_args = 0
+ 712              		@ link register save eliminated.
+ 713 0000 80B4     		push	{r7}
+ 714              	.LCFI2:
+ 715              		.cfi_def_cfa_offset 4
+ 716 0002 83B0     		sub	sp, sp, #12
+ 717              	.LCFI3:
+ 718              		.cfi_def_cfa_offset 16
+ 719 0004 00AF     		add	r7, sp, #0
+ 720              		.cfi_offset 7, -4
+ 721              	.LCFI4:
+ 722              		.cfi_def_cfa_register 7
+ 723 0006 0346     		mov	r3, r0
+ 724 0008 FB71     		strb	r3, [r7, #7]
+ 332:.\Piezo.c     **** 	_alarmEnableFlag = enable;
+ 725              		.loc 1 332 0
+ 726 000a 40F20003 		movw	r3, #:lower16:_alarmEnableFlag
+ 727 000e C0F20003 		movt	r3, #:upper16:_alarmEnableFlag
+ 728 0012 FA79     		ldrb	r2, [r7, #7]
+ 729 0014 1A70     		strb	r2, [r3, #0]
+ 333:.\Piezo.c     **** }
+ 730              		.loc 1 333 0
+ 731 0016 07F10C07 		add	r7, r7, #12
+ 732 001a BD46     		mov	sp, r7
+ 733 001c 80BC     		pop	{r7}
+ 734 001e 7047     		bx	lr
+ 735              		.cfi_endproc
+ 736              	.LFE30:
+ 737              		.size	Piezo_AlarmEnable, .-Piezo_AlarmEnable
+ 738              		.section	.text.Piezo_EmitBeep,"ax",%progbits
+ 739              		.align	2
+ 740              		.global	Piezo_EmitBeep
+ 741              		.thumb
+ 742              		.thumb_func
+ 743              		.type	Piezo_EmitBeep, %function
+ 744              	Piezo_EmitBeep:
+ 745              	.LFB31:
+ 334:.\Piezo.c     **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 20
+
+
+ 335:.\Piezo.c     **** 
+ 336:.\Piezo.c     **** void Piezo_EmitBeep(void)
+ 337:.\Piezo.c     **** {
+ 746              		.loc 1 337 0
+ 747              		.cfi_startproc
+ 748              		@ args = 0, pretend = 0, frame = 0
+ 749              		@ frame_needed = 1, uses_anonymous_args = 0
+ 750              		@ link register save eliminated.
+ 751 0000 80B4     		push	{r7}
+ 752              	.LCFI5:
+ 753              		.cfi_def_cfa_offset 4
+ 754 0002 00AF     		add	r7, sp, #0
+ 755              		.cfi_offset 7, -4
+ 756              	.LCFI6:
+ 757              		.cfi_def_cfa_register 7
+ 338:.\Piezo.c     **** 	_piezoBeepCount++;
+ 758              		.loc 1 338 0
+ 759 0004 40F20003 		movw	r3, #:lower16:_piezoBeepCount
+ 760 0008 C0F20003 		movt	r3, #:upper16:_piezoBeepCount
+ 761 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 762 000e 03F10103 		add	r3, r3, #1
+ 763 0012 DAB2     		uxtb	r2, r3
+ 764 0014 40F20003 		movw	r3, #:lower16:_piezoBeepCount
+ 765 0018 C0F20003 		movt	r3, #:upper16:_piezoBeepCount
+ 766 001c 1A70     		strb	r2, [r3, #0]
+ 339:.\Piezo.c     **** }
+ 767              		.loc 1 339 0
+ 768 001e BD46     		mov	sp, r7
+ 769 0020 80BC     		pop	{r7}
+ 770 0022 7047     		bx	lr
+ 771              		.cfi_endproc
+ 772              	.LFE31:
+ 773              		.size	Piezo_EmitBeep, .-Piezo_EmitBeep
+ 774              		.section	.text.Piezo_EmitMotorOnSound,"ax",%progbits
+ 775              		.align	2
+ 776              		.global	Piezo_EmitMotorOnSound
+ 777              		.thumb
+ 778              		.thumb_func
+ 779              		.type	Piezo_EmitMotorOnSound, %function
+ 780              	Piezo_EmitMotorOnSound:
+ 781              	.LFB32:
+ 340:.\Piezo.c     **** 
+ 341:.\Piezo.c     **** void Piezo_EmitMotorOnSound(motorOnSoundDirection_t motorOnSoundDirection)
+ 342:.\Piezo.c     **** {
+ 782              		.loc 1 342 0
+ 783              		.cfi_startproc
+ 784              		@ args = 0, pretend = 0, frame = 8
+ 785              		@ frame_needed = 1, uses_anonymous_args = 0
+ 786              		@ link register save eliminated.
+ 787 0000 80B4     		push	{r7}
+ 788              	.LCFI7:
+ 789              		.cfi_def_cfa_offset 4
+ 790 0002 83B0     		sub	sp, sp, #12
+ 791              	.LCFI8:
+ 792              		.cfi_def_cfa_offset 16
+ 793 0004 00AF     		add	r7, sp, #0
+ 794              		.cfi_offset 7, -4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 21
+
+
+ 795              	.LCFI9:
+ 796              		.cfi_def_cfa_register 7
+ 797 0006 0346     		mov	r3, r0
+ 798 0008 FB71     		strb	r3, [r7, #7]
+ 343:.\Piezo.c     **** 	_motorOnSoundDirection = motorOnSoundDirection;
+ 799              		.loc 1 343 0
+ 800 000a 40F20003 		movw	r3, #:lower16:_motorOnSoundDirection
+ 801 000e C0F20003 		movt	r3, #:upper16:_motorOnSoundDirection
+ 802 0012 FA79     		ldrb	r2, [r7, #7]
+ 803 0014 1A70     		strb	r2, [r3, #0]
+ 344:.\Piezo.c     **** 	// Set flag for state machine to enter motor piezo sound
+ 345:.\Piezo.c     **** 	_emitMotorSoundFlag = TRUE;
+ 804              		.loc 1 345 0
+ 805 0016 40F20003 		movw	r3, #:lower16:_emitMotorSoundFlag
+ 806 001a C0F20003 		movt	r3, #:upper16:_emitMotorSoundFlag
+ 807 001e 4FF00102 		mov	r2, #1
+ 808 0022 1A70     		strb	r2, [r3, #0]
+ 346:.\Piezo.c     **** }
+ 809              		.loc 1 346 0
+ 810 0024 07F10C07 		add	r7, r7, #12
+ 811 0028 BD46     		mov	sp, r7
+ 812 002a 80BC     		pop	{r7}
+ 813 002c 7047     		bx	lr
+ 814              		.cfi_endproc
+ 815              	.LFE32:
+ 816              		.size	Piezo_EmitMotorOnSound, .-Piezo_EmitMotorOnSound
+ 817 002e 00BF     		.section	.text.Piezo_AlarmActivatedSound,"ax",%progbits
+ 818              		.align	2
+ 819              		.global	Piezo_AlarmActivatedSound
+ 820              		.thumb
+ 821              		.thumb_func
+ 822              		.type	Piezo_AlarmActivatedSound, %function
+ 823              	Piezo_AlarmActivatedSound:
+ 824              	.LFB33:
+ 347:.\Piezo.c     **** 
+ 348:.\Piezo.c     **** void Piezo_AlarmActivatedSound(void)
+ 349:.\Piezo.c     **** {
+ 825              		.loc 1 349 0
+ 826              		.cfi_startproc
+ 827              		@ args = 0, pretend = 0, frame = 0
+ 828              		@ frame_needed = 1, uses_anonymous_args = 0
+ 829              		@ link register save eliminated.
+ 830 0000 80B4     		push	{r7}
+ 831              	.LCFI10:
+ 832              		.cfi_def_cfa_offset 4
+ 833 0002 00AF     		add	r7, sp, #0
+ 834              		.cfi_offset 7, -4
+ 835              	.LCFI11:
+ 836              		.cfi_def_cfa_register 7
+ 350:.\Piezo.c     **** 	_alarmActivatedSoundFlag = TRUE;
+ 837              		.loc 1 350 0
+ 838 0004 40F20003 		movw	r3, #:lower16:_alarmActivatedSoundFlag
+ 839 0008 C0F20003 		movt	r3, #:upper16:_alarmActivatedSoundFlag
+ 840 000c 4FF00102 		mov	r2, #1
+ 841 0010 1A70     		strb	r2, [r3, #0]
+ 351:.\Piezo.c     **** }
+ 842              		.loc 1 351 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 22
+
+
+ 843 0012 BD46     		mov	sp, r7
+ 844 0014 80BC     		pop	{r7}
+ 845 0016 7047     		bx	lr
+ 846              		.cfi_endproc
+ 847              	.LFE33:
+ 848              		.size	Piezo_AlarmActivatedSound, .-Piezo_AlarmActivatedSound
+ 849              		.bss
+ 850              	piezoState.3004:
+ 851 0005 00       		.space	1
+ 852              	prevPiezoState.3003:
+ 853 0006 00       		.space	1
+ 854 0007 00       		.align	2
+ 855              	counter.2992:
+ 856 0008 00000000 		.space	4
+ 857              		.align	2
+ 858              	piezoLastChangeCount.2993:
+ 859 000c 00000000 		.space	4
+ 860              		.data
+ 861              		.align	2
+ 862              		.type	piezoAlarmSound1RunTimeCounts.2994, %object
+ 863              		.size	piezoAlarmSound1RunTimeCounts.2994, 4
+ 864              	piezoAlarmSound1RunTimeCounts.2994:
+ 865 0000 19000000 		.word	25
+ 866              		.align	2
+ 867              		.type	piezoAlarmSound2RunTimeCounts.2995, %object
+ 868              		.size	piezoAlarmSound2RunTimeCounts.2995, 4
+ 869              	piezoAlarmSound2RunTimeCounts.2995:
+ 870 0004 19000000 		.word	25
+ 871              		.align	2
+ 872              		.type	beepRunTimeCounts.2996, %object
+ 873              		.size	beepRunTimeCounts.2996, 4
+ 874              	beepRunTimeCounts.2996:
+ 875 0008 0A000000 		.word	10
+ 876              		.bss
+ 877              		.align	1
+ 878              	currentToneCounts.3001:
+ 879 0010 0000     		.space	2
+ 880              		.align	1
+ 881              	toneCount.3002:
+ 882 0012 0000     		.space	2
+ 883              		.data
+ 884              		.align	2
+ 885              		.type	motorOnToneTimeCounts.2997, %object
+ 886              		.size	motorOnToneTimeCounts.2997, 4
+ 887              	motorOnToneTimeCounts.2997:
+ 888 000c 05000000 		.word	5
+ 889              		.align	2
+ 890              		.type	piezoActivatedSound1RunTimeCounts.2998, %object
+ 891              		.size	piezoActivatedSound1RunTimeCounts.2998, 4
+ 892              	piezoActivatedSound1RunTimeCounts.2998:
+ 893 0010 28000000 		.word	40
+ 894              		.align	2
+ 895              		.type	piezoActivatedSound2RunTimeCounts.2999, %object
+ 896              		.size	piezoActivatedSound2RunTimeCounts.2999, 4
+ 897              	piezoActivatedSound2RunTimeCounts.2999:
+ 898 0014 14000000 		.word	20
+ 899              		.align	2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 23
+
+
+ 900              		.type	piezoActivatedSound3RunTimeCounts.3000, %object
+ 901              		.size	piezoActivatedSound3RunTimeCounts.3000, 4
+ 902              	piezoActivatedSound3RunTimeCounts.3000:
+ 903 0018 28000000 		.word	40
+ 904              		.text
+ 905              	.Letext0:
+ 906              		.section	.debug_loc,"",%progbits
+ 907              	.Ldebug_loc0:
+ 908              	.LLST0:
+ 909 0000 00000000 		.4byte	.LFB29
+ 910 0004 02000000 		.4byte	.LCFI0
+ 911 0008 0100     		.2byte	0x1
+ 912 000a 5D       		.byte	0x5d
+ 913 000b 02000000 		.4byte	.LCFI0
+ 914 000f 04000000 		.4byte	.LCFI1
+ 915 0013 0200     		.2byte	0x2
+ 916 0015 7D       		.byte	0x7d
+ 917 0016 08       		.sleb128 8
+ 918 0017 04000000 		.4byte	.LCFI1
+ 919 001b 00060000 		.4byte	.LFE29
+ 920 001f 0200     		.2byte	0x2
+ 921 0021 77       		.byte	0x77
+ 922 0022 08       		.sleb128 8
+ 923 0023 00000000 		.4byte	0x0
+ 924 0027 00000000 		.4byte	0x0
+ 925              	.LLST1:
+ 926 002b 00000000 		.4byte	.LFB30
+ 927 002f 02000000 		.4byte	.LCFI2
+ 928 0033 0100     		.2byte	0x1
+ 929 0035 5D       		.byte	0x5d
+ 930 0036 02000000 		.4byte	.LCFI2
+ 931 003a 04000000 		.4byte	.LCFI3
+ 932 003e 0200     		.2byte	0x2
+ 933 0040 7D       		.byte	0x7d
+ 934 0041 04       		.sleb128 4
+ 935 0042 04000000 		.4byte	.LCFI3
+ 936 0046 06000000 		.4byte	.LCFI4
+ 937 004a 0200     		.2byte	0x2
+ 938 004c 7D       		.byte	0x7d
+ 939 004d 10       		.sleb128 16
+ 940 004e 06000000 		.4byte	.LCFI4
+ 941 0052 20000000 		.4byte	.LFE30
+ 942 0056 0200     		.2byte	0x2
+ 943 0058 77       		.byte	0x77
+ 944 0059 10       		.sleb128 16
+ 945 005a 00000000 		.4byte	0x0
+ 946 005e 00000000 		.4byte	0x0
+ 947              	.LLST2:
+ 948 0062 00000000 		.4byte	.LFB31
+ 949 0066 02000000 		.4byte	.LCFI5
+ 950 006a 0100     		.2byte	0x1
+ 951 006c 5D       		.byte	0x5d
+ 952 006d 02000000 		.4byte	.LCFI5
+ 953 0071 04000000 		.4byte	.LCFI6
+ 954 0075 0200     		.2byte	0x2
+ 955 0077 7D       		.byte	0x7d
+ 956 0078 04       		.sleb128 4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 24
+
+
+ 957 0079 04000000 		.4byte	.LCFI6
+ 958 007d 24000000 		.4byte	.LFE31
+ 959 0081 0200     		.2byte	0x2
+ 960 0083 77       		.byte	0x77
+ 961 0084 04       		.sleb128 4
+ 962 0085 00000000 		.4byte	0x0
+ 963 0089 00000000 		.4byte	0x0
+ 964              	.LLST3:
+ 965 008d 00000000 		.4byte	.LFB32
+ 966 0091 02000000 		.4byte	.LCFI7
+ 967 0095 0100     		.2byte	0x1
+ 968 0097 5D       		.byte	0x5d
+ 969 0098 02000000 		.4byte	.LCFI7
+ 970 009c 04000000 		.4byte	.LCFI8
+ 971 00a0 0200     		.2byte	0x2
+ 972 00a2 7D       		.byte	0x7d
+ 973 00a3 04       		.sleb128 4
+ 974 00a4 04000000 		.4byte	.LCFI8
+ 975 00a8 06000000 		.4byte	.LCFI9
+ 976 00ac 0200     		.2byte	0x2
+ 977 00ae 7D       		.byte	0x7d
+ 978 00af 10       		.sleb128 16
+ 979 00b0 06000000 		.4byte	.LCFI9
+ 980 00b4 2E000000 		.4byte	.LFE32
+ 981 00b8 0200     		.2byte	0x2
+ 982 00ba 77       		.byte	0x77
+ 983 00bb 10       		.sleb128 16
+ 984 00bc 00000000 		.4byte	0x0
+ 985 00c0 00000000 		.4byte	0x0
+ 986              	.LLST4:
+ 987 00c4 00000000 		.4byte	.LFB33
+ 988 00c8 02000000 		.4byte	.LCFI10
+ 989 00cc 0100     		.2byte	0x1
+ 990 00ce 5D       		.byte	0x5d
+ 991 00cf 02000000 		.4byte	.LCFI10
+ 992 00d3 04000000 		.4byte	.LCFI11
+ 993 00d7 0200     		.2byte	0x2
+ 994 00d9 7D       		.byte	0x7d
+ 995 00da 04       		.sleb128 4
+ 996 00db 04000000 		.4byte	.LCFI11
+ 997 00df 18000000 		.4byte	.LFE33
+ 998 00e3 0200     		.2byte	0x2
+ 999 00e5 77       		.byte	0x77
+ 1000 00e6 04       		.sleb128 4
+ 1001 00e7 00000000 		.4byte	0x0
+ 1002 00eb 00000000 		.4byte	0x0
+ 1003              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 1004              		.file 3 ".\\/../common/PublicObjects.h"
+ 1005              		.file 4 ".\\/Piezo.h"
+ 1006              		.file 5 "./Generated_Source/PSoC5/core_cm3.h"
+ 1007              		.file 6 ".\\/Config.h"
+ 1008              		.section	.debug_info
+ 1009 0000 25030000 		.4byte	0x325
+ 1010 0004 0200     		.2byte	0x2
+ 1011 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1012 000a 04       		.byte	0x4
+ 1013 000b 01       		.uleb128 0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 25
+
+
+ 1014 000c 94020000 		.4byte	.LASF55
+ 1015 0010 01       		.byte	0x1
+ 1016 0011 80020000 		.4byte	.LASF56
+ 1017 0015 5F030000 		.4byte	.LASF57
+ 1018 0019 00000000 		.4byte	0x0
+ 1019 001d 00000000 		.4byte	0x0
+ 1020 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 1021 0025 00000000 		.4byte	.Ldebug_line0
+ 1022 0029 02       		.uleb128 0x2
+ 1023 002a 01       		.byte	0x1
+ 1024 002b 06       		.byte	0x6
+ 1025 002c C7030000 		.4byte	.LASF0
+ 1026 0030 03       		.uleb128 0x3
+ 1027 0031 0C020000 		.4byte	.LASF3
+ 1028 0035 02       		.byte	0x2
+ 1029 0036 2A       		.byte	0x2a
+ 1030 0037 3B000000 		.4byte	0x3b
+ 1031 003b 02       		.uleb128 0x2
+ 1032 003c 01       		.byte	0x1
+ 1033 003d 08       		.byte	0x8
+ 1034 003e F5000000 		.4byte	.LASF1
+ 1035 0042 02       		.uleb128 0x2
+ 1036 0043 02       		.byte	0x2
+ 1037 0044 05       		.byte	0x5
+ 1038 0045 01030000 		.4byte	.LASF2
+ 1039 0049 03       		.uleb128 0x3
+ 1040 004a 10030000 		.4byte	.LASF4
+ 1041 004e 02       		.byte	0x2
+ 1042 004f 36       		.byte	0x36
+ 1043 0050 54000000 		.4byte	0x54
+ 1044 0054 02       		.uleb128 0x2
+ 1045 0055 02       		.byte	0x2
+ 1046 0056 07       		.byte	0x7
+ 1047 0057 33010000 		.4byte	.LASF5
+ 1048 005b 02       		.uleb128 0x2
+ 1049 005c 04       		.byte	0x4
+ 1050 005d 05       		.byte	0x5
+ 1051 005e 56030000 		.4byte	.LASF6
+ 1052 0062 03       		.uleb128 0x3
+ 1053 0063 4D030000 		.4byte	.LASF7
+ 1054 0067 02       		.byte	0x2
+ 1055 0068 50       		.byte	0x50
+ 1056 0069 6D000000 		.4byte	0x6d
+ 1057 006d 02       		.uleb128 0x2
+ 1058 006e 04       		.byte	0x4
+ 1059 006f 07       		.byte	0x7
+ 1060 0070 77010000 		.4byte	.LASF8
+ 1061 0074 02       		.uleb128 0x2
+ 1062 0075 08       		.byte	0x8
+ 1063 0076 05       		.byte	0x5
+ 1064 0077 00000000 		.4byte	.LASF9
+ 1065 007b 02       		.uleb128 0x2
+ 1066 007c 08       		.byte	0x8
+ 1067 007d 07       		.byte	0x7
+ 1068 007e F5010000 		.4byte	.LASF10
+ 1069 0082 04       		.uleb128 0x4
+ 1070 0083 04       		.byte	0x4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 26
+
+
+ 1071 0084 05       		.byte	0x5
+ 1072 0085 696E7400 		.ascii	"int\000"
+ 1073 0089 02       		.uleb128 0x2
+ 1074 008a 04       		.byte	0x4
+ 1075 008b 07       		.byte	0x7
+ 1076 008c D9010000 		.4byte	.LASF11
+ 1077 0090 02       		.uleb128 0x2
+ 1078 0091 01       		.byte	0x1
+ 1079 0092 08       		.byte	0x8
+ 1080 0093 A0020000 		.4byte	.LASF12
+ 1081 0097 05       		.uleb128 0x5
+ 1082 0098 04       		.byte	0x4
+ 1083 0099 07       		.byte	0x7
+ 1084 009a 06       		.uleb128 0x6
+ 1085 009b 01       		.byte	0x1
+ 1086 009c 03       		.byte	0x3
+ 1087 009d 23       		.byte	0x23
+ 1088 009e AF000000 		.4byte	0xaf
+ 1089 00a2 07       		.uleb128 0x7
+ 1090 00a3 71010000 		.4byte	.LASF13
+ 1091 00a7 00       		.sleb128 0
+ 1092 00a8 07       		.uleb128 0x7
+ 1093 00a9 53000000 		.4byte	.LASF14
+ 1094 00ad 01       		.sleb128 1
+ 1095 00ae 00       		.byte	0x0
+ 1096 00af 03       		.uleb128 0x3
+ 1097 00b0 97000000 		.4byte	.LASF15
+ 1098 00b4 03       		.byte	0x3
+ 1099 00b5 26       		.byte	0x26
+ 1100 00b6 9A000000 		.4byte	0x9a
+ 1101 00ba 06       		.uleb128 0x6
+ 1102 00bb 01       		.byte	0x1
+ 1103 00bc 04       		.byte	0x4
+ 1104 00bd 23       		.byte	0x23
+ 1105 00be CE000000 		.4byte	0xce
+ 1106 00c2 08       		.uleb128 0x8
+ 1107 00c3 757000   		.ascii	"up\000"
+ 1108 00c6 00       		.sleb128 0
+ 1109 00c7 07       		.uleb128 0x7
+ 1110 00c8 0B030000 		.4byte	.LASF16
+ 1111 00cc 01       		.sleb128 1
+ 1112 00cd 00       		.byte	0x0
+ 1113 00ce 03       		.uleb128 0x3
+ 1114 00cf DD000000 		.4byte	.LASF17
+ 1115 00d3 04       		.byte	0x4
+ 1116 00d4 26       		.byte	0x26
+ 1117 00d5 BA000000 		.4byte	0xba
+ 1118 00d9 06       		.uleb128 0x6
+ 1119 00da 01       		.byte	0x1
+ 1120 00db 01       		.byte	0x1
+ 1121 00dc 2D       		.byte	0x2d
+ 1122 00dd 18010000 		.4byte	0x118
+ 1123 00e1 07       		.uleb128 0x7
+ 1124 00e2 8A020000 		.4byte	.LASF18
+ 1125 00e6 00       		.sleb128 0
+ 1126 00e7 07       		.uleb128 0x7
+ 1127 00e8 BE030000 		.4byte	.LASF19
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 27
+
+
+ 1128 00ec 01       		.sleb128 1
+ 1129 00ed 07       		.uleb128 0x7
+ 1130 00ee E5020000 		.4byte	.LASF20
+ 1131 00f2 02       		.sleb128 2
+ 1132 00f3 07       		.uleb128 0x7
+ 1133 00f4 C8010000 		.4byte	.LASF21
+ 1134 00f8 03       		.sleb128 3
+ 1135 00f9 07       		.uleb128 0x7
+ 1136 00fa 9E000000 		.4byte	.LASF22
+ 1137 00fe 04       		.sleb128 4
+ 1138 00ff 07       		.uleb128 0x7
+ 1139 0100 21010000 		.4byte	.LASF23
+ 1140 0104 05       		.sleb128 5
+ 1141 0105 07       		.uleb128 0x7
+ 1142 0106 89010000 		.4byte	.LASF24
+ 1143 010a 06       		.sleb128 6
+ 1144 010b 07       		.uleb128 0x7
+ 1145 010c 9E010000 		.4byte	.LASF25
+ 1146 0110 07       		.sleb128 7
+ 1147 0111 07       		.uleb128 0x7
+ 1148 0112 B3010000 		.4byte	.LASF26
+ 1149 0116 08       		.sleb128 8
+ 1150 0117 00       		.byte	0x0
+ 1151 0118 03       		.uleb128 0x3
+ 1152 0119 BE020000 		.4byte	.LASF27
+ 1153 011d 01       		.byte	0x1
+ 1154 011e 37       		.byte	0x37
+ 1155 011f D9000000 		.4byte	0xd9
+ 1156 0123 09       		.uleb128 0x9
+ 1157 0124 01       		.byte	0x1
+ 1158 0125 37000000 		.4byte	.LASF41
+ 1159 0129 01       		.byte	0x1
+ 1160 012a 4D       		.byte	0x4d
+ 1161 012b 01       		.byte	0x1
+ 1162 012c 00000000 		.4byte	.LFB29
+ 1163 0130 00060000 		.4byte	.LFE29
+ 1164 0134 00000000 		.4byte	.LLST0
+ 1165 0138 1A020000 		.4byte	0x21a
+ 1166 013c 0A       		.uleb128 0xa
+ 1167 013d BB000000 		.4byte	.LASF28
+ 1168 0141 01       		.byte	0x1
+ 1169 0142 4F       		.byte	0x4f
+ 1170 0143 62000000 		.4byte	0x62
+ 1171 0147 05       		.byte	0x5
+ 1172 0148 03       		.byte	0x3
+ 1173 0149 08000000 		.4byte	counter.2992
+ 1174 014d 0A       		.uleb128 0xa
+ 1175 014e D3030000 		.4byte	.LASF29
+ 1176 0152 01       		.byte	0x1
+ 1177 0153 51       		.byte	0x51
+ 1178 0154 62000000 		.4byte	0x62
+ 1179 0158 05       		.byte	0x5
+ 1180 0159 03       		.byte	0x3
+ 1181 015a 0C000000 		.4byte	piezoLastChangeCount.2993
+ 1182 015e 0A       		.uleb128 0xa
+ 1183 015f 03010000 		.4byte	.LASF30
+ 1184 0163 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 28
+
+
+ 1185 0164 54       		.byte	0x54
+ 1186 0165 62000000 		.4byte	0x62
+ 1187 0169 05       		.byte	0x5
+ 1188 016a 03       		.byte	0x3
+ 1189 016b 00000000 		.4byte	piezoAlarmSound1RunTimeCounts.2994
+ 1190 016f 0A       		.uleb128 0xa
+ 1191 0170 2F030000 		.4byte	.LASF31
+ 1192 0174 01       		.byte	0x1
+ 1193 0175 55       		.byte	0x55
+ 1194 0176 62000000 		.4byte	0x62
+ 1195 017a 05       		.byte	0x5
+ 1196 017b 03       		.byte	0x3
+ 1197 017c 04000000 		.4byte	piezoAlarmSound2RunTimeCounts.2995
+ 1198 0180 0A       		.uleb128 0xa
+ 1199 0181 0E000000 		.4byte	.LASF32
+ 1200 0185 01       		.byte	0x1
+ 1201 0186 56       		.byte	0x56
+ 1202 0187 62000000 		.4byte	0x62
+ 1203 018b 05       		.byte	0x5
+ 1204 018c 03       		.byte	0x3
+ 1205 018d 08000000 		.4byte	beepRunTimeCounts.2996
+ 1206 0191 0A       		.uleb128 0xa
+ 1207 0192 19030000 		.4byte	.LASF33
+ 1208 0196 01       		.byte	0x1
+ 1209 0197 57       		.byte	0x57
+ 1210 0198 62000000 		.4byte	0x62
+ 1211 019c 05       		.byte	0x5
+ 1212 019d 03       		.byte	0x3
+ 1213 019e 0C000000 		.4byte	motorOnToneTimeCounts.2997
+ 1214 01a2 0A       		.uleb128 0xa
+ 1215 01a3 14020000 		.4byte	.LASF34
+ 1216 01a7 01       		.byte	0x1
+ 1217 01a8 58       		.byte	0x58
+ 1218 01a9 62000000 		.4byte	0x62
+ 1219 01ad 05       		.byte	0x5
+ 1220 01ae 03       		.byte	0x3
+ 1221 01af 10000000 		.4byte	piezoActivatedSound1RunTimeCounts.2998
+ 1222 01b3 0A       		.uleb128 0xa
+ 1223 01b4 58000000 		.4byte	.LASF35
+ 1224 01b8 01       		.byte	0x1
+ 1225 01b9 59       		.byte	0x59
+ 1226 01ba 62000000 		.4byte	0x62
+ 1227 01be 05       		.byte	0x5
+ 1228 01bf 03       		.byte	0x3
+ 1229 01c0 14000000 		.4byte	piezoActivatedSound2RunTimeCounts.2999
+ 1230 01c4 0A       		.uleb128 0xa
+ 1231 01c5 4D020000 		.4byte	.LASF36
+ 1232 01c9 01       		.byte	0x1
+ 1233 01ca 5A       		.byte	0x5a
+ 1234 01cb 62000000 		.4byte	0x62
+ 1235 01cf 05       		.byte	0x5
+ 1236 01d0 03       		.byte	0x3
+ 1237 01d1 18000000 		.4byte	piezoActivatedSound3RunTimeCounts.3000
+ 1238 01d5 0A       		.uleb128 0xa
+ 1239 01d6 41000000 		.4byte	.LASF37
+ 1240 01da 01       		.byte	0x1
+ 1241 01db 5C       		.byte	0x5c
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 29
+
+
+ 1242 01dc 49000000 		.4byte	0x49
+ 1243 01e0 05       		.byte	0x5
+ 1244 01e1 03       		.byte	0x3
+ 1245 01e2 10000000 		.4byte	currentToneCounts.3001
+ 1246 01e6 0A       		.uleb128 0xa
+ 1247 01e7 CC020000 		.4byte	.LASF38
+ 1248 01eb 01       		.byte	0x1
+ 1249 01ec 5D       		.byte	0x5d
+ 1250 01ed 49000000 		.4byte	0x49
+ 1251 01f1 05       		.byte	0x5
+ 1252 01f2 03       		.byte	0x3
+ 1253 01f3 12000000 		.4byte	toneCount.3002
+ 1254 01f7 0A       		.uleb128 0xa
+ 1255 01f8 E6010000 		.4byte	.LASF39
+ 1256 01fc 01       		.byte	0x1
+ 1257 01fd 5F       		.byte	0x5f
+ 1258 01fe 18010000 		.4byte	0x118
+ 1259 0202 05       		.byte	0x5
+ 1260 0203 03       		.byte	0x3
+ 1261 0204 06000000 		.4byte	prevPiezoState.3003
+ 1262 0208 0A       		.uleb128 0xa
+ 1263 0209 F6020000 		.4byte	.LASF40
+ 1264 020d 01       		.byte	0x1
+ 1265 020e 60       		.byte	0x60
+ 1266 020f 18010000 		.4byte	0x118
+ 1267 0213 05       		.byte	0x5
+ 1268 0214 03       		.byte	0x3
+ 1269 0215 05000000 		.4byte	piezoState.3004
+ 1270 0219 00       		.byte	0x0
+ 1271 021a 0B       		.uleb128 0xb
+ 1272 021b 01       		.byte	0x1
+ 1273 021c E8030000 		.4byte	.LASF42
+ 1274 0220 01       		.byte	0x1
+ 1275 0221 4A01     		.2byte	0x14a
+ 1276 0223 01       		.byte	0x1
+ 1277 0224 00000000 		.4byte	.LFB30
+ 1278 0228 20000000 		.4byte	.LFE30
+ 1279 022c 2B000000 		.4byte	.LLST1
+ 1280 0230 44020000 		.4byte	0x244
+ 1281 0234 0C       		.uleb128 0xc
+ 1282 0235 90000000 		.4byte	.LASF44
+ 1283 0239 01       		.byte	0x1
+ 1284 023a 4A01     		.2byte	0x14a
+ 1285 023c AF000000 		.4byte	0xaf
+ 1286 0240 02       		.byte	0x2
+ 1287 0241 91       		.byte	0x91
+ 1288 0242 77       		.sleb128 -9
+ 1289 0243 00       		.byte	0x0
+ 1290 0244 0D       		.uleb128 0xd
+ 1291 0245 01       		.byte	0x1
+ 1292 0246 D6020000 		.4byte	.LASF46
+ 1293 024a 01       		.byte	0x1
+ 1294 024b 5001     		.2byte	0x150
+ 1295 024d 01       		.byte	0x1
+ 1296 024e 00000000 		.4byte	.LFB31
+ 1297 0252 24000000 		.4byte	.LFE31
+ 1298 0256 62000000 		.4byte	.LLST2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 30
+
+
+ 1299 025a 0B       		.uleb128 0xb
+ 1300 025b 01       		.byte	0x1
+ 1301 025c 36020000 		.4byte	.LASF43
+ 1302 0260 01       		.byte	0x1
+ 1303 0261 5501     		.2byte	0x155
+ 1304 0263 01       		.byte	0x1
+ 1305 0264 00000000 		.4byte	.LFB32
+ 1306 0268 2E000000 		.4byte	.LFE32
+ 1307 026c 8D000000 		.4byte	.LLST3
+ 1308 0270 84020000 		.4byte	0x284
+ 1309 0274 0C       		.uleb128 0xc
+ 1310 0275 7A000000 		.4byte	.LASF45
+ 1311 0279 01       		.byte	0x1
+ 1312 027a 5501     		.2byte	0x155
+ 1313 027c CE000000 		.4byte	0xce
+ 1314 0280 02       		.byte	0x2
+ 1315 0281 91       		.byte	0x91
+ 1316 0282 77       		.sleb128 -9
+ 1317 0283 00       		.byte	0x0
+ 1318 0284 0D       		.uleb128 0xd
+ 1319 0285 01       		.byte	0x1
+ 1320 0286 C3000000 		.4byte	.LASF47
+ 1321 028a 01       		.byte	0x1
+ 1322 028b 5C01     		.2byte	0x15c
+ 1323 028d 01       		.byte	0x1
+ 1324 028e 00000000 		.4byte	.LFB33
+ 1325 0292 18000000 		.4byte	.LFE33
+ 1326 0296 C4000000 		.4byte	.LLST4
+ 1327 029a 0A       		.uleb128 0xa
+ 1328 029b 20000000 		.4byte	.LASF48
+ 1329 029f 01       		.byte	0x1
+ 1330 02a0 3E       		.byte	0x3e
+ 1331 02a1 CE000000 		.4byte	0xce
+ 1332 02a5 05       		.byte	0x5
+ 1333 02a6 03       		.byte	0x3
+ 1334 02a7 00000000 		.4byte	_motorOnSoundDirection
+ 1335 02ab 0E       		.uleb128 0xe
+ 1336 02ac 64010000 		.4byte	.LASF49
+ 1337 02b0 05       		.byte	0x5
+ 1338 02b1 CE06     		.2byte	0x6ce
+ 1339 02b3 B9020000 		.4byte	0x2b9
+ 1340 02b7 01       		.byte	0x1
+ 1341 02b8 01       		.byte	0x1
+ 1342 02b9 0F       		.uleb128 0xf
+ 1343 02ba 82000000 		.4byte	0x82
+ 1344 02be 10       		.uleb128 0x10
+ 1345 02bf 90000000 		.4byte	0x90
+ 1346 02c3 CE020000 		.4byte	0x2ce
+ 1347 02c7 11       		.uleb128 0x11
+ 1348 02c8 97000000 		.4byte	0x97
+ 1349 02cc C7       		.byte	0xc7
+ 1350 02cd 00       		.byte	0x0
+ 1351 02ce 12       		.uleb128 0x12
+ 1352 02cf 46010000 		.4byte	.LASF50
+ 1353 02d3 06       		.byte	0x6
+ 1354 02d4 2A       		.byte	0x2a
+ 1355 02d5 BE020000 		.4byte	0x2be
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 31
+
+
+ 1356 02d9 01       		.byte	0x1
+ 1357 02da 05       		.byte	0x5
+ 1358 02db 03       		.byte	0x3
+ 1359 02dc 00000000 		.4byte	debugBuff
+ 1360 02e0 12       		.uleb128 0x12
+ 1361 02e1 50010000 		.4byte	.LASF51
+ 1362 02e5 01       		.byte	0x1
+ 1363 02e6 40       		.byte	0x40
+ 1364 02e7 AF000000 		.4byte	0xaf
+ 1365 02eb 01       		.byte	0x1
+ 1366 02ec 05       		.byte	0x5
+ 1367 02ed 03       		.byte	0x3
+ 1368 02ee 00000000 		.4byte	_emitMotorSoundFlag
+ 1369 02f2 12       		.uleb128 0x12
+ 1370 02f3 6F020000 		.4byte	.LASF52
+ 1371 02f7 01       		.byte	0x1
+ 1372 02f8 41       		.byte	0x41
+ 1373 02f9 AF000000 		.4byte	0xaf
+ 1374 02fd 01       		.byte	0x1
+ 1375 02fe 05       		.byte	0x5
+ 1376 02ff 03       		.byte	0x3
+ 1377 0300 00000000 		.4byte	_alarmEnableFlag
+ 1378 0304 12       		.uleb128 0x12
+ 1379 0305 A5020000 		.4byte	.LASF53
+ 1380 0309 01       		.byte	0x1
+ 1381 030a 42       		.byte	0x42
+ 1382 030b AF000000 		.4byte	0xaf
+ 1383 030f 01       		.byte	0x1
+ 1384 0310 05       		.byte	0x5
+ 1385 0311 03       		.byte	0x3
+ 1386 0312 00000000 		.4byte	_alarmActivatedSoundFlag
+ 1387 0316 12       		.uleb128 0x12
+ 1388 0317 AB000000 		.4byte	.LASF54
+ 1389 031b 01       		.byte	0x1
+ 1390 031c 43       		.byte	0x43
+ 1391 031d 30000000 		.4byte	0x30
+ 1392 0321 01       		.byte	0x1
+ 1393 0322 05       		.byte	0x5
+ 1394 0323 03       		.byte	0x3
+ 1395 0324 00000000 		.4byte	_piezoBeepCount
+ 1396 0328 00       		.byte	0x0
+ 1397              		.section	.debug_abbrev
+ 1398 0000 01       		.uleb128 0x1
+ 1399 0001 11       		.uleb128 0x11
+ 1400 0002 01       		.byte	0x1
+ 1401 0003 25       		.uleb128 0x25
+ 1402 0004 0E       		.uleb128 0xe
+ 1403 0005 13       		.uleb128 0x13
+ 1404 0006 0B       		.uleb128 0xb
+ 1405 0007 03       		.uleb128 0x3
+ 1406 0008 0E       		.uleb128 0xe
+ 1407 0009 1B       		.uleb128 0x1b
+ 1408 000a 0E       		.uleb128 0xe
+ 1409 000b 11       		.uleb128 0x11
+ 1410 000c 01       		.uleb128 0x1
+ 1411 000d 52       		.uleb128 0x52
+ 1412 000e 01       		.uleb128 0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 32
+
+
+ 1413 000f 55       		.uleb128 0x55
+ 1414 0010 06       		.uleb128 0x6
+ 1415 0011 10       		.uleb128 0x10
+ 1416 0012 06       		.uleb128 0x6
+ 1417 0013 00       		.byte	0x0
+ 1418 0014 00       		.byte	0x0
+ 1419 0015 02       		.uleb128 0x2
+ 1420 0016 24       		.uleb128 0x24
+ 1421 0017 00       		.byte	0x0
+ 1422 0018 0B       		.uleb128 0xb
+ 1423 0019 0B       		.uleb128 0xb
+ 1424 001a 3E       		.uleb128 0x3e
+ 1425 001b 0B       		.uleb128 0xb
+ 1426 001c 03       		.uleb128 0x3
+ 1427 001d 0E       		.uleb128 0xe
+ 1428 001e 00       		.byte	0x0
+ 1429 001f 00       		.byte	0x0
+ 1430 0020 03       		.uleb128 0x3
+ 1431 0021 16       		.uleb128 0x16
+ 1432 0022 00       		.byte	0x0
+ 1433 0023 03       		.uleb128 0x3
+ 1434 0024 0E       		.uleb128 0xe
+ 1435 0025 3A       		.uleb128 0x3a
+ 1436 0026 0B       		.uleb128 0xb
+ 1437 0027 3B       		.uleb128 0x3b
+ 1438 0028 0B       		.uleb128 0xb
+ 1439 0029 49       		.uleb128 0x49
+ 1440 002a 13       		.uleb128 0x13
+ 1441 002b 00       		.byte	0x0
+ 1442 002c 00       		.byte	0x0
+ 1443 002d 04       		.uleb128 0x4
+ 1444 002e 24       		.uleb128 0x24
+ 1445 002f 00       		.byte	0x0
+ 1446 0030 0B       		.uleb128 0xb
+ 1447 0031 0B       		.uleb128 0xb
+ 1448 0032 3E       		.uleb128 0x3e
+ 1449 0033 0B       		.uleb128 0xb
+ 1450 0034 03       		.uleb128 0x3
+ 1451 0035 08       		.uleb128 0x8
+ 1452 0036 00       		.byte	0x0
+ 1453 0037 00       		.byte	0x0
+ 1454 0038 05       		.uleb128 0x5
+ 1455 0039 24       		.uleb128 0x24
+ 1456 003a 00       		.byte	0x0
+ 1457 003b 0B       		.uleb128 0xb
+ 1458 003c 0B       		.uleb128 0xb
+ 1459 003d 3E       		.uleb128 0x3e
+ 1460 003e 0B       		.uleb128 0xb
+ 1461 003f 00       		.byte	0x0
+ 1462 0040 00       		.byte	0x0
+ 1463 0041 06       		.uleb128 0x6
+ 1464 0042 04       		.uleb128 0x4
+ 1465 0043 01       		.byte	0x1
+ 1466 0044 0B       		.uleb128 0xb
+ 1467 0045 0B       		.uleb128 0xb
+ 1468 0046 3A       		.uleb128 0x3a
+ 1469 0047 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 33
+
+
+ 1470 0048 3B       		.uleb128 0x3b
+ 1471 0049 0B       		.uleb128 0xb
+ 1472 004a 01       		.uleb128 0x1
+ 1473 004b 13       		.uleb128 0x13
+ 1474 004c 00       		.byte	0x0
+ 1475 004d 00       		.byte	0x0
+ 1476 004e 07       		.uleb128 0x7
+ 1477 004f 28       		.uleb128 0x28
+ 1478 0050 00       		.byte	0x0
+ 1479 0051 03       		.uleb128 0x3
+ 1480 0052 0E       		.uleb128 0xe
+ 1481 0053 1C       		.uleb128 0x1c
+ 1482 0054 0D       		.uleb128 0xd
+ 1483 0055 00       		.byte	0x0
+ 1484 0056 00       		.byte	0x0
+ 1485 0057 08       		.uleb128 0x8
+ 1486 0058 28       		.uleb128 0x28
+ 1487 0059 00       		.byte	0x0
+ 1488 005a 03       		.uleb128 0x3
+ 1489 005b 08       		.uleb128 0x8
+ 1490 005c 1C       		.uleb128 0x1c
+ 1491 005d 0D       		.uleb128 0xd
+ 1492 005e 00       		.byte	0x0
+ 1493 005f 00       		.byte	0x0
+ 1494 0060 09       		.uleb128 0x9
+ 1495 0061 2E       		.uleb128 0x2e
+ 1496 0062 01       		.byte	0x1
+ 1497 0063 3F       		.uleb128 0x3f
+ 1498 0064 0C       		.uleb128 0xc
+ 1499 0065 03       		.uleb128 0x3
+ 1500 0066 0E       		.uleb128 0xe
+ 1501 0067 3A       		.uleb128 0x3a
+ 1502 0068 0B       		.uleb128 0xb
+ 1503 0069 3B       		.uleb128 0x3b
+ 1504 006a 0B       		.uleb128 0xb
+ 1505 006b 27       		.uleb128 0x27
+ 1506 006c 0C       		.uleb128 0xc
+ 1507 006d 11       		.uleb128 0x11
+ 1508 006e 01       		.uleb128 0x1
+ 1509 006f 12       		.uleb128 0x12
+ 1510 0070 01       		.uleb128 0x1
+ 1511 0071 40       		.uleb128 0x40
+ 1512 0072 06       		.uleb128 0x6
+ 1513 0073 01       		.uleb128 0x1
+ 1514 0074 13       		.uleb128 0x13
+ 1515 0075 00       		.byte	0x0
+ 1516 0076 00       		.byte	0x0
+ 1517 0077 0A       		.uleb128 0xa
+ 1518 0078 34       		.uleb128 0x34
+ 1519 0079 00       		.byte	0x0
+ 1520 007a 03       		.uleb128 0x3
+ 1521 007b 0E       		.uleb128 0xe
+ 1522 007c 3A       		.uleb128 0x3a
+ 1523 007d 0B       		.uleb128 0xb
+ 1524 007e 3B       		.uleb128 0x3b
+ 1525 007f 0B       		.uleb128 0xb
+ 1526 0080 49       		.uleb128 0x49
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 34
+
+
+ 1527 0081 13       		.uleb128 0x13
+ 1528 0082 02       		.uleb128 0x2
+ 1529 0083 0A       		.uleb128 0xa
+ 1530 0084 00       		.byte	0x0
+ 1531 0085 00       		.byte	0x0
+ 1532 0086 0B       		.uleb128 0xb
+ 1533 0087 2E       		.uleb128 0x2e
+ 1534 0088 01       		.byte	0x1
+ 1535 0089 3F       		.uleb128 0x3f
+ 1536 008a 0C       		.uleb128 0xc
+ 1537 008b 03       		.uleb128 0x3
+ 1538 008c 0E       		.uleb128 0xe
+ 1539 008d 3A       		.uleb128 0x3a
+ 1540 008e 0B       		.uleb128 0xb
+ 1541 008f 3B       		.uleb128 0x3b
+ 1542 0090 05       		.uleb128 0x5
+ 1543 0091 27       		.uleb128 0x27
+ 1544 0092 0C       		.uleb128 0xc
+ 1545 0093 11       		.uleb128 0x11
+ 1546 0094 01       		.uleb128 0x1
+ 1547 0095 12       		.uleb128 0x12
+ 1548 0096 01       		.uleb128 0x1
+ 1549 0097 40       		.uleb128 0x40
+ 1550 0098 06       		.uleb128 0x6
+ 1551 0099 01       		.uleb128 0x1
+ 1552 009a 13       		.uleb128 0x13
+ 1553 009b 00       		.byte	0x0
+ 1554 009c 00       		.byte	0x0
+ 1555 009d 0C       		.uleb128 0xc
+ 1556 009e 05       		.uleb128 0x5
+ 1557 009f 00       		.byte	0x0
+ 1558 00a0 03       		.uleb128 0x3
+ 1559 00a1 0E       		.uleb128 0xe
+ 1560 00a2 3A       		.uleb128 0x3a
+ 1561 00a3 0B       		.uleb128 0xb
+ 1562 00a4 3B       		.uleb128 0x3b
+ 1563 00a5 05       		.uleb128 0x5
+ 1564 00a6 49       		.uleb128 0x49
+ 1565 00a7 13       		.uleb128 0x13
+ 1566 00a8 02       		.uleb128 0x2
+ 1567 00a9 0A       		.uleb128 0xa
+ 1568 00aa 00       		.byte	0x0
+ 1569 00ab 00       		.byte	0x0
+ 1570 00ac 0D       		.uleb128 0xd
+ 1571 00ad 2E       		.uleb128 0x2e
+ 1572 00ae 00       		.byte	0x0
+ 1573 00af 3F       		.uleb128 0x3f
+ 1574 00b0 0C       		.uleb128 0xc
+ 1575 00b1 03       		.uleb128 0x3
+ 1576 00b2 0E       		.uleb128 0xe
+ 1577 00b3 3A       		.uleb128 0x3a
+ 1578 00b4 0B       		.uleb128 0xb
+ 1579 00b5 3B       		.uleb128 0x3b
+ 1580 00b6 05       		.uleb128 0x5
+ 1581 00b7 27       		.uleb128 0x27
+ 1582 00b8 0C       		.uleb128 0xc
+ 1583 00b9 11       		.uleb128 0x11
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 35
+
+
+ 1584 00ba 01       		.uleb128 0x1
+ 1585 00bb 12       		.uleb128 0x12
+ 1586 00bc 01       		.uleb128 0x1
+ 1587 00bd 40       		.uleb128 0x40
+ 1588 00be 06       		.uleb128 0x6
+ 1589 00bf 00       		.byte	0x0
+ 1590 00c0 00       		.byte	0x0
+ 1591 00c1 0E       		.uleb128 0xe
+ 1592 00c2 34       		.uleb128 0x34
+ 1593 00c3 00       		.byte	0x0
+ 1594 00c4 03       		.uleb128 0x3
+ 1595 00c5 0E       		.uleb128 0xe
+ 1596 00c6 3A       		.uleb128 0x3a
+ 1597 00c7 0B       		.uleb128 0xb
+ 1598 00c8 3B       		.uleb128 0x3b
+ 1599 00c9 05       		.uleb128 0x5
+ 1600 00ca 49       		.uleb128 0x49
+ 1601 00cb 13       		.uleb128 0x13
+ 1602 00cc 3F       		.uleb128 0x3f
+ 1603 00cd 0C       		.uleb128 0xc
+ 1604 00ce 3C       		.uleb128 0x3c
+ 1605 00cf 0C       		.uleb128 0xc
+ 1606 00d0 00       		.byte	0x0
+ 1607 00d1 00       		.byte	0x0
+ 1608 00d2 0F       		.uleb128 0xf
+ 1609 00d3 35       		.uleb128 0x35
+ 1610 00d4 00       		.byte	0x0
+ 1611 00d5 49       		.uleb128 0x49
+ 1612 00d6 13       		.uleb128 0x13
+ 1613 00d7 00       		.byte	0x0
+ 1614 00d8 00       		.byte	0x0
+ 1615 00d9 10       		.uleb128 0x10
+ 1616 00da 01       		.uleb128 0x1
+ 1617 00db 01       		.byte	0x1
+ 1618 00dc 49       		.uleb128 0x49
+ 1619 00dd 13       		.uleb128 0x13
+ 1620 00de 01       		.uleb128 0x1
+ 1621 00df 13       		.uleb128 0x13
+ 1622 00e0 00       		.byte	0x0
+ 1623 00e1 00       		.byte	0x0
+ 1624 00e2 11       		.uleb128 0x11
+ 1625 00e3 21       		.uleb128 0x21
+ 1626 00e4 00       		.byte	0x0
+ 1627 00e5 49       		.uleb128 0x49
+ 1628 00e6 13       		.uleb128 0x13
+ 1629 00e7 2F       		.uleb128 0x2f
+ 1630 00e8 0B       		.uleb128 0xb
+ 1631 00e9 00       		.byte	0x0
+ 1632 00ea 00       		.byte	0x0
+ 1633 00eb 12       		.uleb128 0x12
+ 1634 00ec 34       		.uleb128 0x34
+ 1635 00ed 00       		.byte	0x0
+ 1636 00ee 03       		.uleb128 0x3
+ 1637 00ef 0E       		.uleb128 0xe
+ 1638 00f0 3A       		.uleb128 0x3a
+ 1639 00f1 0B       		.uleb128 0xb
+ 1640 00f2 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 36
+
+
+ 1641 00f3 0B       		.uleb128 0xb
+ 1642 00f4 49       		.uleb128 0x49
+ 1643 00f5 13       		.uleb128 0x13
+ 1644 00f6 3F       		.uleb128 0x3f
+ 1645 00f7 0C       		.uleb128 0xc
+ 1646 00f8 02       		.uleb128 0x2
+ 1647 00f9 0A       		.uleb128 0xa
+ 1648 00fa 00       		.byte	0x0
+ 1649 00fb 00       		.byte	0x0
+ 1650 00fc 00       		.byte	0x0
+ 1651              		.section	.debug_pubnames,"",%progbits
+ 1652 0000 EA000000 		.4byte	0xea
+ 1653 0004 0200     		.2byte	0x2
+ 1654 0006 00000000 		.4byte	.Ldebug_info0
+ 1655 000a 29030000 		.4byte	0x329
+ 1656 000e 23010000 		.4byte	0x123
+ 1657 0012 5069657A 		.ascii	"Piezo_Run\000"
+ 1657      6F5F5275 
+ 1657      6E00
+ 1658 001c 1A020000 		.4byte	0x21a
+ 1659 0020 5069657A 		.ascii	"Piezo_AlarmEnable\000"
+ 1659      6F5F416C 
+ 1659      61726D45 
+ 1659      6E61626C 
+ 1659      6500
+ 1660 0032 44020000 		.4byte	0x244
+ 1661 0036 5069657A 		.ascii	"Piezo_EmitBeep\000"
+ 1661      6F5F456D 
+ 1661      69744265 
+ 1661      657000
+ 1662 0045 5A020000 		.4byte	0x25a
+ 1663 0049 5069657A 		.ascii	"Piezo_EmitMotorOnSound\000"
+ 1663      6F5F456D 
+ 1663      69744D6F 
+ 1663      746F724F 
+ 1663      6E536F75 
+ 1664 0060 84020000 		.4byte	0x284
+ 1665 0064 5069657A 		.ascii	"Piezo_AlarmActivatedSound\000"
+ 1665      6F5F416C 
+ 1665      61726D41 
+ 1665      63746976 
+ 1665      61746564 
+ 1666 007e CE020000 		.4byte	0x2ce
+ 1667 0082 64656275 		.ascii	"debugBuff\000"
+ 1667      67427566 
+ 1667      6600
+ 1668 008c E0020000 		.4byte	0x2e0
+ 1669 0090 5F656D69 		.ascii	"_emitMotorSoundFlag\000"
+ 1669      744D6F74 
+ 1669      6F72536F 
+ 1669      756E6446 
+ 1669      6C616700 
+ 1670 00a4 F2020000 		.4byte	0x2f2
+ 1671 00a8 5F616C61 		.ascii	"_alarmEnableFlag\000"
+ 1671      726D456E 
+ 1671      61626C65 
+ 1671      466C6167 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 37
+
+
+ 1671      00
+ 1672 00b9 04030000 		.4byte	0x304
+ 1673 00bd 5F616C61 		.ascii	"_alarmActivatedSoundFlag\000"
+ 1673      726D4163 
+ 1673      74697661 
+ 1673      74656453 
+ 1673      6F756E64 
+ 1674 00d6 16030000 		.4byte	0x316
+ 1675 00da 5F706965 		.ascii	"_piezoBeepCount\000"
+ 1675      7A6F4265 
+ 1675      6570436F 
+ 1675      756E7400 
+ 1676 00ea 00000000 		.4byte	0x0
+ 1677              		.section	.debug_aranges,"",%progbits
+ 1678 0000 3C000000 		.4byte	0x3c
+ 1679 0004 0200     		.2byte	0x2
+ 1680 0006 00000000 		.4byte	.Ldebug_info0
+ 1681 000a 04       		.byte	0x4
+ 1682 000b 00       		.byte	0x0
+ 1683 000c 0000     		.2byte	0x0
+ 1684 000e 0000     		.2byte	0x0
+ 1685 0010 00000000 		.4byte	.LFB29
+ 1686 0014 00060000 		.4byte	.LFE29-.LFB29
+ 1687 0018 00000000 		.4byte	.LFB30
+ 1688 001c 20000000 		.4byte	.LFE30-.LFB30
+ 1689 0020 00000000 		.4byte	.LFB31
+ 1690 0024 24000000 		.4byte	.LFE31-.LFB31
+ 1691 0028 00000000 		.4byte	.LFB32
+ 1692 002c 2E000000 		.4byte	.LFE32-.LFB32
+ 1693 0030 00000000 		.4byte	.LFB33
+ 1694 0034 18000000 		.4byte	.LFE33-.LFB33
+ 1695 0038 00000000 		.4byte	0x0
+ 1696 003c 00000000 		.4byte	0x0
+ 1697              		.section	.debug_ranges,"",%progbits
+ 1698              	.Ldebug_ranges0:
+ 1699 0000 00000000 		.4byte	.Ltext0
+ 1700 0004 00000000 		.4byte	.Letext0
+ 1701 0008 00000000 		.4byte	.LFB29
+ 1702 000c 00060000 		.4byte	.LFE29
+ 1703 0010 00000000 		.4byte	.LFB30
+ 1704 0014 20000000 		.4byte	.LFE30
+ 1705 0018 00000000 		.4byte	.LFB31
+ 1706 001c 24000000 		.4byte	.LFE31
+ 1707 0020 00000000 		.4byte	.LFB32
+ 1708 0024 2E000000 		.4byte	.LFE32
+ 1709 0028 00000000 		.4byte	.LFB33
+ 1710 002c 18000000 		.4byte	.LFE33
+ 1711 0030 00000000 		.4byte	0x0
+ 1712 0034 00000000 		.4byte	0x0
+ 1713              		.section	.debug_str,"MS",%progbits,1
+ 1714              	.LASF9:
+ 1715 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1715      206C6F6E 
+ 1715      6720696E 
+ 1715      7400
+ 1716              	.LASF32:
+ 1717 000e 62656570 		.ascii	"beepRunTimeCounts\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 38
+
+
+ 1717      52756E54 
+ 1717      696D6543 
+ 1717      6F756E74 
+ 1717      7300
+ 1718              	.LASF48:
+ 1719 0020 5F6D6F74 		.ascii	"_motorOnSoundDirection\000"
+ 1719      6F724F6E 
+ 1719      536F756E 
+ 1719      64446972 
+ 1719      65637469 
+ 1720              	.LASF41:
+ 1721 0037 5069657A 		.ascii	"Piezo_Run\000"
+ 1721      6F5F5275 
+ 1721      6E00
+ 1722              	.LASF37:
+ 1723 0041 63757272 		.ascii	"currentToneCounts\000"
+ 1723      656E7454 
+ 1723      6F6E6543 
+ 1723      6F756E74 
+ 1723      7300
+ 1724              	.LASF14:
+ 1725 0053 54525545 		.ascii	"TRUE\000"
+ 1725      00
+ 1726              	.LASF35:
+ 1727 0058 7069657A 		.ascii	"piezoActivatedSound2RunTimeCounts\000"
+ 1727      6F416374 
+ 1727      69766174 
+ 1727      6564536F 
+ 1727      756E6432 
+ 1728              	.LASF45:
+ 1729 007a 6D6F746F 		.ascii	"motorOnSoundDirection\000"
+ 1729      724F6E53 
+ 1729      6F756E64 
+ 1729      44697265 
+ 1729      6374696F 
+ 1730              	.LASF44:
+ 1731 0090 656E6162 		.ascii	"enable\000"
+ 1731      6C6500
+ 1732              	.LASF15:
+ 1733 0097 626F6F6C 		.ascii	"bool_t\000"
+ 1733      5F7400
+ 1734              	.LASF22:
+ 1735 009e 7069657A 		.ascii	"piezoBeeping\000"
+ 1735      6F426565 
+ 1735      70696E67 
+ 1735      00
+ 1736              	.LASF54:
+ 1737 00ab 5F706965 		.ascii	"_piezoBeepCount\000"
+ 1737      7A6F4265 
+ 1737      6570436F 
+ 1737      756E7400 
+ 1738              	.LASF28:
+ 1739 00bb 636F756E 		.ascii	"counter\000"
+ 1739      74657200 
+ 1740              	.LASF47:
+ 1741 00c3 5069657A 		.ascii	"Piezo_AlarmActivatedSound\000"
+ 1741      6F5F416C 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 39
+
+
+ 1741      61726D41 
+ 1741      63746976 
+ 1741      61746564 
+ 1742              	.LASF17:
+ 1743 00dd 6D6F746F 		.ascii	"motorOnSoundDirection_t\000"
+ 1743      724F6E53 
+ 1743      6F756E64 
+ 1743      44697265 
+ 1743      6374696F 
+ 1744              	.LASF1:
+ 1745 00f5 756E7369 		.ascii	"unsigned char\000"
+ 1745      676E6564 
+ 1745      20636861 
+ 1745      7200
+ 1746              	.LASF30:
+ 1747 0103 7069657A 		.ascii	"piezoAlarmSound1RunTimeCounts\000"
+ 1747      6F416C61 
+ 1747      726D536F 
+ 1747      756E6431 
+ 1747      52756E54 
+ 1748              	.LASF23:
+ 1749 0121 7069657A 		.ascii	"piezoMotorOnSound\000"
+ 1749      6F4D6F74 
+ 1749      6F724F6E 
+ 1749      536F756E 
+ 1749      6400
+ 1750              	.LASF5:
+ 1751 0133 73686F72 		.ascii	"short unsigned int\000"
+ 1751      7420756E 
+ 1751      7369676E 
+ 1751      65642069 
+ 1751      6E7400
+ 1752              	.LASF50:
+ 1753 0146 64656275 		.ascii	"debugBuff\000"
+ 1753      67427566 
+ 1753      6600
+ 1754              	.LASF51:
+ 1755 0150 5F656D69 		.ascii	"_emitMotorSoundFlag\000"
+ 1755      744D6F74 
+ 1755      6F72536F 
+ 1755      756E6446 
+ 1755      6C616700 
+ 1756              	.LASF49:
+ 1757 0164 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1757      52784275 
+ 1757      66666572 
+ 1757      00
+ 1758              	.LASF13:
+ 1759 0171 46414C53 		.ascii	"FALSE\000"
+ 1759      4500
+ 1760              	.LASF8:
+ 1761 0177 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1761      20756E73 
+ 1761      69676E65 
+ 1761      6420696E 
+ 1761      7400
+ 1762              	.LASF24:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 40
+
+
+ 1763 0189 616C6172 		.ascii	"alarmActivatedSound1\000"
+ 1763      6D416374 
+ 1763      69766174 
+ 1763      6564536F 
+ 1763      756E6431 
+ 1764              	.LASF25:
+ 1765 019e 616C6172 		.ascii	"alarmActivatedSound2\000"
+ 1765      6D416374 
+ 1765      69766174 
+ 1765      6564536F 
+ 1765      756E6432 
+ 1766              	.LASF26:
+ 1767 01b3 616C6172 		.ascii	"alarmActivatedSound3\000"
+ 1767      6D416374 
+ 1767      69766174 
+ 1767      6564536F 
+ 1767      756E6433 
+ 1768              	.LASF21:
+ 1769 01c8 7069657A 		.ascii	"piezoAlarmSound2\000"
+ 1769      6F416C61 
+ 1769      726D536F 
+ 1769      756E6432 
+ 1769      00
+ 1770              	.LASF11:
+ 1771 01d9 756E7369 		.ascii	"unsigned int\000"
+ 1771      676E6564 
+ 1771      20696E74 
+ 1771      00
+ 1772              	.LASF39:
+ 1773 01e6 70726576 		.ascii	"prevPiezoState\000"
+ 1773      5069657A 
+ 1773      6F537461 
+ 1773      746500
+ 1774              	.LASF10:
+ 1775 01f5 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1775      206C6F6E 
+ 1775      6720756E 
+ 1775      7369676E 
+ 1775      65642069 
+ 1776              	.LASF3:
+ 1777 020c 75696E74 		.ascii	"uint8_t\000"
+ 1777      385F7400 
+ 1778              	.LASF34:
+ 1779 0214 7069657A 		.ascii	"piezoActivatedSound1RunTimeCounts\000"
+ 1779      6F416374 
+ 1779      69766174 
+ 1779      6564536F 
+ 1779      756E6431 
+ 1780              	.LASF43:
+ 1781 0236 5069657A 		.ascii	"Piezo_EmitMotorOnSound\000"
+ 1781      6F5F456D 
+ 1781      69744D6F 
+ 1781      746F724F 
+ 1781      6E536F75 
+ 1782              	.LASF36:
+ 1783 024d 7069657A 		.ascii	"piezoActivatedSound3RunTimeCounts\000"
+ 1783      6F416374 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 41
+
+
+ 1783      69766174 
+ 1783      6564536F 
+ 1783      756E6433 
+ 1784              	.LASF52:
+ 1785 026f 5F616C61 		.ascii	"_alarmEnableFlag\000"
+ 1785      726D456E 
+ 1785      61626C65 
+ 1785      466C6167 
+ 1785      00
+ 1786              	.LASF56:
+ 1787 0280 2E5C5069 		.ascii	".\\Piezo.c\000"
+ 1787      657A6F2E 
+ 1787      6300
+ 1788              	.LASF18:
+ 1789 028a 7069657A 		.ascii	"piezoInit\000"
+ 1789      6F496E69 
+ 1789      7400
+ 1790              	.LASF55:
+ 1791 0294 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1791      4320342E 
+ 1791      342E3100 
+ 1792              	.LASF12:
+ 1793 02a0 63686172 		.ascii	"char\000"
+ 1793      00
+ 1794              	.LASF53:
+ 1795 02a5 5F616C61 		.ascii	"_alarmActivatedSoundFlag\000"
+ 1795      726D4163 
+ 1795      74697661 
+ 1795      74656453 
+ 1795      6F756E64 
+ 1796              	.LASF27:
+ 1797 02be 7069657A 		.ascii	"piezoStates_t\000"
+ 1797      6F537461 
+ 1797      7465735F 
+ 1797      7400
+ 1798              	.LASF38:
+ 1799 02cc 746F6E65 		.ascii	"toneCount\000"
+ 1799      436F756E 
+ 1799      7400
+ 1800              	.LASF46:
+ 1801 02d6 5069657A 		.ascii	"Piezo_EmitBeep\000"
+ 1801      6F5F456D 
+ 1801      69744265 
+ 1801      657000
+ 1802              	.LASF20:
+ 1803 02e5 7069657A 		.ascii	"piezoAlarmSound1\000"
+ 1803      6F416C61 
+ 1803      726D536F 
+ 1803      756E6431 
+ 1803      00
+ 1804              	.LASF40:
+ 1805 02f6 7069657A 		.ascii	"piezoState\000"
+ 1805      6F537461 
+ 1805      746500
+ 1806              	.LASF2:
+ 1807 0301 73686F72 		.ascii	"short int\000"
+ 1807      7420696E 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 42
+
+
+ 1807      7400
+ 1808              	.LASF16:
+ 1809 030b 646F776E 		.ascii	"down\000"
+ 1809      00
+ 1810              	.LASF4:
+ 1811 0310 75696E74 		.ascii	"uint16_t\000"
+ 1811      31365F74 
+ 1811      00
+ 1812              	.LASF33:
+ 1813 0319 6D6F746F 		.ascii	"motorOnToneTimeCounts\000"
+ 1813      724F6E54 
+ 1813      6F6E6554 
+ 1813      696D6543 
+ 1813      6F756E74 
+ 1814              	.LASF31:
+ 1815 032f 7069657A 		.ascii	"piezoAlarmSound2RunTimeCounts\000"
+ 1815      6F416C61 
+ 1815      726D536F 
+ 1815      756E6432 
+ 1815      52756E54 
+ 1816              	.LASF7:
+ 1817 034d 75696E74 		.ascii	"uint32_t\000"
+ 1817      33325F74 
+ 1817      00
+ 1818              	.LASF6:
+ 1819 0356 6C6F6E67 		.ascii	"long int\000"
+ 1819      20696E74 
+ 1819      00
+ 1820              	.LASF57:
+ 1821 035f 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1821      73657273 
+ 1821      5C47656F 
+ 1821      5C446F63 
+ 1821      756D656E 
+ 1822 038d 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 1822      645C4669 
+ 1822      726D7761 
+ 1822      72655C50 
+ 1822      536F435C 
+ 1823 03bd 00       		.ascii	"\000"
+ 1824              	.LASF19:
+ 1825 03be 7069657A 		.ascii	"piezoOff\000"
+ 1825      6F4F6666 
+ 1825      00
+ 1826              	.LASF0:
+ 1827 03c7 7369676E 		.ascii	"signed char\000"
+ 1827      65642063 
+ 1827      68617200 
+ 1828              	.LASF29:
+ 1829 03d3 7069657A 		.ascii	"piezoLastChangeCount\000"
+ 1829      6F4C6173 
+ 1829      74436861 
+ 1829      6E676543 
+ 1829      6F756E74 
+ 1830              	.LASF42:
+ 1831 03e8 5069657A 		.ascii	"Piezo_AlarmEnable\000"
+ 1831      6F5F416C 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\cc9LC2E6.s 			page 43
+
+
+ 1831      61726D45 
+ 1831      6E61626C 
+ 1831      6500
+ 1832              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

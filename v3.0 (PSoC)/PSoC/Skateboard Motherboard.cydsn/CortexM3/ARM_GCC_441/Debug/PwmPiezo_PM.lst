@@ -1,0 +1,1238 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"PwmPiezo_PM.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 D6000000 		.text
+  20      02007200 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.bss
+  24              		.align	2
+  25              	PwmPiezo_backup:
+  26 0000 00000000 		.space	12
+  26      00000000 
+  26      00000000 
+  27              		.section	.text.PwmPiezo_SaveConfig,"ax",%progbits
+  28              		.align	2
+  29              		.global	PwmPiezo_SaveConfig
+  30              		.thumb
+  31              		.thumb_func
+  32              		.type	PwmPiezo_SaveConfig, %function
+  33              	PwmPiezo_SaveConfig:
+  34              	.LFB0:
+  35              		.file 1 ".\\Generated_Source\\PSoC5\\PwmPiezo_PM.c"
+   1:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * File Name: PwmPiezo_PM.c
+   3:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Version 2.10
+   4:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+   5:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Description:
+   6:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  This file provides the power management source code to API for the
+   7:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  PWM.
+   8:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+   9:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Note:
+  10:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  11:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** ********************************************************************************
+  12:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Copyright 2008-2011, Cypress Semiconductor Corporation.  All rights reserved.
+  13:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
+  14:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  15:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * the software package with which this file was provided.
+  16:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *******************************************************************************/
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 2
+
+
+  17:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** #include "cytypes.h"
+  18:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** #include "PwmPiezo.h"
+  19:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+  20:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** static PwmPiezo_backupStruct PwmPiezo_backup;
+  21:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+  22:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+  23:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** /*******************************************************************************
+  24:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Function Name: PwmPiezo_SaveConfig
+  25:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** ********************************************************************************
+  26:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  27:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Summary:
+  28:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Saves the current user configuration of the component.
+  29:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  
+  30:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Parameters:  
+  31:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+  32:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  33:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Return: 
+  34:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+  35:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  36:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Global variables:
+  37:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  PwmPiezo_backup:  Variables of this global structure are modified to 
+  38:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  store the values of non retention configuration registers when Sleep() API is 
+  39:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  called.
+  40:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  41:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Reentrant:
+  42:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  No.
+  43:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+  44:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *******************************************************************************/
+  45:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** void PwmPiezo_SaveConfig(void)
+  46:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** {
+  36              		.loc 1 46 0
+  37              		.cfi_startproc
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 1, uses_anonymous_args = 0
+  40 0000 80B5     		push	{r7, lr}
+  41              	.LCFI0:
+  42              		.cfi_def_cfa_offset 8
+  43 0002 00AF     		add	r7, sp, #0
+  44              		.cfi_offset 14, -4
+  45              		.cfi_offset 7, -8
+  46              	.LCFI1:
+  47              		.cfi_def_cfa_register 7
+  47:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     
+  48:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     #if(!PwmPiezo_UsingFixedFunction)
+  49:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #if (PwmPiezo_PSOC3_ES2 || PwmPiezo_PSOC5_ES1)
+  50:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMUdb = PwmPiezo_ReadCounter();
+  48              		.loc 1 50 0
+  49 0004 FFF7FEFF 		bl	PwmPiezo_ReadCounter
+  50 0008 0346     		mov	r3, r0
+  51 000a 1A46     		mov	r2, r3
+  52 000c 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+  53 0010 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+  54 0014 5A80     		strh	r2, [r3, #2]	@ movhi
+  51:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMPeriod = PwmPiezo_ReadPeriod();
+  55              		.loc 1 51 0
+  56 0016 46F24D43 		movw	r3, #:lower16:1073767501
+  57 001a C4F20003 		movt	r3, #:upper16:1073767501
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 3
+
+
+  58 001e 1B88     		ldrh	r3, [r3, #0]	@ movhi
+  59 0020 9AB2     		uxth	r2, r3
+  60 0022 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+  61 0026 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+  62 002a 9A80     		strh	r2, [r3, #4]	@ movhi
+  52:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if (PwmPiezo_UseStatus)
+  53:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.InterruptMaskValue = PwmPiezo_STATUS_MASK;
+  63              		.loc 1 53 0
+  64 002c 46F28E43 		movw	r3, #:lower16:1073767566
+  65 0030 C4F20003 		movt	r3, #:upper16:1073767566
+  66 0034 1B78     		ldrb	r3, [r3, #0]
+  67 0036 DAB2     		uxtb	r2, r3
+  68 0038 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+  69 003c C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+  70 0040 9A71     		strb	r2, [r3, #6]
+  54:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  55:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+  56:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if(PwmPiezo_UseOneCompareMode)
+  57:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMCompareValue = PwmPiezo_ReadCompare();
+  71              		.loc 1 57 0
+  72 0042 46F22D43 		movw	r3, #:lower16:1073767469
+  73 0046 C4F20003 		movt	r3, #:upper16:1073767469
+  74 004a 1B88     		ldrh	r3, [r3, #0]	@ movhi
+  75 004c 9AB2     		uxth	r2, r3
+  76 004e 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+  77 0052 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+  78 0056 1A81     		strh	r2, [r3, #8]	@ movhi
+  58:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #else
+  59:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMCompareValue1 = PwmPiezo_ReadCompare1();
+  60:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMCompareValue2 = PwmPiezo_ReadCompare2();
+  61:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  62:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+  63:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****            #if(PwmPiezo_DeadBandUsed)
+  64:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMdeadBandValue = PwmPiezo_ReadDeadTime();
+  65:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  66:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****           
+  67:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if ( PwmPiezo_KillModeMinTime)
+  68:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMKillCounterPeriod = PwmPiezo_ReadKillTime();
+  69:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  70:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #endif
+  71:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         
+  72:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #if (PwmPiezo_PSOC3_ES3 || PwmPiezo_PSOC5_ES2)
+  73:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if(!PwmPiezo_PWMModeIsCenterAligned)
+  74:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMPeriod = PwmPiezo_ReadPeriod();
+  75:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  76:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMUdb = PwmPiezo_ReadCounter();
+  77:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if (PwmPiezo_UseStatus)
+  78:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.InterruptMaskValue = PwmPiezo_STATUS_MASK;
+  79:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  80:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+  81:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if(PwmPiezo_DeadBandMode == PwmPiezo__B_PWM__DBM_256_CLOCKS || PwmPiezo_DeadBandMode =
+  82:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_backup.PWMdeadBandValue = PwmPiezo_ReadDeadTime();
+  83:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+  84:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+  85:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if(PwmPiezo_KillModeMinTime)
+  86:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                  PwmPiezo_backup.PWMKillCounterPeriod = PwmPiezo_ReadKillTime();
+  87:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 4
+
+
+  88:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #endif
+  89:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         
+  90:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #if(PwmPiezo_UseControl)
+  91:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMControlRegister = PwmPiezo_ReadControlRegister();
+  79              		.loc 1 91 0
+  80 0058 46F27E43 		movw	r3, #:lower16:1073767550
+  81 005c C4F20003 		movt	r3, #:upper16:1073767550
+  82 0060 1B78     		ldrb	r3, [r3, #0]
+  83 0062 DAB2     		uxtb	r2, r3
+  84 0064 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+  85 0068 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+  86 006c 9A72     		strb	r2, [r3, #10]
+  92:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #endif
+  93:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     #endif  
+  94:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** }
+  87              		.loc 1 94 0
+  88 006e 80BD     		pop	{r7, pc}
+  89              		.cfi_endproc
+  90              	.LFE0:
+  91              		.size	PwmPiezo_SaveConfig, .-PwmPiezo_SaveConfig
+  92              		.section	.text.PwmPiezo_RestoreConfig,"ax",%progbits
+  93              		.align	2
+  94              		.global	PwmPiezo_RestoreConfig
+  95              		.thumb
+  96              		.thumb_func
+  97              		.type	PwmPiezo_RestoreConfig, %function
+  98              	PwmPiezo_RestoreConfig:
+  99              	.LFB1:
+  95:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+  96:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+  97:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** /*******************************************************************************
+  98:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Function Name: PwmPiezo_RestoreConfig
+  99:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** ********************************************************************************
+ 100:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * 
+ 101:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Summary:
+ 102:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Restores the current user configuration of the component.
+ 103:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 104:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Parameters:  
+ 105:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 106:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 107:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Return: 
+ 108:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 109:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 110:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Global variables:
+ 111:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  PwmPiezo_backup:  Variables of this global structure are used to restore 
+ 112:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  the values of non retention registers on wakeup from sleep mode.
+ 113:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 114:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Reentrant:
+ 115:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Yes.
+ 116:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 117:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *******************************************************************************/
+ 118:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** void PwmPiezo_RestoreConfig(void) 
+ 119:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** {
+ 100              		.loc 1 119 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 8
+ 103              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 5
+
+
+ 104 0000 80B5     		push	{r7, lr}
+ 105              	.LCFI2:
+ 106              		.cfi_def_cfa_offset 8
+ 107 0002 82B0     		sub	sp, sp, #8
+ 108              	.LCFI3:
+ 109              		.cfi_def_cfa_offset 16
+ 110 0004 00AF     		add	r7, sp, #0
+ 111              		.cfi_offset 14, -4
+ 112              		.cfi_offset 7, -8
+ 113              	.LCFI4:
+ 114              		.cfi_def_cfa_register 7
+ 120:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #if(!PwmPiezo_UsingFixedFunction)
+ 121:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if (PwmPiezo_PSOC3_ES2 || PwmPiezo_PSOC5_ES1)
+ 122:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 /* Interrupt State Backup for Critical Region*/
+ 123:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 uint8 PwmPiezo_interruptState;
+ 124:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 /* Enter Critical Region*/
+ 125:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_interruptState = CyEnterCriticalSection();
+ 115              		.loc 1 125 0
+ 116 0006 FFF7FEFF 		bl	CyEnterCriticalSection
+ 117 000a 0346     		mov	r3, r0
+ 118 000c FB71     		strb	r3, [r7, #7]
+ 126:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if (PwmPiezo_UseStatus)
+ 127:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     /* Use the interrupt output of the status register for IRQ output */
+ 128:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_STATUS_AUX_CTRL |= PwmPiezo_STATUS_ACTL_INT_EN_MASK;
+ 119              		.loc 1 128 0
+ 120 000e 46F29E43 		movw	r3, #:lower16:1073767582
+ 121 0012 C4F20003 		movt	r3, #:upper16:1073767582
+ 122 0016 46F29E42 		movw	r2, #:lower16:1073767582
+ 123 001a C4F20002 		movt	r2, #:upper16:1073767582
+ 124 001e 1278     		ldrb	r2, [r2, #0]
+ 125 0020 D2B2     		uxtb	r2, r2
+ 126 0022 42F01002 		orr	r2, r2, #16
+ 127 0026 D2B2     		uxtb	r2, r2
+ 128 0028 1A70     		strb	r2, [r3, #0]
+ 129:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     
+ 130:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_STATUS_MASK = PwmPiezo_backup.InterruptMaskValue;
+ 129              		.loc 1 130 0
+ 130 002a 46F28E43 		movw	r3, #:lower16:1073767566
+ 131 002e C4F20003 		movt	r3, #:upper16:1073767566
+ 132 0032 40F20002 		movw	r2, #:lower16:PwmPiezo_backup
+ 133 0036 C0F20002 		movt	r2, #:upper16:PwmPiezo_backup
+ 134 003a 9279     		ldrb	r2, [r2, #6]	@ zero_extendqisi2
+ 135 003c 1A70     		strb	r2, [r3, #0]
+ 131:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 132:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 133:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if (PwmPiezo_Resolution == 8)
+ 134:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     /* Set FIFO 0 to 1 byte register for period*/
+ 135:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_AUX_CONTROLDP0 |= (PwmPiezo_AUX_CTRL_FIFO0_CLR);
+ 136:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #else /* (PwmPiezo_Resolution == 16)*/
+ 137:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     /* Set FIFO 0 to 1 byte register for period */
+ 138:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_AUX_CONTROLDP0 |= (PwmPiezo_AUX_CTRL_FIFO0_CLR);
+ 136              		.loc 1 138 0
+ 137 003e 46F29D43 		movw	r3, #:lower16:1073767581
+ 138 0042 C4F20003 		movt	r3, #:upper16:1073767581
+ 139 0046 46F29D42 		movw	r2, #:lower16:1073767581
+ 140 004a C4F20002 		movt	r2, #:upper16:1073767581
+ 141 004e 1278     		ldrb	r2, [r2, #0]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 6
+
+
+ 142 0050 D2B2     		uxtb	r2, r2
+ 143 0052 42F00102 		orr	r2, r2, #1
+ 144 0056 D2B2     		uxtb	r2, r2
+ 145 0058 1A70     		strb	r2, [r3, #0]
+ 139:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_AUX_CONTROLDP1 |= (PwmPiezo_AUX_CTRL_FIFO0_CLR);
+ 146              		.loc 1 139 0
+ 147 005a 46F29E43 		movw	r3, #:lower16:1073767582
+ 148 005e C4F20003 		movt	r3, #:upper16:1073767582
+ 149 0062 46F29E42 		movw	r2, #:lower16:1073767582
+ 150 0066 C4F20002 		movt	r2, #:upper16:1073767582
+ 151 006a 1278     		ldrb	r2, [r2, #0]
+ 152 006c D2B2     		uxtb	r2, r2
+ 153 006e 42F00102 		orr	r2, r2, #1
+ 154 0072 D2B2     		uxtb	r2, r2
+ 155 0074 1A70     		strb	r2, [r3, #0]
+ 140:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 141:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 /* Exit Critical Region*/
+ 142:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 CyExitCriticalSection(PwmPiezo_interruptState);
+ 156              		.loc 1 142 0
+ 157 0076 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 158 0078 1846     		mov	r0, r3
+ 159 007a FFF7FEFF 		bl	CyExitCriticalSection
+ 143:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 144:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_WriteCounter(PwmPiezo_backup.PWMUdb);
+ 160              		.loc 1 144 0
+ 161 007e 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 162 0082 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ 163 0086 5B88     		ldrh	r3, [r3, #2]
+ 164 0088 1846     		mov	r0, r3
+ 165 008a FFF7FEFF 		bl	PwmPiezo_WriteCounter
+ 145:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_WritePeriod(PwmPiezo_backup.PWMPeriod);
+ 166              		.loc 1 145 0
+ 167 008e 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 168 0092 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ 169 0096 9B88     		ldrh	r3, [r3, #4]
+ 170 0098 1846     		mov	r0, r3
+ 171 009a FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 146:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 147:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if(PwmPiezo_UseOneCompareMode)
+ 148:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteCompare(PwmPiezo_backup.PWMCompareValue);
+ 172              		.loc 1 148 0
+ 173 009e 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 174 00a2 C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ 175 00a6 1B89     		ldrh	r3, [r3, #8]
+ 176 00a8 1846     		mov	r0, r3
+ 177 00aa FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 149:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #else
+ 150:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteCompare1(PwmPiezo_backup.PWMCompareValue1);
+ 151:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteCompare2(PwmPiezo_backup.PWMCompareValue2);
+ 152:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 153:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 154:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                #if(PwmPiezo_DeadBandMode == PwmPiezo__B_PWM__DBM_256_CLOCKS || PwmPiezo_DeadBandMod
+ 155:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteDeadTime(PwmPiezo_backup.PWMdeadBandValue);
+ 156:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 157:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+ 158:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if ( PwmPiezo_KillModeMinTime)
+ 159:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteKillTime(PwmPiezo_backup.PWMKillCounterPeriod);
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 7
+
+
+ 160:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 161:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+ 162:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+ 163:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if (PwmPiezo_PSOC3_ES3 || PwmPiezo_PSOC5_ES2)
+ 164:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if(!PwmPiezo_PWMModeIsCenterAligned)
+ 165:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WritePeriod(PwmPiezo_backup.PWMPeriod);
+ 166:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 167:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_WriteCounter(PwmPiezo_backup.PWMUdb);
+ 168:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if (PwmPiezo_UseStatus)
+ 169:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_STATUS_MASK = PwmPiezo_backup.InterruptMaskValue;
+ 170:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 171:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 172:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if(PwmPiezo_DeadBandMode == PwmPiezo__B_PWM__DBM_256_CLOCKS || PwmPiezo_DeadBandMo
+ 173:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteDeadTime(PwmPiezo_backup.PWMdeadBandValue);
+ 174:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 175:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 
+ 176:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #if(PwmPiezo_KillModeMinTime)
+ 177:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                     PwmPiezo_WriteKillTime(PwmPiezo_backup.PWMKillCounterPeriod);
+ 178:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 #endif
+ 179:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+ 180:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             
+ 181:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #if(PwmPiezo_UseControl)
+ 182:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****                 PwmPiezo_WriteControlRegister(PwmPiezo_backup.PWMControlRegister); 
+ 178              		.loc 1 182 0
+ 179 00ae 46F27E43 		movw	r3, #:lower16:1073767550
+ 180 00b2 C4F20003 		movt	r3, #:upper16:1073767550
+ 181 00b6 40F20002 		movw	r2, #:lower16:PwmPiezo_backup
+ 182 00ba C0F20002 		movt	r2, #:upper16:PwmPiezo_backup
+ 183 00be 927A     		ldrb	r2, [r2, #10]	@ zero_extendqisi2
+ 184 00c0 1A70     		strb	r2, [r3, #0]
+ 183:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             #endif
+ 184:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         #endif  
+ 185:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     }
+ 185              		.loc 1 185 0
+ 186 00c2 07F10807 		add	r7, r7, #8
+ 187 00c6 BD46     		mov	sp, r7
+ 188 00c8 80BD     		pop	{r7, pc}
+ 189              		.cfi_endproc
+ 190              	.LFE1:
+ 191              		.size	PwmPiezo_RestoreConfig, .-PwmPiezo_RestoreConfig
+ 192 00ca 00BF     		.section	.text.PwmPiezo_Sleep,"ax",%progbits
+ 193              		.align	2
+ 194              		.global	PwmPiezo_Sleep
+ 195              		.thumb
+ 196              		.thumb_func
+ 197              		.type	PwmPiezo_Sleep, %function
+ 198              	PwmPiezo_Sleep:
+ 199              	.LFB2:
+ 186:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+ 187:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+ 188:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** /*******************************************************************************
+ 189:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Function Name: PwmPiezo_Sleep
+ 190:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** ********************************************************************************
+ 191:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * 
+ 192:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Summary:
+ 193:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Disables block's operation and saves the user configuration. Should be called 
+ 194:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  just prior to entering sleep.
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 8
+
+
+ 195:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  
+ 196:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Parameters:  
+ 197:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 198:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 199:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Return: 
+ 200:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 201:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 202:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Global variables:
+ 203:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  PwmPiezo_backup.PWMEnableState:  Is modified depending on the enable state
+ 204:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  of the block before entering sleep mode.
+ 205:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 206:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Reentrant:
+ 207:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  No.
+ 208:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 209:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *******************************************************************************/
+ 210:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** void PwmPiezo_Sleep(void)
+ 211:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** {
+ 200              		.loc 1 211 0
+ 201              		.cfi_startproc
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 1, uses_anonymous_args = 0
+ 204 0000 80B5     		push	{r7, lr}
+ 205              	.LCFI5:
+ 206              		.cfi_def_cfa_offset 8
+ 207 0002 00AF     		add	r7, sp, #0
+ 208              		.cfi_offset 14, -4
+ 209              		.cfi_offset 7, -8
+ 210              	.LCFI6:
+ 211              		.cfi_def_cfa_register 7
+ 212:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     #if(PwmPiezo_UseControl)
+ 213:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         if(PwmPiezo_CTRL_ENABLE == (PwmPiezo_CONTROL & PwmPiezo_CTRL_ENABLE))
+ 212              		.loc 1 213 0
+ 213 0004 46F27E43 		movw	r3, #:lower16:1073767550
+ 214 0008 C4F20003 		movt	r3, #:upper16:1073767550
+ 215 000c 1B78     		ldrb	r3, [r3, #0]
+ 216 000e DBB2     		uxtb	r3, r3
+ 217 0010 5BB2     		sxtb	r3, r3
+ 218 0012 002B     		cmp	r3, #0
+ 219 0014 07DA     		bge	.L6
+ 214:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         {
+ 215:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             /*Component is enabled */
+ 216:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMEnableState = 1u;
+ 220              		.loc 1 216 0
+ 221 0016 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 222 001a C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ 223 001e 4FF00102 		mov	r2, #1
+ 224 0022 1A70     		strb	r2, [r3, #0]
+ 225 0024 06E0     		b	.L7
+ 226              	.L6:
+ 217:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         }
+ 218:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         else
+ 219:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         {
+ 220:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             /* Component is disabled */
+ 221:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****             PwmPiezo_backup.PWMEnableState = 0u;
+ 227              		.loc 1 221 0
+ 228 0026 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 229 002a C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 9
+
+
+ 230 002e 4FF00002 		mov	r2, #0
+ 231 0032 1A70     		strb	r2, [r3, #0]
+ 232              	.L7:
+ 222:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         }
+ 223:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     #endif
+ 224:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     /* Stop component */
+ 225:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     PwmPiezo_Stop();
+ 233              		.loc 1 225 0
+ 234 0034 FFF7FEFF 		bl	PwmPiezo_Stop
+ 226:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     
+ 227:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     /* Save registers configuration */
+ 228:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     PwmPiezo_SaveConfig();
+ 235              		.loc 1 228 0
+ 236 0038 FFF7FEFF 		bl	PwmPiezo_SaveConfig
+ 229:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** }
+ 237              		.loc 1 229 0
+ 238 003c 80BD     		pop	{r7, pc}
+ 239              		.cfi_endproc
+ 240              	.LFE2:
+ 241              		.size	PwmPiezo_Sleep, .-PwmPiezo_Sleep
+ 242 003e 00BF     		.section	.text.PwmPiezo_Wakeup,"ax",%progbits
+ 243              		.align	2
+ 244              		.global	PwmPiezo_Wakeup
+ 245              		.thumb
+ 246              		.thumb_func
+ 247              		.type	PwmPiezo_Wakeup, %function
+ 248              	PwmPiezo_Wakeup:
+ 249              	.LFB3:
+ 230:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+ 231:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** 
+ 232:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** /*******************************************************************************
+ 233:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Function Name: PwmPiezo_Wakeup
+ 234:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** ********************************************************************************
+ 235:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * 
+ 236:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Summary:
+ 237:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Restores and enables the user configuration. Should be called just after 
+ 238:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  awaking from sleep.
+ 239:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  
+ 240:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Parameters:  
+ 241:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 242:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 243:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Return: 
+ 244:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  void
+ 245:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 246:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Global variables:
+ 247:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  PwmPiezo_backup.pwmEnable:  Is used to restore the enable state of 
+ 248:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  block on wakeup from sleep mode.
+ 249:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 250:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** * Reentrant:
+ 251:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *  Yes
+ 252:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *
+ 253:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** *******************************************************************************/
+ 254:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** void PwmPiezo_Wakeup(void) 
+ 255:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** {
+ 250              		.loc 1 255 0
+ 251              		.cfi_startproc
+ 252              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 10
+
+
+ 253              		@ frame_needed = 1, uses_anonymous_args = 0
+ 254 0000 80B5     		push	{r7, lr}
+ 255              	.LCFI7:
+ 256              		.cfi_def_cfa_offset 8
+ 257 0002 00AF     		add	r7, sp, #0
+ 258              		.cfi_offset 14, -4
+ 259              		.cfi_offset 7, -8
+ 260              	.LCFI8:
+ 261              		.cfi_def_cfa_register 7
+ 256:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****      /* Restore registers values */
+ 257:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     PwmPiezo_RestoreConfig();
+ 262              		.loc 1 257 0
+ 263 0004 FFF7FEFF 		bl	PwmPiezo_RestoreConfig
+ 258:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     
+ 259:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     if(PwmPiezo_backup.PWMEnableState != 0u)
+ 264              		.loc 1 259 0
+ 265 0008 40F20003 		movw	r3, #:lower16:PwmPiezo_backup
+ 266 000c C0F20003 		movt	r3, #:upper16:PwmPiezo_backup
+ 267 0010 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 268 0012 002B     		cmp	r3, #0
+ 269 0014 01D0     		beq	.L11
+ 260:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     {
+ 261:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         /* Enable component's operation */
+ 262:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****         PwmPiezo_Enable();
+ 270              		.loc 1 262 0
+ 271 0016 FFF7FEFF 		bl	PwmPiezo_Enable
+ 272              	.L11:
+ 263:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     } /* Do nothing if component's block was disabled before */
+ 264:.\Generated_Source\PSoC5/PwmPiezo_PM.c ****     
+ 265:.\Generated_Source\PSoC5/PwmPiezo_PM.c **** }
+ 273              		.loc 1 265 0
+ 274 001a 80BD     		pop	{r7, pc}
+ 275              		.cfi_endproc
+ 276              	.LFE3:
+ 277              		.size	PwmPiezo_Wakeup, .-PwmPiezo_Wakeup
+ 278              		.text
+ 279              	.Letext0:
+ 280              		.section	.debug_loc,"",%progbits
+ 281              	.Ldebug_loc0:
+ 282              	.LLST0:
+ 283 0000 00000000 		.4byte	.LFB0
+ 284 0004 02000000 		.4byte	.LCFI0
+ 285 0008 0100     		.2byte	0x1
+ 286 000a 5D       		.byte	0x5d
+ 287 000b 02000000 		.4byte	.LCFI0
+ 288 000f 04000000 		.4byte	.LCFI1
+ 289 0013 0200     		.2byte	0x2
+ 290 0015 7D       		.byte	0x7d
+ 291 0016 08       		.sleb128 8
+ 292 0017 04000000 		.4byte	.LCFI1
+ 293 001b 70000000 		.4byte	.LFE0
+ 294 001f 0200     		.2byte	0x2
+ 295 0021 77       		.byte	0x77
+ 296 0022 08       		.sleb128 8
+ 297 0023 00000000 		.4byte	0x0
+ 298 0027 00000000 		.4byte	0x0
+ 299              	.LLST1:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 11
+
+
+ 300 002b 00000000 		.4byte	.LFB1
+ 301 002f 02000000 		.4byte	.LCFI2
+ 302 0033 0100     		.2byte	0x1
+ 303 0035 5D       		.byte	0x5d
+ 304 0036 02000000 		.4byte	.LCFI2
+ 305 003a 04000000 		.4byte	.LCFI3
+ 306 003e 0200     		.2byte	0x2
+ 307 0040 7D       		.byte	0x7d
+ 308 0041 08       		.sleb128 8
+ 309 0042 04000000 		.4byte	.LCFI3
+ 310 0046 06000000 		.4byte	.LCFI4
+ 311 004a 0200     		.2byte	0x2
+ 312 004c 7D       		.byte	0x7d
+ 313 004d 10       		.sleb128 16
+ 314 004e 06000000 		.4byte	.LCFI4
+ 315 0052 CA000000 		.4byte	.LFE1
+ 316 0056 0200     		.2byte	0x2
+ 317 0058 77       		.byte	0x77
+ 318 0059 10       		.sleb128 16
+ 319 005a 00000000 		.4byte	0x0
+ 320 005e 00000000 		.4byte	0x0
+ 321              	.LLST2:
+ 322 0062 00000000 		.4byte	.LFB2
+ 323 0066 02000000 		.4byte	.LCFI5
+ 324 006a 0100     		.2byte	0x1
+ 325 006c 5D       		.byte	0x5d
+ 326 006d 02000000 		.4byte	.LCFI5
+ 327 0071 04000000 		.4byte	.LCFI6
+ 328 0075 0200     		.2byte	0x2
+ 329 0077 7D       		.byte	0x7d
+ 330 0078 08       		.sleb128 8
+ 331 0079 04000000 		.4byte	.LCFI6
+ 332 007d 3E000000 		.4byte	.LFE2
+ 333 0081 0200     		.2byte	0x2
+ 334 0083 77       		.byte	0x77
+ 335 0084 08       		.sleb128 8
+ 336 0085 00000000 		.4byte	0x0
+ 337 0089 00000000 		.4byte	0x0
+ 338              	.LLST3:
+ 339 008d 00000000 		.4byte	.LFB3
+ 340 0091 02000000 		.4byte	.LCFI7
+ 341 0095 0100     		.2byte	0x1
+ 342 0097 5D       		.byte	0x5d
+ 343 0098 02000000 		.4byte	.LCFI7
+ 344 009c 04000000 		.4byte	.LCFI8
+ 345 00a0 0200     		.2byte	0x2
+ 346 00a2 7D       		.byte	0x7d
+ 347 00a3 08       		.sleb128 8
+ 348 00a4 04000000 		.4byte	.LCFI8
+ 349 00a8 1C000000 		.4byte	.LFE3
+ 350 00ac 0200     		.2byte	0x2
+ 351 00ae 77       		.byte	0x77
+ 352 00af 08       		.sleb128 8
+ 353 00b0 00000000 		.4byte	0x0
+ 354 00b4 00000000 		.4byte	0x0
+ 355              		.file 2 ".\\Generated_Source\\PSoC5\\/cytypes.h"
+ 356              		.file 3 ".\\Generated_Source\\PSoC5\\/PwmPiezo.h"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 12
+
+
+ 357              		.section	.debug_info
+ 358 0000 70010000 		.4byte	0x170
+ 359 0004 0200     		.2byte	0x2
+ 360 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 361 000a 04       		.byte	0x4
+ 362 000b 01       		.uleb128 0x1
+ 363 000c 03010000 		.4byte	.LASF24
+ 364 0010 01       		.byte	0x1
+ 365 0011 35010000 		.4byte	.LASF25
+ 366 0015 4D000000 		.4byte	.LASF26
+ 367 0019 00000000 		.4byte	0x0
+ 368 001d 00000000 		.4byte	0x0
+ 369 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 370 0025 00000000 		.4byte	.Ldebug_line0
+ 371 0029 02       		.uleb128 0x2
+ 372 002a 01       		.byte	0x1
+ 373 002b 06       		.byte	0x6
+ 374 002c AC010000 		.4byte	.LASF0
+ 375 0030 02       		.uleb128 0x2
+ 376 0031 01       		.byte	0x1
+ 377 0032 08       		.byte	0x8
+ 378 0033 0F010000 		.4byte	.LASF1
+ 379 0037 02       		.uleb128 0x2
+ 380 0038 02       		.byte	0x2
+ 381 0039 05       		.byte	0x5
+ 382 003a C8010000 		.4byte	.LASF2
+ 383 003e 02       		.uleb128 0x2
+ 384 003f 02       		.byte	0x2
+ 385 0040 07       		.byte	0x7
+ 386 0041 99010000 		.4byte	.LASF3
+ 387 0045 02       		.uleb128 0x2
+ 388 0046 04       		.byte	0x4
+ 389 0047 05       		.byte	0x5
+ 390 0048 5C010000 		.4byte	.LASF4
+ 391 004c 02       		.uleb128 0x2
+ 392 004d 04       		.byte	0x4
+ 393 004e 07       		.byte	0x7
+ 394 004f DA000000 		.4byte	.LASF5
+ 395 0053 02       		.uleb128 0x2
+ 396 0054 08       		.byte	0x8
+ 397 0055 05       		.byte	0x5
+ 398 0056 00000000 		.4byte	.LASF6
+ 399 005a 02       		.uleb128 0x2
+ 400 005b 08       		.byte	0x8
+ 401 005c 07       		.byte	0x7
+ 402 005d EC000000 		.4byte	.LASF7
+ 403 0061 03       		.uleb128 0x3
+ 404 0062 04       		.byte	0x4
+ 405 0063 05       		.byte	0x5
+ 406 0064 696E7400 		.ascii	"int\000"
+ 407 0068 02       		.uleb128 0x2
+ 408 0069 04       		.byte	0x4
+ 409 006a 07       		.byte	0x7
+ 410 006b 31000000 		.4byte	.LASF8
+ 411 006f 02       		.uleb128 0x2
+ 412 0070 01       		.byte	0x1
+ 413 0071 08       		.byte	0x8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 13
+
+
+ 414 0072 1D010000 		.4byte	.LASF9
+ 415 0076 04       		.uleb128 0x4
+ 416 0077 D4000000 		.4byte	.LASF10
+ 417 007b 02       		.byte	0x2
+ 418 007c 51       		.byte	0x51
+ 419 007d 30000000 		.4byte	0x30
+ 420 0081 04       		.uleb128 0x4
+ 421 0082 D2010000 		.4byte	.LASF11
+ 422 0086 02       		.byte	0x2
+ 423 0087 52       		.byte	0x52
+ 424 0088 3E000000 		.4byte	0x3e
+ 425 008c 05       		.uleb128 0x5
+ 426 008d 04       		.byte	0x4
+ 427 008e 07       		.byte	0x7
+ 428 008f 06       		.uleb128 0x6
+ 429 0090 65010000 		.4byte	.LASF18
+ 430 0094 0C       		.byte	0xc
+ 431 0095 03       		.byte	0x3
+ 432 0096 70       		.byte	0x70
+ 433 0097 F0000000 		.4byte	0xf0
+ 434 009b 07       		.uleb128 0x7
+ 435 009c 3E000000 		.4byte	.LASF12
+ 436 00a0 03       		.byte	0x3
+ 437 00a1 72       		.byte	0x72
+ 438 00a2 76000000 		.4byte	0x76
+ 439 00a6 02       		.byte	0x2
+ 440 00a7 23       		.byte	0x23
+ 441 00a8 00       		.uleb128 0x0
+ 442 00a9 07       		.uleb128 0x7
+ 443 00aa 7B010000 		.4byte	.LASF13
+ 444 00ae 03       		.byte	0x3
+ 445 00af 76       		.byte	0x76
+ 446 00b0 81000000 		.4byte	0x81
+ 447 00b4 02       		.byte	0x2
+ 448 00b5 23       		.byte	0x23
+ 449 00b6 02       		.uleb128 0x2
+ 450 00b7 07       		.uleb128 0x7
+ 451 00b8 EC010000 		.4byte	.LASF14
+ 452 00bc 03       		.byte	0x3
+ 453 00bd 77       		.byte	0x77
+ 454 00be 81000000 		.4byte	0x81
+ 455 00c2 02       		.byte	0x2
+ 456 00c3 23       		.byte	0x23
+ 457 00c4 04       		.uleb128 0x4
+ 458 00c5 07       		.uleb128 0x7
+ 459 00c6 D9010000 		.4byte	.LASF15
+ 460 00ca 03       		.byte	0x3
+ 461 00cb 79       		.byte	0x79
+ 462 00cc 76000000 		.4byte	0x76
+ 463 00d0 02       		.byte	0x2
+ 464 00d1 23       		.byte	0x23
+ 465 00d2 06       		.uleb128 0x6
+ 466 00d3 07       		.uleb128 0x7
+ 467 00d4 F6010000 		.4byte	.LASF16
+ 468 00d8 03       		.byte	0x3
+ 469 00d9 7C       		.byte	0x7c
+ 470 00da 81000000 		.4byte	0x81
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 14
+
+
+ 471 00de 02       		.byte	0x2
+ 472 00df 23       		.byte	0x23
+ 473 00e0 08       		.uleb128 0x8
+ 474 00e1 07       		.uleb128 0x7
+ 475 00e2 22010000 		.4byte	.LASF17
+ 476 00e6 03       		.byte	0x3
+ 477 00e7 A5       		.byte	0xa5
+ 478 00e8 76000000 		.4byte	0x76
+ 479 00ec 02       		.byte	0x2
+ 480 00ed 23       		.byte	0x23
+ 481 00ee 0A       		.uleb128 0xa
+ 482 00ef 00       		.byte	0x0
+ 483 00f0 04       		.uleb128 0x4
+ 484 00f1 65010000 		.4byte	.LASF18
+ 485 00f5 03       		.byte	0x3
+ 486 00f6 AA       		.byte	0xaa
+ 487 00f7 8F000000 		.4byte	0x8f
+ 488 00fb 08       		.uleb128 0x8
+ 489 00fc 01       		.byte	0x1
+ 490 00fd 1D000000 		.4byte	.LASF19
+ 491 0101 01       		.byte	0x1
+ 492 0102 2D       		.byte	0x2d
+ 493 0103 01       		.byte	0x1
+ 494 0104 00000000 		.4byte	.LFB0
+ 495 0108 70000000 		.4byte	.LFE0
+ 496 010c 00000000 		.4byte	.LLST0
+ 497 0110 09       		.uleb128 0x9
+ 498 0111 01       		.byte	0x1
+ 499 0112 82010000 		.4byte	.LASF27
+ 500 0116 01       		.byte	0x1
+ 501 0117 76       		.byte	0x76
+ 502 0118 01       		.byte	0x1
+ 503 0119 00000000 		.4byte	.LFB1
+ 504 011d CA000000 		.4byte	.LFE1
+ 505 0121 2B000000 		.4byte	.LLST1
+ 506 0125 38010000 		.4byte	0x138
+ 507 0129 0A       		.uleb128 0xa
+ 508 012a AC000000 		.4byte	.LASF22
+ 509 012e 01       		.byte	0x1
+ 510 012f 7B       		.byte	0x7b
+ 511 0130 76000000 		.4byte	0x76
+ 512 0134 02       		.byte	0x2
+ 513 0135 91       		.byte	0x91
+ 514 0136 77       		.sleb128 -9
+ 515 0137 00       		.byte	0x0
+ 516 0138 08       		.uleb128 0x8
+ 517 0139 01       		.byte	0x1
+ 518 013a 0E000000 		.4byte	.LASF20
+ 519 013e 01       		.byte	0x1
+ 520 013f D2       		.byte	0xd2
+ 521 0140 01       		.byte	0x1
+ 522 0141 00000000 		.4byte	.LFB2
+ 523 0145 3E000000 		.4byte	.LFE2
+ 524 0149 62000000 		.4byte	.LLST2
+ 525 014d 08       		.uleb128 0x8
+ 526 014e 01       		.byte	0x1
+ 527 014f C4000000 		.4byte	.LASF21
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 15
+
+
+ 528 0153 01       		.byte	0x1
+ 529 0154 FE       		.byte	0xfe
+ 530 0155 01       		.byte	0x1
+ 531 0156 00000000 		.4byte	.LFB3
+ 532 015a 1C000000 		.4byte	.LFE3
+ 533 015e 8D000000 		.4byte	.LLST3
+ 534 0162 0A       		.uleb128 0xa
+ 535 0163 B8010000 		.4byte	.LASF23
+ 536 0167 01       		.byte	0x1
+ 537 0168 14       		.byte	0x14
+ 538 0169 F0000000 		.4byte	0xf0
+ 539 016d 05       		.byte	0x5
+ 540 016e 03       		.byte	0x3
+ 541 016f 00000000 		.4byte	PwmPiezo_backup
+ 542 0173 00       		.byte	0x0
+ 543              		.section	.debug_abbrev
+ 544 0000 01       		.uleb128 0x1
+ 545 0001 11       		.uleb128 0x11
+ 546 0002 01       		.byte	0x1
+ 547 0003 25       		.uleb128 0x25
+ 548 0004 0E       		.uleb128 0xe
+ 549 0005 13       		.uleb128 0x13
+ 550 0006 0B       		.uleb128 0xb
+ 551 0007 03       		.uleb128 0x3
+ 552 0008 0E       		.uleb128 0xe
+ 553 0009 1B       		.uleb128 0x1b
+ 554 000a 0E       		.uleb128 0xe
+ 555 000b 11       		.uleb128 0x11
+ 556 000c 01       		.uleb128 0x1
+ 557 000d 52       		.uleb128 0x52
+ 558 000e 01       		.uleb128 0x1
+ 559 000f 55       		.uleb128 0x55
+ 560 0010 06       		.uleb128 0x6
+ 561 0011 10       		.uleb128 0x10
+ 562 0012 06       		.uleb128 0x6
+ 563 0013 00       		.byte	0x0
+ 564 0014 00       		.byte	0x0
+ 565 0015 02       		.uleb128 0x2
+ 566 0016 24       		.uleb128 0x24
+ 567 0017 00       		.byte	0x0
+ 568 0018 0B       		.uleb128 0xb
+ 569 0019 0B       		.uleb128 0xb
+ 570 001a 3E       		.uleb128 0x3e
+ 571 001b 0B       		.uleb128 0xb
+ 572 001c 03       		.uleb128 0x3
+ 573 001d 0E       		.uleb128 0xe
+ 574 001e 00       		.byte	0x0
+ 575 001f 00       		.byte	0x0
+ 576 0020 03       		.uleb128 0x3
+ 577 0021 24       		.uleb128 0x24
+ 578 0022 00       		.byte	0x0
+ 579 0023 0B       		.uleb128 0xb
+ 580 0024 0B       		.uleb128 0xb
+ 581 0025 3E       		.uleb128 0x3e
+ 582 0026 0B       		.uleb128 0xb
+ 583 0027 03       		.uleb128 0x3
+ 584 0028 08       		.uleb128 0x8
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 16
+
+
+ 585 0029 00       		.byte	0x0
+ 586 002a 00       		.byte	0x0
+ 587 002b 04       		.uleb128 0x4
+ 588 002c 16       		.uleb128 0x16
+ 589 002d 00       		.byte	0x0
+ 590 002e 03       		.uleb128 0x3
+ 591 002f 0E       		.uleb128 0xe
+ 592 0030 3A       		.uleb128 0x3a
+ 593 0031 0B       		.uleb128 0xb
+ 594 0032 3B       		.uleb128 0x3b
+ 595 0033 0B       		.uleb128 0xb
+ 596 0034 49       		.uleb128 0x49
+ 597 0035 13       		.uleb128 0x13
+ 598 0036 00       		.byte	0x0
+ 599 0037 00       		.byte	0x0
+ 600 0038 05       		.uleb128 0x5
+ 601 0039 24       		.uleb128 0x24
+ 602 003a 00       		.byte	0x0
+ 603 003b 0B       		.uleb128 0xb
+ 604 003c 0B       		.uleb128 0xb
+ 605 003d 3E       		.uleb128 0x3e
+ 606 003e 0B       		.uleb128 0xb
+ 607 003f 00       		.byte	0x0
+ 608 0040 00       		.byte	0x0
+ 609 0041 06       		.uleb128 0x6
+ 610 0042 13       		.uleb128 0x13
+ 611 0043 01       		.byte	0x1
+ 612 0044 03       		.uleb128 0x3
+ 613 0045 0E       		.uleb128 0xe
+ 614 0046 0B       		.uleb128 0xb
+ 615 0047 0B       		.uleb128 0xb
+ 616 0048 3A       		.uleb128 0x3a
+ 617 0049 0B       		.uleb128 0xb
+ 618 004a 3B       		.uleb128 0x3b
+ 619 004b 0B       		.uleb128 0xb
+ 620 004c 01       		.uleb128 0x1
+ 621 004d 13       		.uleb128 0x13
+ 622 004e 00       		.byte	0x0
+ 623 004f 00       		.byte	0x0
+ 624 0050 07       		.uleb128 0x7
+ 625 0051 0D       		.uleb128 0xd
+ 626 0052 00       		.byte	0x0
+ 627 0053 03       		.uleb128 0x3
+ 628 0054 0E       		.uleb128 0xe
+ 629 0055 3A       		.uleb128 0x3a
+ 630 0056 0B       		.uleb128 0xb
+ 631 0057 3B       		.uleb128 0x3b
+ 632 0058 0B       		.uleb128 0xb
+ 633 0059 49       		.uleb128 0x49
+ 634 005a 13       		.uleb128 0x13
+ 635 005b 38       		.uleb128 0x38
+ 636 005c 0A       		.uleb128 0xa
+ 637 005d 00       		.byte	0x0
+ 638 005e 00       		.byte	0x0
+ 639 005f 08       		.uleb128 0x8
+ 640 0060 2E       		.uleb128 0x2e
+ 641 0061 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 17
+
+
+ 642 0062 3F       		.uleb128 0x3f
+ 643 0063 0C       		.uleb128 0xc
+ 644 0064 03       		.uleb128 0x3
+ 645 0065 0E       		.uleb128 0xe
+ 646 0066 3A       		.uleb128 0x3a
+ 647 0067 0B       		.uleb128 0xb
+ 648 0068 3B       		.uleb128 0x3b
+ 649 0069 0B       		.uleb128 0xb
+ 650 006a 27       		.uleb128 0x27
+ 651 006b 0C       		.uleb128 0xc
+ 652 006c 11       		.uleb128 0x11
+ 653 006d 01       		.uleb128 0x1
+ 654 006e 12       		.uleb128 0x12
+ 655 006f 01       		.uleb128 0x1
+ 656 0070 40       		.uleb128 0x40
+ 657 0071 06       		.uleb128 0x6
+ 658 0072 00       		.byte	0x0
+ 659 0073 00       		.byte	0x0
+ 660 0074 09       		.uleb128 0x9
+ 661 0075 2E       		.uleb128 0x2e
+ 662 0076 01       		.byte	0x1
+ 663 0077 3F       		.uleb128 0x3f
+ 664 0078 0C       		.uleb128 0xc
+ 665 0079 03       		.uleb128 0x3
+ 666 007a 0E       		.uleb128 0xe
+ 667 007b 3A       		.uleb128 0x3a
+ 668 007c 0B       		.uleb128 0xb
+ 669 007d 3B       		.uleb128 0x3b
+ 670 007e 0B       		.uleb128 0xb
+ 671 007f 27       		.uleb128 0x27
+ 672 0080 0C       		.uleb128 0xc
+ 673 0081 11       		.uleb128 0x11
+ 674 0082 01       		.uleb128 0x1
+ 675 0083 12       		.uleb128 0x12
+ 676 0084 01       		.uleb128 0x1
+ 677 0085 40       		.uleb128 0x40
+ 678 0086 06       		.uleb128 0x6
+ 679 0087 01       		.uleb128 0x1
+ 680 0088 13       		.uleb128 0x13
+ 681 0089 00       		.byte	0x0
+ 682 008a 00       		.byte	0x0
+ 683 008b 0A       		.uleb128 0xa
+ 684 008c 34       		.uleb128 0x34
+ 685 008d 00       		.byte	0x0
+ 686 008e 03       		.uleb128 0x3
+ 687 008f 0E       		.uleb128 0xe
+ 688 0090 3A       		.uleb128 0x3a
+ 689 0091 0B       		.uleb128 0xb
+ 690 0092 3B       		.uleb128 0x3b
+ 691 0093 0B       		.uleb128 0xb
+ 692 0094 49       		.uleb128 0x49
+ 693 0095 13       		.uleb128 0x13
+ 694 0096 02       		.uleb128 0x2
+ 695 0097 0A       		.uleb128 0xa
+ 696 0098 00       		.byte	0x0
+ 697 0099 00       		.byte	0x0
+ 698 009a 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 18
+
+
+ 699              		.section	.debug_pubnames,"",%progbits
+ 700 0000 68000000 		.4byte	0x68
+ 701 0004 0200     		.2byte	0x2
+ 702 0006 00000000 		.4byte	.Ldebug_info0
+ 703 000a 74010000 		.4byte	0x174
+ 704 000e FB000000 		.4byte	0xfb
+ 705 0012 50776D50 		.ascii	"PwmPiezo_SaveConfig\000"
+ 705      69657A6F 
+ 705      5F536176 
+ 705      65436F6E 
+ 705      66696700 
+ 706 0026 10010000 		.4byte	0x110
+ 707 002a 50776D50 		.ascii	"PwmPiezo_RestoreConfig\000"
+ 707      69657A6F 
+ 707      5F526573 
+ 707      746F7265 
+ 707      436F6E66 
+ 708 0041 38010000 		.4byte	0x138
+ 709 0045 50776D50 		.ascii	"PwmPiezo_Sleep\000"
+ 709      69657A6F 
+ 709      5F536C65 
+ 709      657000
+ 710 0054 4D010000 		.4byte	0x14d
+ 711 0058 50776D50 		.ascii	"PwmPiezo_Wakeup\000"
+ 711      69657A6F 
+ 711      5F57616B 
+ 711      65757000 
+ 712 0068 00000000 		.4byte	0x0
+ 713              		.section	.debug_aranges,"",%progbits
+ 714 0000 34000000 		.4byte	0x34
+ 715 0004 0200     		.2byte	0x2
+ 716 0006 00000000 		.4byte	.Ldebug_info0
+ 717 000a 04       		.byte	0x4
+ 718 000b 00       		.byte	0x0
+ 719 000c 0000     		.2byte	0x0
+ 720 000e 0000     		.2byte	0x0
+ 721 0010 00000000 		.4byte	.LFB0
+ 722 0014 70000000 		.4byte	.LFE0-.LFB0
+ 723 0018 00000000 		.4byte	.LFB1
+ 724 001c CA000000 		.4byte	.LFE1-.LFB1
+ 725 0020 00000000 		.4byte	.LFB2
+ 726 0024 3E000000 		.4byte	.LFE2-.LFB2
+ 727 0028 00000000 		.4byte	.LFB3
+ 728 002c 1C000000 		.4byte	.LFE3-.LFB3
+ 729 0030 00000000 		.4byte	0x0
+ 730 0034 00000000 		.4byte	0x0
+ 731              		.section	.debug_ranges,"",%progbits
+ 732              	.Ldebug_ranges0:
+ 733 0000 00000000 		.4byte	.Ltext0
+ 734 0004 00000000 		.4byte	.Letext0
+ 735 0008 00000000 		.4byte	.LFB0
+ 736 000c 70000000 		.4byte	.LFE0
+ 737 0010 00000000 		.4byte	.LFB1
+ 738 0014 CA000000 		.4byte	.LFE1
+ 739 0018 00000000 		.4byte	.LFB2
+ 740 001c 3E000000 		.4byte	.LFE2
+ 741 0020 00000000 		.4byte	.LFB3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 19
+
+
+ 742 0024 1C000000 		.4byte	.LFE3
+ 743 0028 00000000 		.4byte	0x0
+ 744 002c 00000000 		.4byte	0x0
+ 745              		.section	.debug_str,"MS",%progbits,1
+ 746              	.LASF6:
+ 747 0000 6C6F6E67 		.ascii	"long long int\000"
+ 747      206C6F6E 
+ 747      6720696E 
+ 747      7400
+ 748              	.LASF20:
+ 749 000e 50776D50 		.ascii	"PwmPiezo_Sleep\000"
+ 749      69657A6F 
+ 749      5F536C65 
+ 749      657000
+ 750              	.LASF19:
+ 751 001d 50776D50 		.ascii	"PwmPiezo_SaveConfig\000"
+ 751      69657A6F 
+ 751      5F536176 
+ 751      65436F6E 
+ 751      66696700 
+ 752              	.LASF8:
+ 753 0031 756E7369 		.ascii	"unsigned int\000"
+ 753      676E6564 
+ 753      20696E74 
+ 753      00
+ 754              	.LASF12:
+ 755 003e 50574D45 		.ascii	"PWMEnableState\000"
+ 755      6E61626C 
+ 755      65537461 
+ 755      746500
+ 756              	.LASF26:
+ 757 004d 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 757      73657273 
+ 757      5C47656F 
+ 757      5C446F63 
+ 757      756D656E 
+ 758 007b 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 758      645C4669 
+ 758      726D7761 
+ 758      72655C50 
+ 758      536F435C 
+ 759 00ab 00       		.ascii	"\000"
+ 760              	.LASF22:
+ 761 00ac 50776D50 		.ascii	"PwmPiezo_interruptState\000"
+ 761      69657A6F 
+ 761      5F696E74 
+ 761      65727275 
+ 761      70745374 
+ 762              	.LASF21:
+ 763 00c4 50776D50 		.ascii	"PwmPiezo_Wakeup\000"
+ 763      69657A6F 
+ 763      5F57616B 
+ 763      65757000 
+ 764              	.LASF10:
+ 765 00d4 75696E74 		.ascii	"uint8\000"
+ 765      3800
+ 766              	.LASF5:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 20
+
+
+ 767 00da 6C6F6E67 		.ascii	"long unsigned int\000"
+ 767      20756E73 
+ 767      69676E65 
+ 767      6420696E 
+ 767      7400
+ 768              	.LASF7:
+ 769 00ec 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 769      206C6F6E 
+ 769      6720756E 
+ 769      7369676E 
+ 769      65642069 
+ 770              	.LASF24:
+ 771 0103 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 771      4320342E 
+ 771      342E3100 
+ 772              	.LASF1:
+ 773 010f 756E7369 		.ascii	"unsigned char\000"
+ 773      676E6564 
+ 773      20636861 
+ 773      7200
+ 774              	.LASF9:
+ 775 011d 63686172 		.ascii	"char\000"
+ 775      00
+ 776              	.LASF17:
+ 777 0122 50574D43 		.ascii	"PWMControlRegister\000"
+ 777      6F6E7472 
+ 777      6F6C5265 
+ 777      67697374 
+ 777      657200
+ 778              	.LASF25:
+ 779 0135 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\PwmPiezo_PM.c\000"
+ 779      6E657261 
+ 779      7465645F 
+ 779      536F7572 
+ 779      63655C50 
+ 780              	.LASF4:
+ 781 015c 6C6F6E67 		.ascii	"long int\000"
+ 781      20696E74 
+ 781      00
+ 782              	.LASF18:
+ 783 0165 50776D50 		.ascii	"PwmPiezo_backupStruct\000"
+ 783      69657A6F 
+ 783      5F626163 
+ 783      6B757053 
+ 783      74727563 
+ 784              	.LASF13:
+ 785 017b 50574D55 		.ascii	"PWMUdb\000"
+ 785      646200
+ 786              	.LASF27:
+ 787 0182 50776D50 		.ascii	"PwmPiezo_RestoreConfig\000"
+ 787      69657A6F 
+ 787      5F526573 
+ 787      746F7265 
+ 787      436F6E66 
+ 788              	.LASF3:
+ 789 0199 73686F72 		.ascii	"short unsigned int\000"
+ 789      7420756E 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccSClX7h.s 			page 21
+
+
+ 789      7369676E 
+ 789      65642069 
+ 789      6E7400
+ 790              	.LASF0:
+ 791 01ac 7369676E 		.ascii	"signed char\000"
+ 791      65642063 
+ 791      68617200 
+ 792              	.LASF23:
+ 793 01b8 50776D50 		.ascii	"PwmPiezo_backup\000"
+ 793      69657A6F 
+ 793      5F626163 
+ 793      6B757000 
+ 794              	.LASF2:
+ 795 01c8 73686F72 		.ascii	"short int\000"
+ 795      7420696E 
+ 795      7400
+ 796              	.LASF11:
+ 797 01d2 75696E74 		.ascii	"uint16\000"
+ 797      313600
+ 798              	.LASF15:
+ 799 01d9 496E7465 		.ascii	"InterruptMaskValue\000"
+ 799      72727570 
+ 799      744D6173 
+ 799      6B56616C 
+ 799      756500
+ 800              	.LASF14:
+ 801 01ec 50574D50 		.ascii	"PWMPeriod\000"
+ 801      6572696F 
+ 801      6400
+ 802              	.LASF16:
+ 803 01f6 50574D43 		.ascii	"PWMCompareValue\000"
+ 803      6F6D7061 
+ 803      72655661 
+ 803      6C756500 
+ 804              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

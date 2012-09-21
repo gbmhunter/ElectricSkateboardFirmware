@@ -1,0 +1,1942 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"BattMonitor.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 E2000000 		.text
+  20      02006900 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.bss
+  24              		.align	3
+  25              	_remoteBattVoltMin:
+  26 0000 00000000 		.space	8
+  26      00000000 
+  27              		.align	3
+  28              	_remoteBattVoltMax:
+  29 0008 00000000 		.space	8
+  29      00000000 
+  30              		.align	3
+  31              	_remoteBattVoltThreshold1:
+  32 0010 00000000 		.space	8
+  32      00000000 
+  33              		.align	3
+  34              	_remoteBattVoltThreshold2:
+  35 0018 00000000 		.space	8
+  35      00000000 
+  36              		.align	3
+  37              	_remoteBattVoltBetweenThresholds:
+  38 0020 00000000 		.space	8
+  38      00000000 
+  39              		.align	3
+  40              	_boardBattVoltMin:
+  41 0028 00000000 		.space	8
+  41      00000000 
+  42              		.align	3
+  43              	_boardBattVoltMax:
+  44 0030 00000000 		.space	8
+  44      00000000 
+  45              		.align	3
+  46              	_boardBattVoltThreshold1:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 2
+
+
+  47 0038 00000000 		.space	8
+  47      00000000 
+  48              		.align	3
+  49              	_boardBattVoltThreshold2:
+  50 0040 00000000 		.space	8
+  50      00000000 
+  51              		.align	3
+  52              	_boardBattVoltBetweenThresholds:
+  53 0048 00000000 		.space	8
+  53      00000000 
+  54              		.section	.text.BattMonitor_Init,"ax",%progbits
+  55              		.align	2
+  56              		.global	BattMonitor_Init
+  57              		.thumb
+  58              		.thumb_func
+  59              		.type	BattMonitor_Init, %function
+  60              	BattMonitor_Init:
+  61              	.LFB29:
+  62              		.file 1 ".\\BattMonitor.c"
+   1:.\BattMonitor.c **** //!
+   2:.\BattMonitor.c **** //! @file 		BattMonitor.c
+   3:.\BattMonitor.c **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\BattMonitor.c **** //! @date 		14/05/2011
+   5:.\BattMonitor.c **** //! @brief 		Performs actions relating to the battery voltage.
+   6:.\BattMonitor.c **** //! @details
+   7:.\BattMonitor.c **** //!		<b>Last Modified:			</b> 21/05/2011								\n
+   8:.\BattMonitor.c **** //!		<b>Version:					</b> v1.0									\n
+   9:.\BattMonitor.c **** //!		<b>Company:					</b> CladLabs								\n
+  10:.\BattMonitor.c **** //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+  11:.\BattMonitor.c **** //!		<b>Computer Architecture:	</b> ARM									\n
+  12:.\BattMonitor.c **** //!		<b>Compiler:				</b> GCC									\n
+  13:.\BattMonitor.c **** //! 	<b>uC Model:				</b> PSoC5									\n
+  14:.\BattMonitor.c **** //!		<b>Documentation Format:	</b> Doxygen								\n
+  15:.\BattMonitor.c **** //!		
+  16:.\BattMonitor.c **** //!		
+  17:.\BattMonitor.c **** //!
+  18:.\BattMonitor.c **** 
+  19:.\BattMonitor.c **** //=================================================================================================
+  20:.\BattMonitor.c **** //============================================ INFO ===============================================
+  21:.\BattMonitor.c **** //=================================================================================================
+  22:.\BattMonitor.c **** 
+  23:.\BattMonitor.c **** //=================================================================================================
+  24:.\BattMonitor.c **** //======================================= FILE INCLUSIONS =========================================
+  25:.\BattMonitor.c **** //=================================================================================================
+  26:.\BattMonitor.c **** 
+  27:.\BattMonitor.c **** #include <device.h>
+  28:.\BattMonitor.c **** #include "Config.h"
+  29:.\BattMonitor.c **** #include "BattMonitor.h"
+  30:.\BattMonitor.c **** #include "Lights.h"
+  31:.\BattMonitor.c **** 
+  32:.\BattMonitor.c **** 
+  33:.\BattMonitor.c **** static double _remoteBattVoltMin;
+  34:.\BattMonitor.c **** static double _remoteBattVoltMax;
+  35:.\BattMonitor.c **** static double _remoteBattVoltThreshold1;
+  36:.\BattMonitor.c **** static double _remoteBattVoltThreshold2;
+  37:.\BattMonitor.c **** static double _remoteBattVoltBetweenThresholds;
+  38:.\BattMonitor.c **** 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 3
+
+
+  39:.\BattMonitor.c **** static double _boardBattVoltMin;
+  40:.\BattMonitor.c **** static double _boardBattVoltMax;
+  41:.\BattMonitor.c **** static double _boardBattVoltThreshold1;
+  42:.\BattMonitor.c **** static double _boardBattVoltThreshold2;
+  43:.\BattMonitor.c **** static double _boardBattVoltBetweenThresholds;
+  44:.\BattMonitor.c **** 
+  45:.\BattMonitor.c **** double BattMonitor_CalculateFlashRate(double voltage, double voltageBetweenThresholds);
+  46:.\BattMonitor.c **** 
+  47:.\BattMonitor.c **** //! @brief 		Initializes battery monitor variables
+  48:.\BattMonitor.c **** //! @details	Call before calling any other battery monitor function.
+  49:.\BattMonitor.c **** void BattMonitor_Init()
+  50:.\BattMonitor.c **** {
+  63              		.loc 1 50 0
+  64              		.cfi_startproc
+  65              		@ args = 0, pretend = 0, frame = 0
+  66              		@ frame_needed = 1, uses_anonymous_args = 0
+  67              		@ link register save eliminated.
+  68 0000 80B4     		push	{r7}
+  69              	.LCFI0:
+  70              		.cfi_def_cfa_offset 4
+  71 0002 00AF     		add	r7, sp, #0
+  72              		.cfi_offset 7, -4
+  73              	.LCFI1:
+  74              		.cfi_def_cfa_register 7
+  51:.\BattMonitor.c **** 	// Store values into globals
+  52:.\BattMonitor.c **** 	_remoteBattVoltMin = configREMOTE_BATT_VOLT_LOW_LEVEL_MV;
+  75              		.loc 1 52 0
+  76 0004 40F20003 		movw	r3, #:lower16:_remoteBattVoltMin
+  77 0008 C0F20003 		movt	r3, #:upper16:_remoteBattVoltMin
+  78 000c 2CA1     		adr	r1, .L3
+  79 000e D1E90001 		ldrd	r0, [r1]
+  80 0012 C3E90001 		strd	r0, [r3]
+  53:.\BattMonitor.c **** 	_remoteBattVoltThreshold1 = (configREMOTE_BATT_VOLT_HIGH_LEVEL_MV - configREMOTE_BATT_VOLT_LOW_LEV
+  81              		.loc 1 53 0
+  82 0016 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold1
+  83 001a C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold1
+  84 001e 2AA1     		adr	r1, .L3+8
+  85 0020 D1E90001 		ldrd	r0, [r1]
+  86 0024 C3E90001 		strd	r0, [r3]
+  54:.\BattMonitor.c **** 	_remoteBattVoltThreshold2 = (configREMOTE_BATT_VOLT_HIGH_LEVEL_MV - configREMOTE_BATT_VOLT_LOW_LEV
+  87              		.loc 1 54 0
+  88 0028 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold2
+  89 002c C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold2
+  90 0030 27A1     		adr	r1, .L3+16
+  91 0032 D1E90001 		ldrd	r0, [r1]
+  92 0036 C3E90001 		strd	r0, [r3]
+  55:.\BattMonitor.c **** 	_remoteBattVoltMax = configREMOTE_BATT_VOLT_HIGH_LEVEL_MV;
+  93              		.loc 1 55 0
+  94 003a 40F20003 		movw	r3, #:lower16:_remoteBattVoltMax
+  95 003e C0F20003 		movt	r3, #:upper16:_remoteBattVoltMax
+  96 0042 25A1     		adr	r1, .L3+24
+  97 0044 D1E90001 		ldrd	r0, [r1]
+  98 0048 C3E90001 		strd	r0, [r3]
+  56:.\BattMonitor.c **** 	
+  57:.\BattMonitor.c **** 	// Calculate voltage interval between thresholds
+  58:.\BattMonitor.c **** 	_remoteBattVoltBetweenThresholds = (configREMOTE_BATT_VOLT_HIGH_LEVEL_MV - configREMOTE_BATT_VOLT_
+  99              		.loc 1 58 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 4
+
+
+ 100 004c 40F20003 		movw	r3, #:lower16:_remoteBattVoltBetweenThresholds
+ 101 0050 C0F20003 		movt	r3, #:upper16:_remoteBattVoltBetweenThresholds
+ 102 0054 22A1     		adr	r1, .L3+32
+ 103 0056 D1E90001 		ldrd	r0, [r1]
+ 104 005a C3E90001 		strd	r0, [r3]
+  59:.\BattMonitor.c **** 	
+  60:.\BattMonitor.c **** 	// Store values into globals
+  61:.\BattMonitor.c **** 	_boardBattVoltMin = configBOARD_BATT_VOLT_LOW_LEVEL_MV;
+ 105              		.loc 1 61 0
+ 106 005e 40F20003 		movw	r3, #:lower16:_boardBattVoltMin
+ 107 0062 C0F20003 		movt	r3, #:upper16:_boardBattVoltMin
+ 108 0066 20A1     		adr	r1, .L3+40
+ 109 0068 D1E90001 		ldrd	r0, [r1]
+ 110 006c C3E90001 		strd	r0, [r3]
+  62:.\BattMonitor.c **** 	_boardBattVoltThreshold1 = (configBOARD_BATT_VOLT_HIGH_LEVEL_MV - configBOARD_BATT_VOLT_LOW_LEVEL_
+ 111              		.loc 1 62 0
+ 112 0070 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold1
+ 113 0074 C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold1
+ 114 0078 1DA1     		adr	r1, .L3+48
+ 115 007a D1E90001 		ldrd	r0, [r1]
+ 116 007e C3E90001 		strd	r0, [r3]
+  63:.\BattMonitor.c **** 	_boardBattVoltThreshold2 = (configBOARD_BATT_VOLT_HIGH_LEVEL_MV - configBOARD_BATT_VOLT_LOW_LEVEL_
+ 117              		.loc 1 63 0
+ 118 0082 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold2
+ 119 0086 C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold2
+ 120 008a 1BA1     		adr	r1, .L3+56
+ 121 008c D1E90001 		ldrd	r0, [r1]
+ 122 0090 C3E90001 		strd	r0, [r3]
+  64:.\BattMonitor.c **** 	_boardBattVoltMax = configBOARD_BATT_VOLT_HIGH_LEVEL_MV;
+ 123              		.loc 1 64 0
+ 124 0094 40F20003 		movw	r3, #:lower16:_boardBattVoltMax
+ 125 0098 C0F20003 		movt	r3, #:upper16:_boardBattVoltMax
+ 126 009c 18A1     		adr	r1, .L3+64
+ 127 009e D1E90001 		ldrd	r0, [r1]
+ 128 00a2 C3E90001 		strd	r0, [r3]
+  65:.\BattMonitor.c **** 	
+  66:.\BattMonitor.c **** 	// Calculate voltage interval between thresholds
+  67:.\BattMonitor.c **** 	_boardBattVoltBetweenThresholds = (configBOARD_BATT_VOLT_HIGH_LEVEL_MV - configBOARD_BATT_VOLT_LOW
+ 129              		.loc 1 67 0
+ 130 00a6 40F20003 		movw	r3, #:lower16:_boardBattVoltBetweenThresholds
+ 131 00aa C0F20003 		movt	r3, #:upper16:_boardBattVoltBetweenThresholds
+ 132 00ae 16A1     		adr	r1, .L3+72
+ 133 00b0 D1E90001 		ldrd	r0, [r1]
+ 134 00b4 C3E90001 		strd	r0, [r3]
+  68:.\BattMonitor.c **** }
+ 135              		.loc 1 68 0
+ 136 00b8 BD46     		mov	sp, r7
+ 137 00ba 80BC     		pop	{r7}
+ 138 00bc 7047     		bx	lr
+ 139              	.L4:
+ 140 00be 00BF     		.align	3
+ 141              	.L3:
+ 142 00c0 00000000 		.word	0
+ 143 00c4 0070B740 		.word	1085763584
+ 144 00c8 AAAAAAAA 		.word	-1431655766
+ 145 00cc AAFEBB40 		.word	1086062250
+ 146 00d0 AAAAAAAA 		.word	-1431655766
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 5
+
+
+ 147 00d4 AA46C040 		.word	1086342826
+ 148 00d8 00000000 		.word	0
+ 149 00dc 008EC240 		.word	1086492160
+ 150 00e0 ABAAAAAA 		.word	-1431655765
+ 151 00e4 AA3A9240 		.word	1083325098
+ 152 00e8 00000000 		.word	0
+ 153 00ec 0017E140 		.word	1088493312
+ 154 00f0 55555555 		.word	1431655765
+ 155 00f4 55D5E440 		.word	1088738645
+ 156 00f8 AAAAAAAA 		.word	-1431655766
+ 157 00fc AA93E840 		.word	1088983978
+ 158 0100 00000000 		.word	0
+ 159 0104 0052EC40 		.word	1089229312
+ 160 0108 ABAAAAAA 		.word	-1431655765
+ 161 010c AAF2BD40 		.word	1086190250
+ 162              		.cfi_endproc
+ 163              	.LFE29:
+ 164              		.size	BattMonitor_Init, .-BattMonitor_Init
+ 165              		.global	__aeabi_dcmplt
+ 166              		.global	__aeabi_dsub
+ 167              		.global	__aeabi_dcmpge
+ 168              		.section	.text.BattMonitor_Run,"ax",%progbits
+ 169              		.align	2
+ 170              		.global	BattMonitor_Run
+ 171              		.thumb
+ 172              		.thumb_func
+ 173              		.type	BattMonitor_Run, %function
+ 174              	BattMonitor_Run:
+ 175              	.LFB30:
+  69:.\BattMonitor.c **** 
+  70:.\BattMonitor.c **** //! @brief		Call from main loop once per tick
+  71:.\BattMonitor.c **** void BattMonitor_Run(double remoteBattVoltage, double boardBattVoltage)
+  72:.\BattMonitor.c **** {
+ 176              		.loc 1 72 0
+ 177              		.cfi_startproc
+ 178              		@ args = 0, pretend = 0, frame = 64
+ 179              		@ frame_needed = 1, uses_anonymous_args = 0
+ 180 0000 90B5     		push	{r4, r7, lr}
+ 181              	.LCFI2:
+ 182              		.cfi_def_cfa_offset 12
+ 183 0002 91B0     		sub	sp, sp, #68
+ 184              	.LCFI3:
+ 185              		.cfi_def_cfa_offset 80
+ 186 0004 00AF     		add	r7, sp, #0
+ 187              		.cfi_offset 14, -4
+ 188              		.cfi_offset 7, -8
+ 189              		.cfi_offset 4, -12
+ 190              	.LCFI4:
+ 191              		.cfi_def_cfa_register 7
+ 192 0006 C7E90201 		strd	r0, [r7, #8]
+ 193 000a C7E90023 		strd	r2, [r7]
+  73:.\BattMonitor.c **** 	static uint32 counter = 0;
+  74:.\BattMonitor.c **** 	
+  75:.\BattMonitor.c **** 	#if(configDEBUG_BATT_MONITOR == 1)
+  76:.\BattMonitor.c **** 		char tempBuff[100];
+  77:.\BattMonitor.c **** 		snprintf(tempBuff, sizeof(tempBuff), "BATT: Remote Batt Voltage = %f, Board Batt Voltage = %f\r\n
+  78:.\BattMonitor.c **** 		UartDebug_PutString(tempBuff);
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 6
+
+
+  79:.\BattMonitor.c **** 	#endif
+  80:.\BattMonitor.c **** 	
+  81:.\BattMonitor.c **** 	//=========================================== REMOTE BATT LEDS =================================//
+  82:.\BattMonitor.c **** 	
+  83:.\BattMonitor.c **** 	// Control the battery level leds
+  84:.\BattMonitor.c **** 	if(remoteBattVoltage < _remoteBattVoltThreshold1)
+ 194              		.loc 1 84 0
+ 195 000e 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold1
+ 196 0012 C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold1
+ 197 0016 D3E90023 		ldrd	r2, [r3]
+ 198 001a 4FF00001 		mov	r1, #0
+ 199 001e 0C46     		mov	r4, r1
+ 200 0020 D7E90201 		ldrd	r0, [r7, #8]
+ 201 0024 FFF7FEFF 		bl	__aeabi_dcmplt
+ 202 0028 0346     		mov	r3, r0
+ 203 002a 002B     		cmp	r3, #0
+ 204 002c 02D0     		beq	.L6
+ 205              	.L7:
+ 206 002e 4FF00103 		mov	r3, #1
+ 207 0032 1C46     		mov	r4, r3
+ 208              	.L6:
+ 209 0034 E3B2     		uxtb	r3, r4
+ 210 0036 002B     		cmp	r3, #0
+ 211 0038 35D0     		beq	.L8
+ 212              	.LBB2:
+  85:.\BattMonitor.c **** 	{
+  86:.\BattMonitor.c **** 		// Voltage is in lower third or below min
+  87:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(remoteBattVoltage - _remoteBattVoltMin, _remote
+ 213              		.loc 1 87 0
+ 214 003a 40F20003 		movw	r3, #:lower16:_remoteBattVoltMin
+ 215 003e C0F20003 		movt	r3, #:upper16:_remoteBattVoltMin
+ 216 0042 D3E90023 		ldrd	r2, [r3]
+ 217 0046 D7E90201 		ldrd	r0, [r7, #8]
+ 218 004a FFF7FEFF 		bl	__aeabi_dsub
+ 219 004e 0246     		mov	r2, r0
+ 220 0050 0B46     		mov	r3, r1
+ 221 0052 1046     		mov	r0, r2
+ 222 0054 1946     		mov	r1, r3
+ 223 0056 40F20003 		movw	r3, #:lower16:_remoteBattVoltBetweenThresholds
+ 224 005a C0F20003 		movt	r3, #:upper16:_remoteBattVoltBetweenThresholds
+ 225 005e D3E90023 		ldrd	r2, [r3]
+ 226 0062 FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 227 0066 0246     		mov	r2, r0
+ 228 0068 0B46     		mov	r3, r1
+ 229 006a C7E90423 		strd	r2, [r7, #16]
+  88:.\BattMonitor.c **** 		// Only flash lower led, others off
+  89:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_BOT, FLASHING, flashRate);
+ 230              		.loc 1 89 0
+ 231 006e 4FF00800 		mov	r0, #8
+ 232 0072 4FF00201 		mov	r1, #2
+ 233 0076 D7E90423 		ldrd	r2, [r7, #16]
+ 234 007a FFF7FEFF 		bl	Lights_SetLedMode
+  90:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_MID, OFF, 0);
+ 235              		.loc 1 90 0
+ 236 007e 4FF00700 		mov	r0, #7
+ 237 0082 4FF00001 		mov	r1, #0
+ 238 0086 4FF00002 		mov	r2, #0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 7
+
+
+ 239 008a 4FF00003 		mov	r3, #0
+ 240 008e FFF7FEFF 		bl	Lights_SetLedMode
+  91:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_TOP, OFF, 0);
+ 241              		.loc 1 91 0
+ 242 0092 4FF00600 		mov	r0, #6
+ 243 0096 4FF00001 		mov	r1, #0
+ 244 009a 4FF00002 		mov	r2, #0
+ 245 009e 4FF00003 		mov	r3, #0
+ 246 00a2 FFF7FEFF 		bl	Lights_SetLedMode
+ 247              	.L8:
+ 248              	.LBE2:
+  92:.\BattMonitor.c **** 		
+  93:.\BattMonitor.c **** 	}
+  94:.\BattMonitor.c **** 	if(remoteBattVoltage >= _remoteBattVoltThreshold1 && remoteBattVoltage < _remoteBattVoltThreshold2
+ 249              		.loc 1 94 0
+ 250 00a6 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold1
+ 251 00aa C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold1
+ 252 00ae D3E90023 		ldrd	r2, [r3]
+ 253 00b2 4FF00001 		mov	r1, #0
+ 254 00b6 0C46     		mov	r4, r1
+ 255 00b8 D7E90201 		ldrd	r0, [r7, #8]
+ 256 00bc FFF7FEFF 		bl	__aeabi_dcmpge
+ 257 00c0 0346     		mov	r3, r0
+ 258 00c2 002B     		cmp	r3, #0
+ 259 00c4 02D0     		beq	.L9
+ 260              	.L10:
+ 261 00c6 4FF00103 		mov	r3, #1
+ 262 00ca 1C46     		mov	r4, r3
+ 263              	.L9:
+ 264 00cc E3B2     		uxtb	r3, r4
+ 265 00ce 002B     		cmp	r3, #0
+ 266 00d0 4BD0     		beq	.L11
+ 267 00d2 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold2
+ 268 00d6 C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold2
+ 269 00da D3E90023 		ldrd	r2, [r3]
+ 270 00de 4FF00001 		mov	r1, #0
+ 271 00e2 0C46     		mov	r4, r1
+ 272 00e4 D7E90201 		ldrd	r0, [r7, #8]
+ 273 00e8 FFF7FEFF 		bl	__aeabi_dcmplt
+ 274 00ec 0346     		mov	r3, r0
+ 275 00ee 002B     		cmp	r3, #0
+ 276 00f0 02D0     		beq	.L12
+ 277              	.L13:
+ 278 00f2 4FF00103 		mov	r3, #1
+ 279 00f6 1C46     		mov	r4, r3
+ 280              	.L12:
+ 281 00f8 E3B2     		uxtb	r3, r4
+ 282 00fa 002B     		cmp	r3, #0
+ 283 00fc 35D0     		beq	.L11
+ 284              	.LBB3:
+  95:.\BattMonitor.c **** 	{
+  96:.\BattMonitor.c **** 		// Voltage is in middle third
+  97:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(remoteBattVoltage - _remoteBattVoltThreshold1, 
+ 285              		.loc 1 97 0
+ 286 00fe 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold1
+ 287 0102 C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold1
+ 288 0106 D3E90023 		ldrd	r2, [r3]
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 8
+
+
+ 289 010a D7E90201 		ldrd	r0, [r7, #8]
+ 290 010e FFF7FEFF 		bl	__aeabi_dsub
+ 291 0112 0246     		mov	r2, r0
+ 292 0114 0B46     		mov	r3, r1
+ 293 0116 1046     		mov	r0, r2
+ 294 0118 1946     		mov	r1, r3
+ 295 011a 40F20003 		movw	r3, #:lower16:_remoteBattVoltBetweenThresholds
+ 296 011e C0F20003 		movt	r3, #:upper16:_remoteBattVoltBetweenThresholds
+ 297 0122 D3E90023 		ldrd	r2, [r3]
+ 298 0126 FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 299 012a 0246     		mov	r2, r0
+ 300 012c 0B46     		mov	r3, r1
+ 301 012e C7E90623 		strd	r2, [r7, #24]
+  98:.\BattMonitor.c **** 		// Turn bottom led on, and flash middle led
+  99:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_BOT, ON, 0);
+ 302              		.loc 1 99 0
+ 303 0132 4FF00800 		mov	r0, #8
+ 304 0136 4FF00101 		mov	r1, #1
+ 305 013a 4FF00002 		mov	r2, #0
+ 306 013e 4FF00003 		mov	r3, #0
+ 307 0142 FFF7FEFF 		bl	Lights_SetLedMode
+ 100:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_MID, FLASHING, flashRate);
+ 308              		.loc 1 100 0
+ 309 0146 4FF00700 		mov	r0, #7
+ 310 014a 4FF00201 		mov	r1, #2
+ 311 014e D7E90623 		ldrd	r2, [r7, #24]
+ 312 0152 FFF7FEFF 		bl	Lights_SetLedMode
+ 101:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_TOP, OFF, 0);
+ 313              		.loc 1 101 0
+ 314 0156 4FF00600 		mov	r0, #6
+ 315 015a 4FF00001 		mov	r1, #0
+ 316 015e 4FF00002 		mov	r2, #0
+ 317 0162 4FF00003 		mov	r3, #0
+ 318 0166 FFF7FEFF 		bl	Lights_SetLedMode
+ 319              	.L11:
+ 320              	.LBE3:
+ 102:.\BattMonitor.c **** 
+ 103:.\BattMonitor.c **** 	}
+ 104:.\BattMonitor.c **** 	if(remoteBattVoltage >= _remoteBattVoltThreshold2)
+ 321              		.loc 1 104 0
+ 322 016a 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold2
+ 323 016e C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold2
+ 324 0172 D3E90023 		ldrd	r2, [r3]
+ 325 0176 4FF00001 		mov	r1, #0
+ 326 017a 0C46     		mov	r4, r1
+ 327 017c D7E90201 		ldrd	r0, [r7, #8]
+ 328 0180 FFF7FEFF 		bl	__aeabi_dcmpge
+ 329 0184 0346     		mov	r3, r0
+ 330 0186 002B     		cmp	r3, #0
+ 331 0188 02D0     		beq	.L14
+ 332              	.L15:
+ 333 018a 4FF00103 		mov	r3, #1
+ 334 018e 1C46     		mov	r4, r3
+ 335              	.L14:
+ 336 0190 E3B2     		uxtb	r3, r4
+ 337 0192 002B     		cmp	r3, #0
+ 338 0194 35D0     		beq	.L16
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 9
+
+
+ 339              	.LBB4:
+ 105:.\BattMonitor.c **** 	{
+ 106:.\BattMonitor.c **** 		// Voltage is in top third or above max
+ 107:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(remoteBattVoltage - _remoteBattVoltThreshold2, 
+ 340              		.loc 1 107 0
+ 341 0196 40F20003 		movw	r3, #:lower16:_remoteBattVoltThreshold2
+ 342 019a C0F20003 		movt	r3, #:upper16:_remoteBattVoltThreshold2
+ 343 019e D3E90023 		ldrd	r2, [r3]
+ 344 01a2 D7E90201 		ldrd	r0, [r7, #8]
+ 345 01a6 FFF7FEFF 		bl	__aeabi_dsub
+ 346 01aa 0246     		mov	r2, r0
+ 347 01ac 0B46     		mov	r3, r1
+ 348 01ae 1046     		mov	r0, r2
+ 349 01b0 1946     		mov	r1, r3
+ 350 01b2 40F20003 		movw	r3, #:lower16:_remoteBattVoltBetweenThresholds
+ 351 01b6 C0F20003 		movt	r3, #:upper16:_remoteBattVoltBetweenThresholds
+ 352 01ba D3E90023 		ldrd	r2, [r3]
+ 353 01be FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 354 01c2 0246     		mov	r2, r0
+ 355 01c4 0B46     		mov	r3, r1
+ 356 01c6 C7E90823 		strd	r2, [r7, #32]
+ 108:.\BattMonitor.c **** 		// Turn bottom two led's on, and flash top led
+ 109:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_BOT, ON, 0);
+ 357              		.loc 1 109 0
+ 358 01ca 4FF00800 		mov	r0, #8
+ 359 01ce 4FF00101 		mov	r1, #1
+ 360 01d2 4FF00002 		mov	r2, #0
+ 361 01d6 4FF00003 		mov	r3, #0
+ 362 01da FFF7FEFF 		bl	Lights_SetLedMode
+ 110:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_MID, ON, 0);
+ 363              		.loc 1 110 0
+ 364 01de 4FF00700 		mov	r0, #7
+ 365 01e2 4FF00101 		mov	r1, #1
+ 366 01e6 4FF00002 		mov	r2, #0
+ 367 01ea 4FF00003 		mov	r3, #0
+ 368 01ee FFF7FEFF 		bl	Lights_SetLedMode
+ 111:.\BattMonitor.c **** 		Lights_SetLedMode(LED_REMOTE_BATT_LVL_TOP, FLASHING, flashRate);
+ 369              		.loc 1 111 0
+ 370 01f2 4FF00600 		mov	r0, #6
+ 371 01f6 4FF00201 		mov	r1, #2
+ 372 01fa D7E90823 		ldrd	r2, [r7, #32]
+ 373 01fe FFF7FEFF 		bl	Lights_SetLedMode
+ 374              	.L16:
+ 375              	.LBE4:
+ 112:.\BattMonitor.c **** 	}
+ 113:.\BattMonitor.c **** 	
+ 114:.\BattMonitor.c **** 	//=========================================== BOARD BATT LEDS =================================//
+ 115:.\BattMonitor.c **** 	// Control the boardbattery level leds
+ 116:.\BattMonitor.c **** 	if(boardBattVoltage < _boardBattVoltThreshold1)
+ 376              		.loc 1 116 0
+ 377 0202 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold1
+ 378 0206 C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold1
+ 379 020a D3E90023 		ldrd	r2, [r3]
+ 380 020e 4FF00001 		mov	r1, #0
+ 381 0212 0C46     		mov	r4, r1
+ 382 0214 D7E90001 		ldrd	r0, [r7]
+ 383 0218 FFF7FEFF 		bl	__aeabi_dcmplt
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 10
+
+
+ 384 021c 0346     		mov	r3, r0
+ 385 021e 002B     		cmp	r3, #0
+ 386 0220 02D0     		beq	.L17
+ 387              	.L18:
+ 388 0222 4FF00103 		mov	r3, #1
+ 389 0226 1C46     		mov	r4, r3
+ 390              	.L17:
+ 391 0228 E3B2     		uxtb	r3, r4
+ 392 022a 002B     		cmp	r3, #0
+ 393 022c 35D0     		beq	.L19
+ 394              	.LBB5:
+ 117:.\BattMonitor.c **** 	{
+ 118:.\BattMonitor.c **** 		// Voltage is in lower third or below min
+ 119:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(boardBattVoltage - _boardBattVoltMin, _boardBat
+ 395              		.loc 1 119 0
+ 396 022e 40F20003 		movw	r3, #:lower16:_boardBattVoltMin
+ 397 0232 C0F20003 		movt	r3, #:upper16:_boardBattVoltMin
+ 398 0236 D3E90023 		ldrd	r2, [r3]
+ 399 023a D7E90001 		ldrd	r0, [r7]
+ 400 023e FFF7FEFF 		bl	__aeabi_dsub
+ 401 0242 0246     		mov	r2, r0
+ 402 0244 0B46     		mov	r3, r1
+ 403 0246 1046     		mov	r0, r2
+ 404 0248 1946     		mov	r1, r3
+ 405 024a 40F20003 		movw	r3, #:lower16:_boardBattVoltBetweenThresholds
+ 406 024e C0F20003 		movt	r3, #:upper16:_boardBattVoltBetweenThresholds
+ 407 0252 D3E90023 		ldrd	r2, [r3]
+ 408 0256 FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 409 025a 0246     		mov	r2, r0
+ 410 025c 0B46     		mov	r3, r1
+ 411 025e C7E90A23 		strd	r2, [r7, #40]
+ 120:.\BattMonitor.c **** 		// Only flash lower led, others off
+ 121:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_BOT, FLASHING, flashRate);
+ 412              		.loc 1 121 0
+ 413 0262 4FF00500 		mov	r0, #5
+ 414 0266 4FF00201 		mov	r1, #2
+ 415 026a D7E90A23 		ldrd	r2, [r7, #40]
+ 416 026e FFF7FEFF 		bl	Lights_SetLedMode
+ 122:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_MID, OFF, 0);
+ 417              		.loc 1 122 0
+ 418 0272 4FF00400 		mov	r0, #4
+ 419 0276 4FF00001 		mov	r1, #0
+ 420 027a 4FF00002 		mov	r2, #0
+ 421 027e 4FF00003 		mov	r3, #0
+ 422 0282 FFF7FEFF 		bl	Lights_SetLedMode
+ 123:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_TOP, OFF, 0);
+ 423              		.loc 1 123 0
+ 424 0286 4FF00300 		mov	r0, #3
+ 425 028a 4FF00001 		mov	r1, #0
+ 426 028e 4FF00002 		mov	r2, #0
+ 427 0292 4FF00003 		mov	r3, #0
+ 428 0296 FFF7FEFF 		bl	Lights_SetLedMode
+ 429              	.L19:
+ 430              	.LBE5:
+ 124:.\BattMonitor.c **** 		
+ 125:.\BattMonitor.c **** 	}
+ 126:.\BattMonitor.c **** 	if(boardBattVoltage >= _boardBattVoltThreshold1 && boardBattVoltage < _boardBattVoltThreshold2)
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 11
+
+
+ 431              		.loc 1 126 0
+ 432 029a 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold1
+ 433 029e C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold1
+ 434 02a2 D3E90023 		ldrd	r2, [r3]
+ 435 02a6 4FF00001 		mov	r1, #0
+ 436 02aa 0C46     		mov	r4, r1
+ 437 02ac D7E90001 		ldrd	r0, [r7]
+ 438 02b0 FFF7FEFF 		bl	__aeabi_dcmpge
+ 439 02b4 0346     		mov	r3, r0
+ 440 02b6 002B     		cmp	r3, #0
+ 441 02b8 02D0     		beq	.L20
+ 442              	.L21:
+ 443 02ba 4FF00103 		mov	r3, #1
+ 444 02be 1C46     		mov	r4, r3
+ 445              	.L20:
+ 446 02c0 E3B2     		uxtb	r3, r4
+ 447 02c2 002B     		cmp	r3, #0
+ 448 02c4 4BD0     		beq	.L22
+ 449 02c6 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold2
+ 450 02ca C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold2
+ 451 02ce D3E90023 		ldrd	r2, [r3]
+ 452 02d2 4FF00001 		mov	r1, #0
+ 453 02d6 0C46     		mov	r4, r1
+ 454 02d8 D7E90001 		ldrd	r0, [r7]
+ 455 02dc FFF7FEFF 		bl	__aeabi_dcmplt
+ 456 02e0 0346     		mov	r3, r0
+ 457 02e2 002B     		cmp	r3, #0
+ 458 02e4 02D0     		beq	.L23
+ 459              	.L24:
+ 460 02e6 4FF00103 		mov	r3, #1
+ 461 02ea 1C46     		mov	r4, r3
+ 462              	.L23:
+ 463 02ec E3B2     		uxtb	r3, r4
+ 464 02ee 002B     		cmp	r3, #0
+ 465 02f0 35D0     		beq	.L22
+ 466              	.LBB6:
+ 127:.\BattMonitor.c **** 	{
+ 128:.\BattMonitor.c **** 		// Voltage is in middle third
+ 129:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(boardBattVoltage - _boardBattVoltThreshold1, _b
+ 467              		.loc 1 129 0
+ 468 02f2 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold1
+ 469 02f6 C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold1
+ 470 02fa D3E90023 		ldrd	r2, [r3]
+ 471 02fe D7E90001 		ldrd	r0, [r7]
+ 472 0302 FFF7FEFF 		bl	__aeabi_dsub
+ 473 0306 0246     		mov	r2, r0
+ 474 0308 0B46     		mov	r3, r1
+ 475 030a 1046     		mov	r0, r2
+ 476 030c 1946     		mov	r1, r3
+ 477 030e 40F20003 		movw	r3, #:lower16:_boardBattVoltBetweenThresholds
+ 478 0312 C0F20003 		movt	r3, #:upper16:_boardBattVoltBetweenThresholds
+ 479 0316 D3E90023 		ldrd	r2, [r3]
+ 480 031a FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 481 031e 0246     		mov	r2, r0
+ 482 0320 0B46     		mov	r3, r1
+ 483 0322 C7E90C23 		strd	r2, [r7, #48]
+ 130:.\BattMonitor.c **** 		// Turn bottom led on, and flash middle led
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 12
+
+
+ 131:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_BOT, ON, 0);
+ 484              		.loc 1 131 0
+ 485 0326 4FF00500 		mov	r0, #5
+ 486 032a 4FF00101 		mov	r1, #1
+ 487 032e 4FF00002 		mov	r2, #0
+ 488 0332 4FF00003 		mov	r3, #0
+ 489 0336 FFF7FEFF 		bl	Lights_SetLedMode
+ 132:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_MID, FLASHING, flashRate);
+ 490              		.loc 1 132 0
+ 491 033a 4FF00400 		mov	r0, #4
+ 492 033e 4FF00201 		mov	r1, #2
+ 493 0342 D7E90C23 		ldrd	r2, [r7, #48]
+ 494 0346 FFF7FEFF 		bl	Lights_SetLedMode
+ 133:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_TOP, OFF, 0);
+ 495              		.loc 1 133 0
+ 496 034a 4FF00300 		mov	r0, #3
+ 497 034e 4FF00001 		mov	r1, #0
+ 498 0352 4FF00002 		mov	r2, #0
+ 499 0356 4FF00003 		mov	r3, #0
+ 500 035a FFF7FEFF 		bl	Lights_SetLedMode
+ 501              	.L22:
+ 502              	.LBE6:
+ 134:.\BattMonitor.c **** 
+ 135:.\BattMonitor.c **** 	}
+ 136:.\BattMonitor.c **** 	if(boardBattVoltage >= _boardBattVoltThreshold2)
+ 503              		.loc 1 136 0
+ 504 035e 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold2
+ 505 0362 C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold2
+ 506 0366 D3E90023 		ldrd	r2, [r3]
+ 507 036a 4FF00001 		mov	r1, #0
+ 508 036e 0C46     		mov	r4, r1
+ 509 0370 D7E90001 		ldrd	r0, [r7]
+ 510 0374 FFF7FEFF 		bl	__aeabi_dcmpge
+ 511 0378 0346     		mov	r3, r0
+ 512 037a 002B     		cmp	r3, #0
+ 513 037c 02D0     		beq	.L25
+ 514              	.L26:
+ 515 037e 4FF00103 		mov	r3, #1
+ 516 0382 1C46     		mov	r4, r3
+ 517              	.L25:
+ 518 0384 E3B2     		uxtb	r3, r4
+ 519 0386 002B     		cmp	r3, #0
+ 520 0388 35D0     		beq	.L27
+ 521              	.LBB7:
+ 137:.\BattMonitor.c **** 	{
+ 138:.\BattMonitor.c **** 		// Voltage is in top third or above max
+ 139:.\BattMonitor.c **** 		double flashRate = BattMonitor_CalculateFlashRate(boardBattVoltage - _boardBattVoltThreshold2, _b
+ 522              		.loc 1 139 0
+ 523 038a 40F20003 		movw	r3, #:lower16:_boardBattVoltThreshold2
+ 524 038e C0F20003 		movt	r3, #:upper16:_boardBattVoltThreshold2
+ 525 0392 D3E90023 		ldrd	r2, [r3]
+ 526 0396 D7E90001 		ldrd	r0, [r7]
+ 527 039a FFF7FEFF 		bl	__aeabi_dsub
+ 528 039e 0246     		mov	r2, r0
+ 529 03a0 0B46     		mov	r3, r1
+ 530 03a2 1046     		mov	r0, r2
+ 531 03a4 1946     		mov	r1, r3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 13
+
+
+ 532 03a6 40F20003 		movw	r3, #:lower16:_boardBattVoltBetweenThresholds
+ 533 03aa C0F20003 		movt	r3, #:upper16:_boardBattVoltBetweenThresholds
+ 534 03ae D3E90023 		ldrd	r2, [r3]
+ 535 03b2 FFF7FEFF 		bl	BattMonitor_CalculateFlashRate
+ 536 03b6 0246     		mov	r2, r0
+ 537 03b8 0B46     		mov	r3, r1
+ 538 03ba C7E90E23 		strd	r2, [r7, #56]
+ 140:.\BattMonitor.c **** 		// Turn bottom two led's on, and flash top led
+ 141:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_BOT, ON, 0);
+ 539              		.loc 1 141 0
+ 540 03be 4FF00500 		mov	r0, #5
+ 541 03c2 4FF00101 		mov	r1, #1
+ 542 03c6 4FF00002 		mov	r2, #0
+ 543 03ca 4FF00003 		mov	r3, #0
+ 544 03ce FFF7FEFF 		bl	Lights_SetLedMode
+ 142:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_MID, ON, 0);
+ 545              		.loc 1 142 0
+ 546 03d2 4FF00400 		mov	r0, #4
+ 547 03d6 4FF00101 		mov	r1, #1
+ 548 03da 4FF00002 		mov	r2, #0
+ 549 03de 4FF00003 		mov	r3, #0
+ 550 03e2 FFF7FEFF 		bl	Lights_SetLedMode
+ 143:.\BattMonitor.c **** 		Lights_SetLedMode(LED_BOARD_BATT_LVL_TOP, FLASHING, flashRate);
+ 551              		.loc 1 143 0
+ 552 03e6 4FF00300 		mov	r0, #3
+ 553 03ea 4FF00201 		mov	r1, #2
+ 554 03ee D7E90E23 		ldrd	r2, [r7, #56]
+ 555 03f2 FFF7FEFF 		bl	Lights_SetLedMode
+ 556              	.L27:
+ 557              	.LBE7:
+ 144:.\BattMonitor.c **** 	}
+ 145:.\BattMonitor.c **** 	
+ 146:.\BattMonitor.c **** 	// Increment counter
+ 147:.\BattMonitor.c **** 	counter++;
+ 558              		.loc 1 147 0
+ 559 03f6 40F20003 		movw	r3, #:lower16:counter.3035
+ 560 03fa C0F20003 		movt	r3, #:upper16:counter.3035
+ 561 03fe 1B68     		ldr	r3, [r3, #0]
+ 562 0400 03F10102 		add	r2, r3, #1
+ 563 0404 40F20003 		movw	r3, #:lower16:counter.3035
+ 564 0408 C0F20003 		movt	r3, #:upper16:counter.3035
+ 565 040c 1A60     		str	r2, [r3, #0]
+ 148:.\BattMonitor.c **** 		
+ 149:.\BattMonitor.c **** }
+ 566              		.loc 1 149 0
+ 567 040e 07F14407 		add	r7, r7, #68
+ 568 0412 BD46     		mov	sp, r7
+ 569 0414 90BD     		pop	{r4, r7, pc}
+ 570              		.cfi_endproc
+ 571              	.LFE30:
+ 572              		.size	BattMonitor_Run, .-BattMonitor_Run
+ 573              		.global	__aeabi_ddiv
+ 574              		.global	__aeabi_dmul
+ 575              		.global	__aeabi_dadd
+ 576 0416 00BF     		.section	.text.BattMonitor_CalculateFlashRate,"ax",%progbits
+ 577              		.align	2
+ 578              		.global	BattMonitor_CalculateFlashRate
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 14
+
+
+ 579              		.thumb
+ 580              		.thumb_func
+ 581              		.type	BattMonitor_CalculateFlashRate, %function
+ 582              	BattMonitor_CalculateFlashRate:
+ 583              	.LFB31:
+ 150:.\BattMonitor.c **** 
+ 151:.\BattMonitor.c **** //! @brief 		Calculates the flash rate of a led given a voltage
+ 152:.\BattMonitor.c **** //! @details	The voltage has to range from 0 to the maximum between two voltage thresholds
+ 153:.\BattMonitor.c **** double BattMonitor_CalculateFlashRate(double voltage, double voltageBetweenThresholds)
+ 154:.\BattMonitor.c **** {
+ 584              		.loc 1 154 0
+ 585              		.cfi_startproc
+ 586              		@ args = 0, pretend = 0, frame = 40
+ 587              		@ frame_needed = 1, uses_anonymous_args = 0
+ 588 0000 90B5     		push	{r4, r7, lr}
+ 589              	.LCFI5:
+ 590              		.cfi_def_cfa_offset 12
+ 591 0002 8BB0     		sub	sp, sp, #44
+ 592              	.LCFI6:
+ 593              		.cfi_def_cfa_offset 56
+ 594 0004 00AF     		add	r7, sp, #0
+ 595              		.cfi_offset 14, -4
+ 596              		.cfi_offset 7, -8
+ 597              		.cfi_offset 4, -12
+ 598              	.LCFI7:
+ 599              		.cfi_def_cfa_register 7
+ 600 0006 C7E90201 		strd	r0, [r7, #8]
+ 601 000a C7E90023 		strd	r2, [r7]
+ 155:.\BattMonitor.c **** 	// If voltage happens to be negative (as with the case if it was below voltMin, set to 0
+ 156:.\BattMonitor.c **** 	if(voltage < 0)
+ 602              		.loc 1 156 0
+ 603 000e 4FF00003 		mov	r3, #0
+ 604 0012 1C46     		mov	r4, r3
+ 605 0014 D7E90201 		ldrd	r0, [r7, #8]
+ 606 0018 4FF00002 		mov	r2, #0
+ 607 001c 4FF00003 		mov	r3, #0
+ 608 0020 FFF7FEFF 		bl	__aeabi_dcmplt
+ 609 0024 0346     		mov	r3, r0
+ 610 0026 002B     		cmp	r3, #0
+ 611 0028 02D0     		beq	.L30
+ 612              	.L31:
+ 613 002a 4FF00103 		mov	r3, #1
+ 614 002e 1C46     		mov	r4, r3
+ 615              	.L30:
+ 616 0030 E3B2     		uxtb	r3, r4
+ 617 0032 002B     		cmp	r3, #0
+ 618 0034 05D0     		beq	.L32
+ 157:.\BattMonitor.c **** 		voltage = 0;
+ 619              		.loc 1 157 0
+ 620 0036 4FF00002 		mov	r2, #0
+ 621 003a 4FF00003 		mov	r3, #0
+ 622 003e C7E90223 		strd	r2, [r7, #8]
+ 623              	.L32:
+ 158:.\BattMonitor.c **** 	
+ 159:.\BattMonitor.c **** 	// Should always be between 0 and 1. Ratio goes down as battery voltage drops.
+ 160:.\BattMonitor.c **** 	double voltRatio = voltage/voltageBetweenThresholds;
+ 624              		.loc 1 160 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 15
+
+
+ 625 0042 D7E90201 		ldrd	r0, [r7, #8]
+ 626 0046 D7E90023 		ldrd	r2, [r7]
+ 627 004a FFF7FEFF 		bl	__aeabi_ddiv
+ 628 004e 0246     		mov	r2, r0
+ 629 0050 0B46     		mov	r3, r1
+ 630 0052 C7E90423 		strd	r2, [r7, #16]
+ 161:.\BattMonitor.c **** 	
+ 162:.\BattMonitor.c **** 	double flashInterval = (configBATT_MONITOR_HIGHEST_FLASH_PERIOD_MS - configBATT_MONITOR_LOWEST_FLA
+ 631              		.loc 1 162 0
+ 632 0056 12A3     		adr	r3, .L34
+ 633 0058 D3E90023 		ldrd	r2, [r3]
+ 634 005c C7E90623 		strd	r2, [r7, #24]
+ 163:.\BattMonitor.c **** 	
+ 164:.\BattMonitor.c **** 	// Want led to flash faster as battery voltage drops, so flashPeriod needs to decrease and ratio d
+ 165:.\BattMonitor.c **** 	double flashPeriod = flashInterval*voltRatio + configBATT_MONITOR_LOWEST_FLASH_PERIOD_MS;
+ 635              		.loc 1 165 0
+ 636 0060 D7E90601 		ldrd	r0, [r7, #24]
+ 637 0064 D7E90423 		ldrd	r2, [r7, #16]
+ 638 0068 FFF7FEFF 		bl	__aeabi_dmul
+ 639 006c 0246     		mov	r2, r0
+ 640 006e 0B46     		mov	r3, r1
+ 641 0070 1046     		mov	r0, r2
+ 642 0072 1946     		mov	r1, r3
+ 643 0074 4FF00002 		mov	r2, #0
+ 644 0078 4FF08043 		mov	r3, #1073741824
+ 645 007c 03F59203 		add	r3, r3, #4784128
+ 646 0080 FFF7FEFF 		bl	__aeabi_dadd
+ 647 0084 0246     		mov	r2, r0
+ 648 0086 0B46     		mov	r3, r1
+ 649 0088 C7E90823 		strd	r2, [r7, #32]
+ 166:.\BattMonitor.c **** 	
+ 167:.\BattMonitor.c **** 	return flashPeriod;
+ 650              		.loc 1 167 0
+ 651 008c D7E90823 		ldrd	r2, [r7, #32]
+ 168:.\BattMonitor.c **** }
+ 652              		.loc 1 168 0
+ 653 0090 1046     		mov	r0, r2
+ 654 0092 1946     		mov	r1, r3
+ 655 0094 07F12C07 		add	r7, r7, #44
+ 656 0098 BD46     		mov	sp, r7
+ 657 009a 90BD     		pop	{r4, r7, pc}
+ 658              	.L35:
+ 659 009c AFF30080 		.align	3
+ 660              	.L34:
+ 661 00a0 00000000 		.word	0
+ 662 00a4 00B08D40 		.word	1083027456
+ 663              		.cfi_endproc
+ 664              	.LFE31:
+ 665              		.size	BattMonitor_CalculateFlashRate, .-BattMonitor_CalculateFlashRate
+ 666              		.bss
+ 667              		.align	2
+ 668              	counter.3035:
+ 669 0050 00000000 		.space	4
+ 670 0054 00000000 		.text
+ 671              	.Letext0:
+ 672              		.section	.debug_loc,"",%progbits
+ 673              	.Ldebug_loc0:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 16
+
+
+ 674              	.LLST0:
+ 675 0000 00000000 		.4byte	.LFB29
+ 676 0004 02000000 		.4byte	.LCFI0
+ 677 0008 0100     		.2byte	0x1
+ 678 000a 5D       		.byte	0x5d
+ 679 000b 02000000 		.4byte	.LCFI0
+ 680 000f 04000000 		.4byte	.LCFI1
+ 681 0013 0200     		.2byte	0x2
+ 682 0015 7D       		.byte	0x7d
+ 683 0016 04       		.sleb128 4
+ 684 0017 04000000 		.4byte	.LCFI1
+ 685 001b 10010000 		.4byte	.LFE29
+ 686 001f 0200     		.2byte	0x2
+ 687 0021 77       		.byte	0x77
+ 688 0022 04       		.sleb128 4
+ 689 0023 00000000 		.4byte	0x0
+ 690 0027 00000000 		.4byte	0x0
+ 691              	.LLST1:
+ 692 002b 00000000 		.4byte	.LFB30
+ 693 002f 02000000 		.4byte	.LCFI2
+ 694 0033 0100     		.2byte	0x1
+ 695 0035 5D       		.byte	0x5d
+ 696 0036 02000000 		.4byte	.LCFI2
+ 697 003a 04000000 		.4byte	.LCFI3
+ 698 003e 0200     		.2byte	0x2
+ 699 0040 7D       		.byte	0x7d
+ 700 0041 0C       		.sleb128 12
+ 701 0042 04000000 		.4byte	.LCFI3
+ 702 0046 06000000 		.4byte	.LCFI4
+ 703 004a 0300     		.2byte	0x3
+ 704 004c 7D       		.byte	0x7d
+ 705 004d D000     		.sleb128 80
+ 706 004f 06000000 		.4byte	.LCFI4
+ 707 0053 16040000 		.4byte	.LFE30
+ 708 0057 0300     		.2byte	0x3
+ 709 0059 77       		.byte	0x77
+ 710 005a D000     		.sleb128 80
+ 711 005c 00000000 		.4byte	0x0
+ 712 0060 00000000 		.4byte	0x0
+ 713              	.LLST2:
+ 714 0064 00000000 		.4byte	.LFB31
+ 715 0068 02000000 		.4byte	.LCFI5
+ 716 006c 0100     		.2byte	0x1
+ 717 006e 5D       		.byte	0x5d
+ 718 006f 02000000 		.4byte	.LCFI5
+ 719 0073 04000000 		.4byte	.LCFI6
+ 720 0077 0200     		.2byte	0x2
+ 721 0079 7D       		.byte	0x7d
+ 722 007a 0C       		.sleb128 12
+ 723 007b 04000000 		.4byte	.LCFI6
+ 724 007f 06000000 		.4byte	.LCFI7
+ 725 0083 0200     		.2byte	0x2
+ 726 0085 7D       		.byte	0x7d
+ 727 0086 38       		.sleb128 56
+ 728 0087 06000000 		.4byte	.LCFI7
+ 729 008b A8000000 		.4byte	.LFE31
+ 730 008f 0200     		.2byte	0x2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 17
+
+
+ 731 0091 77       		.byte	0x77
+ 732 0092 38       		.sleb128 56
+ 733 0093 00000000 		.4byte	0x0
+ 734 0097 00000000 		.4byte	0x0
+ 735              		.file 2 ".\\/Lights.h"
+ 736              		.file 3 "./Generated_Source/PSoC5/cytypes.h"
+ 737              		.file 4 "./Generated_Source/PSoC5/core_cm3.h"
+ 738              		.section	.debug_info
+ 739 0000 03030000 		.4byte	0x303
+ 740 0004 0200     		.2byte	0x2
+ 741 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 742 000a 04       		.byte	0x4
+ 743 000b 01       		.uleb128 0x1
+ 744 000c 84020000 		.4byte	.LASF40
+ 745 0010 01       		.byte	0x1
+ 746 0011 A1020000 		.4byte	.LASF41
+ 747 0015 08030000 		.4byte	.LASF42
+ 748 0019 00000000 		.4byte	0x0
+ 749 001d 00000000 		.4byte	0x0
+ 750 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 751 0025 00000000 		.4byte	.Ldebug_line0
+ 752 0029 02       		.uleb128 0x2
+ 753 002a 01       		.byte	0x1
+ 754 002b 06       		.byte	0x6
+ 755 002c E0000000 		.4byte	.LASF0
+ 756 0030 02       		.uleb128 0x2
+ 757 0031 01       		.byte	0x1
+ 758 0032 08       		.byte	0x8
+ 759 0033 9E010000 		.4byte	.LASF1
+ 760 0037 02       		.uleb128 0x2
+ 761 0038 02       		.byte	0x2
+ 762 0039 05       		.byte	0x5
+ 763 003a B1020000 		.4byte	.LASF2
+ 764 003e 02       		.uleb128 0x2
+ 765 003f 02       		.byte	0x2
+ 766 0040 07       		.byte	0x7
+ 767 0041 5D010000 		.4byte	.LASF3
+ 768 0045 02       		.uleb128 0x2
+ 769 0046 04       		.byte	0x4
+ 770 0047 05       		.byte	0x5
+ 771 0048 ED020000 		.4byte	.LASF4
+ 772 004c 02       		.uleb128 0x2
+ 773 004d 04       		.byte	0x4
+ 774 004e 07       		.byte	0x7
+ 775 004f 4B010000 		.4byte	.LASF5
+ 776 0053 02       		.uleb128 0x2
+ 777 0054 08       		.byte	0x8
+ 778 0055 05       		.byte	0x5
+ 779 0056 00000000 		.4byte	.LASF6
+ 780 005a 02       		.uleb128 0x2
+ 781 005b 08       		.byte	0x8
+ 782 005c 07       		.byte	0x7
+ 783 005d 23020000 		.4byte	.LASF7
+ 784 0061 03       		.uleb128 0x3
+ 785 0062 04       		.byte	0x4
+ 786 0063 05       		.byte	0x5
+ 787 0064 696E7400 		.ascii	"int\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 18
+
+
+ 788 0068 02       		.uleb128 0x2
+ 789 0069 04       		.byte	0x4
+ 790 006a 07       		.byte	0x7
+ 791 006b 16020000 		.4byte	.LASF8
+ 792 006f 02       		.uleb128 0x2
+ 793 0070 01       		.byte	0x1
+ 794 0071 08       		.byte	0x8
+ 795 0072 90020000 		.4byte	.LASF9
+ 796 0076 04       		.uleb128 0x4
+ 797 0077 E2010000 		.4byte	.LASF43
+ 798 007b 03       		.byte	0x3
+ 799 007c 53       		.byte	0x53
+ 800 007d 4C000000 		.4byte	0x4c
+ 801 0081 05       		.uleb128 0x5
+ 802 0082 04       		.byte	0x4
+ 803 0083 07       		.byte	0x7
+ 804 0084 06       		.uleb128 0x6
+ 805 0085 01       		.byte	0x1
+ 806 0086 02       		.byte	0x2
+ 807 0087 24       		.byte	0x24
+ 808 0088 C3000000 		.4byte	0xc3
+ 809 008c 07       		.uleb128 0x7
+ 810 008d 75030000 		.4byte	.LASF10
+ 811 0091 00       		.sleb128 0
+ 812 0092 07       		.uleb128 0x7
+ 813 0093 3E010000 		.4byte	.LASF11
+ 814 0097 01       		.sleb128 1
+ 815 0098 07       		.uleb128 0x7
+ 816 0099 E9010000 		.4byte	.LASF12
+ 817 009d 02       		.sleb128 2
+ 818 009e 07       		.uleb128 0x7
+ 819 009f 25000000 		.4byte	.LASF13
+ 820 00a3 03       		.sleb128 3
+ 821 00a4 07       		.uleb128 0x7
+ 822 00a5 0E000000 		.4byte	.LASF14
+ 823 00a9 04       		.sleb128 4
+ 824 00aa 07       		.uleb128 0x7
+ 825 00ab B3010000 		.4byte	.LASF15
+ 826 00af 05       		.sleb128 5
+ 827 00b0 07       		.uleb128 0x7
+ 828 00b1 CA010000 		.4byte	.LASF16
+ 829 00b5 06       		.sleb128 6
+ 830 00b6 07       		.uleb128 0x7
+ 831 00b7 BB020000 		.4byte	.LASF17
+ 832 00bb 07       		.sleb128 7
+ 833 00bc 07       		.uleb128 0x7
+ 834 00bd FE000000 		.4byte	.LASF18
+ 835 00c1 08       		.sleb128 8
+ 836 00c2 00       		.byte	0x0
+ 837 00c3 06       		.uleb128 0x6
+ 838 00c4 01       		.byte	0x1
+ 839 00c5 02       		.byte	0x2
+ 840 00c6 31       		.byte	0x31
+ 841 00c7 DD000000 		.4byte	0xdd
+ 842 00cb 08       		.uleb128 0x8
+ 843 00cc 4F464600 		.ascii	"OFF\000"
+ 844 00d0 00       		.sleb128 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 19
+
+
+ 845 00d1 08       		.uleb128 0x8
+ 846 00d2 4F4E00   		.ascii	"ON\000"
+ 847 00d5 01       		.sleb128 1
+ 848 00d6 07       		.uleb128 0x7
+ 849 00d7 84000000 		.4byte	.LASF19
+ 850 00db 02       		.sleb128 2
+ 851 00dc 00       		.byte	0x0
+ 852 00dd 09       		.uleb128 0x9
+ 853 00de 01       		.byte	0x1
+ 854 00df 8D000000 		.4byte	.LASF44
+ 855 00e3 01       		.byte	0x1
+ 856 00e4 31       		.byte	0x31
+ 857 00e5 00000000 		.4byte	.LFB29
+ 858 00e9 10010000 		.4byte	.LFE29
+ 859 00ed 00000000 		.4byte	.LLST0
+ 860 00f1 0A       		.uleb128 0xa
+ 861 00f2 01       		.byte	0x1
+ 862 00f3 6A020000 		.4byte	.LASF45
+ 863 00f7 01       		.byte	0x1
+ 864 00f8 47       		.byte	0x47
+ 865 00f9 01       		.byte	0x1
+ 866 00fa 00000000 		.4byte	.LFB30
+ 867 00fe 16040000 		.4byte	.LFE30
+ 868 0102 2B000000 		.4byte	.LLST1
+ 869 0106 DE010000 		.4byte	0x1de
+ 870 010a 0B       		.uleb128 0xb
+ 871 010b EC000000 		.4byte	.LASF20
+ 872 010f 01       		.byte	0x1
+ 873 0110 47       		.byte	0x47
+ 874 0111 DE010000 		.4byte	0x1de
+ 875 0115 03       		.byte	0x3
+ 876 0116 91       		.byte	0x91
+ 877 0117 B87F     		.sleb128 -72
+ 878 0119 0B       		.uleb128 0xb
+ 879 011a 59020000 		.4byte	.LASF21
+ 880 011e 01       		.byte	0x1
+ 881 011f 47       		.byte	0x47
+ 882 0120 DE010000 		.4byte	0x1de
+ 883 0124 03       		.byte	0x3
+ 884 0125 91       		.byte	0x91
+ 885 0126 B07F     		.sleb128 -80
+ 886 0128 0C       		.uleb128 0xc
+ 887 0129 D8000000 		.4byte	.LASF22
+ 888 012d 01       		.byte	0x1
+ 889 012e 49       		.byte	0x49
+ 890 012f 76000000 		.4byte	0x76
+ 891 0133 05       		.byte	0x5
+ 892 0134 03       		.byte	0x3
+ 893 0135 50000000 		.4byte	counter.3035
+ 894 0139 0D       		.uleb128 0xd
+ 895 013a 3A000000 		.4byte	.LBB2
+ 896 013e A6000000 		.4byte	.LBE2
+ 897 0142 55010000 		.4byte	0x155
+ 898 0146 0C       		.uleb128 0xc
+ 899 0147 7A000000 		.4byte	.LASF23
+ 900 014b 01       		.byte	0x1
+ 901 014c 57       		.byte	0x57
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 20
+
+
+ 902 014d DE010000 		.4byte	0x1de
+ 903 0151 02       		.byte	0x2
+ 904 0152 91       		.byte	0x91
+ 905 0153 40       		.sleb128 -64
+ 906 0154 00       		.byte	0x0
+ 907 0155 0D       		.uleb128 0xd
+ 908 0156 FE000000 		.4byte	.LBB3
+ 909 015a 6A010000 		.4byte	.LBE3
+ 910 015e 71010000 		.4byte	0x171
+ 911 0162 0C       		.uleb128 0xc
+ 912 0163 7A000000 		.4byte	.LASF23
+ 913 0167 01       		.byte	0x1
+ 914 0168 61       		.byte	0x61
+ 915 0169 DE010000 		.4byte	0x1de
+ 916 016d 02       		.byte	0x2
+ 917 016e 91       		.byte	0x91
+ 918 016f 48       		.sleb128 -56
+ 919 0170 00       		.byte	0x0
+ 920 0171 0D       		.uleb128 0xd
+ 921 0172 96010000 		.4byte	.LBB4
+ 922 0176 02020000 		.4byte	.LBE4
+ 923 017a 8D010000 		.4byte	0x18d
+ 924 017e 0C       		.uleb128 0xc
+ 925 017f 7A000000 		.4byte	.LASF23
+ 926 0183 01       		.byte	0x1
+ 927 0184 6B       		.byte	0x6b
+ 928 0185 DE010000 		.4byte	0x1de
+ 929 0189 02       		.byte	0x2
+ 930 018a 91       		.byte	0x91
+ 931 018b 50       		.sleb128 -48
+ 932 018c 00       		.byte	0x0
+ 933 018d 0D       		.uleb128 0xd
+ 934 018e 2E020000 		.4byte	.LBB5
+ 935 0192 9A020000 		.4byte	.LBE5
+ 936 0196 A9010000 		.4byte	0x1a9
+ 937 019a 0C       		.uleb128 0xc
+ 938 019b 7A000000 		.4byte	.LASF23
+ 939 019f 01       		.byte	0x1
+ 940 01a0 77       		.byte	0x77
+ 941 01a1 DE010000 		.4byte	0x1de
+ 942 01a5 02       		.byte	0x2
+ 943 01a6 91       		.byte	0x91
+ 944 01a7 58       		.sleb128 -40
+ 945 01a8 00       		.byte	0x0
+ 946 01a9 0D       		.uleb128 0xd
+ 947 01aa F2020000 		.4byte	.LBB6
+ 948 01ae 5E030000 		.4byte	.LBE6
+ 949 01b2 C5010000 		.4byte	0x1c5
+ 950 01b6 0C       		.uleb128 0xc
+ 951 01b7 7A000000 		.4byte	.LASF23
+ 952 01bb 01       		.byte	0x1
+ 953 01bc 81       		.byte	0x81
+ 954 01bd DE010000 		.4byte	0x1de
+ 955 01c1 02       		.byte	0x2
+ 956 01c2 91       		.byte	0x91
+ 957 01c3 60       		.sleb128 -32
+ 958 01c4 00       		.byte	0x0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 21
+
+
+ 959 01c5 0E       		.uleb128 0xe
+ 960 01c6 8A030000 		.4byte	.LBB7
+ 961 01ca F6030000 		.4byte	.LBE7
+ 962 01ce 0C       		.uleb128 0xc
+ 963 01cf 7A000000 		.4byte	.LASF23
+ 964 01d3 01       		.byte	0x1
+ 965 01d4 8B       		.byte	0x8b
+ 966 01d5 DE010000 		.4byte	0x1de
+ 967 01d9 02       		.byte	0x2
+ 968 01da 91       		.byte	0x91
+ 969 01db 68       		.sleb128 -24
+ 970 01dc 00       		.byte	0x0
+ 971 01dd 00       		.byte	0x0
+ 972 01de 02       		.uleb128 0x2
+ 973 01df 08       		.byte	0x8
+ 974 01e0 04       		.byte	0x4
+ 975 01e1 AC010000 		.4byte	.LASF24
+ 976 01e5 0F       		.uleb128 0xf
+ 977 01e6 01       		.byte	0x1
+ 978 01e7 3A020000 		.4byte	.LASF46
+ 979 01eb 01       		.byte	0x1
+ 980 01ec 99       		.byte	0x99
+ 981 01ed 01       		.byte	0x1
+ 982 01ee DE010000 		.4byte	0x1de
+ 983 01f2 00000000 		.4byte	.LFB31
+ 984 01f6 A8000000 		.4byte	.LFE31
+ 985 01fa 64000000 		.4byte	.LLST2
+ 986 01fe 49020000 		.4byte	0x249
+ 987 0202 0B       		.uleb128 0xb
+ 988 0203 89010000 		.4byte	.LASF25
+ 989 0207 01       		.byte	0x1
+ 990 0208 99       		.byte	0x99
+ 991 0209 DE010000 		.4byte	0x1de
+ 992 020d 02       		.byte	0x2
+ 993 020e 91       		.byte	0x91
+ 994 020f 50       		.sleb128 -48
+ 995 0210 0B       		.uleb128 0xb
+ 996 0211 70010000 		.4byte	.LASF26
+ 997 0215 01       		.byte	0x1
+ 998 0216 99       		.byte	0x99
+ 999 0217 DE010000 		.4byte	0x1de
+ 1000 021b 02       		.byte	0x2
+ 1001 021c 91       		.byte	0x91
+ 1002 021d 48       		.sleb128 -56
+ 1003 021e 0C       		.uleb128 0xc
+ 1004 021f 7A020000 		.4byte	.LASF27
+ 1005 0223 01       		.byte	0x1
+ 1006 0224 A0       		.byte	0xa0
+ 1007 0225 DE010000 		.4byte	0x1de
+ 1008 0229 02       		.byte	0x2
+ 1009 022a 91       		.byte	0x91
+ 1010 022b 58       		.sleb128 -40
+ 1011 022c 0C       		.uleb128 0xc
+ 1012 022d 30010000 		.4byte	.LASF28
+ 1013 0231 01       		.byte	0x1
+ 1014 0232 A2       		.byte	0xa2
+ 1015 0233 DE010000 		.4byte	0x1de
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 22
+
+
+ 1016 0237 02       		.byte	0x2
+ 1017 0238 91       		.byte	0x91
+ 1018 0239 60       		.sleb128 -32
+ 1019 023a 0C       		.uleb128 0xc
+ 1020 023b 95020000 		.4byte	.LASF29
+ 1021 023f 01       		.byte	0x1
+ 1022 0240 A5       		.byte	0xa5
+ 1023 0241 DE010000 		.4byte	0x1de
+ 1024 0245 02       		.byte	0x2
+ 1025 0246 91       		.byte	0x91
+ 1026 0247 68       		.sleb128 -24
+ 1027 0248 00       		.byte	0x0
+ 1028 0249 0C       		.uleb128 0xc
+ 1029 024a 67000000 		.4byte	.LASF30
+ 1030 024e 01       		.byte	0x1
+ 1031 024f 21       		.byte	0x21
+ 1032 0250 DE010000 		.4byte	0x1de
+ 1033 0254 05       		.byte	0x5
+ 1034 0255 03       		.byte	0x3
+ 1035 0256 00000000 		.4byte	_remoteBattVoltMin
+ 1036 025a 0C       		.uleb128 0xc
+ 1037 025b 62030000 		.4byte	.LASF31
+ 1038 025f 01       		.byte	0x1
+ 1039 0260 22       		.byte	0x22
+ 1040 0261 DE010000 		.4byte	0x1de
+ 1041 0265 05       		.byte	0x5
+ 1042 0266 03       		.byte	0x3
+ 1043 0267 08000000 		.4byte	_remoteBattVoltMax
+ 1044 026b 0C       		.uleb128 0xc
+ 1045 026c D3020000 		.4byte	.LASF32
+ 1046 0270 01       		.byte	0x1
+ 1047 0271 23       		.byte	0x23
+ 1048 0272 DE010000 		.4byte	0x1de
+ 1049 0276 05       		.byte	0x5
+ 1050 0277 03       		.byte	0x3
+ 1051 0278 10000000 		.4byte	_remoteBattVoltThreshold1
+ 1052 027c 0C       		.uleb128 0xc
+ 1053 027d 16010000 		.4byte	.LASF33
+ 1054 0281 01       		.byte	0x1
+ 1055 0282 24       		.byte	0x24
+ 1056 0283 DE010000 		.4byte	0x1de
+ 1057 0287 05       		.byte	0x5
+ 1058 0288 03       		.byte	0x3
+ 1059 0289 18000000 		.4byte	_remoteBattVoltThreshold2
+ 1060 028d 0C       		.uleb128 0xc
+ 1061 028e 9E000000 		.4byte	.LASF34
+ 1062 0292 01       		.byte	0x1
+ 1063 0293 25       		.byte	0x25
+ 1064 0294 DE010000 		.4byte	0x1de
+ 1065 0298 05       		.byte	0x5
+ 1066 0299 03       		.byte	0x3
+ 1067 029a 20000000 		.4byte	_remoteBattVoltBetweenThresholds
+ 1068 029e 0C       		.uleb128 0xc
+ 1069 029f F6020000 		.4byte	.LASF35
+ 1070 02a3 01       		.byte	0x1
+ 1071 02a4 27       		.byte	0x27
+ 1072 02a5 DE010000 		.4byte	0x1de
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 23
+
+
+ 1073 02a9 05       		.byte	0x5
+ 1074 02aa 03       		.byte	0x3
+ 1075 02ab 28000000 		.4byte	_boardBattVoltMin
+ 1076 02af 0C       		.uleb128 0xc
+ 1077 02b0 55000000 		.4byte	.LASF36
+ 1078 02b4 01       		.byte	0x1
+ 1079 02b5 28       		.byte	0x28
+ 1080 02b6 DE010000 		.4byte	0x1de
+ 1081 02ba 05       		.byte	0x5
+ 1082 02bb 03       		.byte	0x3
+ 1083 02bc 30000000 		.4byte	_boardBattVoltMax
+ 1084 02c0 0C       		.uleb128 0xc
+ 1085 02c1 3C000000 		.4byte	.LASF37
+ 1086 02c5 01       		.byte	0x1
+ 1087 02c6 29       		.byte	0x29
+ 1088 02c7 DE010000 		.4byte	0x1de
+ 1089 02cb 05       		.byte	0x5
+ 1090 02cc 03       		.byte	0x3
+ 1091 02cd 38000000 		.4byte	_boardBattVoltThreshold1
+ 1092 02d1 0C       		.uleb128 0xc
+ 1093 02d2 BF000000 		.4byte	.LASF38
+ 1094 02d6 01       		.byte	0x1
+ 1095 02d7 2A       		.byte	0x2a
+ 1096 02d8 DE010000 		.4byte	0x1de
+ 1097 02dc 05       		.byte	0x5
+ 1098 02dd 03       		.byte	0x3
+ 1099 02de 40000000 		.4byte	_boardBattVoltThreshold2
+ 1100 02e2 0C       		.uleb128 0xc
+ 1101 02e3 F6010000 		.4byte	.LASF39
+ 1102 02e7 01       		.byte	0x1
+ 1103 02e8 2B       		.byte	0x2b
+ 1104 02e9 DE010000 		.4byte	0x1de
+ 1105 02ed 05       		.byte	0x5
+ 1106 02ee 03       		.byte	0x3
+ 1107 02ef 48000000 		.4byte	_boardBattVoltBetweenThresholds
+ 1108 02f3 10       		.uleb128 0x10
+ 1109 02f4 91010000 		.4byte	.LASF47
+ 1110 02f8 04       		.byte	0x4
+ 1111 02f9 CE06     		.2byte	0x6ce
+ 1112 02fb 01030000 		.4byte	0x301
+ 1113 02ff 01       		.byte	0x1
+ 1114 0300 01       		.byte	0x1
+ 1115 0301 11       		.uleb128 0x11
+ 1116 0302 61000000 		.4byte	0x61
+ 1117 0306 00       		.byte	0x0
+ 1118              		.section	.debug_abbrev
+ 1119 0000 01       		.uleb128 0x1
+ 1120 0001 11       		.uleb128 0x11
+ 1121 0002 01       		.byte	0x1
+ 1122 0003 25       		.uleb128 0x25
+ 1123 0004 0E       		.uleb128 0xe
+ 1124 0005 13       		.uleb128 0x13
+ 1125 0006 0B       		.uleb128 0xb
+ 1126 0007 03       		.uleb128 0x3
+ 1127 0008 0E       		.uleb128 0xe
+ 1128 0009 1B       		.uleb128 0x1b
+ 1129 000a 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 24
+
+
+ 1130 000b 11       		.uleb128 0x11
+ 1131 000c 01       		.uleb128 0x1
+ 1132 000d 52       		.uleb128 0x52
+ 1133 000e 01       		.uleb128 0x1
+ 1134 000f 55       		.uleb128 0x55
+ 1135 0010 06       		.uleb128 0x6
+ 1136 0011 10       		.uleb128 0x10
+ 1137 0012 06       		.uleb128 0x6
+ 1138 0013 00       		.byte	0x0
+ 1139 0014 00       		.byte	0x0
+ 1140 0015 02       		.uleb128 0x2
+ 1141 0016 24       		.uleb128 0x24
+ 1142 0017 00       		.byte	0x0
+ 1143 0018 0B       		.uleb128 0xb
+ 1144 0019 0B       		.uleb128 0xb
+ 1145 001a 3E       		.uleb128 0x3e
+ 1146 001b 0B       		.uleb128 0xb
+ 1147 001c 03       		.uleb128 0x3
+ 1148 001d 0E       		.uleb128 0xe
+ 1149 001e 00       		.byte	0x0
+ 1150 001f 00       		.byte	0x0
+ 1151 0020 03       		.uleb128 0x3
+ 1152 0021 24       		.uleb128 0x24
+ 1153 0022 00       		.byte	0x0
+ 1154 0023 0B       		.uleb128 0xb
+ 1155 0024 0B       		.uleb128 0xb
+ 1156 0025 3E       		.uleb128 0x3e
+ 1157 0026 0B       		.uleb128 0xb
+ 1158 0027 03       		.uleb128 0x3
+ 1159 0028 08       		.uleb128 0x8
+ 1160 0029 00       		.byte	0x0
+ 1161 002a 00       		.byte	0x0
+ 1162 002b 04       		.uleb128 0x4
+ 1163 002c 16       		.uleb128 0x16
+ 1164 002d 00       		.byte	0x0
+ 1165 002e 03       		.uleb128 0x3
+ 1166 002f 0E       		.uleb128 0xe
+ 1167 0030 3A       		.uleb128 0x3a
+ 1168 0031 0B       		.uleb128 0xb
+ 1169 0032 3B       		.uleb128 0x3b
+ 1170 0033 0B       		.uleb128 0xb
+ 1171 0034 49       		.uleb128 0x49
+ 1172 0035 13       		.uleb128 0x13
+ 1173 0036 00       		.byte	0x0
+ 1174 0037 00       		.byte	0x0
+ 1175 0038 05       		.uleb128 0x5
+ 1176 0039 24       		.uleb128 0x24
+ 1177 003a 00       		.byte	0x0
+ 1178 003b 0B       		.uleb128 0xb
+ 1179 003c 0B       		.uleb128 0xb
+ 1180 003d 3E       		.uleb128 0x3e
+ 1181 003e 0B       		.uleb128 0xb
+ 1182 003f 00       		.byte	0x0
+ 1183 0040 00       		.byte	0x0
+ 1184 0041 06       		.uleb128 0x6
+ 1185 0042 04       		.uleb128 0x4
+ 1186 0043 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 25
+
+
+ 1187 0044 0B       		.uleb128 0xb
+ 1188 0045 0B       		.uleb128 0xb
+ 1189 0046 3A       		.uleb128 0x3a
+ 1190 0047 0B       		.uleb128 0xb
+ 1191 0048 3B       		.uleb128 0x3b
+ 1192 0049 0B       		.uleb128 0xb
+ 1193 004a 01       		.uleb128 0x1
+ 1194 004b 13       		.uleb128 0x13
+ 1195 004c 00       		.byte	0x0
+ 1196 004d 00       		.byte	0x0
+ 1197 004e 07       		.uleb128 0x7
+ 1198 004f 28       		.uleb128 0x28
+ 1199 0050 00       		.byte	0x0
+ 1200 0051 03       		.uleb128 0x3
+ 1201 0052 0E       		.uleb128 0xe
+ 1202 0053 1C       		.uleb128 0x1c
+ 1203 0054 0D       		.uleb128 0xd
+ 1204 0055 00       		.byte	0x0
+ 1205 0056 00       		.byte	0x0
+ 1206 0057 08       		.uleb128 0x8
+ 1207 0058 28       		.uleb128 0x28
+ 1208 0059 00       		.byte	0x0
+ 1209 005a 03       		.uleb128 0x3
+ 1210 005b 08       		.uleb128 0x8
+ 1211 005c 1C       		.uleb128 0x1c
+ 1212 005d 0D       		.uleb128 0xd
+ 1213 005e 00       		.byte	0x0
+ 1214 005f 00       		.byte	0x0
+ 1215 0060 09       		.uleb128 0x9
+ 1216 0061 2E       		.uleb128 0x2e
+ 1217 0062 00       		.byte	0x0
+ 1218 0063 3F       		.uleb128 0x3f
+ 1219 0064 0C       		.uleb128 0xc
+ 1220 0065 03       		.uleb128 0x3
+ 1221 0066 0E       		.uleb128 0xe
+ 1222 0067 3A       		.uleb128 0x3a
+ 1223 0068 0B       		.uleb128 0xb
+ 1224 0069 3B       		.uleb128 0x3b
+ 1225 006a 0B       		.uleb128 0xb
+ 1226 006b 11       		.uleb128 0x11
+ 1227 006c 01       		.uleb128 0x1
+ 1228 006d 12       		.uleb128 0x12
+ 1229 006e 01       		.uleb128 0x1
+ 1230 006f 40       		.uleb128 0x40
+ 1231 0070 06       		.uleb128 0x6
+ 1232 0071 00       		.byte	0x0
+ 1233 0072 00       		.byte	0x0
+ 1234 0073 0A       		.uleb128 0xa
+ 1235 0074 2E       		.uleb128 0x2e
+ 1236 0075 01       		.byte	0x1
+ 1237 0076 3F       		.uleb128 0x3f
+ 1238 0077 0C       		.uleb128 0xc
+ 1239 0078 03       		.uleb128 0x3
+ 1240 0079 0E       		.uleb128 0xe
+ 1241 007a 3A       		.uleb128 0x3a
+ 1242 007b 0B       		.uleb128 0xb
+ 1243 007c 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 26
+
+
+ 1244 007d 0B       		.uleb128 0xb
+ 1245 007e 27       		.uleb128 0x27
+ 1246 007f 0C       		.uleb128 0xc
+ 1247 0080 11       		.uleb128 0x11
+ 1248 0081 01       		.uleb128 0x1
+ 1249 0082 12       		.uleb128 0x12
+ 1250 0083 01       		.uleb128 0x1
+ 1251 0084 40       		.uleb128 0x40
+ 1252 0085 06       		.uleb128 0x6
+ 1253 0086 01       		.uleb128 0x1
+ 1254 0087 13       		.uleb128 0x13
+ 1255 0088 00       		.byte	0x0
+ 1256 0089 00       		.byte	0x0
+ 1257 008a 0B       		.uleb128 0xb
+ 1258 008b 05       		.uleb128 0x5
+ 1259 008c 00       		.byte	0x0
+ 1260 008d 03       		.uleb128 0x3
+ 1261 008e 0E       		.uleb128 0xe
+ 1262 008f 3A       		.uleb128 0x3a
+ 1263 0090 0B       		.uleb128 0xb
+ 1264 0091 3B       		.uleb128 0x3b
+ 1265 0092 0B       		.uleb128 0xb
+ 1266 0093 49       		.uleb128 0x49
+ 1267 0094 13       		.uleb128 0x13
+ 1268 0095 02       		.uleb128 0x2
+ 1269 0096 0A       		.uleb128 0xa
+ 1270 0097 00       		.byte	0x0
+ 1271 0098 00       		.byte	0x0
+ 1272 0099 0C       		.uleb128 0xc
+ 1273 009a 34       		.uleb128 0x34
+ 1274 009b 00       		.byte	0x0
+ 1275 009c 03       		.uleb128 0x3
+ 1276 009d 0E       		.uleb128 0xe
+ 1277 009e 3A       		.uleb128 0x3a
+ 1278 009f 0B       		.uleb128 0xb
+ 1279 00a0 3B       		.uleb128 0x3b
+ 1280 00a1 0B       		.uleb128 0xb
+ 1281 00a2 49       		.uleb128 0x49
+ 1282 00a3 13       		.uleb128 0x13
+ 1283 00a4 02       		.uleb128 0x2
+ 1284 00a5 0A       		.uleb128 0xa
+ 1285 00a6 00       		.byte	0x0
+ 1286 00a7 00       		.byte	0x0
+ 1287 00a8 0D       		.uleb128 0xd
+ 1288 00a9 0B       		.uleb128 0xb
+ 1289 00aa 01       		.byte	0x1
+ 1290 00ab 11       		.uleb128 0x11
+ 1291 00ac 01       		.uleb128 0x1
+ 1292 00ad 12       		.uleb128 0x12
+ 1293 00ae 01       		.uleb128 0x1
+ 1294 00af 01       		.uleb128 0x1
+ 1295 00b0 13       		.uleb128 0x13
+ 1296 00b1 00       		.byte	0x0
+ 1297 00b2 00       		.byte	0x0
+ 1298 00b3 0E       		.uleb128 0xe
+ 1299 00b4 0B       		.uleb128 0xb
+ 1300 00b5 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 27
+
+
+ 1301 00b6 11       		.uleb128 0x11
+ 1302 00b7 01       		.uleb128 0x1
+ 1303 00b8 12       		.uleb128 0x12
+ 1304 00b9 01       		.uleb128 0x1
+ 1305 00ba 00       		.byte	0x0
+ 1306 00bb 00       		.byte	0x0
+ 1307 00bc 0F       		.uleb128 0xf
+ 1308 00bd 2E       		.uleb128 0x2e
+ 1309 00be 01       		.byte	0x1
+ 1310 00bf 3F       		.uleb128 0x3f
+ 1311 00c0 0C       		.uleb128 0xc
+ 1312 00c1 03       		.uleb128 0x3
+ 1313 00c2 0E       		.uleb128 0xe
+ 1314 00c3 3A       		.uleb128 0x3a
+ 1315 00c4 0B       		.uleb128 0xb
+ 1316 00c5 3B       		.uleb128 0x3b
+ 1317 00c6 0B       		.uleb128 0xb
+ 1318 00c7 27       		.uleb128 0x27
+ 1319 00c8 0C       		.uleb128 0xc
+ 1320 00c9 49       		.uleb128 0x49
+ 1321 00ca 13       		.uleb128 0x13
+ 1322 00cb 11       		.uleb128 0x11
+ 1323 00cc 01       		.uleb128 0x1
+ 1324 00cd 12       		.uleb128 0x12
+ 1325 00ce 01       		.uleb128 0x1
+ 1326 00cf 40       		.uleb128 0x40
+ 1327 00d0 06       		.uleb128 0x6
+ 1328 00d1 01       		.uleb128 0x1
+ 1329 00d2 13       		.uleb128 0x13
+ 1330 00d3 00       		.byte	0x0
+ 1331 00d4 00       		.byte	0x0
+ 1332 00d5 10       		.uleb128 0x10
+ 1333 00d6 34       		.uleb128 0x34
+ 1334 00d7 00       		.byte	0x0
+ 1335 00d8 03       		.uleb128 0x3
+ 1336 00d9 0E       		.uleb128 0xe
+ 1337 00da 3A       		.uleb128 0x3a
+ 1338 00db 0B       		.uleb128 0xb
+ 1339 00dc 3B       		.uleb128 0x3b
+ 1340 00dd 05       		.uleb128 0x5
+ 1341 00de 49       		.uleb128 0x49
+ 1342 00df 13       		.uleb128 0x13
+ 1343 00e0 3F       		.uleb128 0x3f
+ 1344 00e1 0C       		.uleb128 0xc
+ 1345 00e2 3C       		.uleb128 0x3c
+ 1346 00e3 0C       		.uleb128 0xc
+ 1347 00e4 00       		.byte	0x0
+ 1348 00e5 00       		.byte	0x0
+ 1349 00e6 11       		.uleb128 0x11
+ 1350 00e7 35       		.uleb128 0x35
+ 1351 00e8 00       		.byte	0x0
+ 1352 00e9 49       		.uleb128 0x49
+ 1353 00ea 13       		.uleb128 0x13
+ 1354 00eb 00       		.byte	0x0
+ 1355 00ec 00       		.byte	0x0
+ 1356 00ed 00       		.byte	0x0
+ 1357              		.section	.debug_pubnames,"",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 28
+
+
+ 1358 0000 5A000000 		.4byte	0x5a
+ 1359 0004 0200     		.2byte	0x2
+ 1360 0006 00000000 		.4byte	.Ldebug_info0
+ 1361 000a 07030000 		.4byte	0x307
+ 1362 000e DD000000 		.4byte	0xdd
+ 1363 0012 42617474 		.ascii	"BattMonitor_Init\000"
+ 1363      4D6F6E69 
+ 1363      746F725F 
+ 1363      496E6974 
+ 1363      00
+ 1364 0023 F1000000 		.4byte	0xf1
+ 1365 0027 42617474 		.ascii	"BattMonitor_Run\000"
+ 1365      4D6F6E69 
+ 1365      746F725F 
+ 1365      52756E00 
+ 1366 0037 E5010000 		.4byte	0x1e5
+ 1367 003b 42617474 		.ascii	"BattMonitor_CalculateFlashRate\000"
+ 1367      4D6F6E69 
+ 1367      746F725F 
+ 1367      43616C63 
+ 1367      756C6174 
+ 1368 005a 00000000 		.4byte	0x0
+ 1369              		.section	.debug_aranges,"",%progbits
+ 1370 0000 2C000000 		.4byte	0x2c
+ 1371 0004 0200     		.2byte	0x2
+ 1372 0006 00000000 		.4byte	.Ldebug_info0
+ 1373 000a 04       		.byte	0x4
+ 1374 000b 00       		.byte	0x0
+ 1375 000c 0000     		.2byte	0x0
+ 1376 000e 0000     		.2byte	0x0
+ 1377 0010 00000000 		.4byte	.LFB29
+ 1378 0014 10010000 		.4byte	.LFE29-.LFB29
+ 1379 0018 00000000 		.4byte	.LFB30
+ 1380 001c 16040000 		.4byte	.LFE30-.LFB30
+ 1381 0020 00000000 		.4byte	.LFB31
+ 1382 0024 A8000000 		.4byte	.LFE31-.LFB31
+ 1383 0028 00000000 		.4byte	0x0
+ 1384 002c 00000000 		.4byte	0x0
+ 1385              		.section	.debug_ranges,"",%progbits
+ 1386              	.Ldebug_ranges0:
+ 1387 0000 00000000 		.4byte	.Ltext0
+ 1388 0004 00000000 		.4byte	.Letext0
+ 1389 0008 00000000 		.4byte	.LFB29
+ 1390 000c 10010000 		.4byte	.LFE29
+ 1391 0010 00000000 		.4byte	.LFB30
+ 1392 0014 16040000 		.4byte	.LFE30
+ 1393 0018 00000000 		.4byte	.LFB31
+ 1394 001c A8000000 		.4byte	.LFE31
+ 1395 0020 00000000 		.4byte	0x0
+ 1396 0024 00000000 		.4byte	0x0
+ 1397              		.section	.debug_str,"MS",%progbits,1
+ 1398              	.LASF6:
+ 1399 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1399      206C6F6E 
+ 1399      6720696E 
+ 1399      7400
+ 1400              	.LASF14:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 29
+
+
+ 1401 000e 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_MID\000"
+ 1401      424F4152 
+ 1401      445F4241 
+ 1401      54545F4C 
+ 1401      564C5F4D 
+ 1402              	.LASF13:
+ 1403 0025 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_TOP\000"
+ 1403      424F4152 
+ 1403      445F4241 
+ 1403      54545F4C 
+ 1403      564C5F54 
+ 1404              	.LASF37:
+ 1405 003c 5F626F61 		.ascii	"_boardBattVoltThreshold1\000"
+ 1405      72644261 
+ 1405      7474566F 
+ 1405      6C745468 
+ 1405      72657368 
+ 1406              	.LASF36:
+ 1407 0055 5F626F61 		.ascii	"_boardBattVoltMax\000"
+ 1407      72644261 
+ 1407      7474566F 
+ 1407      6C744D61 
+ 1407      7800
+ 1408              	.LASF30:
+ 1409 0067 5F72656D 		.ascii	"_remoteBattVoltMin\000"
+ 1409      6F746542 
+ 1409      61747456 
+ 1409      6F6C744D 
+ 1409      696E00
+ 1410              	.LASF23:
+ 1411 007a 666C6173 		.ascii	"flashRate\000"
+ 1411      68526174 
+ 1411      6500
+ 1412              	.LASF19:
+ 1413 0084 464C4153 		.ascii	"FLASHING\000"
+ 1413      48494E47 
+ 1413      00
+ 1414              	.LASF44:
+ 1415 008d 42617474 		.ascii	"BattMonitor_Init\000"
+ 1415      4D6F6E69 
+ 1415      746F725F 
+ 1415      496E6974 
+ 1415      00
+ 1416              	.LASF34:
+ 1417 009e 5F72656D 		.ascii	"_remoteBattVoltBetweenThresholds\000"
+ 1417      6F746542 
+ 1417      61747456 
+ 1417      6F6C7442 
+ 1417      65747765 
+ 1418              	.LASF38:
+ 1419 00bf 5F626F61 		.ascii	"_boardBattVoltThreshold2\000"
+ 1419      72644261 
+ 1419      7474566F 
+ 1419      6C745468 
+ 1419      72657368 
+ 1420              	.LASF22:
+ 1421 00d8 636F756E 		.ascii	"counter\000"
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 30
+
+
+ 1421      74657200 
+ 1422              	.LASF0:
+ 1423 00e0 7369676E 		.ascii	"signed char\000"
+ 1423      65642063 
+ 1423      68617200 
+ 1424              	.LASF20:
+ 1425 00ec 72656D6F 		.ascii	"remoteBattVoltage\000"
+ 1425      74654261 
+ 1425      7474566F 
+ 1425      6C746167 
+ 1425      6500
+ 1426              	.LASF18:
+ 1427 00fe 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_BOT\000"
+ 1427      52454D4F 
+ 1427      54455F42 
+ 1427      4154545F 
+ 1427      4C564C5F 
+ 1428              	.LASF33:
+ 1429 0116 5F72656D 		.ascii	"_remoteBattVoltThreshold2\000"
+ 1429      6F746542 
+ 1429      61747456 
+ 1429      6F6C7454 
+ 1429      68726573 
+ 1430              	.LASF28:
+ 1431 0130 666C6173 		.ascii	"flashInterval\000"
+ 1431      68496E74 
+ 1431      65727661 
+ 1431      6C00
+ 1432              	.LASF11:
+ 1433 013e 4C45445F 		.ascii	"LED_MOTOR_ON\000"
+ 1433      4D4F544F 
+ 1433      525F4F4E 
+ 1433      00
+ 1434              	.LASF5:
+ 1435 014b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1435      20756E73 
+ 1435      69676E65 
+ 1435      6420696E 
+ 1435      7400
+ 1436              	.LASF3:
+ 1437 015d 73686F72 		.ascii	"short unsigned int\000"
+ 1437      7420756E 
+ 1437      7369676E 
+ 1437      65642069 
+ 1437      6E7400
+ 1438              	.LASF26:
+ 1439 0170 766F6C74 		.ascii	"voltageBetweenThresholds\000"
+ 1439      61676542 
+ 1439      65747765 
+ 1439      656E5468 
+ 1439      72657368 
+ 1440              	.LASF25:
+ 1441 0189 766F6C74 		.ascii	"voltage\000"
+ 1441      61676500 
+ 1442              	.LASF47:
+ 1443 0191 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1443      52784275 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 31
+
+
+ 1443      66666572 
+ 1443      00
+ 1444              	.LASF1:
+ 1445 019e 756E7369 		.ascii	"unsigned char\000"
+ 1445      676E6564 
+ 1445      20636861 
+ 1445      7200
+ 1446              	.LASF24:
+ 1447 01ac 646F7562 		.ascii	"double\000"
+ 1447      6C6500
+ 1448              	.LASF15:
+ 1449 01b3 4C45445F 		.ascii	"LED_BOARD_BATT_LVL_BOT\000"
+ 1449      424F4152 
+ 1449      445F4241 
+ 1449      54545F4C 
+ 1449      564C5F42 
+ 1450              	.LASF16:
+ 1451 01ca 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_TOP\000"
+ 1451      52454D4F 
+ 1451      54455F42 
+ 1451      4154545F 
+ 1451      4C564C5F 
+ 1452              	.LASF43:
+ 1453 01e2 75696E74 		.ascii	"uint32\000"
+ 1453      333200
+ 1454              	.LASF12:
+ 1455 01e9 4C45445F 		.ascii	"LED_ALARM_ON\000"
+ 1455      414C4152 
+ 1455      4D5F4F4E 
+ 1455      00
+ 1456              	.LASF39:
+ 1457 01f6 5F626F61 		.ascii	"_boardBattVoltBetweenThresholds\000"
+ 1457      72644261 
+ 1457      7474566F 
+ 1457      6C744265 
+ 1457      74776565 
+ 1458              	.LASF8:
+ 1459 0216 756E7369 		.ascii	"unsigned int\000"
+ 1459      676E6564 
+ 1459      20696E74 
+ 1459      00
+ 1460              	.LASF7:
+ 1461 0223 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1461      206C6F6E 
+ 1461      6720756E 
+ 1461      7369676E 
+ 1461      65642069 
+ 1462              	.LASF46:
+ 1463 023a 42617474 		.ascii	"BattMonitor_CalculateFlashRate\000"
+ 1463      4D6F6E69 
+ 1463      746F725F 
+ 1463      43616C63 
+ 1463      756C6174 
+ 1464              	.LASF21:
+ 1465 0259 626F6172 		.ascii	"boardBattVoltage\000"
+ 1465      64426174 
+ 1465      74566F6C 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 32
+
+
+ 1465      74616765 
+ 1465      00
+ 1466              	.LASF45:
+ 1467 026a 42617474 		.ascii	"BattMonitor_Run\000"
+ 1467      4D6F6E69 
+ 1467      746F725F 
+ 1467      52756E00 
+ 1468              	.LASF27:
+ 1469 027a 766F6C74 		.ascii	"voltRatio\000"
+ 1469      52617469 
+ 1469      6F00
+ 1470              	.LASF40:
+ 1471 0284 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1471      4320342E 
+ 1471      342E3100 
+ 1472              	.LASF9:
+ 1473 0290 63686172 		.ascii	"char\000"
+ 1473      00
+ 1474              	.LASF29:
+ 1475 0295 666C6173 		.ascii	"flashPeriod\000"
+ 1475      68506572 
+ 1475      696F6400 
+ 1476              	.LASF41:
+ 1477 02a1 2E5C4261 		.ascii	".\\BattMonitor.c\000"
+ 1477      74744D6F 
+ 1477      6E69746F 
+ 1477      722E6300 
+ 1478              	.LASF2:
+ 1479 02b1 73686F72 		.ascii	"short int\000"
+ 1479      7420696E 
+ 1479      7400
+ 1480              	.LASF17:
+ 1481 02bb 4C45445F 		.ascii	"LED_REMOTE_BATT_LVL_MID\000"
+ 1481      52454D4F 
+ 1481      54455F42 
+ 1481      4154545F 
+ 1481      4C564C5F 
+ 1482              	.LASF32:
+ 1483 02d3 5F72656D 		.ascii	"_remoteBattVoltThreshold1\000"
+ 1483      6F746542 
+ 1483      61747456 
+ 1483      6F6C7454 
+ 1483      68726573 
+ 1484              	.LASF4:
+ 1485 02ed 6C6F6E67 		.ascii	"long int\000"
+ 1485      20696E74 
+ 1485      00
+ 1486              	.LASF35:
+ 1487 02f6 5F626F61 		.ascii	"_boardBattVoltMin\000"
+ 1487      72644261 
+ 1487      7474566F 
+ 1487      6C744D69 
+ 1487      6E00
+ 1488              	.LASF42:
+ 1489 0308 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1489      73657273 
+ 1489      5C47656F 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccuR14Bp.s 			page 33
+
+
+ 1489      5C446F63 
+ 1489      756D656E 
+ 1490 0336 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Remote.cydsn\000"
+ 1490      645C4669 
+ 1490      726D7761 
+ 1490      72655C50 
+ 1490      536F435C 
+ 1491              	.LASF31:
+ 1492 0362 5F72656D 		.ascii	"_remoteBattVoltMax\000"
+ 1492      6F746542 
+ 1492      61747456 
+ 1492      6F6C744D 
+ 1492      617800
+ 1493              	.LASF10:
+ 1494 0375 4C45445F 		.ascii	"LED_IN_RANGE\000"
+ 1494      494E5F52 
+ 1494      414E4745 
+ 1494      00
+ 1495              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

@@ -1,0 +1,1839 @@
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"Alarm.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 B8010000 		.text
+  20      0200FB00 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.data
+  24              		.type	nextAlarmState, %object
+  25              		.size	nextAlarmState, 1
+  26              	nextAlarmState:
+  27 0000 01       		.byte	1
+  28              		.bss
+  29              	_motorOnSoundDirection:
+  30 0000 00       		.space	1
+  31              		.section	.text.Alarm_Run,"ax",%progbits
+  32              		.align	2
+  33              		.global	Alarm_Run
+  34              		.thumb
+  35              		.thumb_func
+  36              		.type	Alarm_Run, %function
+  37              	Alarm_Run:
+  38              	.LFB29:
+  39              		.file 1 ".\\Alarm.c"
+   1:.\Alarm.c     **** //!
+   2:.\Alarm.c     **** //! @file 		Alarm.c
+   3:.\Alarm.c     **** //! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+   4:.\Alarm.c     **** //! @date 		14/05/2011
+   5:.\Alarm.c     **** //! @brief 		Controls the alarm functions on the skateboard.
+   6:.\Alarm.c     **** //! @details
+   7:.\Alarm.c     **** //!		<b>Last Modified:			</b> 14/05/2011			\n
+   8:.\Alarm.c     **** //!		<b>Version:					</b> v1.0				\n
+   9:.\Alarm.c     **** //!		<b>Company:					</b> CladLabs			\n
+  10:.\Alarm.c     **** //!		<b>Project:					</b> Electric Skateboard\n
+  11:.\Alarm.c     **** //!		<b>Computer Architecture:	</b> ARM				\n
+  12:.\Alarm.c     **** //!		<b>Compiler:				</b> GCC				\n
+  13:.\Alarm.c     **** //! 	<b>uC Model:				</b> PSoC5				\n
+  14:.\Alarm.c     **** //!		<b>Documentation Format:	</b> Doxygen			\n
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 2
+
+
+  15:.\Alarm.c     **** //!		
+  16:.\Alarm.c     **** //!		Controls the led's on the board
+  17:.\Alarm.c     **** //!
+  18:.\Alarm.c     **** 
+  19:.\Alarm.c     **** //=================================================================================================
+  20:.\Alarm.c     **** //============================================ INFO ===============================================
+  21:.\Alarm.c     **** //=================================================================================================
+  22:.\Alarm.c     **** 
+  23:.\Alarm.c     **** //=================================================================================================
+  24:.\Alarm.c     **** //======================================= FILE INCLUSIONS =========================================
+  25:.\Alarm.c     **** //=================================================================================================
+  26:.\Alarm.c     **** 
+  27:.\Alarm.c     **** #include <device.h>
+  28:.\Alarm.c     **** #include "Alarm.h"
+  29:.\Alarm.c     **** #include "Config.h"
+  30:.\Alarm.c     **** 
+  31:.\Alarm.c     **** //===============================================================================================//
+  32:.\Alarm.c     **** //=================================== PRECOMPILER CHECKS ========================================//
+  33:.\Alarm.c     **** //===============================================================================================//
+  34:.\Alarm.c     **** 
+  35:.\Alarm.c     **** //=================================================================================================
+  36:.\Alarm.c     **** //========================================== DEFINES ==============================================
+  37:.\Alarm.c     **** //=================================================================================================
+  38:.\Alarm.c     **** 
+  39:.\Alarm.c     **** //=================================================================================================
+  40:.\Alarm.c     **** //========================================== TYPEDEF's ============================================
+  41:.\Alarm.c     **** //=================================================================================================
+  42:.\Alarm.c     **** 
+  43:.\Alarm.c     **** typedef enum
+  44:.\Alarm.c     **** {
+  45:.\Alarm.c     **** 	alarmInit,
+  46:.\Alarm.c     **** 	alarmOff,
+  47:.\Alarm.c     **** 	alarmTone1,
+  48:.\Alarm.c     **** 	alarmTone2,
+  49:.\Alarm.c     **** 	beep,
+  50:.\Alarm.c     **** 	motorOnSound
+  51:.\Alarm.c     **** } alarmStates_t;
+  52:.\Alarm.c     **** 
+  53:.\Alarm.c     **** //=================================================================================================
+  54:.\Alarm.c     **** //==================================== PRIVATE VARIABLES ==========================================
+  55:.\Alarm.c     **** //=================================================================================================
+  56:.\Alarm.c     **** 
+  57:.\Alarm.c     **** static alarmStates_t nextAlarmState = alarmOff;
+  58:.\Alarm.c     **** static motorOnSoundDirection_t _motorOnSoundDirection = up;
+  59:.\Alarm.c     **** 
+  60:.\Alarm.c     **** //=================================================================================================
+  61:.\Alarm.c     **** //=============================== PRIVATE FUNCTION PROTOTYPES =====================================
+  62:.\Alarm.c     **** //=================================================================================================
+  63:.\Alarm.c     **** 
+  64:.\Alarm.c     **** //=================================================================================================
+  65:.\Alarm.c     **** //===================================== PUBLIC FUNCTIONS ==========================================
+  66:.\Alarm.c     **** //=================================================================================================
+  67:.\Alarm.c     **** 
+  68:.\Alarm.c     **** void Alarm_Run(void)
+  69:.\Alarm.c     **** {
+  40              		.loc 1 69 0
+  41              		.cfi_startproc
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 3
+
+
+  42              		@ args = 0, pretend = 0, frame = 0
+  43              		@ frame_needed = 1, uses_anonymous_args = 0
+  44 0000 80B5     		push	{r7, lr}
+  45              	.LCFI0:
+  46              		.cfi_def_cfa_offset 8
+  47 0002 00AF     		add	r7, sp, #0
+  48              		.cfi_offset 14, -4
+  49              		.cfi_offset 7, -8
+  50              	.LCFI1:
+  51              		.cfi_def_cfa_register 7
+  70:.\Alarm.c     **** 	static uint32_t counter = 0;
+  71:.\Alarm.c     **** 	
+  72:.\Alarm.c     **** 	static uint32_t alarmLastChangeCount = 0;
+  73:.\Alarm.c     **** 
+  74:.\Alarm.c     **** 	// Calculate run times in counts
+  75:.\Alarm.c     **** 	static uint32_t alarmTone1RunTimeCounts = (uint32_t)(configALARM_TONE_1_PERIOD_MS/configMAIN_TICK_
+  76:.\Alarm.c     **** 	static uint32_t alarmTone2RunTimeCounts = (uint32_t)(configALARM_TONE_2_PERIOD_MS/configMAIN_TICK_
+  77:.\Alarm.c     **** 	static uint32_t	beepRunTimeCounts = (uint32_t)(configBEEP_PERIOD_MS/configMAIN_TICK_PERIOD_MS);
+  78:.\Alarm.c     **** 	static uint32_t	motorOnToneTimeCounts = (uint32_t)(configMOTOR_ON_TONE_PERIOD_MS/configMAIN_TICK_P
+  79:.\Alarm.c     **** 	
+  80:.\Alarm.c     **** 	static uint16_t toneJumpCounts = 200;
+  81:.\Alarm.c     **** 	static uint16_t baseToneCounts = 8000;
+  82:.\Alarm.c     **** 	static uint16_t currentToneCounts = 0;
+  83:.\Alarm.c     **** 	static uint16_t toneCount = 0;
+  84:.\Alarm.c     **** 
+  85:.\Alarm.c     **** 	static alarmStates_t prevAlarmState = alarmInit;
+  86:.\Alarm.c     **** 	
+  87:.\Alarm.c     **** 	switch(nextAlarmState)
+  52              		.loc 1 87 0
+  53 0004 40F20003 		movw	r3, #:lower16:nextAlarmState
+  54 0008 C0F20003 		movt	r3, #:upper16:nextAlarmState
+  55 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  56 000e 03F1FF33 		add	r3, r3, #-1
+  57 0012 042B     		cmp	r3, #4
+  58 0014 00F29181 		bhi	.L2
+  59 0018 01A2     		adr	r2, .L8
+  60 001a 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+  61 001e 00BF     		.align	2
+  62              	.L8:
+  63 0020 35000000 		.word	.L3+1
+  64 0024 59000000 		.word	.L4+1
+  65 0028 D3000000 		.word	.L5+1
+  66 002c 49010000 		.word	.L6+1
+  67 0030 C3010000 		.word	.L7+1
+  68              	.L3:
+  88:.\Alarm.c     **** 	{
+  89:.\Alarm.c     **** 		case alarmOff:
+  90:.\Alarm.c     **** 			if(prevAlarmState != alarmOff)
+  69              		.loc 1 90 0
+  70 0034 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+  71 0038 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+  72 003c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  73 003e 012B     		cmp	r3, #1
+  74 0040 00F07481 		beq	.L21
+  91:.\Alarm.c     **** 			{
+  92:.\Alarm.c     **** 				PwmPiezo_Stop();
+  75              		.loc 1 92 0
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 4
+
+
+  76 0044 FFF7FEFF 		bl	PwmPiezo_Stop
+  93:.\Alarm.c     **** 				prevAlarmState = alarmOff;
+  77              		.loc 1 93 0
+  78 0048 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+  79 004c C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+  80 0050 4FF00102 		mov	r2, #1
+  81 0054 1A70     		strb	r2, [r3, #0]
+  94:.\Alarm.c     **** 			}
+  95:.\Alarm.c     **** 		
+  96:.\Alarm.c     **** 			break;
+  82              		.loc 1 96 0
+  83 0056 70E1     		b	.L2
+  84              	.L4:
+  97:.\Alarm.c     **** 			
+  98:.\Alarm.c     **** 		case alarmTone1:
+  99:.\Alarm.c     **** 			if(prevAlarmState != alarmTone1)
+  85              		.loc 1 99 0
+  86 0058 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+  87 005c C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+  88 0060 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+  89 0062 022B     		cmp	r3, #2
+  90 0064 1AD0     		beq	.L10
+ 100:.\Alarm.c     **** 			{
+ 101:.\Alarm.c     **** 				PwmPiezo_Start();
+  91              		.loc 1 101 0
+  92 0066 FFF7FEFF 		bl	PwmPiezo_Start
+ 102:.\Alarm.c     **** 				PwmPiezo_WritePeriod(6000);
+  93              		.loc 1 102 0
+  94 006a 41F27070 		movw	r0, #6000
+  95 006e FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 103:.\Alarm.c     **** 				PwmPiezo_WriteCompare(3000);
+  96              		.loc 1 103 0
+  97 0072 40F6B830 		movw	r0, #3000
+  98 0076 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 104:.\Alarm.c     **** 				
+ 105:.\Alarm.c     **** 				alarmLastChangeCount = counter;
+  99              		.loc 1 105 0
+ 100 007a 40F20003 		movw	r3, #:lower16:counter.2907
+ 101 007e C0F20003 		movt	r3, #:upper16:counter.2907
+ 102 0082 1A68     		ldr	r2, [r3, #0]
+ 103 0084 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 104 0088 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 105 008c 1A60     		str	r2, [r3, #0]
+ 106:.\Alarm.c     **** 				
+ 107:.\Alarm.c     **** 				prevAlarmState = alarmTone1;
+ 106              		.loc 1 107 0
+ 107 008e 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 108 0092 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 109 0096 4FF00202 		mov	r2, #2
+ 110 009a 1A70     		strb	r2, [r3, #0]
+ 111              	.L10:
+ 108:.\Alarm.c     **** 			}
+ 109:.\Alarm.c     **** 			
+ 110:.\Alarm.c     **** 			if(counter >= alarmLastChangeCount + alarmTone1RunTimeCounts)
+ 112              		.loc 1 110 0
+ 113 009c 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 114 00a0 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 5
+
+
+ 115 00a4 1A68     		ldr	r2, [r3, #0]
+ 116 00a6 40F20003 		movw	r3, #:lower16:alarmTone1RunTimeCounts.2909
+ 117 00aa C0F20003 		movt	r3, #:upper16:alarmTone1RunTimeCounts.2909
+ 118 00ae 1B68     		ldr	r3, [r3, #0]
+ 119 00b0 1A44     		add	r2, r2, r3
+ 120 00b2 40F20003 		movw	r3, #:lower16:counter.2907
+ 121 00b6 C0F20003 		movt	r3, #:upper16:counter.2907
+ 122 00ba 1B68     		ldr	r3, [r3, #0]
+ 123 00bc 9A42     		cmp	r2, r3
+ 124 00be 00F23781 		bhi	.L22
+ 111:.\Alarm.c     **** 			{
+ 112:.\Alarm.c     **** 				nextAlarmState = alarmTone2;
+ 125              		.loc 1 112 0
+ 126 00c2 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 127 00c6 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 128 00ca 4FF00302 		mov	r2, #3
+ 129 00ce 1A70     		strb	r2, [r3, #0]
+ 113:.\Alarm.c     **** 			}
+ 114:.\Alarm.c     **** 			break;
+ 130              		.loc 1 114 0
+ 131 00d0 33E1     		b	.L2
+ 132              	.L5:
+ 115:.\Alarm.c     **** 			
+ 116:.\Alarm.c     **** 		case alarmTone2:
+ 117:.\Alarm.c     **** 			if(prevAlarmState != alarmTone2)
+ 133              		.loc 1 117 0
+ 134 00d2 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 135 00d6 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 136 00da 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 137 00dc 032B     		cmp	r3, #3
+ 138 00de 18D0     		beq	.L12
+ 118:.\Alarm.c     **** 			{
+ 119:.\Alarm.c     **** 				PwmPiezo_WritePeriod(6500);
+ 139              		.loc 1 119 0
+ 140 00e0 41F66410 		movw	r0, #6500
+ 141 00e4 FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 120:.\Alarm.c     **** 				PwmPiezo_WriteCompare(3250);
+ 142              		.loc 1 120 0
+ 143 00e8 40F6B240 		movw	r0, #3250
+ 144 00ec FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 121:.\Alarm.c     **** 				
+ 122:.\Alarm.c     **** 				alarmLastChangeCount = counter;
+ 145              		.loc 1 122 0
+ 146 00f0 40F20003 		movw	r3, #:lower16:counter.2907
+ 147 00f4 C0F20003 		movt	r3, #:upper16:counter.2907
+ 148 00f8 1A68     		ldr	r2, [r3, #0]
+ 149 00fa 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 150 00fe C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 151 0102 1A60     		str	r2, [r3, #0]
+ 123:.\Alarm.c     **** 				
+ 124:.\Alarm.c     **** 				prevAlarmState = alarmTone2;
+ 152              		.loc 1 124 0
+ 153 0104 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 154 0108 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 155 010c 4FF00302 		mov	r2, #3
+ 156 0110 1A70     		strb	r2, [r3, #0]
+ 157              	.L12:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 6
+
+
+ 125:.\Alarm.c     **** 			}
+ 126:.\Alarm.c     **** 			
+ 127:.\Alarm.c     **** 			if(counter >= alarmLastChangeCount + alarmTone2RunTimeCounts)
+ 158              		.loc 1 127 0
+ 159 0112 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 160 0116 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 161 011a 1A68     		ldr	r2, [r3, #0]
+ 162 011c 40F20003 		movw	r3, #:lower16:alarmTone2RunTimeCounts.2910
+ 163 0120 C0F20003 		movt	r3, #:upper16:alarmTone2RunTimeCounts.2910
+ 164 0124 1B68     		ldr	r3, [r3, #0]
+ 165 0126 1A44     		add	r2, r2, r3
+ 166 0128 40F20003 		movw	r3, #:lower16:counter.2907
+ 167 012c C0F20003 		movt	r3, #:upper16:counter.2907
+ 168 0130 1B68     		ldr	r3, [r3, #0]
+ 169 0132 9A42     		cmp	r2, r3
+ 170 0134 00F2FE80 		bhi	.L23
+ 128:.\Alarm.c     **** 			{
+ 129:.\Alarm.c     **** 				nextAlarmState = alarmTone1;
+ 171              		.loc 1 129 0
+ 172 0138 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 173 013c C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 174 0140 4FF00202 		mov	r2, #2
+ 175 0144 1A70     		strb	r2, [r3, #0]
+ 130:.\Alarm.c     **** 			}
+ 131:.\Alarm.c     **** 			
+ 132:.\Alarm.c     **** 			break;
+ 176              		.loc 1 132 0
+ 177 0146 F8E0     		b	.L2
+ 178              	.L6:
+ 133:.\Alarm.c     **** 		case beep:
+ 134:.\Alarm.c     **** 		
+ 135:.\Alarm.c     **** 			if(prevAlarmState != beep)
+ 179              		.loc 1 135 0
+ 180 0148 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 181 014c C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 182 0150 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 183 0152 042B     		cmp	r3, #4
+ 184 0154 1AD0     		beq	.L14
+ 136:.\Alarm.c     **** 			{
+ 137:.\Alarm.c     **** 				PwmPiezo_WritePeriod(6000);
+ 185              		.loc 1 137 0
+ 186 0156 41F27070 		movw	r0, #6000
+ 187 015a FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 138:.\Alarm.c     **** 				PwmPiezo_WriteCompare(3000);
+ 188              		.loc 1 138 0
+ 189 015e 40F6B830 		movw	r0, #3000
+ 190 0162 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 139:.\Alarm.c     **** 				PwmPiezo_Start();
+ 191              		.loc 1 139 0
+ 192 0166 FFF7FEFF 		bl	PwmPiezo_Start
+ 140:.\Alarm.c     **** 				
+ 141:.\Alarm.c     **** 				alarmLastChangeCount = counter;
+ 193              		.loc 1 141 0
+ 194 016a 40F20003 		movw	r3, #:lower16:counter.2907
+ 195 016e C0F20003 		movt	r3, #:upper16:counter.2907
+ 196 0172 1A68     		ldr	r2, [r3, #0]
+ 197 0174 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 7
+
+
+ 198 0178 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 199 017c 1A60     		str	r2, [r3, #0]
+ 142:.\Alarm.c     **** 				
+ 143:.\Alarm.c     **** 				prevAlarmState = beep;
+ 200              		.loc 1 143 0
+ 201 017e 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 202 0182 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 203 0186 4FF00402 		mov	r2, #4
+ 204 018a 1A70     		strb	r2, [r3, #0]
+ 205              	.L14:
+ 144:.\Alarm.c     **** 			}
+ 145:.\Alarm.c     **** 			
+ 146:.\Alarm.c     **** 			if(counter >= alarmLastChangeCount + beepRunTimeCounts)
+ 206              		.loc 1 146 0
+ 207 018c 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 208 0190 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 209 0194 1A68     		ldr	r2, [r3, #0]
+ 210 0196 40F20003 		movw	r3, #:lower16:beepRunTimeCounts.2911
+ 211 019a C0F20003 		movt	r3, #:upper16:beepRunTimeCounts.2911
+ 212 019e 1B68     		ldr	r3, [r3, #0]
+ 213 01a0 1A44     		add	r2, r2, r3
+ 214 01a2 40F20003 		movw	r3, #:lower16:counter.2907
+ 215 01a6 C0F20003 		movt	r3, #:upper16:counter.2907
+ 216 01aa 1B68     		ldr	r3, [r3, #0]
+ 217 01ac 9A42     		cmp	r2, r3
+ 218 01ae 00F2C380 		bhi	.L24
+ 147:.\Alarm.c     **** 			{
+ 148:.\Alarm.c     **** 				nextAlarmState = alarmOff;
+ 219              		.loc 1 148 0
+ 220 01b2 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 221 01b6 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 222 01ba 4FF00102 		mov	r2, #1
+ 223 01be 1A70     		strb	r2, [r3, #0]
+ 149:.\Alarm.c     **** 			}
+ 150:.\Alarm.c     **** 			
+ 151:.\Alarm.c     **** 			break;
+ 224              		.loc 1 151 0
+ 225 01c0 BBE0     		b	.L2
+ 226              	.L7:
+ 152:.\Alarm.c     **** 			
+ 153:.\Alarm.c     **** 		case motorOnSound:
+ 154:.\Alarm.c     **** 			
+ 155:.\Alarm.c     **** 		
+ 156:.\Alarm.c     **** 			if(prevAlarmState != motorOnSound)
+ 227              		.loc 1 156 0
+ 228 01c2 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 229 01c6 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 230 01ca 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 231 01cc 052B     		cmp	r3, #5
+ 232 01ce 36D0     		beq	.L16
+ 157:.\Alarm.c     **** 			{
+ 158:.\Alarm.c     **** 				currentToneCounts = baseToneCounts;
+ 233              		.loc 1 158 0
+ 234 01d0 40F20003 		movw	r3, #:lower16:baseToneCounts.2914
+ 235 01d4 C0F20003 		movt	r3, #:upper16:baseToneCounts.2914
+ 236 01d8 1A88     		ldrh	r2, [r3, #0]
+ 237 01da 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 8
+
+
+ 238 01de C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 239 01e2 1A80     		strh	r2, [r3, #0]	@ movhi
+ 159:.\Alarm.c     **** 				PwmPiezo_WritePeriod(currentToneCounts);
+ 240              		.loc 1 159 0
+ 241 01e4 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 242 01e8 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 243 01ec 1B88     		ldrh	r3, [r3, #0]
+ 244 01ee 1846     		mov	r0, r3
+ 245 01f0 FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 160:.\Alarm.c     **** 				PwmPiezo_WriteCompare(currentToneCounts/2);
+ 246              		.loc 1 160 0
+ 247 01f4 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 248 01f8 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 249 01fc 1B88     		ldrh	r3, [r3, #0]
+ 250 01fe 4FEA5303 		lsr	r3, r3, #1
+ 251 0202 9BB2     		uxth	r3, r3
+ 252 0204 1846     		mov	r0, r3
+ 253 0206 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 161:.\Alarm.c     **** 				PwmPiezo_Start();
+ 254              		.loc 1 161 0
+ 255 020a FFF7FEFF 		bl	PwmPiezo_Start
+ 162:.\Alarm.c     **** 				toneCount = 0;
+ 256              		.loc 1 162 0
+ 257 020e 40F20003 		movw	r3, #:lower16:toneCount.2916
+ 258 0212 C0F20003 		movt	r3, #:upper16:toneCount.2916
+ 259 0216 4FF00002 		mov	r2, #0
+ 260 021a 1A80     		strh	r2, [r3, #0]	@ movhi
+ 163:.\Alarm.c     **** 				
+ 164:.\Alarm.c     **** 				alarmLastChangeCount = counter;
+ 261              		.loc 1 164 0
+ 262 021c 40F20003 		movw	r3, #:lower16:counter.2907
+ 263 0220 C0F20003 		movt	r3, #:upper16:counter.2907
+ 264 0224 1A68     		ldr	r2, [r3, #0]
+ 265 0226 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 266 022a C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 267 022e 1A60     		str	r2, [r3, #0]
+ 165:.\Alarm.c     **** 				
+ 166:.\Alarm.c     **** 				prevAlarmState = motorOnSound;
+ 268              		.loc 1 166 0
+ 269 0230 40F20003 		movw	r3, #:lower16:prevAlarmState.2917
+ 270 0234 C0F20003 		movt	r3, #:upper16:prevAlarmState.2917
+ 271 0238 4FF00502 		mov	r2, #5
+ 272 023c 1A70     		strb	r2, [r3, #0]
+ 273              	.L16:
+ 167:.\Alarm.c     **** 			}
+ 168:.\Alarm.c     **** 			
+ 169:.\Alarm.c     **** 			if(counter >= alarmLastChangeCount + motorOnToneTimeCounts)
+ 274              		.loc 1 169 0
+ 275 023e 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 276 0242 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 277 0246 1A68     		ldr	r2, [r3, #0]
+ 278 0248 40F20003 		movw	r3, #:lower16:motorOnToneTimeCounts.2912
+ 279 024c C0F20003 		movt	r3, #:upper16:motorOnToneTimeCounts.2912
+ 280 0250 1B68     		ldr	r3, [r3, #0]
+ 281 0252 1A44     		add	r2, r2, r3
+ 282 0254 40F20003 		movw	r3, #:lower16:counter.2907
+ 283 0258 C0F20003 		movt	r3, #:upper16:counter.2907
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 9
+
+
+ 284 025c 1B68     		ldr	r3, [r3, #0]
+ 285 025e 9A42     		cmp	r2, r3
+ 286 0260 6BD8     		bhi	.L2
+ 170:.\Alarm.c     **** 			{
+ 171:.\Alarm.c     **** 				toneCount++;
+ 287              		.loc 1 171 0
+ 288 0262 40F20003 		movw	r3, #:lower16:toneCount.2916
+ 289 0266 C0F20003 		movt	r3, #:upper16:toneCount.2916
+ 290 026a 1B88     		ldrh	r3, [r3, #0]
+ 291 026c 03F10103 		add	r3, r3, #1
+ 292 0270 9AB2     		uxth	r2, r3
+ 293 0272 40F20003 		movw	r3, #:lower16:toneCount.2916
+ 294 0276 C0F20003 		movt	r3, #:upper16:toneCount.2916
+ 295 027a 1A80     		strh	r2, [r3, #0]	@ movhi
+ 172:.\Alarm.c     **** 				if(toneCount >= config_MOTOR_ON_NUM_TONES)
+ 296              		.loc 1 172 0
+ 297 027c 40F20003 		movw	r3, #:lower16:toneCount.2916
+ 298 0280 C0F20003 		movt	r3, #:upper16:toneCount.2916
+ 299 0284 1B88     		ldrh	r3, [r3, #0]
+ 300 0286 092B     		cmp	r3, #9
+ 301 0288 07D9     		bls	.L17
+ 173:.\Alarm.c     **** 				{
+ 174:.\Alarm.c     **** 					nextAlarmState = alarmOff;
+ 302              		.loc 1 174 0
+ 303 028a 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 304 028e C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 305 0292 4FF00102 		mov	r2, #1
+ 306 0296 1A70     		strb	r2, [r3, #0]
+ 175:.\Alarm.c     **** 					break;
+ 307              		.loc 1 175 0
+ 308 0298 4FE0     		b	.L2
+ 309              	.L17:
+ 176:.\Alarm.c     **** 				}
+ 177:.\Alarm.c     **** 				if(_motorOnSoundDirection == up)
+ 310              		.loc 1 177 0
+ 311 029a 40F20003 		movw	r3, #:lower16:_motorOnSoundDirection
+ 312 029e C0F20003 		movt	r3, #:upper16:_motorOnSoundDirection
+ 313 02a2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 314 02a4 002B     		cmp	r3, #0
+ 315 02a6 12D1     		bne	.L18
+ 178:.\Alarm.c     **** 					currentToneCounts = currentToneCounts - toneJumpCounts;
+ 316              		.loc 1 178 0
+ 317 02a8 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 318 02ac C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 319 02b0 1A88     		ldrh	r2, [r3, #0]
+ 320 02b2 40F20003 		movw	r3, #:lower16:toneJumpCounts.2913
+ 321 02b6 C0F20003 		movt	r3, #:upper16:toneJumpCounts.2913
+ 322 02ba 1B88     		ldrh	r3, [r3, #0]
+ 323 02bc C3EB0203 		rsb	r3, r3, r2
+ 324 02c0 9AB2     		uxth	r2, r3
+ 325 02c2 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 326 02c6 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 327 02ca 1A80     		strh	r2, [r3, #0]	@ movhi
+ 328 02cc 10E0     		b	.L19
+ 329              	.L18:
+ 179:.\Alarm.c     **** 				else
+ 180:.\Alarm.c     **** 					// Must be down
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 10
+
+
+ 181:.\Alarm.c     **** 					currentToneCounts = currentToneCounts + toneJumpCounts;
+ 330              		.loc 1 181 0
+ 331 02ce 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 332 02d2 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 333 02d6 1A88     		ldrh	r2, [r3, #0]
+ 334 02d8 40F20003 		movw	r3, #:lower16:toneJumpCounts.2913
+ 335 02dc C0F20003 		movt	r3, #:upper16:toneJumpCounts.2913
+ 336 02e0 1B88     		ldrh	r3, [r3, #0]
+ 337 02e2 1344     		add	r3, r2, r3
+ 338 02e4 9AB2     		uxth	r2, r3
+ 339 02e6 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 340 02ea C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 341 02ee 1A80     		strh	r2, [r3, #0]	@ movhi
+ 342              	.L19:
+ 182:.\Alarm.c     **** 				PwmPiezo_WritePeriod(currentToneCounts);
+ 343              		.loc 1 182 0
+ 344 02f0 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 345 02f4 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 346 02f8 1B88     		ldrh	r3, [r3, #0]
+ 347 02fa 1846     		mov	r0, r3
+ 348 02fc FFF7FEFF 		bl	PwmPiezo_WritePeriod
+ 183:.\Alarm.c     **** 				PwmPiezo_WriteCompare(currentToneCounts/2);
+ 349              		.loc 1 183 0
+ 350 0300 40F20003 		movw	r3, #:lower16:currentToneCounts.2915
+ 351 0304 C0F20003 		movt	r3, #:upper16:currentToneCounts.2915
+ 352 0308 1B88     		ldrh	r3, [r3, #0]
+ 353 030a 4FEA5303 		lsr	r3, r3, #1
+ 354 030e 9BB2     		uxth	r3, r3
+ 355 0310 1846     		mov	r0, r3
+ 356 0312 FFF7FEFF 		bl	PwmPiezo_WriteCompare
+ 184:.\Alarm.c     **** 				alarmLastChangeCount = counter;
+ 357              		.loc 1 184 0
+ 358 0316 40F20003 		movw	r3, #:lower16:counter.2907
+ 359 031a C0F20003 		movt	r3, #:upper16:counter.2907
+ 360 031e 1A68     		ldr	r2, [r3, #0]
+ 361 0320 40F20003 		movw	r3, #:lower16:alarmLastChangeCount.2908
+ 362 0324 C0F20003 		movt	r3, #:upper16:alarmLastChangeCount.2908
+ 363 0328 1A60     		str	r2, [r3, #0]
+ 364 032a 06E0     		b	.L2
+ 365              	.L21:
+ 366              		.loc 1 96 0
+ 367 032c 00BF     		nop
+ 368 032e 04E0     		b	.L2
+ 369              	.L22:
+ 370              		.loc 1 114 0
+ 371 0330 00BF     		nop
+ 372 0332 02E0     		b	.L2
+ 373              	.L23:
+ 374              		.loc 1 132 0
+ 375 0334 00BF     		nop
+ 376 0336 00E0     		b	.L2
+ 377              	.L24:
+ 378              		.loc 1 151 0
+ 379 0338 00BF     		nop
+ 380              	.L2:
+ 185:.\Alarm.c     **** 			}
+ 186:.\Alarm.c     **** 			
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 11
+
+
+ 187:.\Alarm.c     **** 			break;
+ 188:.\Alarm.c     **** 	}
+ 189:.\Alarm.c     **** 	
+ 190:.\Alarm.c     **** 	// Increment state machine loop counter
+ 191:.\Alarm.c     **** 	counter++;
+ 381              		.loc 1 191 0
+ 382 033a 40F20003 		movw	r3, #:lower16:counter.2907
+ 383 033e C0F20003 		movt	r3, #:upper16:counter.2907
+ 384 0342 1B68     		ldr	r3, [r3, #0]
+ 385 0344 03F10102 		add	r2, r3, #1
+ 386 0348 40F20003 		movw	r3, #:lower16:counter.2907
+ 387 034c C0F20003 		movt	r3, #:upper16:counter.2907
+ 388 0350 1A60     		str	r2, [r3, #0]
+ 192:.\Alarm.c     **** }
+ 389              		.loc 1 192 0
+ 390 0352 80BD     		pop	{r7, pc}
+ 391              		.cfi_endproc
+ 392              	.LFE29:
+ 393              		.size	Alarm_Run, .-Alarm_Run
+ 394              		.section	.text.Alarm_On,"ax",%progbits
+ 395              		.align	2
+ 396              		.global	Alarm_On
+ 397              		.thumb
+ 398              		.thumb_func
+ 399              		.type	Alarm_On, %function
+ 400              	Alarm_On:
+ 401              	.LFB30:
+ 193:.\Alarm.c     **** 
+ 194:.\Alarm.c     **** void Alarm_On(void)
+ 195:.\Alarm.c     **** {
+ 402              		.loc 1 195 0
+ 403              		.cfi_startproc
+ 404              		@ args = 0, pretend = 0, frame = 0
+ 405              		@ frame_needed = 1, uses_anonymous_args = 0
+ 406              		@ link register save eliminated.
+ 407 0000 80B4     		push	{r7}
+ 408              	.LCFI2:
+ 409              		.cfi_def_cfa_offset 4
+ 410 0002 00AF     		add	r7, sp, #0
+ 411              		.cfi_offset 7, -4
+ 412              	.LCFI3:
+ 413              		.cfi_def_cfa_register 7
+ 196:.\Alarm.c     **** 	nextAlarmState = alarmTone1;
+ 414              		.loc 1 196 0
+ 415 0004 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 416 0008 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 417 000c 4FF00202 		mov	r2, #2
+ 418 0010 1A70     		strb	r2, [r3, #0]
+ 197:.\Alarm.c     **** }
+ 419              		.loc 1 197 0
+ 420 0012 BD46     		mov	sp, r7
+ 421 0014 80BC     		pop	{r7}
+ 422 0016 7047     		bx	lr
+ 423              		.cfi_endproc
+ 424              	.LFE30:
+ 425              		.size	Alarm_On, .-Alarm_On
+ 426              		.section	.text.Alarm_Off,"ax",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 12
+
+
+ 427              		.align	2
+ 428              		.global	Alarm_Off
+ 429              		.thumb
+ 430              		.thumb_func
+ 431              		.type	Alarm_Off, %function
+ 432              	Alarm_Off:
+ 433              	.LFB31:
+ 198:.\Alarm.c     **** 
+ 199:.\Alarm.c     **** void Alarm_Off(void)
+ 200:.\Alarm.c     **** {
+ 434              		.loc 1 200 0
+ 435              		.cfi_startproc
+ 436              		@ args = 0, pretend = 0, frame = 0
+ 437              		@ frame_needed = 1, uses_anonymous_args = 0
+ 438              		@ link register save eliminated.
+ 439 0000 80B4     		push	{r7}
+ 440              	.LCFI4:
+ 441              		.cfi_def_cfa_offset 4
+ 442 0002 00AF     		add	r7, sp, #0
+ 443              		.cfi_offset 7, -4
+ 444              	.LCFI5:
+ 445              		.cfi_def_cfa_register 7
+ 201:.\Alarm.c     **** 	nextAlarmState = alarmOff;
+ 446              		.loc 1 201 0
+ 447 0004 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 448 0008 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 449 000c 4FF00102 		mov	r2, #1
+ 450 0010 1A70     		strb	r2, [r3, #0]
+ 202:.\Alarm.c     **** }
+ 451              		.loc 1 202 0
+ 452 0012 BD46     		mov	sp, r7
+ 453 0014 80BC     		pop	{r7}
+ 454 0016 7047     		bx	lr
+ 455              		.cfi_endproc
+ 456              	.LFE31:
+ 457              		.size	Alarm_Off, .-Alarm_Off
+ 458              		.section	.text.Alarm_IsTriggered,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	Alarm_IsTriggered
+ 461              		.thumb
+ 462              		.thumb_func
+ 463              		.type	Alarm_IsTriggered, %function
+ 464              	Alarm_IsTriggered:
+ 465              	.LFB32:
+ 203:.\Alarm.c     **** 
+ 204:.\Alarm.c     **** void Alarm_IsTriggered(void)
+ 205:.\Alarm.c     **** {
+ 466              		.loc 1 205 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 1, uses_anonymous_args = 0
+ 470              		@ link register save eliminated.
+ 471 0000 80B4     		push	{r7}
+ 472              	.LCFI6:
+ 473              		.cfi_def_cfa_offset 4
+ 474 0002 00AF     		add	r7, sp, #0
+ 475              		.cfi_offset 7, -4
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 13
+
+
+ 476              	.LCFI7:
+ 477              		.cfi_def_cfa_register 7
+ 206:.\Alarm.c     **** 
+ 207:.\Alarm.c     **** }
+ 478              		.loc 1 207 0
+ 479 0004 BD46     		mov	sp, r7
+ 480 0006 80BC     		pop	{r7}
+ 481 0008 7047     		bx	lr
+ 482              		.cfi_endproc
+ 483              	.LFE32:
+ 484              		.size	Alarm_IsTriggered, .-Alarm_IsTriggered
+ 485 000a 00BF     		.section	.text.Alarm_EmitBeep,"ax",%progbits
+ 486              		.align	2
+ 487              		.global	Alarm_EmitBeep
+ 488              		.thumb
+ 489              		.thumb_func
+ 490              		.type	Alarm_EmitBeep, %function
+ 491              	Alarm_EmitBeep:
+ 492              	.LFB33:
+ 208:.\Alarm.c     **** 
+ 209:.\Alarm.c     **** void Alarm_EmitBeep(void)
+ 210:.\Alarm.c     **** {
+ 493              		.loc 1 210 0
+ 494              		.cfi_startproc
+ 495              		@ args = 0, pretend = 0, frame = 0
+ 496              		@ frame_needed = 1, uses_anonymous_args = 0
+ 497              		@ link register save eliminated.
+ 498 0000 80B4     		push	{r7}
+ 499              	.LCFI8:
+ 500              		.cfi_def_cfa_offset 4
+ 501 0002 00AF     		add	r7, sp, #0
+ 502              		.cfi_offset 7, -4
+ 503              	.LCFI9:
+ 504              		.cfi_def_cfa_register 7
+ 211:.\Alarm.c     **** 	if(nextAlarmState == alarmOff)
+ 505              		.loc 1 211 0
+ 506 0004 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 507 0008 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 508 000c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 509 000e 012B     		cmp	r3, #1
+ 510 0010 06D1     		bne	.L33
+ 212:.\Alarm.c     **** 	{
+ 213:.\Alarm.c     **** 		nextAlarmState = beep;
+ 511              		.loc 1 213 0
+ 512 0012 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 513 0016 C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 514 001a 4FF00402 		mov	r2, #4
+ 515 001e 1A70     		strb	r2, [r3, #0]
+ 516              	.L33:
+ 214:.\Alarm.c     **** 	}
+ 215:.\Alarm.c     **** }
+ 517              		.loc 1 215 0
+ 518 0020 BD46     		mov	sp, r7
+ 519 0022 80BC     		pop	{r7}
+ 520 0024 7047     		bx	lr
+ 521              		.cfi_endproc
+ 522              	.LFE33:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 14
+
+
+ 523              		.size	Alarm_EmitBeep, .-Alarm_EmitBeep
+ 524 0026 00BF     		.section	.text.Alarm_EmitMotorOnSound,"ax",%progbits
+ 525              		.align	2
+ 526              		.global	Alarm_EmitMotorOnSound
+ 527              		.thumb
+ 528              		.thumb_func
+ 529              		.type	Alarm_EmitMotorOnSound, %function
+ 530              	Alarm_EmitMotorOnSound:
+ 531              	.LFB34:
+ 216:.\Alarm.c     **** 
+ 217:.\Alarm.c     **** void Alarm_EmitMotorOnSound(motorOnSoundDirection_t motorOnSoundDirection)
+ 218:.\Alarm.c     **** {
+ 532              		.loc 1 218 0
+ 533              		.cfi_startproc
+ 534              		@ args = 0, pretend = 0, frame = 8
+ 535              		@ frame_needed = 1, uses_anonymous_args = 0
+ 536              		@ link register save eliminated.
+ 537 0000 80B4     		push	{r7}
+ 538              	.LCFI10:
+ 539              		.cfi_def_cfa_offset 4
+ 540 0002 83B0     		sub	sp, sp, #12
+ 541              	.LCFI11:
+ 542              		.cfi_def_cfa_offset 16
+ 543 0004 00AF     		add	r7, sp, #0
+ 544              		.cfi_offset 7, -4
+ 545              	.LCFI12:
+ 546              		.cfi_def_cfa_register 7
+ 547 0006 0346     		mov	r3, r0
+ 548 0008 FB71     		strb	r3, [r7, #7]
+ 219:.\Alarm.c     **** 	_motorOnSoundDirection = motorOnSoundDirection;
+ 549              		.loc 1 219 0
+ 550 000a 40F20003 		movw	r3, #:lower16:_motorOnSoundDirection
+ 551 000e C0F20003 		movt	r3, #:upper16:_motorOnSoundDirection
+ 552 0012 FA79     		ldrb	r2, [r7, #7]
+ 553 0014 1A70     		strb	r2, [r3, #0]
+ 220:.\Alarm.c     **** 	nextAlarmState = motorOnSound;
+ 554              		.loc 1 220 0
+ 555 0016 40F20003 		movw	r3, #:lower16:nextAlarmState
+ 556 001a C0F20003 		movt	r3, #:upper16:nextAlarmState
+ 557 001e 4FF00502 		mov	r2, #5
+ 558 0022 1A70     		strb	r2, [r3, #0]
+ 221:.\Alarm.c     **** }
+ 559              		.loc 1 221 0
+ 560 0024 07F10C07 		add	r7, r7, #12
+ 561 0028 BD46     		mov	sp, r7
+ 562 002a 80BC     		pop	{r7}
+ 563 002c 7047     		bx	lr
+ 564              		.cfi_endproc
+ 565              	.LFE34:
+ 566              		.size	Alarm_EmitMotorOnSound, .-Alarm_EmitMotorOnSound
+ 567 002e 00BF     		.bss
+ 568              	prevAlarmState.2917:
+ 569 0001 00       		.space	1
+ 570 0002 0000     		.align	2
+ 571              	counter.2907:
+ 572 0004 00000000 		.space	4
+ 573              		.align	2
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 15
+
+
+ 574              	alarmLastChangeCount.2908:
+ 575 0008 00000000 		.space	4
+ 576              		.data
+ 577 0001 000000   		.align	2
+ 578              		.type	alarmTone1RunTimeCounts.2909, %object
+ 579              		.size	alarmTone1RunTimeCounts.2909, 4
+ 580              	alarmTone1RunTimeCounts.2909:
+ 581 0004 19000000 		.word	25
+ 582              		.align	2
+ 583              		.type	alarmTone2RunTimeCounts.2910, %object
+ 584              		.size	alarmTone2RunTimeCounts.2910, 4
+ 585              	alarmTone2RunTimeCounts.2910:
+ 586 0008 19000000 		.word	25
+ 587              		.align	2
+ 588              		.type	beepRunTimeCounts.2911, %object
+ 589              		.size	beepRunTimeCounts.2911, 4
+ 590              	beepRunTimeCounts.2911:
+ 591 000c 0A000000 		.word	10
+ 592              		.align	1
+ 593              		.type	baseToneCounts.2914, %object
+ 594              		.size	baseToneCounts.2914, 2
+ 595              	baseToneCounts.2914:
+ 596 0010 401F     		.short	8000
+ 597              		.bss
+ 598              		.align	1
+ 599              	currentToneCounts.2915:
+ 600 000c 0000     		.space	2
+ 601              		.align	1
+ 602              	toneCount.2916:
+ 603 000e 0000     		.space	2
+ 604              		.data
+ 605 0012 0000     		.align	2
+ 606              		.type	motorOnToneTimeCounts.2912, %object
+ 607              		.size	motorOnToneTimeCounts.2912, 4
+ 608              	motorOnToneTimeCounts.2912:
+ 609 0014 05000000 		.word	5
+ 610              		.align	1
+ 611              		.type	toneJumpCounts.2913, %object
+ 612              		.size	toneJumpCounts.2913, 2
+ 613              	toneJumpCounts.2913:
+ 614 0018 C800     		.short	200
+ 615 001a 0000     		.text
+ 616              	.Letext0:
+ 617              		.section	.debug_loc,"",%progbits
+ 618              	.Ldebug_loc0:
+ 619              	.LLST0:
+ 620 0000 00000000 		.4byte	.LFB29
+ 621 0004 02000000 		.4byte	.LCFI0
+ 622 0008 0100     		.2byte	0x1
+ 623 000a 5D       		.byte	0x5d
+ 624 000b 02000000 		.4byte	.LCFI0
+ 625 000f 04000000 		.4byte	.LCFI1
+ 626 0013 0200     		.2byte	0x2
+ 627 0015 7D       		.byte	0x7d
+ 628 0016 08       		.sleb128 8
+ 629 0017 04000000 		.4byte	.LCFI1
+ 630 001b 54030000 		.4byte	.LFE29
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 16
+
+
+ 631 001f 0200     		.2byte	0x2
+ 632 0021 77       		.byte	0x77
+ 633 0022 08       		.sleb128 8
+ 634 0023 00000000 		.4byte	0x0
+ 635 0027 00000000 		.4byte	0x0
+ 636              	.LLST1:
+ 637 002b 00000000 		.4byte	.LFB30
+ 638 002f 02000000 		.4byte	.LCFI2
+ 639 0033 0100     		.2byte	0x1
+ 640 0035 5D       		.byte	0x5d
+ 641 0036 02000000 		.4byte	.LCFI2
+ 642 003a 04000000 		.4byte	.LCFI3
+ 643 003e 0200     		.2byte	0x2
+ 644 0040 7D       		.byte	0x7d
+ 645 0041 04       		.sleb128 4
+ 646 0042 04000000 		.4byte	.LCFI3
+ 647 0046 18000000 		.4byte	.LFE30
+ 648 004a 0200     		.2byte	0x2
+ 649 004c 77       		.byte	0x77
+ 650 004d 04       		.sleb128 4
+ 651 004e 00000000 		.4byte	0x0
+ 652 0052 00000000 		.4byte	0x0
+ 653              	.LLST2:
+ 654 0056 00000000 		.4byte	.LFB31
+ 655 005a 02000000 		.4byte	.LCFI4
+ 656 005e 0100     		.2byte	0x1
+ 657 0060 5D       		.byte	0x5d
+ 658 0061 02000000 		.4byte	.LCFI4
+ 659 0065 04000000 		.4byte	.LCFI5
+ 660 0069 0200     		.2byte	0x2
+ 661 006b 7D       		.byte	0x7d
+ 662 006c 04       		.sleb128 4
+ 663 006d 04000000 		.4byte	.LCFI5
+ 664 0071 18000000 		.4byte	.LFE31
+ 665 0075 0200     		.2byte	0x2
+ 666 0077 77       		.byte	0x77
+ 667 0078 04       		.sleb128 4
+ 668 0079 00000000 		.4byte	0x0
+ 669 007d 00000000 		.4byte	0x0
+ 670              	.LLST3:
+ 671 0081 00000000 		.4byte	.LFB32
+ 672 0085 02000000 		.4byte	.LCFI6
+ 673 0089 0100     		.2byte	0x1
+ 674 008b 5D       		.byte	0x5d
+ 675 008c 02000000 		.4byte	.LCFI6
+ 676 0090 04000000 		.4byte	.LCFI7
+ 677 0094 0200     		.2byte	0x2
+ 678 0096 7D       		.byte	0x7d
+ 679 0097 04       		.sleb128 4
+ 680 0098 04000000 		.4byte	.LCFI7
+ 681 009c 0A000000 		.4byte	.LFE32
+ 682 00a0 0200     		.2byte	0x2
+ 683 00a2 77       		.byte	0x77
+ 684 00a3 04       		.sleb128 4
+ 685 00a4 00000000 		.4byte	0x0
+ 686 00a8 00000000 		.4byte	0x0
+ 687              	.LLST4:
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 17
+
+
+ 688 00ac 00000000 		.4byte	.LFB33
+ 689 00b0 02000000 		.4byte	.LCFI8
+ 690 00b4 0100     		.2byte	0x1
+ 691 00b6 5D       		.byte	0x5d
+ 692 00b7 02000000 		.4byte	.LCFI8
+ 693 00bb 04000000 		.4byte	.LCFI9
+ 694 00bf 0200     		.2byte	0x2
+ 695 00c1 7D       		.byte	0x7d
+ 696 00c2 04       		.sleb128 4
+ 697 00c3 04000000 		.4byte	.LCFI9
+ 698 00c7 26000000 		.4byte	.LFE33
+ 699 00cb 0200     		.2byte	0x2
+ 700 00cd 77       		.byte	0x77
+ 701 00ce 04       		.sleb128 4
+ 702 00cf 00000000 		.4byte	0x0
+ 703 00d3 00000000 		.4byte	0x0
+ 704              	.LLST5:
+ 705 00d7 00000000 		.4byte	.LFB34
+ 706 00db 02000000 		.4byte	.LCFI10
+ 707 00df 0100     		.2byte	0x1
+ 708 00e1 5D       		.byte	0x5d
+ 709 00e2 02000000 		.4byte	.LCFI10
+ 710 00e6 04000000 		.4byte	.LCFI11
+ 711 00ea 0200     		.2byte	0x2
+ 712 00ec 7D       		.byte	0x7d
+ 713 00ed 04       		.sleb128 4
+ 714 00ee 04000000 		.4byte	.LCFI11
+ 715 00f2 06000000 		.4byte	.LCFI12
+ 716 00f6 0200     		.2byte	0x2
+ 717 00f8 7D       		.byte	0x7d
+ 718 00f9 10       		.sleb128 16
+ 719 00fa 06000000 		.4byte	.LCFI12
+ 720 00fe 2E000000 		.4byte	.LFE34
+ 721 0102 0200     		.2byte	0x2
+ 722 0104 77       		.byte	0x77
+ 723 0105 10       		.sleb128 16
+ 724 0106 00000000 		.4byte	0x0
+ 725 010a 00000000 		.4byte	0x0
+ 726              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\2.0\\psoc creator\\import\\gnu_cs\\arm\\4
+ 727              		.file 3 ".\\/Alarm.h"
+ 728              		.file 4 "./Generated_Source/PSoC5/core_cm3.h"
+ 729              		.section	.debug_info
+ 730 0000 69020000 		.4byte	0x269
+ 731 0004 0200     		.2byte	0x2
+ 732 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 733 000a 04       		.byte	0x4
+ 734 000b 01       		.uleb128 0x1
+ 735 000c 98010000 		.4byte	.LASF40
+ 736 0010 01       		.byte	0x1
+ 737 0011 B4020000 		.4byte	.LASF41
+ 738 0015 31020000 		.4byte	.LASF42
+ 739 0019 00000000 		.4byte	0x0
+ 740 001d 00000000 		.4byte	0x0
+ 741 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 742 0025 00000000 		.4byte	.Ldebug_line0
+ 743 0029 02       		.uleb128 0x2
+ 744 002a 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 18
+
+
+ 745 002b 06       		.byte	0x6
+ 746 002c 90020000 		.4byte	.LASF0
+ 747 0030 02       		.uleb128 0x2
+ 748 0031 01       		.byte	0x1
+ 749 0032 08       		.byte	0x8
+ 750 0033 AC000000 		.4byte	.LASF1
+ 751 0037 02       		.uleb128 0x2
+ 752 0038 02       		.byte	0x2
+ 753 0039 05       		.byte	0x5
+ 754 003a D3010000 		.4byte	.LASF2
+ 755 003e 03       		.uleb128 0x3
+ 756 003f E2010000 		.4byte	.LASF5
+ 757 0043 02       		.byte	0x2
+ 758 0044 36       		.byte	0x36
+ 759 0045 49000000 		.4byte	0x49
+ 760 0049 02       		.uleb128 0x2
+ 761 004a 02       		.byte	0x2
+ 762 004b 07       		.byte	0x7
+ 763 004c E9000000 		.4byte	.LASF3
+ 764 0050 02       		.uleb128 0x2
+ 765 0051 04       		.byte	0x4
+ 766 0052 05       		.byte	0x5
+ 767 0053 46000000 		.4byte	.LASF4
+ 768 0057 03       		.uleb128 0x3
+ 769 0058 10020000 		.4byte	.LASF6
+ 770 005c 02       		.byte	0x2
+ 771 005d 50       		.byte	0x50
+ 772 005e 62000000 		.4byte	0x62
+ 773 0062 02       		.uleb128 0x2
+ 774 0063 04       		.byte	0x4
+ 775 0064 07       		.byte	0x7
+ 776 0065 0E010000 		.4byte	.LASF7
+ 777 0069 02       		.uleb128 0x2
+ 778 006a 08       		.byte	0x8
+ 779 006b 05       		.byte	0x5
+ 780 006c 00000000 		.4byte	.LASF8
+ 781 0070 02       		.uleb128 0x2
+ 782 0071 08       		.byte	0x8
+ 783 0072 07       		.byte	0x7
+ 784 0073 74010000 		.4byte	.LASF9
+ 785 0077 04       		.uleb128 0x4
+ 786 0078 04       		.byte	0x4
+ 787 0079 05       		.byte	0x5
+ 788 007a 696E7400 		.ascii	"int\000"
+ 789 007e 02       		.uleb128 0x2
+ 790 007f 04       		.byte	0x4
+ 791 0080 07       		.byte	0x7
+ 792 0081 55010000 		.4byte	.LASF10
+ 793 0085 02       		.uleb128 0x2
+ 794 0086 01       		.byte	0x1
+ 795 0087 08       		.byte	0x8
+ 796 0088 0E000000 		.4byte	.LASF11
+ 797 008c 05       		.uleb128 0x5
+ 798 008d 04       		.byte	0x4
+ 799 008e 07       		.byte	0x7
+ 800 008f 06       		.uleb128 0x6
+ 801 0090 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 19
+
+
+ 802 0091 03       		.byte	0x3
+ 803 0092 23       		.byte	0x23
+ 804 0093 A3000000 		.4byte	0xa3
+ 805 0097 07       		.uleb128 0x7
+ 806 0098 757000   		.ascii	"up\000"
+ 807 009b 00       		.sleb128 0
+ 808 009c 08       		.uleb128 0x8
+ 809 009d DD010000 		.4byte	.LASF12
+ 810 00a1 01       		.sleb128 1
+ 811 00a2 00       		.byte	0x0
+ 812 00a3 03       		.uleb128 0x3
+ 813 00a4 94000000 		.4byte	.LASF13
+ 814 00a8 03       		.byte	0x3
+ 815 00a9 26       		.byte	0x26
+ 816 00aa 8F000000 		.4byte	0x8f
+ 817 00ae 06       		.uleb128 0x6
+ 818 00af 01       		.byte	0x1
+ 819 00b0 01       		.byte	0x1
+ 820 00b1 2C       		.byte	0x2c
+ 821 00b2 DB000000 		.4byte	0xdb
+ 822 00b6 08       		.uleb128 0x8
+ 823 00b7 2A000000 		.4byte	.LASF14
+ 824 00bb 00       		.sleb128 0
+ 825 00bc 08       		.uleb128 0x8
+ 826 00bd E0000000 		.4byte	.LASF15
+ 827 00c1 01       		.sleb128 1
+ 828 00c2 08       		.uleb128 0x8
+ 829 00c3 BD010000 		.4byte	.LASF16
+ 830 00c7 02       		.sleb128 2
+ 831 00c8 08       		.uleb128 0x8
+ 832 00c9 C8010000 		.4byte	.LASF17
+ 833 00cd 03       		.sleb128 3
+ 834 00ce 08       		.uleb128 0x8
+ 835 00cf 09010000 		.4byte	.LASF18
+ 836 00d3 04       		.sleb128 4
+ 837 00d4 08       		.uleb128 0x8
+ 838 00d5 8B010000 		.4byte	.LASF19
+ 839 00d9 05       		.sleb128 5
+ 840 00da 00       		.byte	0x0
+ 841 00db 03       		.uleb128 0x3
+ 842 00dc 47010000 		.4byte	.LASF20
+ 843 00e0 01       		.byte	0x1
+ 844 00e1 33       		.byte	0x33
+ 845 00e2 AE000000 		.4byte	0xae
+ 846 00e6 09       		.uleb128 0x9
+ 847 00e7 01       		.byte	0x1
+ 848 00e8 C8020000 		.4byte	.LASF36
+ 849 00ec 01       		.byte	0x1
+ 850 00ed 44       		.byte	0x44
+ 851 00ee 01       		.byte	0x1
+ 852 00ef 00000000 		.4byte	.LFB29
+ 853 00f3 54030000 		.4byte	.LFE29
+ 854 00f7 00000000 		.4byte	.LLST0
+ 855 00fb BB010000 		.4byte	0x1bb
+ 856 00ff 0A       		.uleb128 0xa
+ 857 0100 74000000 		.4byte	.LASF21
+ 858 0104 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 20
+
+
+ 859 0105 46       		.byte	0x46
+ 860 0106 57000000 		.4byte	0x57
+ 861 010a 05       		.byte	0x5
+ 862 010b 03       		.byte	0x3
+ 863 010c 04000000 		.4byte	counter.2907
+ 864 0110 0A       		.uleb128 0xa
+ 865 0111 32010000 		.4byte	.LASF22
+ 866 0115 01       		.byte	0x1
+ 867 0116 48       		.byte	0x48
+ 868 0117 57000000 		.4byte	0x57
+ 869 011b 05       		.byte	0x5
+ 870 011c 03       		.byte	0x3
+ 871 011d 08000000 		.4byte	alarmLastChangeCount.2908
+ 872 0121 0A       		.uleb128 0xa
+ 873 0122 7C000000 		.4byte	.LASF23
+ 874 0126 01       		.byte	0x1
+ 875 0127 4B       		.byte	0x4b
+ 876 0128 57000000 		.4byte	0x57
+ 877 012c 05       		.byte	0x5
+ 878 012d 03       		.byte	0x3
+ 879 012e 04000000 		.4byte	alarmTone1RunTimeCounts.2909
+ 880 0132 0A       		.uleb128 0xa
+ 881 0133 9C020000 		.4byte	.LASF24
+ 882 0137 01       		.byte	0x1
+ 883 0138 4C       		.byte	0x4c
+ 884 0139 57000000 		.4byte	0x57
+ 885 013d 05       		.byte	0x5
+ 886 013e 03       		.byte	0x3
+ 887 013f 08000000 		.4byte	alarmTone2RunTimeCounts.2910
+ 888 0143 0A       		.uleb128 0xa
+ 889 0144 20010000 		.4byte	.LASF25
+ 890 0148 01       		.byte	0x1
+ 891 0149 4D       		.byte	0x4d
+ 892 014a 57000000 		.4byte	0x57
+ 893 014e 05       		.byte	0x5
+ 894 014f 03       		.byte	0x3
+ 895 0150 0C000000 		.4byte	beepRunTimeCounts.2911
+ 896 0154 0A       		.uleb128 0xa
+ 897 0155 EB010000 		.4byte	.LASF26
+ 898 0159 01       		.byte	0x1
+ 899 015a 4E       		.byte	0x4e
+ 900 015b 57000000 		.4byte	0x57
+ 901 015f 05       		.byte	0x5
+ 902 0160 03       		.byte	0x3
+ 903 0161 14000000 		.4byte	motorOnToneTimeCounts.2912
+ 904 0165 0A       		.uleb128 0xa
+ 905 0166 A4010000 		.4byte	.LASF27
+ 906 016a 01       		.byte	0x1
+ 907 016b 50       		.byte	0x50
+ 908 016c 3E000000 		.4byte	0x3e
+ 909 0170 05       		.byte	0x5
+ 910 0171 03       		.byte	0x3
+ 911 0172 18000000 		.4byte	toneJumpCounts.2913
+ 912 0176 0A       		.uleb128 0xa
+ 913 0177 19020000 		.4byte	.LASF28
+ 914 017b 01       		.byte	0x1
+ 915 017c 51       		.byte	0x51
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 21
+
+
+ 916 017d 3E000000 		.4byte	0x3e
+ 917 0181 05       		.byte	0x5
+ 918 0182 03       		.byte	0x3
+ 919 0183 10000000 		.4byte	baseToneCounts.2914
+ 920 0187 0A       		.uleb128 0xa
+ 921 0188 34000000 		.4byte	.LASF29
+ 922 018c 01       		.byte	0x1
+ 923 018d 52       		.byte	0x52
+ 924 018e 3E000000 		.4byte	0x3e
+ 925 0192 05       		.byte	0x5
+ 926 0193 03       		.byte	0x3
+ 927 0194 0C000000 		.4byte	currentToneCounts.2915
+ 928 0198 0A       		.uleb128 0xa
+ 929 0199 B3010000 		.4byte	.LASF30
+ 930 019d 01       		.byte	0x1
+ 931 019e 53       		.byte	0x53
+ 932 019f 3E000000 		.4byte	0x3e
+ 933 01a3 05       		.byte	0x5
+ 934 01a4 03       		.byte	0x3
+ 935 01a5 0E000000 		.4byte	toneCount.2916
+ 936 01a9 0A       		.uleb128 0xa
+ 937 01aa 65000000 		.4byte	.LASF31
+ 938 01ae 01       		.byte	0x1
+ 939 01af 55       		.byte	0x55
+ 940 01b0 DB000000 		.4byte	0xdb
+ 941 01b4 05       		.byte	0x5
+ 942 01b5 03       		.byte	0x3
+ 943 01b6 01000000 		.4byte	prevAlarmState.2917
+ 944 01ba 00       		.byte	0x0
+ 945 01bb 0B       		.uleb128 0xb
+ 946 01bc 01       		.byte	0x1
+ 947 01bd 28020000 		.4byte	.LASF32
+ 948 01c1 01       		.byte	0x1
+ 949 01c2 C2       		.byte	0xc2
+ 950 01c3 01       		.byte	0x1
+ 951 01c4 00000000 		.4byte	.LFB30
+ 952 01c8 18000000 		.4byte	.LFE30
+ 953 01cc 2B000000 		.4byte	.LLST1
+ 954 01d0 0B       		.uleb128 0xb
+ 955 01d1 01       		.byte	0x1
+ 956 01d2 BE020000 		.4byte	.LASF33
+ 957 01d6 01       		.byte	0x1
+ 958 01d7 C7       		.byte	0xc7
+ 959 01d8 01       		.byte	0x1
+ 960 01d9 00000000 		.4byte	.LFB31
+ 961 01dd 18000000 		.4byte	.LFE31
+ 962 01e1 56000000 		.4byte	.LLST2
+ 963 01e5 0B       		.uleb128 0xb
+ 964 01e6 01       		.byte	0x1
+ 965 01e7 62010000 		.4byte	.LASF34
+ 966 01eb 01       		.byte	0x1
+ 967 01ec CC       		.byte	0xcc
+ 968 01ed 01       		.byte	0x1
+ 969 01ee 00000000 		.4byte	.LFB32
+ 970 01f2 0A000000 		.4byte	.LFE32
+ 971 01f6 81000000 		.4byte	.LLST3
+ 972 01fa 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 22
+
+
+ 973 01fb 01       		.byte	0x1
+ 974 01fc 01020000 		.4byte	.LASF35
+ 975 0200 01       		.byte	0x1
+ 976 0201 D1       		.byte	0xd1
+ 977 0202 01       		.byte	0x1
+ 978 0203 00000000 		.4byte	.LFB33
+ 979 0207 26000000 		.4byte	.LFE33
+ 980 020b AC000000 		.4byte	.LLST4
+ 981 020f 09       		.uleb128 0x9
+ 982 0210 01       		.byte	0x1
+ 983 0211 BA000000 		.4byte	.LASF37
+ 984 0215 01       		.byte	0x1
+ 985 0216 D9       		.byte	0xd9
+ 986 0217 01       		.byte	0x1
+ 987 0218 00000000 		.4byte	.LFB34
+ 988 021c 2E000000 		.4byte	.LFE34
+ 989 0220 D7000000 		.4byte	.LLST5
+ 990 0224 37020000 		.4byte	0x237
+ 991 0228 0C       		.uleb128 0xc
+ 992 0229 4F000000 		.4byte	.LASF43
+ 993 022d 01       		.byte	0x1
+ 994 022e D9       		.byte	0xd9
+ 995 022f A3000000 		.4byte	0xa3
+ 996 0233 02       		.byte	0x2
+ 997 0234 91       		.byte	0x91
+ 998 0235 77       		.sleb128 -9
+ 999 0236 00       		.byte	0x0
+ 1000 0237 0A       		.uleb128 0xa
+ 1001 0238 D1000000 		.4byte	.LASF38
+ 1002 023c 01       		.byte	0x1
+ 1003 023d 39       		.byte	0x39
+ 1004 023e DB000000 		.4byte	0xdb
+ 1005 0242 05       		.byte	0x5
+ 1006 0243 03       		.byte	0x3
+ 1007 0244 00000000 		.4byte	nextAlarmState
+ 1008 0248 0A       		.uleb128 0xa
+ 1009 0249 13000000 		.4byte	.LASF39
+ 1010 024d 01       		.byte	0x1
+ 1011 024e 3A       		.byte	0x3a
+ 1012 024f A3000000 		.4byte	0xa3
+ 1013 0253 05       		.byte	0x5
+ 1014 0254 03       		.byte	0x3
+ 1015 0255 00000000 		.4byte	_motorOnSoundDirection
+ 1016 0259 0D       		.uleb128 0xd
+ 1017 025a FC000000 		.4byte	.LASF44
+ 1018 025e 04       		.byte	0x4
+ 1019 025f CE06     		.2byte	0x6ce
+ 1020 0261 67020000 		.4byte	0x267
+ 1021 0265 01       		.byte	0x1
+ 1022 0266 01       		.byte	0x1
+ 1023 0267 0E       		.uleb128 0xe
+ 1024 0268 77000000 		.4byte	0x77
+ 1025 026c 00       		.byte	0x0
+ 1026              		.section	.debug_abbrev
+ 1027 0000 01       		.uleb128 0x1
+ 1028 0001 11       		.uleb128 0x11
+ 1029 0002 01       		.byte	0x1
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 23
+
+
+ 1030 0003 25       		.uleb128 0x25
+ 1031 0004 0E       		.uleb128 0xe
+ 1032 0005 13       		.uleb128 0x13
+ 1033 0006 0B       		.uleb128 0xb
+ 1034 0007 03       		.uleb128 0x3
+ 1035 0008 0E       		.uleb128 0xe
+ 1036 0009 1B       		.uleb128 0x1b
+ 1037 000a 0E       		.uleb128 0xe
+ 1038 000b 11       		.uleb128 0x11
+ 1039 000c 01       		.uleb128 0x1
+ 1040 000d 52       		.uleb128 0x52
+ 1041 000e 01       		.uleb128 0x1
+ 1042 000f 55       		.uleb128 0x55
+ 1043 0010 06       		.uleb128 0x6
+ 1044 0011 10       		.uleb128 0x10
+ 1045 0012 06       		.uleb128 0x6
+ 1046 0013 00       		.byte	0x0
+ 1047 0014 00       		.byte	0x0
+ 1048 0015 02       		.uleb128 0x2
+ 1049 0016 24       		.uleb128 0x24
+ 1050 0017 00       		.byte	0x0
+ 1051 0018 0B       		.uleb128 0xb
+ 1052 0019 0B       		.uleb128 0xb
+ 1053 001a 3E       		.uleb128 0x3e
+ 1054 001b 0B       		.uleb128 0xb
+ 1055 001c 03       		.uleb128 0x3
+ 1056 001d 0E       		.uleb128 0xe
+ 1057 001e 00       		.byte	0x0
+ 1058 001f 00       		.byte	0x0
+ 1059 0020 03       		.uleb128 0x3
+ 1060 0021 16       		.uleb128 0x16
+ 1061 0022 00       		.byte	0x0
+ 1062 0023 03       		.uleb128 0x3
+ 1063 0024 0E       		.uleb128 0xe
+ 1064 0025 3A       		.uleb128 0x3a
+ 1065 0026 0B       		.uleb128 0xb
+ 1066 0027 3B       		.uleb128 0x3b
+ 1067 0028 0B       		.uleb128 0xb
+ 1068 0029 49       		.uleb128 0x49
+ 1069 002a 13       		.uleb128 0x13
+ 1070 002b 00       		.byte	0x0
+ 1071 002c 00       		.byte	0x0
+ 1072 002d 04       		.uleb128 0x4
+ 1073 002e 24       		.uleb128 0x24
+ 1074 002f 00       		.byte	0x0
+ 1075 0030 0B       		.uleb128 0xb
+ 1076 0031 0B       		.uleb128 0xb
+ 1077 0032 3E       		.uleb128 0x3e
+ 1078 0033 0B       		.uleb128 0xb
+ 1079 0034 03       		.uleb128 0x3
+ 1080 0035 08       		.uleb128 0x8
+ 1081 0036 00       		.byte	0x0
+ 1082 0037 00       		.byte	0x0
+ 1083 0038 05       		.uleb128 0x5
+ 1084 0039 24       		.uleb128 0x24
+ 1085 003a 00       		.byte	0x0
+ 1086 003b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 24
+
+
+ 1087 003c 0B       		.uleb128 0xb
+ 1088 003d 3E       		.uleb128 0x3e
+ 1089 003e 0B       		.uleb128 0xb
+ 1090 003f 00       		.byte	0x0
+ 1091 0040 00       		.byte	0x0
+ 1092 0041 06       		.uleb128 0x6
+ 1093 0042 04       		.uleb128 0x4
+ 1094 0043 01       		.byte	0x1
+ 1095 0044 0B       		.uleb128 0xb
+ 1096 0045 0B       		.uleb128 0xb
+ 1097 0046 3A       		.uleb128 0x3a
+ 1098 0047 0B       		.uleb128 0xb
+ 1099 0048 3B       		.uleb128 0x3b
+ 1100 0049 0B       		.uleb128 0xb
+ 1101 004a 01       		.uleb128 0x1
+ 1102 004b 13       		.uleb128 0x13
+ 1103 004c 00       		.byte	0x0
+ 1104 004d 00       		.byte	0x0
+ 1105 004e 07       		.uleb128 0x7
+ 1106 004f 28       		.uleb128 0x28
+ 1107 0050 00       		.byte	0x0
+ 1108 0051 03       		.uleb128 0x3
+ 1109 0052 08       		.uleb128 0x8
+ 1110 0053 1C       		.uleb128 0x1c
+ 1111 0054 0D       		.uleb128 0xd
+ 1112 0055 00       		.byte	0x0
+ 1113 0056 00       		.byte	0x0
+ 1114 0057 08       		.uleb128 0x8
+ 1115 0058 28       		.uleb128 0x28
+ 1116 0059 00       		.byte	0x0
+ 1117 005a 03       		.uleb128 0x3
+ 1118 005b 0E       		.uleb128 0xe
+ 1119 005c 1C       		.uleb128 0x1c
+ 1120 005d 0D       		.uleb128 0xd
+ 1121 005e 00       		.byte	0x0
+ 1122 005f 00       		.byte	0x0
+ 1123 0060 09       		.uleb128 0x9
+ 1124 0061 2E       		.uleb128 0x2e
+ 1125 0062 01       		.byte	0x1
+ 1126 0063 3F       		.uleb128 0x3f
+ 1127 0064 0C       		.uleb128 0xc
+ 1128 0065 03       		.uleb128 0x3
+ 1129 0066 0E       		.uleb128 0xe
+ 1130 0067 3A       		.uleb128 0x3a
+ 1131 0068 0B       		.uleb128 0xb
+ 1132 0069 3B       		.uleb128 0x3b
+ 1133 006a 0B       		.uleb128 0xb
+ 1134 006b 27       		.uleb128 0x27
+ 1135 006c 0C       		.uleb128 0xc
+ 1136 006d 11       		.uleb128 0x11
+ 1137 006e 01       		.uleb128 0x1
+ 1138 006f 12       		.uleb128 0x12
+ 1139 0070 01       		.uleb128 0x1
+ 1140 0071 40       		.uleb128 0x40
+ 1141 0072 06       		.uleb128 0x6
+ 1142 0073 01       		.uleb128 0x1
+ 1143 0074 13       		.uleb128 0x13
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 25
+
+
+ 1144 0075 00       		.byte	0x0
+ 1145 0076 00       		.byte	0x0
+ 1146 0077 0A       		.uleb128 0xa
+ 1147 0078 34       		.uleb128 0x34
+ 1148 0079 00       		.byte	0x0
+ 1149 007a 03       		.uleb128 0x3
+ 1150 007b 0E       		.uleb128 0xe
+ 1151 007c 3A       		.uleb128 0x3a
+ 1152 007d 0B       		.uleb128 0xb
+ 1153 007e 3B       		.uleb128 0x3b
+ 1154 007f 0B       		.uleb128 0xb
+ 1155 0080 49       		.uleb128 0x49
+ 1156 0081 13       		.uleb128 0x13
+ 1157 0082 02       		.uleb128 0x2
+ 1158 0083 0A       		.uleb128 0xa
+ 1159 0084 00       		.byte	0x0
+ 1160 0085 00       		.byte	0x0
+ 1161 0086 0B       		.uleb128 0xb
+ 1162 0087 2E       		.uleb128 0x2e
+ 1163 0088 00       		.byte	0x0
+ 1164 0089 3F       		.uleb128 0x3f
+ 1165 008a 0C       		.uleb128 0xc
+ 1166 008b 03       		.uleb128 0x3
+ 1167 008c 0E       		.uleb128 0xe
+ 1168 008d 3A       		.uleb128 0x3a
+ 1169 008e 0B       		.uleb128 0xb
+ 1170 008f 3B       		.uleb128 0x3b
+ 1171 0090 0B       		.uleb128 0xb
+ 1172 0091 27       		.uleb128 0x27
+ 1173 0092 0C       		.uleb128 0xc
+ 1174 0093 11       		.uleb128 0x11
+ 1175 0094 01       		.uleb128 0x1
+ 1176 0095 12       		.uleb128 0x12
+ 1177 0096 01       		.uleb128 0x1
+ 1178 0097 40       		.uleb128 0x40
+ 1179 0098 06       		.uleb128 0x6
+ 1180 0099 00       		.byte	0x0
+ 1181 009a 00       		.byte	0x0
+ 1182 009b 0C       		.uleb128 0xc
+ 1183 009c 05       		.uleb128 0x5
+ 1184 009d 00       		.byte	0x0
+ 1185 009e 03       		.uleb128 0x3
+ 1186 009f 0E       		.uleb128 0xe
+ 1187 00a0 3A       		.uleb128 0x3a
+ 1188 00a1 0B       		.uleb128 0xb
+ 1189 00a2 3B       		.uleb128 0x3b
+ 1190 00a3 0B       		.uleb128 0xb
+ 1191 00a4 49       		.uleb128 0x49
+ 1192 00a5 13       		.uleb128 0x13
+ 1193 00a6 02       		.uleb128 0x2
+ 1194 00a7 0A       		.uleb128 0xa
+ 1195 00a8 00       		.byte	0x0
+ 1196 00a9 00       		.byte	0x0
+ 1197 00aa 0D       		.uleb128 0xd
+ 1198 00ab 34       		.uleb128 0x34
+ 1199 00ac 00       		.byte	0x0
+ 1200 00ad 03       		.uleb128 0x3
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 26
+
+
+ 1201 00ae 0E       		.uleb128 0xe
+ 1202 00af 3A       		.uleb128 0x3a
+ 1203 00b0 0B       		.uleb128 0xb
+ 1204 00b1 3B       		.uleb128 0x3b
+ 1205 00b2 05       		.uleb128 0x5
+ 1206 00b3 49       		.uleb128 0x49
+ 1207 00b4 13       		.uleb128 0x13
+ 1208 00b5 3F       		.uleb128 0x3f
+ 1209 00b6 0C       		.uleb128 0xc
+ 1210 00b7 3C       		.uleb128 0x3c
+ 1211 00b8 0C       		.uleb128 0xc
+ 1212 00b9 00       		.byte	0x0
+ 1213 00ba 00       		.byte	0x0
+ 1214 00bb 0E       		.uleb128 0xe
+ 1215 00bc 35       		.uleb128 0x35
+ 1216 00bd 00       		.byte	0x0
+ 1217 00be 49       		.uleb128 0x49
+ 1218 00bf 13       		.uleb128 0x13
+ 1219 00c0 00       		.byte	0x0
+ 1220 00c1 00       		.byte	0x0
+ 1221 00c2 00       		.byte	0x0
+ 1222              		.section	.debug_pubnames,"",%progbits
+ 1223 0000 7B000000 		.4byte	0x7b
+ 1224 0004 0200     		.2byte	0x2
+ 1225 0006 00000000 		.4byte	.Ldebug_info0
+ 1226 000a 6D020000 		.4byte	0x26d
+ 1227 000e E6000000 		.4byte	0xe6
+ 1228 0012 416C6172 		.ascii	"Alarm_Run\000"
+ 1228      6D5F5275 
+ 1228      6E00
+ 1229 001c BB010000 		.4byte	0x1bb
+ 1230 0020 416C6172 		.ascii	"Alarm_On\000"
+ 1230      6D5F4F6E 
+ 1230      00
+ 1231 0029 D0010000 		.4byte	0x1d0
+ 1232 002d 416C6172 		.ascii	"Alarm_Off\000"
+ 1232      6D5F4F66 
+ 1232      6600
+ 1233 0037 E5010000 		.4byte	0x1e5
+ 1234 003b 416C6172 		.ascii	"Alarm_IsTriggered\000"
+ 1234      6D5F4973 
+ 1234      54726967 
+ 1234      67657265 
+ 1234      6400
+ 1235 004d FA010000 		.4byte	0x1fa
+ 1236 0051 416C6172 		.ascii	"Alarm_EmitBeep\000"
+ 1236      6D5F456D 
+ 1236      69744265 
+ 1236      657000
+ 1237 0060 0F020000 		.4byte	0x20f
+ 1238 0064 416C6172 		.ascii	"Alarm_EmitMotorOnSound\000"
+ 1238      6D5F456D 
+ 1238      69744D6F 
+ 1238      746F724F 
+ 1238      6E536F75 
+ 1239 007b 00000000 		.4byte	0x0
+ 1240              		.section	.debug_aranges,"",%progbits
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 27
+
+
+ 1241 0000 44000000 		.4byte	0x44
+ 1242 0004 0200     		.2byte	0x2
+ 1243 0006 00000000 		.4byte	.Ldebug_info0
+ 1244 000a 04       		.byte	0x4
+ 1245 000b 00       		.byte	0x0
+ 1246 000c 0000     		.2byte	0x0
+ 1247 000e 0000     		.2byte	0x0
+ 1248 0010 00000000 		.4byte	.LFB29
+ 1249 0014 54030000 		.4byte	.LFE29-.LFB29
+ 1250 0018 00000000 		.4byte	.LFB30
+ 1251 001c 18000000 		.4byte	.LFE30-.LFB30
+ 1252 0020 00000000 		.4byte	.LFB31
+ 1253 0024 18000000 		.4byte	.LFE31-.LFB31
+ 1254 0028 00000000 		.4byte	.LFB32
+ 1255 002c 0A000000 		.4byte	.LFE32-.LFB32
+ 1256 0030 00000000 		.4byte	.LFB33
+ 1257 0034 26000000 		.4byte	.LFE33-.LFB33
+ 1258 0038 00000000 		.4byte	.LFB34
+ 1259 003c 2E000000 		.4byte	.LFE34-.LFB34
+ 1260 0040 00000000 		.4byte	0x0
+ 1261 0044 00000000 		.4byte	0x0
+ 1262              		.section	.debug_ranges,"",%progbits
+ 1263              	.Ldebug_ranges0:
+ 1264 0000 00000000 		.4byte	.Ltext0
+ 1265 0004 00000000 		.4byte	.Letext0
+ 1266 0008 00000000 		.4byte	.LFB29
+ 1267 000c 54030000 		.4byte	.LFE29
+ 1268 0010 00000000 		.4byte	.LFB30
+ 1269 0014 18000000 		.4byte	.LFE30
+ 1270 0018 00000000 		.4byte	.LFB31
+ 1271 001c 18000000 		.4byte	.LFE31
+ 1272 0020 00000000 		.4byte	.LFB32
+ 1273 0024 0A000000 		.4byte	.LFE32
+ 1274 0028 00000000 		.4byte	.LFB33
+ 1275 002c 26000000 		.4byte	.LFE33
+ 1276 0030 00000000 		.4byte	.LFB34
+ 1277 0034 2E000000 		.4byte	.LFE34
+ 1278 0038 00000000 		.4byte	0x0
+ 1279 003c 00000000 		.4byte	0x0
+ 1280              		.section	.debug_str,"MS",%progbits,1
+ 1281              	.LASF8:
+ 1282 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1282      206C6F6E 
+ 1282      6720696E 
+ 1282      7400
+ 1283              	.LASF11:
+ 1284 000e 63686172 		.ascii	"char\000"
+ 1284      00
+ 1285              	.LASF39:
+ 1286 0013 5F6D6F74 		.ascii	"_motorOnSoundDirection\000"
+ 1286      6F724F6E 
+ 1286      536F756E 
+ 1286      64446972 
+ 1286      65637469 
+ 1287              	.LASF14:
+ 1288 002a 616C6172 		.ascii	"alarmInit\000"
+ 1288      6D496E69 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 28
+
+
+ 1288      7400
+ 1289              	.LASF29:
+ 1290 0034 63757272 		.ascii	"currentToneCounts\000"
+ 1290      656E7454 
+ 1290      6F6E6543 
+ 1290      6F756E74 
+ 1290      7300
+ 1291              	.LASF4:
+ 1292 0046 6C6F6E67 		.ascii	"long int\000"
+ 1292      20696E74 
+ 1292      00
+ 1293              	.LASF43:
+ 1294 004f 6D6F746F 		.ascii	"motorOnSoundDirection\000"
+ 1294      724F6E53 
+ 1294      6F756E64 
+ 1294      44697265 
+ 1294      6374696F 
+ 1295              	.LASF31:
+ 1296 0065 70726576 		.ascii	"prevAlarmState\000"
+ 1296      416C6172 
+ 1296      6D537461 
+ 1296      746500
+ 1297              	.LASF21:
+ 1298 0074 636F756E 		.ascii	"counter\000"
+ 1298      74657200 
+ 1299              	.LASF23:
+ 1300 007c 616C6172 		.ascii	"alarmTone1RunTimeCounts\000"
+ 1300      6D546F6E 
+ 1300      65315275 
+ 1300      6E54696D 
+ 1300      65436F75 
+ 1301              	.LASF13:
+ 1302 0094 6D6F746F 		.ascii	"motorOnSoundDirection_t\000"
+ 1302      724F6E53 
+ 1302      6F756E64 
+ 1302      44697265 
+ 1302      6374696F 
+ 1303              	.LASF1:
+ 1304 00ac 756E7369 		.ascii	"unsigned char\000"
+ 1304      676E6564 
+ 1304      20636861 
+ 1304      7200
+ 1305              	.LASF37:
+ 1306 00ba 416C6172 		.ascii	"Alarm_EmitMotorOnSound\000"
+ 1306      6D5F456D 
+ 1306      69744D6F 
+ 1306      746F724F 
+ 1306      6E536F75 
+ 1307              	.LASF38:
+ 1308 00d1 6E657874 		.ascii	"nextAlarmState\000"
+ 1308      416C6172 
+ 1308      6D537461 
+ 1308      746500
+ 1309              	.LASF15:
+ 1310 00e0 616C6172 		.ascii	"alarmOff\000"
+ 1310      6D4F6666 
+ 1310      00
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 29
+
+
+ 1311              	.LASF3:
+ 1312 00e9 73686F72 		.ascii	"short unsigned int\000"
+ 1312      7420756E 
+ 1312      7369676E 
+ 1312      65642069 
+ 1312      6E7400
+ 1313              	.LASF44:
+ 1314 00fc 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1314      52784275 
+ 1314      66666572 
+ 1314      00
+ 1315              	.LASF18:
+ 1316 0109 62656570 		.ascii	"beep\000"
+ 1316      00
+ 1317              	.LASF7:
+ 1318 010e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1318      20756E73 
+ 1318      69676E65 
+ 1318      6420696E 
+ 1318      7400
+ 1319              	.LASF25:
+ 1320 0120 62656570 		.ascii	"beepRunTimeCounts\000"
+ 1320      52756E54 
+ 1320      696D6543 
+ 1320      6F756E74 
+ 1320      7300
+ 1321              	.LASF22:
+ 1322 0132 616C6172 		.ascii	"alarmLastChangeCount\000"
+ 1322      6D4C6173 
+ 1322      74436861 
+ 1322      6E676543 
+ 1322      6F756E74 
+ 1323              	.LASF20:
+ 1324 0147 616C6172 		.ascii	"alarmStates_t\000"
+ 1324      6D537461 
+ 1324      7465735F 
+ 1324      7400
+ 1325              	.LASF10:
+ 1326 0155 756E7369 		.ascii	"unsigned int\000"
+ 1326      676E6564 
+ 1326      20696E74 
+ 1326      00
+ 1327              	.LASF34:
+ 1328 0162 416C6172 		.ascii	"Alarm_IsTriggered\000"
+ 1328      6D5F4973 
+ 1328      54726967 
+ 1328      67657265 
+ 1328      6400
+ 1329              	.LASF9:
+ 1330 0174 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1330      206C6F6E 
+ 1330      6720756E 
+ 1330      7369676E 
+ 1330      65642069 
+ 1331              	.LASF19:
+ 1332 018b 6D6F746F 		.ascii	"motorOnSound\000"
+ 1332      724F6E53 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 30
+
+
+ 1332      6F756E64 
+ 1332      00
+ 1333              	.LASF40:
+ 1334 0198 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1334      4320342E 
+ 1334      342E3100 
+ 1335              	.LASF27:
+ 1336 01a4 746F6E65 		.ascii	"toneJumpCounts\000"
+ 1336      4A756D70 
+ 1336      436F756E 
+ 1336      747300
+ 1337              	.LASF30:
+ 1338 01b3 746F6E65 		.ascii	"toneCount\000"
+ 1338      436F756E 
+ 1338      7400
+ 1339              	.LASF16:
+ 1340 01bd 616C6172 		.ascii	"alarmTone1\000"
+ 1340      6D546F6E 
+ 1340      653100
+ 1341              	.LASF17:
+ 1342 01c8 616C6172 		.ascii	"alarmTone2\000"
+ 1342      6D546F6E 
+ 1342      653200
+ 1343              	.LASF2:
+ 1344 01d3 73686F72 		.ascii	"short int\000"
+ 1344      7420696E 
+ 1344      7400
+ 1345              	.LASF12:
+ 1346 01dd 646F776E 		.ascii	"down\000"
+ 1346      00
+ 1347              	.LASF5:
+ 1348 01e2 75696E74 		.ascii	"uint16_t\000"
+ 1348      31365F74 
+ 1348      00
+ 1349              	.LASF26:
+ 1350 01eb 6D6F746F 		.ascii	"motorOnToneTimeCounts\000"
+ 1350      724F6E54 
+ 1350      6F6E6554 
+ 1350      696D6543 
+ 1350      6F756E74 
+ 1351              	.LASF35:
+ 1352 0201 416C6172 		.ascii	"Alarm_EmitBeep\000"
+ 1352      6D5F456D 
+ 1352      69744265 
+ 1352      657000
+ 1353              	.LASF6:
+ 1354 0210 75696E74 		.ascii	"uint32_t\000"
+ 1354      33325F74 
+ 1354      00
+ 1355              	.LASF28:
+ 1356 0219 62617365 		.ascii	"baseToneCounts\000"
+ 1356      546F6E65 
+ 1356      436F756E 
+ 1356      747300
+ 1357              	.LASF32:
+ 1358 0228 416C6172 		.ascii	"Alarm_On\000"
+ 1358      6D5F4F6E 
+ARM GAS  C:\Users\Geo\AppData\Local\Temp\ccryViSR.s 			page 31
+
+
+ 1358      00
+ 1359              	.LASF42:
+ 1360 0231 433A5C55 		.ascii	"C:\\Users\\Geo\\Documents\\Projects\\Electric Skate"
+ 1360      73657273 
+ 1360      5C47656F 
+ 1360      5C446F63 
+ 1360      756D656E 
+ 1361 025f 626F6172 		.ascii	"board\\Firmware\\PSoC\\Skateboard Motherboard.cydsn"
+ 1361      645C4669 
+ 1361      726D7761 
+ 1361      72655C50 
+ 1361      536F435C 
+ 1362 028f 00       		.ascii	"\000"
+ 1363              	.LASF0:
+ 1364 0290 7369676E 		.ascii	"signed char\000"
+ 1364      65642063 
+ 1364      68617200 
+ 1365              	.LASF24:
+ 1366 029c 616C6172 		.ascii	"alarmTone2RunTimeCounts\000"
+ 1366      6D546F6E 
+ 1366      65325275 
+ 1366      6E54696D 
+ 1366      65436F75 
+ 1367              	.LASF41:
+ 1368 02b4 2E5C416C 		.ascii	".\\Alarm.c\000"
+ 1368      61726D2E 
+ 1368      6300
+ 1369              	.LASF33:
+ 1370 02be 416C6172 		.ascii	"Alarm_Off\000"
+ 1370      6D5F4F66 
+ 1370      6600
+ 1371              	.LASF36:
+ 1372 02c8 416C6172 		.ascii	"Alarm_Run\000"
+ 1372      6D5F5275 
+ 1372      6E00
+ 1373              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"

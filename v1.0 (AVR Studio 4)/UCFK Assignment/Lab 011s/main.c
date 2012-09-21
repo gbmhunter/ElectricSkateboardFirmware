@@ -1,0 +1,213 @@
+#include "crypt.h"
+
+/*
+ * A function to create a message buffer object - takes a length measure as a indictation
+ * of how big a message buffer is required.  The actually object will be bigger by 4/3 (approx)
+ */
+buffer_t* new_buffer(long length)
+{
+	buffer_t *buffer;
+	long buffer_size;
+	
+	buffer_size = (length/3 + 1) * 4;
+	buffer = (buffer_t*)malloc(sizeof(buffer_t));
+	if (buffer == NULL)
+	{
+		printf("Error allocating buffer object, out of memory\n");
+		exit(1);
+	}
+	buffer->buffer = (uint8_t*)calloc(buffer_size, sizeof(uint8_t));
+	if (buffer->buffer == NULL)
+	{
+		printf("Error allocating buffer, out of memory\n");
+		exit(1);
+	}
+	buffer->buffer_size = buffer_size;
+	buffer->length = length;
+	
+	return(buffer);
+}
+
+/*
+ * A function to delete the buffer object.
+ */
+void delete_buffer(buffer_t *buffer)
+{
+	free(buffer->buffer);
+	free(buffer);
+}
+
+/*
+ * A function that computes the size of a file (message).
+ * This function is used to find the size of the message so that a message buffer object of the
+ * right size can be created.
+ */
+long filesize(char filename[])
+{
+	FILE *fhandler;
+	long size;
+	
+	fhandler = fopen(filename, "rb");
+	if (fhandler == NULL) 
+	{
+		printf("Can't open file (%s) for reading\n", filename);
+		exit(1);
+	}
+
+	fseek(fhandler, 0, SEEK_END);
+	size =  ftell(fhandler);
+
+	fclose(fhandler);
+
+	return size;
+}
+
+/*
+ * A function to read a file and put its contents in the message buffer "outbuffer"
+ */
+buffer_t* read_message(char filename[], buffer_t *outbuffer)
+{
+	FILE *fhandler;
+	
+	fhandler = fopen(filename, "rb");
+	if (fhandler == NULL) 
+	{
+		printf("Can't open file (%s) for reading\n", filename);
+		exit(1);
+	}
+
+	if (outbuffer->length != fread(outbuffer->buffer, sizeof(uint8_t), outbuffer->length, fhandler))
+	{
+		printf("Error reading file (%s)\n", filename);
+		exit(1);
+	}
+
+	fclose(fhandler);
+
+	return outbuffer;
+}
+
+/*
+ * A function that creates (or recreates) a new file with name "filename" and writes the contents of
+ * "inbuffer" to the file
+ */
+void write_message(char filename[], buffer_t *inbuffer)
+{
+	FILE *fhandler;
+
+	if (strcmp(filename, "-") == 0)
+	{
+		printf("%s\n", inbuffer->buffer);
+	}
+	else
+	{
+		fhandler = fopen(filename, "wb");
+		if (fhandler == NULL)
+		{
+			printf("Can't open file (%s) for writing\n", filename);
+			exit(1);
+		}
+
+		if (inbuffer->length != fwrite(inbuffer->buffer, sizeof(uint8_t), inbuffer->length, fhandler))
+		{
+			printf("Error writing file (%s)\n", filename);
+			exit(1);
+		}
+
+		fclose(fhandler);
+	}
+}
+
+/*
+ * A function to parse the command line to find the
+ *    crypt_method
+ *    optional key
+ *    input message filename
+ *    output message filename
+ */
+cl_parameters parse_cl(int argc, char *argv[])
+{
+	int i,j,k;
+	
+	cl_parameters parameters;
+	if (!(argc == 4 || argc == 6))
+	{
+		printf("\n\nError in call to crypt function\n\n");
+		printf("Correct usage is:\n");
+		printf("\tcrypt crypt_method [key] input_message_filename output_message_filename\n\n");
+		printf("The optional key is one of the form:\n");
+		printf("\t--charkey character\n");
+		printf("\t--hexkey hex_long_value\n");
+		exit(1);
+	}
+
+	for(i=1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "--charkey") == 0)
+		{
+			parameters.keytype = CHARKEY;
+			parameters.key.charkey = argv[i+1][0];
+			for (j=i+2, k=i;   j < argc;   j++, k++)
+			{
+				argv[k] = argv[j];
+			}
+			argc = argc-2;
+			break;
+		}
+		if (strcmp(argv[i], "--hexkey") == 0)
+		{
+			parameters.keytype = HEXKEY;
+			sscanf(argv[i+1], "%lx", &(parameters.key.hexkey));
+			for (j=i+2, k=i;   j < argc;   j++, k++)
+			{
+				argv[k] = argv[j];
+			}
+			argc = argc-2;
+			break;			
+		}
+	}
+
+	parameters.methodname = argv[1];
+	parameters.input = argv[2];
+	parameters.output = argv[3];
+	
+	return parameters;
+}
+/*
+ * Main function::
+ *    1. Parse the command-line
+ *    2. Create the message buffers
+ *    3. Read the input file message
+ *    4. Call the encoder/decoder method
+ *    5. Write encoded/decoded message to the output file
+ * 
+ * Usage::
+ *    crypt method [key] input_message-file output_message_file
+ * 
+ * Key::
+ *    The key is optional, and takes two forms 
+ *    --charkey char
+ *    --hexkey  hex_long_value
+ */
+int main(int argc, char *argv[])
+{
+	long message_size;
+	buffer_t *inmessage;
+	buffer_t *outmessage;
+	cl_parameters parameters;
+	encoder_function_t method;
+	
+	parameters = parse_cl(argc, argv);
+	method = get_encoder(parameters.methodname);
+	
+	message_size = filesize(parameters.input);
+	inmessage = new_buffer(message_size);
+	outmessage = new_buffer(message_size);
+	
+	read_message(parameters.input, inmessage);
+	(*method)(inmessage, outmessage, (void*)&(parameters.key));
+	write_message(parameters.output, outmessage);
+	
+	return 0;
+}
+

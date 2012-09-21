@@ -1,0 +1,21 @@
+The reward for success is..... more work.
+
+4. Bit-shifting encoder
+The second message is encrypted using a scheme that I have come up with.  It is relatively simple to break, but there is no need as I will explain it below.  The real purpose behind this encoder and decoder is to develop some bit manipulation skills.
+
+ASCII is a 7-bit code, which permits us to use the most significant bit (7th bit when counting from 0) for other purposes - provide we discard it latter. Using this knowledge I have devised the following scheme for encoding a character:
+        1. Compute the odd-parity of the character (1 if there are an odd number of 1's in the 7-bit ASCII code, otherwise 0)
+        2. Set the 7th-bit to be the computed odd-parity (from step 1)
+        3. Swap the 7th and 4th bits --- because we can and this will make things more interesting
+        4. If the ASCII-code has odd parity then XOR the 4 least significant bits with an 8-bit hex value passed in as a key to the algorithm.
+
+To aid in writing your decoder function you must also write a set of assisting functions or as MACROS.  It is more conventional to write them as MACROS, but you can make the choice.  Each must provide the functionality as described below:
+        1. BV(x) :: return an unsigned number where the bit at position 'x' is set 1 and all the others are cleared (0).
+        2. CLEARBIT(a,x) :: return an unsigned number equal to the unsigned number 'a' except the bit at position 'x' is clear or 0.
+        3. SETBIT(a,x) :: return an unsigned number equal to the unsigned number 'a' except the bit at position 'x' is set or 1.
+        4. ASSIGNBIT(a,x,v) :: return an unsigned number equal to the unsigned number 'a' except the bit at position 'x' is assigned the value of 'v', where 'v' is either 1 or 0.
+        5. ISCLEAR(a,x) :: return 1 if the bit at position 'x' in the unsigned value 'a' is clear or 0,  otherwise return 0.
+        6. ISSET(a,x) :: return 1 if the bit at position 'x' in the unsigned value 'a' is set or 1, otherwise return 0.
+
+Your decoding function should use at least 3 of the bit manipulation methods from above.  The key needed to decode message 2 is 0x0A.
+
