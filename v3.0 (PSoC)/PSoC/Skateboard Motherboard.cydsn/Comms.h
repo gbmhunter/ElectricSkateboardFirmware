@@ -1,11 +1,20 @@
-/***************************************************************
- * Geo's Wireless Skateboard: Common File
- * comms.h 
- * Written By: Geoffrey Hunter
- * Last Modification: 04/01/2012
- *
- ***************************************************************
- */
+//!
+//! @file 		Comms.h
+//! @author 	Geoffrey Hunter (gbmhunter@gmail.com)
+//! @date 		22/12/2010
+//! @brief 		Header file for Comms.c
+//! @details
+//!		<b>Last Modified:			</b> 28/09/2012								\n
+//!		<b>Version:					</b> v1.0									\n
+//!		<b>Company:					</b> CladLabs								\n
+//!		<b>Project:					</b> Electric Skateboard - Board			\n
+//!		<b>Computer Architecture:	</b> ARM									\n
+//!		<b>Compiler:				</b> GCC									\n
+//! 	<b>uC Model:				</b> PSoC5									\n
+//!		<b>Documentation Format:	</b> Doxygen								\n
+//!		
+//!		
+//!
 
 //===============================================================================================//
 //======================================== HEADER GUARD =========================================//
