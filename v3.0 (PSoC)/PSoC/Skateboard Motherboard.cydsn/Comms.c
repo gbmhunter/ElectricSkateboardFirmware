@@ -7,7 +7,7 @@
 //!		<b>Last Modified:			</b> 24/05/2011								\n
 //!		<b>Version:					</b> v1.0									\n
 //!		<b>Company:					</b> CladLabs								\n
-//!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
+//!		<b>Project:					</b> Electric Skateboard - Board			\n
 //!		<b>Computer Architecture:	</b> ARM									\n
 //!		<b>Compiler:				</b> GCC									\n
 //! 	<b>uC Model:				</b> PSoC5									\n

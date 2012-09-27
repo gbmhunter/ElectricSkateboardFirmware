@@ -4,7 +4,7 @@
 //! @date 		14/05/2011
 //! @brief 		Contains the entry point and main loop.
 //! @details
-//!		<b>Last Modified:			</b> 22/05/2011								\n
+//!		<b>Last Modified:			</b> 28/09/2012								\n
 //!		<b>Version:					</b> v1.0									\n
 //!		<b>Company:					</b> CladLabs								\n
 //!		<b>Project:					</b> Electric Skateboard - Skateboard Remote\n
@@ -24,9 +24,13 @@
 //======================================= FILE INCLUSIONS =======================================//
 //===============================================================================================//
 
+// PSoC
 #include <device.h>
+
+// GCC
 #include <stdio.h>
 
+// User
 #include "../common/PublicObjects.h"
 #include "Config.h"
 #include "Buttons.h"
@@ -34,6 +38,10 @@
 #include "Lights.h"
 #include "Adc.h"
 #include "Comms.h"
+
+//===============================================================================================//
+//========================================== TYPEDEF's ==========================================//
+//===============================================================================================//
 
 typedef enum{
 	mainInit,
